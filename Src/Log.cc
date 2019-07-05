@@ -2,6 +2,14 @@
 namespace Log
 {
 
+uint32_t LogEvent::getLine() const{ return this->Line; }
+uint64_t LogEvent::getTime() const{ return this->Time; }
+uint64_t LogEvent::getElapse() const{ return this->Elapse; }
+uint64_t LogEvent::getFiberId() const{ return this->FiberId; }
+uint64_t LogEvent::getThreadId() const{ return this->ThreadId; }
+const std::string& LogEvent::getFile() const{ return this->File; }
+const std::string& LogEvent::getContext() const{ return this->Context; }
+
 void ILogAppender::setFormatter(std::shared_ptr<LogFormatter> formatter){
     this->Formatter = formatter;
 }
@@ -134,8 +142,7 @@ void LogFormatter::initFormat(const std::string &pattern){
         nomalString.clear();
     }
 }
-std::string LogFormatter::format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event){
-}
+
 void StdOutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level,std::shared_ptr<LogEvent> event){
     this->getFormatter()->format(std::cout, logger, level, event);
 }
@@ -154,6 +161,25 @@ bool FileLogAppender::reOpen(){
     }
     this->OutPutFile.open(this->Path);
     return this->OutPutFile.is_open();
+}
+
+std::string LogFormatter::format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+
+}
+//%m 消息体
+//%p Level
+//%r 启动时间
+//%c log名称
+//%t 线程id
+//%n 回车换行
+//%d 时间 
+//%f 文件名
+//%l 行号
+void MessageFormatItem::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+    os << event->getContext().c_str();    
+}
+void LevelFormatItem::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+    os << LogLevel::toString().c_str();
 }
 
 } // namespace Log

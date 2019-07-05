@@ -6,13 +6,6 @@
 #include <fstream>
 #include <iostream>
 
-//%p 输出优先级，即DEBUG，INFO，WARN，ERROR，FATAL
-//%r 输出自应用启动到输出该log信息耗费的毫秒数
-//%c 输出所属的类目，通常就是所在类的全名
-//%t 输出产生该日志事件的线程名
-//%n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”
-//%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
-//%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。举例：Testlog4.main(TestLog4.java:10)
 namespace Log{
 
 class Logger;
@@ -31,12 +24,19 @@ public:
         ERROR   =4,
         FATAL   =5
     };
+    static std::string toString();
 };
 
 class LogEvent{
 public:
     LogEvent();
-
+    uint32_t getLine() const;
+    uint64_t getTime() const;
+    uint64_t getElapse() const;
+    uint64_t getFiberId() const;
+    uint64_t getThreadId() const;
+    const std::string& getFile() const;
+    const std::string& getContext() const; 
 private:
     uint32_t Line       =0;
     uint64_t Time       =0;
@@ -44,6 +44,7 @@ private:
     uint64_t FiberId    =0;
     uint64_t ThreadId   =0;
     std::string File;
+    std::string Context;
 };
 
 class ILogAppender{
@@ -80,23 +81,6 @@ private:
     std::list<std::shared_ptr<ILogAppender>> ILogAppenders;
 };
 
-class ILogFormatItem{
-public:
-    virtual ~ILogFormatItem(){};
-    std::string format();
-};
-
-class LogFormatter{
-public:
-    void initFormat(const std::string &pattern);
-    std::string format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
-
-private:
-    std::vector<std::shared_ptr<ILogFormatItem>> Item;
-};
-
-//.....format item interface
-
 class StdOutLogAppender : public ILogAppender{
 public:
     void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
@@ -112,5 +96,31 @@ private:
     std::string Path;
     std::ofstream OutPutFile;
 };
+
+class ILogFormatItem{
+public:
+    virtual ~ILogFormatItem(){};
+    virtual void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) =0;
+};
+
+class LogFormatter{
+public:
+    void initFormat(const std::string &pattern);
+    std::string format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+
+private:
+    std::vector<std::shared_ptr<ILogFormatItem>> Item;
+};
+//.....format item interface
+class MessageFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+};
+
+class LevelFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+};
+
 
 } // namespace Log
