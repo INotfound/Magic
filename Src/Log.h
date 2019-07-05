@@ -13,8 +13,8 @@
 //%n 输出一个回车换行符，Windows平台为“rn”，Unix平台为“n”
 //%d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss,SSS}，输出类似：2002年10月18日 22：10：28，921
 //%l 输出日志事件的发生位置，包括类目名、发生的线程，以及在代码中的行数。举例：Testlog4.main(TestLog4.java:10)
-namespace Log
-{
+namespace Log{
+
 class Logger;
 class LogLevel;
 class LogEvent;
@@ -22,35 +22,31 @@ class LogFormatter;
 class ILogAppender;
 class ILogFormatItem;
 
-class LogLevel
-{
+class LogLevel{
 public:
-    enum Level
-    {
-        DEBUG = 1,
-        INFO = 2,
-        WARN = 3,
-        ERROR = 4,
-        FATAL = 5
+    enum Level{
+        DEBUG   =1,
+        INFO    =2,
+        WARN    =3,
+        ERROR   =4,
+        FATAL   =5
     };
 };
 
-class LogEvent
-{
+class LogEvent{
 public:
     LogEvent();
 
 private:
-    uint32_t Line = 0;
-    uint64_t Time = 0;
-    uint64_t Elapse = 0;
-    uint64_t FiberId = 0;
-    uint64_t ThreadId = 0;
+    uint32_t Line       =0;
+    uint64_t Time       =0;
+    uint64_t Elapse     =0;
+    uint64_t FiberId    =0;
+    uint64_t ThreadId   =0;
     std::string File;
 };
 
-class ILogAppender
-{
+class ILogAppender{
 public:
     virtual ~ILogAppender(){};
     virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) = 0;
@@ -61,8 +57,7 @@ private:
     std::shared_ptr<LogFormatter> Formatter;
 };
 
-class Logger : public std::enable_shared_from_this<Logger>
-{
+class Logger : public std::enable_shared_from_this<Logger>{
 public:
     explicit Logger(const std::string &name = "root");
     void addILogAppender(std::shared_ptr<ILogAppender> logAppender);
@@ -85,15 +80,13 @@ private:
     std::list<std::shared_ptr<ILogAppender>> ILogAppenders;
 };
 
-class ILogFormatItem
-{
+class ILogFormatItem{
 public:
     virtual ~ILogFormatItem(){};
     std::string format();
 };
 
-class LogFormatter
-{
+class LogFormatter{
 public:
     void initFormat(const std::string &pattern);
     std::string format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
@@ -102,16 +95,14 @@ private:
     std::vector<std::shared_ptr<ILogFormatItem>> Item;
 };
 
-//.....
+//.....format item interface
 
-class StdOutLogAppender : public ILogAppender
-{
+class StdOutLogAppender : public ILogAppender{
 public:
     void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
 };
 
-class FileLogAppender : public ILogAppender
-{
+class FileLogAppender : public ILogAppender{
 public:
     FileLogAppender(const std::string &path);
     void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;

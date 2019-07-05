@@ -134,9 +134,15 @@ void LogFormatter::initFormat(const std::string &pattern){
         nomalString.clear();
     }
 }
-std::string LogFormatter::format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+std::string LogFormatter::format(std::ostream &os, 
+        std::shared_ptr<Logger> logger, 
+        LogLevel::Level level, 
+        std::shared_ptr<LogEvent> event){
+
 }
-void StdOutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level,std::shared_ptr<LogEvent> event){
+void StdOutLogAppender::log(std::shared_ptr<Logger> logger, 
+        LogLevel::Level level,
+        std::shared_ptr<LogEvent> event){
     this->getFormatter()->format(std::cout, logger, level, event);
 }
 FileLogAppender::FileLogAppender(const std::string &path){
