@@ -5,7 +5,7 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
-
+#include <function>
 namespace Log{
 
 class Logger;
@@ -24,7 +24,7 @@ public:
         ERROR   =4,
         FATAL   =5
     };
-    static std::string toString();
+    static const char* toString(LogLevel::Level level);
 };
 
 class LogEvent{
@@ -110,16 +110,7 @@ public:
 
 private:
     std::vector<std::shared_ptr<ILogFormatItem>> Item;
-};
-//.....format item interface
-class MessageFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
-};
-
-class LevelFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+    std::map<std::string,std::function<stILogFormatItem> FormatItem;
 };
 
 
