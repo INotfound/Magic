@@ -2,6 +2,66 @@
 namespace Log
 {
 
+//%m 消息体
+//%p Level
+//%r 启动时间
+//%c log名称
+//%t 线程id
+//%n 回车换行
+//%d 时间 
+//%f 文件名
+//%l 行号
+//format item interface
+class MessageFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+};
+
+class LevelFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+};
+
+class ElapseFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+
+};
+
+class ThreadIdFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+
+};
+
+class FiberIdFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+
+};
+
+class DateTimeFormatItem :public ILogFormatItem{
+public:
+    DateTimeFormatItem(const std::string &format = "%Y:%m:%d %H:%M:%S");
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+private:
+    std::string Format;
+};
+
+
+class FileFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+
+};
+
+class LineFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+
+};
+//format item interface
+
 const char* LogLevel::toString(LogLevel::Level level){
     switch(level){
 #define LEVEL(Name)\
@@ -185,63 +245,5 @@ std::string LogFormatter::format(std::ostream &os, std::shared_ptr<Logger> logge
 
 }
 
-//%m 消息体
-//%p Level
-//%r 启动时间
-//%c log名称
-//%t 线程id
-//%n 回车换行
-//%d 时间 
-//%f 文件名
-//%l 行号
-//.....format item interface
-class MessageFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
-};
-
-class LevelFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-};
-
-class ElapseFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
-};
-
-class ThreadIdFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
-};
-
-class FiberIdFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
-};
-
-class DateTimeFormatItem :public ILogFormatItem{
-public:
-    DateTimeFormatItem(const std::string &format = "%Y:%m:%d %H:%M:%S");
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-private:
-    std::string Format;
-};
-
-
-class FileFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
-};
-
-class LineFormatItem :public ILogFormatItem{
-public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
-};
 
 } // namespace Log
