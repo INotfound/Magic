@@ -5,7 +5,6 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
-#include <function>
 namespace Log{
 
 class Logger;
@@ -110,7 +109,6 @@ public:
 
 private:
     std::vector<std::shared_ptr<ILogFormatItem>> Item;
-    std::map<std::string,std::function<stILogFormatItem> FormatItem;
 };
 
 

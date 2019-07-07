@@ -1,4 +1,6 @@
 #include "Log.h"
+#include <map>
+#include <functional>
 namespace Log
 {
 
@@ -19,49 +21,61 @@ public:
 
 class LevelFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
 class ElapseFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+};
 
+class LogNameFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
 class ThreadIdFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
-class FiberIdFormatItem :public ILogFormatItem{
+class NewLineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
 class DateTimeFormatItem :public ILogFormatItem{
 public:
-    DateTimeFormatItem(const std::string &format = "%Y:%m:%d %H:%M:%S");
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-private:
-    std::string Format;
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
-
-class FileFormatItem :public ILogFormatItem{
+class FilePathFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
 class LineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
-
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
-//format item interface
 
+class TabFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+};
+
+class FiberIdFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+};
+
+class ThreadNameFormatItem :public ILogFormatItem{
+public:
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+};
+
+
+//format item interface
 const char* LogLevel::toString(LogLevel::Level level){
     switch(level){
 #define LEVEL(Name)\
@@ -219,6 +233,26 @@ void LogFormatter::initFormat(const std::string &pattern){
             << "]" << std::endl;
         nomalString.clear();
     }
+
+    std::map<std::string,std::function<std::shared_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
+#define Item(str,type) \
+        {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type);}}
+        
+        Item(m, MessageFormatItem),           //m:消息
+        Item(p, LevelFormatItem),             //p:日志级别
+        Item(r, ElapseFormatItem),            //r:累计毫秒数
+        Item(c, LogNameFormatItem),              //c:日志名称
+        Item(t, ThreadIdFormatItem),          //t:线程id
+        Item(n, NewLineFormatItem),           //n:换行
+        Item(d, DateTimeFormatItem),          //d:时间
+        Item(f, FilePathFormatItem),          //f:文件名
+        Item(l, LineFormatItem),              //l:行号
+        Item(T, TabFormatItem),               //T:Tab
+        Item(F, FiberIdFormatItem),           //F:协程id
+        Item(N, ThreadNameFormatItem),        //N:线程名称
+#undef Item
+    };
+
 }
 
 void StdOutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level,std::shared_ptr<LogEvent> event){
