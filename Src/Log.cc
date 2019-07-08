@@ -1,6 +1,7 @@
 #include "Log.h"
 #include <map>
 #include <functional>
+
 namespace Log
 {
 
@@ -41,7 +42,9 @@ public:
 
 class NewLineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+        os << std::endl;
+    }
 };
 
 class DateTimeFormatItem :public ILogFormatItem{
@@ -74,6 +77,15 @@ public:
     void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override;
 };
 
+class StringFormatItem :public ILogFormatItem{
+public:
+    StringFormatItem(const std::string & str):Str(str){}
+    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+        os << Str.c_str(); 
+    }
+private:
+    std::string Str; 
+};
 
 //format item interface
 const char* LogLevel::toString(LogLevel::Level level){
@@ -138,9 +150,8 @@ std::shared_ptr<LogFormatter> Logger::getFormatter(){
 }
 
 void Logger::log(LogLevel::Level level, std::shared_ptr<LogEvent> event){
-    auto self = this->shared_from_this();
     for (auto &i : this->ILogAppenders){
-        i->log(self, level, event);
+        i->log(level, event);
     }
 }
 void Logger::debug(std::shared_ptr<LogEvent> event){
@@ -237,7 +248,9 @@ void LogFormatter::initFormat(const std::string &pattern){
     std::map<std::string,std::function<std::shared_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
 #define Item(str,type) \
         {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type);}}
-        
+#define ItemEx(str,type) \
+        {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type(fmt));}}
+
         Item(m, MessageFormatItem),           //m:消息
         Item(p, LevelFormatItem),             //p:日志级别
         Item(r, ElapseFormatItem),            //r:累计毫秒数
@@ -250,21 +263,33 @@ void LogFormatter::initFormat(const std::string &pattern){
         Item(T, TabFormatItem),               //T:Tab
         Item(F, FiberIdFormatItem),           //F:协程id
         Item(N, ThreadNameFormatItem),        //N:线程名称
+#undef ItemEx
 #undef Item
     };
+    for(auto &value : vec){
+        uint32_t flag = std::get<2>(value);
+        if(flag == 0){
+            this->Items.push_back(std::shared_ptr<ILogFormatItem>(new StringFormatItem(std::get<0>(value))));
+        }else if(flag == 1){
+            auto subItem = formatItem.find(std::get<0>(value));
+            if(subItem == formatItem.end()){
+                std::cout << "ERROR: Not Found Item" << std::endl;
+            }else {
+                this->Items.push_back(subItem->second(std::get<1>(value)));
+            }
+        }
+    }
 
 }
 
-void StdOutLogAppender::log(std::shared_ptr<Logger> logger, LogLevel::Level level,std::shared_ptr<LogEvent> event){
-    this->getFormatter()->format(std::cout, logger, level, event);
+void StdOutLogAppender::log(LogLevel::Level level,std::shared_ptr<LogEvent> event){
+    this->getFormatter()->format(std::cout,level, event);
 }
 FileLogAppender::FileLogAppender(const std::string &path){
     this->reOpen();
 }
-void FileLogAppender::log(std::shared_ptr<Logger> logger, 
-        LogLevel::Level level,
-        std::shared_ptr<LogEvent> event){
-    this->getFormatter()->format(this->OutPutFile, logger, level, event);
+void FileLogAppender::log(LogLevel::Level level, std::shared_ptr<LogEvent> event){
+    this->getFormatter()->format(this->OutPutFile, level, event);
 }
 
 bool FileLogAppender::reOpen(){
@@ -275,8 +300,10 @@ bool FileLogAppender::reOpen(){
     return this->OutPutFile.is_open();
 }
 
-std::string LogFormatter::format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event){
-
+std::string LogFormatter::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+    for(auto &i : this->Items){
+        i->format(os,level,event);
+    }
 }
 
 

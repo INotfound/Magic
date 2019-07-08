@@ -49,7 +49,7 @@ private:
 class ILogAppender{
 public:
     virtual ~ILogAppender(){};
-    virtual void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) = 0;
+    virtual void log(LogLevel::Level level, std::shared_ptr<LogEvent> event) = 0;
     void setFormatter(std::shared_ptr<LogFormatter> formatter);
     std::shared_ptr<LogFormatter> getFormatter();
 
@@ -82,13 +82,13 @@ private:
 
 class StdOutLogAppender : public ILogAppender{
 public:
-    void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+    void log(LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
 };
 
 class FileLogAppender : public ILogAppender{
 public:
     FileLogAppender(const std::string &path);
-    void log(std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
+    void log(LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
     bool reOpen();
 
 private:
@@ -105,10 +105,10 @@ public:
 class LogFormatter{
 public:
     void initFormat(const std::string &pattern);
-    std::string format(std::ostream &os, std::shared_ptr<Logger> logger, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+    std::string format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
 
 private:
-    std::vector<std::shared_ptr<ILogFormatItem>> Item;
+    std::vector<std::shared_ptr<ILogFormatItem>> Items;
 };
 
 
