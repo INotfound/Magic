@@ -59,8 +59,11 @@ public:
     void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
         time_t time_secounds = event->getTime();
         struct tm nowTime;
-        //localtime_r(&time_secounds,&nowTime);
+#if defined(_WIN32) || defined(_WIN64)
         localtime_s(&nowTime,&time_secounds);
+#else
+        localtime_r(&time_secounds,&nowTime);
+#endif
 		char buf[1024] = { 0 };
         strftime(buf,sizeof(buf),FormatString.c_str(),&nowTime);
         os << buf;
@@ -147,8 +150,9 @@ const std::string& LogEvent::getFile() const{ return this->File; }
 const std::string& LogEvent::getContext() const{ return this->Context; }
 const std::string& LogEvent::getThreadName() const{ return this->ThreadName; }
 
-Logger::Logger(const std::string &name) 
+Logger::Logger(const std::string& name,const std::string& formatPattern) 
     :LogName(name){
+        this->Formatter = std::make_shared<LogFormatter>(formatPattern);
 }
 
 void Logger::addILogAppender(std::shared_ptr<ILogAppender> logAppender){
@@ -171,7 +175,8 @@ void Logger::log(LogLevel::Level level, std::shared_ptr<LogEvent> event){
         i->log(level, event);
     }
 }
-void Logger::setFormatter(std::shared_ptr<LogFormatter> formatter){
+
+void Logger::setNewFormatter(std::shared_ptr<LogFormatter> formatter){
     this->Formatter = formatter;
 }
 
@@ -194,8 +199,8 @@ void Logger::fatal(std::shared_ptr<LogEvent> event){
     this->log(LogLevel::FATAL, event);
 }
 
-void LogFormatter::initFormat(const std::string &pattern){
-    //cmd fmt type
+LogFormatter::LogFormatter(const std::string& pattern){
+    //cmd fmt flag
     std::vector<std::tuple<std::string, std::string, int>> vec;
     std::string nomalString;
     std::string cmd;

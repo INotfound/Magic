@@ -68,7 +68,7 @@ public:
 
 class LogFormatter{
 public:
-    void initFormat(const std::string &pattern);
+    LogFormatter(const std::string& pattern);
     std::string format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
 
 private:
@@ -78,10 +78,10 @@ private:
 
 class Logger : public std::enable_shared_from_this<Logger>{
 public:
-    explicit Logger(const std::string &name = "root");
+    Logger(const std::string& name = "root",const std::string& formatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n");
     void addILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void delILogAppender(std::shared_ptr<ILogAppender> logAppender);
-    void setFormatter(std::shared_ptr<LogFormatter> formatter);
+    void setNewFormatter(std::shared_ptr<LogFormatter> formatter);
     const std::string& getLogName() const;
     void log(LogLevel::Level level, std::shared_ptr<LogEvent> event);
     void debug(std::shared_ptr<LogEvent> event);
