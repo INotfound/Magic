@@ -59,8 +59,9 @@ public:
     void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
         time_t time_secounds = event->getTime();
         struct tm nowTime;
-        localtime_r(&time_secounds,&nowTime);
-        char buf[1024] = { 0 };
+        //localtime_r(&time_secounds,&nowTime);
+        localtime_s(&nowTime,&time_secounds);
+		char buf[1024] = { 0 };
         strftime(buf,sizeof(buf),FormatString.c_str(),&nowTime);
         os << buf;
     }
@@ -128,8 +129,8 @@ const char* LogLevel::toString(LogLevel::Level level){
         default:
             break;
 #undef LEVEL
-       
     }
+	return "<(ERROR)>";
 }
 LogEvent::LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string& logName,const std::string& context,const std::string& threadName)
     :Line(line),Time(time),Elapse(elapse),FiberId(fiberId),ThreadId(threadId),File(file),LogName(logName),Context(context),ThreadName(threadName){
@@ -166,7 +167,6 @@ void Logger::delILogAppender(std::shared_ptr<ILogAppender> logAppender){
 }
 
 void Logger::log(LogLevel::Level level, std::shared_ptr<LogEvent> event){
-    std::cout << this->ILogAppenders.size();
     for (auto &i : this->ILogAppenders){
         i->log(level, event);
     }
@@ -249,23 +249,17 @@ void LogFormatter::initFormat(const std::string &pattern){
         if (Status == 0){
             if (!nomalString.empty()){
                 vec.push_back(std::make_tuple(nomalString, std::string(), 0));
-                std::cout << "normalString:[" << nomalString.c_str() << "]" << std::endl;
                 nomalString.clear();
             }
             vec.push_back(std::make_tuple(cmd, fmt, 1));
-            std::cout << "cmd:[" << cmd.c_str() 
-                << "]fmt:[" << fmt.c_str() << "]" << std::endl;
             i = n - 1;
         }
         else if (Status == 1){
-            std::cout << "pattern error:" << pattern 
-                << "-" << pattern.substr(i) << std::endl;
+            std::cout << "pattern error:" << pattern << "-" << pattern.substr(i) << std::endl;
         }
     }
     if (!nomalString.empty()){
         vec.push_back(std::make_tuple(nomalString, std::string(), 0));
-        std::cout << "normalString:[" << nomalString.c_str() 
-            << "]" << std::endl;
         nomalString.clear();
     }
 
@@ -291,7 +285,6 @@ void LogFormatter::initFormat(const std::string &pattern){
 #undef Item
     };
 
-    int x = 0;
     for(auto &value : vec){
 
         uint32_t flag = std::get<2>(value);
@@ -332,10 +325,10 @@ bool FileLogAppender::reOpen(){
 }
 
 std::string LogFormatter::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
-    std::cout << this->Items.size() << std::endl;
     for(auto &i : this->Items){
         i->format(os,level,event);
     }
+	return std::string("");
 }
 
 
