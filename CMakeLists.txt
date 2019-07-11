@@ -4,6 +4,7 @@ project(Main)
 set(CMAKE_C_COMPILER "clang")
 set(CMAKE_CXX_COMPILER "clang++")
 
+add_definitions(-g)
 add_definitions(-std=c++11)
 add_subdirectory(Src)
 aux_source_directory(. Local)

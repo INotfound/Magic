@@ -28,14 +28,17 @@ public:
 
 class LogEvent{
 public:
-    LogEvent();
+    LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string &logName,const std::string& context,const std::string& threadName);
     uint32_t getLine() const;
     uint64_t getTime() const;
     uint64_t getElapse() const;
     uint64_t getFiberId() const;
     uint64_t getThreadId() const;
     const std::string& getFile() const;
+    const std::string& getLogName() const;
     const std::string& getContext() const; 
+    const std::string& getThreadName()const;
+
 private:
     uint32_t Line       =0;
     uint64_t Time       =0;
@@ -43,19 +46,35 @@ private:
     uint64_t FiberId    =0;
     uint64_t ThreadId   =0;
     std::string File;
+    std::string LogName;
     std::string Context;
+    std::string ThreadName;
 };
 
 class ILogAppender{
+    friend class Logger;
 public:
     virtual ~ILogAppender(){};
     virtual void log(LogLevel::Level level, std::shared_ptr<LogEvent> event) = 0;
-    void setFormatter(std::shared_ptr<LogFormatter> formatter);
-    std::shared_ptr<LogFormatter> getFormatter();
-
-private:
+protected:
     std::shared_ptr<LogFormatter> Formatter;
 };
+
+class ILogFormatItem{
+public:
+    virtual ~ILogFormatItem(){};
+    virtual void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) =0;
+};
+
+class LogFormatter{
+public:
+    void initFormat(const std::string &pattern);
+    std::string format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+
+private:
+    std::vector<std::shared_ptr<ILogFormatItem>> Items;
+};
+
 
 class Logger : public std::enable_shared_from_this<Logger>{
 public:
@@ -63,8 +82,7 @@ public:
     void addILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void delILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void setFormatter(std::shared_ptr<LogFormatter> formatter);
-    void setFormatter(const std::string &val);
-    std::shared_ptr<LogFormatter> getFormatter();
+    const std::string& getLogName() const;
     void log(LogLevel::Level level, std::shared_ptr<LogEvent> event);
     void debug(std::shared_ptr<LogEvent> event);
     void info(std::shared_ptr<LogEvent> event);
@@ -95,21 +113,5 @@ private:
     std::string Path;
     std::ofstream OutPutFile;
 };
-
-class ILogFormatItem{
-public:
-    virtual ~ILogFormatItem(){};
-    virtual void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) =0;
-};
-
-class LogFormatter{
-public:
-    void initFormat(const std::string &pattern);
-    std::string format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
-
-private:
-    std::vector<std::shared_ptr<ILogFormatItem>> Items;
-};
-
 
 } // namespace Log
