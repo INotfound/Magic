@@ -10,7 +10,7 @@ namespace Log
 class MessageFormatItem :public ILogFormatItem{
 public:
     void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
-        os << event->getContext().c_str();
+        os << event->getContent().c_str();
     }
 };
 
@@ -135,19 +135,20 @@ const char* LogLevel::toString(LogLevel::Level level){
     }
 	return "<(ERROR)>";
 }
-LogEvent::LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string& logName,const std::string& context,const std::string& threadName)
-    :Line(line),Time(time),Elapse(elapse),FiberId(fiberId),ThreadId(threadId),File(file),LogName(logName),Context(context),ThreadName(threadName){
-    
-    }
+
+LogEvent::LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string& logName,const std::string& threadName)
+    :Line(line),Time(time),Elapse(elapse),FiberId(fiberId),ThreadId(threadId),File(file),LogName(logName),ThreadName(threadName){
+}
 
 uint32_t LogEvent::getLine() const{ return this->Line; }
 uint64_t LogEvent::getTime() const{ return this->Time; }
 uint64_t LogEvent::getElapse() const{ return this->Elapse; }
 uint64_t LogEvent::getFiberId() const{ return this->FiberId; }
 uint64_t LogEvent::getThreadId() const{ return this->ThreadId; }
+const std::string  LogEvent::getContent() const{ return this->StrStream.str(); }
+std::stringstream& LogEvent::getStream(){ return this->StrStream; }
 const std::string& LogEvent::getLogName() const{return this->LogName;}
 const std::string& LogEvent::getFile() const{ return this->File; }
-const std::string& LogEvent::getContext() const{ return this->Context; }
 const std::string& LogEvent::getThreadName() const{ return this->ThreadName; }
 
 Logger::Logger(const std::string& name,const std::string& formatPattern) 
@@ -198,6 +199,16 @@ void Logger::error(std::shared_ptr<LogEvent> event){
 void Logger::fatal(std::shared_ptr<LogEvent> event){
     this->log(LogLevel::FATAL, event);
 }
+
+LogWrap::LogWrap(std::shared_ptr<Logger> logger,LogLevel::Level level,std::shared_ptr<LogEvent> event):Log(logger),Level(level),Event(event){
+}
+
+std::stringstream& LogWrap::get(){ return this->Event->getStream(); }
+
+LogWrap::~LogWrap(){
+    this->Log->log(Level,Event);
+}
+
 
 LogFormatter::LogFormatter(const std::string& pattern){
     //cmd fmt flag

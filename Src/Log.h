@@ -4,12 +4,15 @@
 #include <vector>
 #include <memory>
 #include <fstream>
+#include <sstream>
 #include <iostream>
+
 namespace Log{
 
 class Logger;
 class LogLevel;
 class LogEvent;
+class LogWrap;
 class LogFormatter;
 class ILogAppender;
 class ILogFormatItem;
@@ -28,17 +31,18 @@ public:
 
 class LogEvent{
 public:
-    LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string &logName,const std::string& context,const std::string& threadName);
+    LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string &logName,const std::string& threadName);
     uint32_t getLine() const;
     uint64_t getTime() const;
     uint64_t getElapse() const;
     uint64_t getFiberId() const;
     uint64_t getThreadId() const;
+    std::stringstream& getStream();
+    const std::string  getContent() const;
     const std::string& getFile() const;
     const std::string& getLogName() const;
-    const std::string& getContext() const; 
     const std::string& getThreadName()const;
-
+    
 private:
     uint32_t Line       =0;
     uint64_t Time       =0;
@@ -47,8 +51,8 @@ private:
     uint64_t ThreadId   =0;
     std::string File;
     std::string LogName;
-    std::string Context;
     std::string ThreadName;
+    std::stringstream StrStream;
 };
 
 class ILogAppender{
@@ -96,6 +100,17 @@ private:
     std::shared_ptr<Logger> Root;
     std::shared_ptr<LogFormatter> Formatter;
     std::list<std::shared_ptr<ILogAppender>> ILogAppenders;
+};
+
+class LogWrap{
+public:
+    LogWrap(std::shared_ptr<Logger> logger,LogLevel::Level level,std::shared_ptr<LogEvent> event);
+    std::stringstream& get();
+    ~LogWrap();
+private:
+    LogLevel::Level Level;
+    std::shared_ptr<Logger> Log;
+    std::shared_ptr<LogEvent> Event;
 };
 
 class StdOutLogAppender : public ILogAppender{
