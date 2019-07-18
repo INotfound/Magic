@@ -1,4 +1,4 @@
-#include "logFormatter.h"
+ #include "logFormatter.h"
 
 #include <map>
 #include <tuple>
@@ -228,9 +228,8 @@ LogFormatter::LogFormatter(const std::string& pattern){
     }
 }
 
-std::string LogFormatter::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+void LogFormatter::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
 	for(auto &v :this->m_Items){
 		v->format(os,level,event);
 	}
-	return std::string("");
 }

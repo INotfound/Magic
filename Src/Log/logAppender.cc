@@ -23,6 +23,6 @@ bool FileLogAppender::reOpen(){
     if(this->m_FileStream){
         this->m_FileStream.close();
 	}
-    this->m_FileStream.open(this->m_Path);
+    this->m_FileStream.open(this->m_Path,std::ios_base::out | std::ios_base::app);
     return this->m_FileStream.is_open();
 }

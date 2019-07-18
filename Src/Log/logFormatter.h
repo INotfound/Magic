@@ -13,7 +13,7 @@ class ILogFormatItem;
 class LogFormatter{
 public:
     LogFormatter(const std::string& pattern);
-    std::string format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
 private:
     std::vector<std::shared_ptr<ILogFormatItem>> m_Items;
 };
