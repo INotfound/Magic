@@ -8,12 +8,12 @@ class LogEvent;
 class LogFormatter;
 
 class ILogAppender{
-	friend class Logger;
+    friend class Logger;
 public:
-	virtual ~ILogAppender(){};
-	virtual void log(LogLevel::Level level,std::shared_ptr<LogEvent> event) =0;
+    virtual ~ILogAppender(){};
+    virtual void log(LogLevel::Level level,std::shared_ptr<LogEvent> event) =0;
 protected:
-	std::shared_ptr<LogFormatter> m_Formatter;
+    std::shared_ptr<LogFormatter> m_Formatter;
 };
 
 class StdOutLogAppender : public ILogAppender{

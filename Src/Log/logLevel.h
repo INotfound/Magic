@@ -1,6 +1,7 @@
 #pragma once
 
 namespace Magic{
+	
 class LogLevel{
 public:
 enum Level{

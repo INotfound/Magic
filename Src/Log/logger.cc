@@ -23,6 +23,14 @@ void  Logger::delILogAppender(std::shared_ptr<ILogAppender> logAppender){
 	}
 }
 
+void Logger::setLevel(LogLevel::Level val){
+    this->m_Level = val;
+}
+
+ LogLevel::Level Logger::getLevel() const{
+    return this->m_Level;
+}
+
 const std::string& Logger::getLogName() const{
 	return this->m_LogName;
 }

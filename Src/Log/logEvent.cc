@@ -3,8 +3,8 @@
 using namespace Magic;
 
 LogEvent::LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string& logName,const std::string& threadName)
-	:m_Line(line),m_Time(time),m_Elapse(elapse),m_FiberId(fiberId),
-	m_ThreadId(threadId),m_File(file),m_LogName(logName),m_ThreadName(threadName){
+    :m_Line(line),m_Time(time),m_Elapse(elapse),m_FiberId(fiberId),
+    m_ThreadId(threadId),m_File(file),m_LogName(logName),m_ThreadName(threadName){
 }
 
 uint32_t LogEvent::getLine()const{return this->m_Line;}
