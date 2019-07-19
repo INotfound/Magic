@@ -7,6 +7,8 @@
   </Plugins>
   <VirtualDirectory Name="Src">
     <VirtualDirectory Name="Util">
+      <File Name="Src/Util/Singleton.h"/>
+      <File Name="Src/Util/Util.cc"/>
       <VirtualDirectory Name="Adapter">
         <File Name="Src/Util/Adapter/api_Window.cc"/>
       </VirtualDirectory>
@@ -14,6 +16,8 @@
     </VirtualDirectory>
     <File Name="Src/main.cc"/>
     <VirtualDirectory Name="Log">
+      <File Name="Src/Log/loggerManager.cc"/>
+      <File Name="Src/Log/loggerManager.h"/>
       <File Name="Src/Log/logWrap.cc"/>
       <File Name="Src/Log/Log.h"/>
       <File Name="Src/Log/logLevel.cc"/>

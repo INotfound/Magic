@@ -11,7 +11,7 @@ class LogFormatter;
 
 class Logger : public std::enable_shared_from_this<Logger>{
 public:
-    Logger(const std::string& name = "root",const std::string& formatPattern = "%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%p]%T[%c]%T%f:%l%T%m%n");
+    Logger(const std::string& formatPattern,const std::string& name = "root");
     void addILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void delILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void setLevel(LogLevel::Level);

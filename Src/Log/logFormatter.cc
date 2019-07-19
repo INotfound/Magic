@@ -189,7 +189,7 @@ LogFormatter::LogFormatter(const std::string& pattern){
         nomalString.clear();
     }
 
-    std::map<std::string,std::function<std::shared_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
+    static std::map<std::string,std::function<std::shared_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
 #define Item(str,type) \
         {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type);}}
 #define ItemEx(str,type) \

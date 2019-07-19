@@ -4,7 +4,7 @@
 
 using namespace Magic;
 
-Logger::Logger(const std::string& name,const std::string& formatPattern) :m_LogName(name){
+Logger::Logger(const std::string& formatPattern,const std::string& name) :m_LogName(name){
 	this->m_Formatter = std::make_shared<LogFormatter>(formatPattern);
 }
 
@@ -36,7 +36,11 @@ const std::string& Logger::getLogName() const{
 }
 
 void  Logger::log(LogLevel::Level level, std::shared_ptr<LogEvent> event){
-	for(auto &v :this->m_ILogAppenders){
-		v->log(level,event);
-	}
+    if(!this->m_ILogAppenders.empty()){
+        for(auto &v :this->m_ILogAppenders){
+            v->log(level,event);
+        }
+    }else if(m_Root){
+        m_Root->log(level,event);
+    }
 }
