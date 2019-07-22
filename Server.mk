@@ -13,7 +13,7 @@ CurrentFileName        :=
 CurrentFilePath        :=
 CurrentFileFullPath    :=
 User                   :=admin
-Date                   :=2019/7/19
+Date                   :=2019/7/22
 CodeLitePath           :="C:/Program Files/CodeLite"
 LinkerName             :=g++
 SharedObjectLinkerName :=g++ -shared -fPIC
@@ -62,7 +62,8 @@ AS       := as
 ## User defined environment variables
 ##
 CodeLiteDir:=C:\Program Files\CodeLite
-Objects0=$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_main.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logFormatter.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logAppender.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix) 
+Objects0=$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_loggerManager.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_main.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logFormatter.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix) $(IntermediateDirectory)/Src_Log_logAppender.cc$(ObjectSuffix) \
+	
 
 
 
@@ -93,29 +94,37 @@ PreBuild:
 ##
 ## Objects
 ##
-$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix): Src/Log/logger.cc $(IntermediateDirectory)/Src_Log_logger.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logger.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Src_Log_logger.cc$(DependSuffix): Src/Log/logger.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logger.cc$(DependSuffix) -MM Src/Log/logger.cc
+$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix): Src/Log/logEvent.cc $(IntermediateDirectory)/Src_Log_logEvent.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logEvent.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Log_logEvent.cc$(DependSuffix): Src/Log/logEvent.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logEvent.cc$(DependSuffix) -MM Src/Log/logEvent.cc
 
-$(IntermediateDirectory)/Src_Log_logger.cc$(PreprocessSuffix): Src/Log/logger.cc
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logger.cc$(PreprocessSuffix) Src/Log/logger.cc
+$(IntermediateDirectory)/Src_Log_logEvent.cc$(PreprocessSuffix): Src/Log/logEvent.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logEvent.cc$(PreprocessSuffix) Src/Log/logEvent.cc
 
-$(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix): Src/Log/logLevel.cc $(IntermediateDirectory)/Src_Log_logLevel.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logLevel.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Src_Log_logLevel.cc$(DependSuffix): Src/Log/logLevel.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logLevel.cc$(DependSuffix) -MM Src/Log/logLevel.cc
+$(IntermediateDirectory)/Src_Log_loggerManager.cc$(ObjectSuffix): Src/Log/loggerManager.cc $(IntermediateDirectory)/Src_Log_loggerManager.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/loggerManager.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_loggerManager.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Log_loggerManager.cc$(DependSuffix): Src/Log/loggerManager.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_loggerManager.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_loggerManager.cc$(DependSuffix) -MM Src/Log/loggerManager.cc
 
-$(IntermediateDirectory)/Src_Log_logLevel.cc$(PreprocessSuffix): Src/Log/logLevel.cc
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logLevel.cc$(PreprocessSuffix) Src/Log/logLevel.cc
+$(IntermediateDirectory)/Src_Log_loggerManager.cc$(PreprocessSuffix): Src/Log/loggerManager.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_loggerManager.cc$(PreprocessSuffix) Src/Log/loggerManager.cc
 
-$(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix): Src/Log/logWrap.cc $(IntermediateDirectory)/Src_Log_logWrap.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logWrap.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Src_Log_logWrap.cc$(DependSuffix): Src/Log/logWrap.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logWrap.cc$(DependSuffix) -MM Src/Log/logWrap.cc
+$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix): Src/Util/Adapter/api_Window.cc $(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Util/Adapter/api_Window.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(DependSuffix): Src/Util/Adapter/api_Window.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(DependSuffix) -MM Src/Util/Adapter/api_Window.cc
 
-$(IntermediateDirectory)/Src_Log_logWrap.cc$(PreprocessSuffix): Src/Log/logWrap.cc
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logWrap.cc$(PreprocessSuffix) Src/Log/logWrap.cc
+$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(PreprocessSuffix): Src/Util/Adapter/api_Window.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(PreprocessSuffix) Src/Util/Adapter/api_Window.cc
+
+$(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix): Src/Util/Util.cc $(IntermediateDirectory)/Src_Util_Util.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Util/Util.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Util_Util.cc$(DependSuffix): Src/Util/Util.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Util_Util.cc$(DependSuffix) -MM Src/Util/Util.cc
+
+$(IntermediateDirectory)/Src_Util_Util.cc$(PreprocessSuffix): Src/Util/Util.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Util_Util.cc$(PreprocessSuffix) Src/Util/Util.cc
 
 $(IntermediateDirectory)/Src_main.cc$(ObjectSuffix): Src/main.cc $(IntermediateDirectory)/Src_main.cc$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/main.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_main.cc$(ObjectSuffix) $(IncludePath)
@@ -133,13 +142,29 @@ $(IntermediateDirectory)/Src_Log_logFormatter.cc$(DependSuffix): Src/Log/logForm
 $(IntermediateDirectory)/Src_Log_logFormatter.cc$(PreprocessSuffix): Src/Log/logFormatter.cc
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logFormatter.cc$(PreprocessSuffix) Src/Log/logFormatter.cc
 
-$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix): Src/Log/logEvent.cc $(IntermediateDirectory)/Src_Log_logEvent.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logEvent.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Src_Log_logEvent.cc$(DependSuffix): Src/Log/logEvent.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logEvent.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logEvent.cc$(DependSuffix) -MM Src/Log/logEvent.cc
+$(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix): Src/Log/logWrap.cc $(IntermediateDirectory)/Src_Log_logWrap.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logWrap.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Log_logWrap.cc$(DependSuffix): Src/Log/logWrap.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logWrap.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logWrap.cc$(DependSuffix) -MM Src/Log/logWrap.cc
 
-$(IntermediateDirectory)/Src_Log_logEvent.cc$(PreprocessSuffix): Src/Log/logEvent.cc
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logEvent.cc$(PreprocessSuffix) Src/Log/logEvent.cc
+$(IntermediateDirectory)/Src_Log_logWrap.cc$(PreprocessSuffix): Src/Log/logWrap.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logWrap.cc$(PreprocessSuffix) Src/Log/logWrap.cc
+
+$(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix): Src/Log/logLevel.cc $(IntermediateDirectory)/Src_Log_logLevel.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logLevel.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Log_logLevel.cc$(DependSuffix): Src/Log/logLevel.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logLevel.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logLevel.cc$(DependSuffix) -MM Src/Log/logLevel.cc
+
+$(IntermediateDirectory)/Src_Log_logLevel.cc$(PreprocessSuffix): Src/Log/logLevel.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logLevel.cc$(PreprocessSuffix) Src/Log/logLevel.cc
+
+$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix): Src/Log/logger.cc $(IntermediateDirectory)/Src_Log_logger.cc$(DependSuffix)
+	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logger.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix) $(IncludePath)
+$(IntermediateDirectory)/Src_Log_logger.cc$(DependSuffix): Src/Log/logger.cc
+	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Log_logger.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Log_logger.cc$(DependSuffix) -MM Src/Log/logger.cc
+
+$(IntermediateDirectory)/Src_Log_logger.cc$(PreprocessSuffix): Src/Log/logger.cc
+	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logger.cc$(PreprocessSuffix) Src/Log/logger.cc
 
 $(IntermediateDirectory)/Src_Log_logAppender.cc$(ObjectSuffix): Src/Log/logAppender.cc $(IntermediateDirectory)/Src_Log_logAppender.cc$(DependSuffix)
 	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Log/logAppender.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Log_logAppender.cc$(ObjectSuffix) $(IncludePath)
@@ -148,22 +173,6 @@ $(IntermediateDirectory)/Src_Log_logAppender.cc$(DependSuffix): Src/Log/logAppen
 
 $(IntermediateDirectory)/Src_Log_logAppender.cc$(PreprocessSuffix): Src/Log/logAppender.cc
 	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Log_logAppender.cc$(PreprocessSuffix) Src/Log/logAppender.cc
-
-$(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix): Src/Util/Util.cc $(IntermediateDirectory)/Src_Util_Util.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Util/Util.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Src_Util_Util.cc$(DependSuffix): Src/Util/Util.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Util_Util.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Util_Util.cc$(DependSuffix) -MM Src/Util/Util.cc
-
-$(IntermediateDirectory)/Src_Util_Util.cc$(PreprocessSuffix): Src/Util/Util.cc
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Util_Util.cc$(PreprocessSuffix) Src/Util/Util.cc
-
-$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix): Src/Util/Adapter/api_Window.cc $(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(DependSuffix)
-	$(CXX) $(IncludePCH) $(SourceSwitch) "D:/Source/Magic/Server/Src/Util/Adapter/api_Window.cc" $(CXXFLAGS) $(ObjectSwitch)$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix) $(IncludePath)
-$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(DependSuffix): Src/Util/Adapter/api_Window.cc
-	@$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) -MG -MP -MT$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(ObjectSuffix) -MF$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(DependSuffix) -MM Src/Util/Adapter/api_Window.cc
-
-$(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(PreprocessSuffix): Src/Util/Adapter/api_Window.cc
-	$(CXX) $(CXXFLAGS) $(IncludePCH) $(IncludePath) $(PreprocessOnlySwitch) $(OutputSwitch) $(IntermediateDirectory)/Src_Util_Adapter_api_Window.cc$(PreprocessSuffix) Src/Util/Adapter/api_Window.cc
 
 
 -include $(IntermediateDirectory)/*$(DependSuffix)

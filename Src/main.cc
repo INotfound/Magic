@@ -3,15 +3,15 @@
 #include <time.h>
 #include "Log/Log.h"
 #include "Util/Util.h"
-#include "Util/Singleton.h"
 
-
+static std::shared_ptr<Magic::Logger> log = MAGIC_LOG_ROOT();
 
 int main(){
-    std::shared_ptr<Magic::Logger> logger = std::make_shared<Magic::Logger>("[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%c]%T%f:%l%T%m%n");
-    logger->addILogAppender(std::shared_ptr<Magic::ILogAppender>(new Magic::StdOutLogAppender()));
-    logger->setLevel(Magic::LogLevel::DEBUG);
-
+    MAGIC_LOG_DEBUG(log) << "hello XiaoBaiJun1";
+    MAGIC_LOG_INFO(log) << "hello XiaoBaiJun2";
+    MAGIC_LOG_WARN(log) << "hello XiaoBaiJun3";
+    MAGIC_LOG_FATAL(log) << "hello XiaoBaiJun4";
+                
     std::cout.flush();
     std::getchar();
 	return 0;

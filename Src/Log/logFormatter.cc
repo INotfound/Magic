@@ -195,18 +195,18 @@ LogFormatter::LogFormatter(const std::string& pattern){
 #define ItemEx(str,type) \
         {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type(fmt));}}
 
-        Item(m, MessageFormatItem),           //m:消息
-        Item(p, LevelFormatItem),             //p:日志级别
-        Item(r, ElapseFormatItem),            //r:累计毫秒数
-        Item(c, LogNameFormatItem),           //c:日志名称
-        Item(t, ThreadIdFormatItem),          //t:线程id
-        Item(n, NewLineFormatItem),           //n:换行
-        Item(f, FilePathFormatItem),          //f:文件名
-        Item(l, LineFormatItem),              //l:行号
-        Item(T, TabFormatItem),               //T:Tab
-        Item(F, FiberIdFormatItem),           //F:协程id
-        Item(N, ThreadNameFormatItem),        //N:线程名称
-        ItemEx(d, DateTimeFormatItem),          //d:时间
+        Item(m, MessageFormatItem),            //m:消息
+        Item(p, LevelFormatItem),                    //p:日志级别
+        Item(r, ElapseFormatItem),                  //r:累计毫秒数
+        Item(c, LogNameFormatItem),            //c:日志名称
+        Item(t, ThreadIdFormatItem),              //t:线程id
+        Item(n, NewLineFormatItem),              //n:换行
+        Item(f, FilePathFormatItem),                //f:文件名
+        Item(l, LineFormatItem),                        //l:行号
+        Item(T, TabFormatItem),                        //T:Tab
+        Item(F, FiberIdFormatItem),                  //F:协程id
+        Item(N, ThreadNameFormatItem),       //N:线程名称
+        ItemEx(d, DateTimeFormatItem),         //d:时间
 #undef ItemEx
 #undef Item
     };

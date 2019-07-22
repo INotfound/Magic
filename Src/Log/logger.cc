@@ -1,11 +1,12 @@
 #include "logger.h"
+#include "logLevel.h"
 #include "logAppender.h"
 #include "logFormatter.h"
 
 using namespace Magic;
 
-Logger::Logger(const std::string& formatPattern,const std::string& name) :m_LogName(name){
-	this->m_Formatter = std::make_shared<LogFormatter>(formatPattern);
+Logger::Logger(const std::string& name) :m_LogName(name),m_Level(LogLevel::DEBUG){
+	
 }
 
 void  Logger::addILogAppender(std::shared_ptr<ILogAppender> logAppender){
@@ -23,6 +24,9 @@ void  Logger::delILogAppender(std::shared_ptr<ILogAppender> logAppender){
 	}
 }
 
+void Logger::setFormatPattern(const std::string& formatPattern){
+    this->m_Formatter.reset(new LogFormatter(formatPattern));
+}
 void Logger::setLevel(LogLevel::Level val){
     this->m_Level = val;
 }

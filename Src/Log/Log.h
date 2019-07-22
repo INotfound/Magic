@@ -4,7 +4,11 @@
 #include "logEvent.h"
 #include "logAppender.h"
 #include "logFormatter.h"
+#include "loggerManager.h"
 #include "../Util/Util.h"
+#include "../Util/Singleton.h"
+
+typedef Magic::Singleton<Magic::LoggerManager> LoggerMgr;
 
 #define  MAGIC_LOG_LEVEL(logger,level) \
                 if(level >= logger->getLevel()) \
@@ -19,3 +23,7 @@
 #define MAGIC_LOG_ERROR(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::ERROR)
 
 #define MAGIC_LOG_FATAL(logger)        MAGIC_LOG_LEVEL(logger,Magic::LogLevel::FATAL)
+
+#define MAGIC_LOG_ROOT()                    LoggerMgr::GetInstance()->getRoot()
+
+#define MAGIC_LOG_NAME(Name)        LoggerMgr::GetInstance()->getLogger(Name)

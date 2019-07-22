@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 
+namespace Magic{
+
 template <class T>
 class Singleton{
 public:
@@ -18,3 +20,5 @@ public:
         return v;
     }
 };
+
+}

@@ -10,17 +10,17 @@ class ILogAppender;
 class LogFormatter;
 
 class Logger : public std::enable_shared_from_this<Logger>{
+    friend class LoggerManager;
 public:
-    Logger(const std::string& formatPattern,const std::string& name = "root");
+    Logger(const std::string& name = "root");
     void addILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void delILogAppender(std::shared_ptr<ILogAppender> logAppender);
+    void setFormatPattern(const std::string& formatPattern);
     void setLevel(LogLevel::Level);
     LogLevel::Level getLevel() const;
     const std::string& getLogName() const;
     void log(LogLevel::Level level, std::shared_ptr<LogEvent> event);
-
 private:
-
     std::string m_LogName;
 	LogLevel::Level m_Level;
     std::shared_ptr<Logger> m_Root;
