@@ -52,7 +52,7 @@ public:
 
 class DateTimeFormatItem :public ILogFormatItem{
 public:
-    DateTimeFormatItem(const std::string &formatString ="%Y:%m:%d %H:%M:%S"):m_FormatString(formatString){
+    explicit DateTimeFormatItem(const std::string &formatString ="%Y:%m:%d %H:%M:%S"):m_FormatString(formatString){
         if(this->m_FormatString.empty()){
             this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
         }
@@ -110,7 +110,7 @@ public:
 
 class StringFormatItem :public ILogFormatItem{
 public:
-    StringFormatItem(const std::string & str):m_Str(str){}
+    explicit StringFormatItem(const std::string & str):m_Str(str){}
     void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
         os << this->m_Str.c_str(); 
     }
@@ -130,26 +130,26 @@ LogFormatter::LogFormatter(const std::string& pattern){
     for (uint32_t i = 0; i < length; i++){
         cmd.clear();
         fmt.clear();
-        if (pattern[i] != '%'){
-            nomalString.append(1, pattern[i]);
+        if (pattern.at(i) != '%'){
+            nomalString.append(1, pattern.at(i));
             continue;
         }
         uint32_t n = i + 1;
         uint32_t Status = 0;
         uint32_t Index = 0;
-        if (pattern[n] == '%' && n <= length){
+        if (pattern.at(n) == '%' && n <= length){
             nomalString.append(1, '%');
             i = n;
             continue;
         }
         while (n < length){
-            if (!Status && !std::isalpha(pattern[n]) 
-                    && pattern[n] != '{' && pattern[n] != '}'){
+            if (!Status && !std::isalpha(pattern.at(n)) 
+                    && pattern.at(n) != '{' && pattern.at(n) != '}'){
                 cmd = pattern.substr(i + 1, n - i - 1);
                 break;
             }
             if (Status == 0){
-                if (pattern[n] == '{'){
+                if (pattern.at(n) == '{'){
                     cmd = pattern.substr(i + 1, n - i - 1);
                     Status = 1;
                     Index = n;
@@ -158,7 +158,7 @@ LogFormatter::LogFormatter(const std::string& pattern){
                 }
             }
             if (Status == 1){
-                if (pattern[n] == '}'){
+                if (pattern.at(n) == '}'){
                     fmt = pattern.substr(Index + 1, n - Index - 1);
                     Status = 0;
                     n++;

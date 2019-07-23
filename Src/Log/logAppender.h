@@ -23,7 +23,7 @@ public:
 
 class FileLogAppender : public ILogAppender{
 public:
-    FileLogAppender(const std::string &path);
+    explicit FileLogAppender(const std::string &path);
     void log(LogLevel::Level level, std::shared_ptr<LogEvent> event) override;
     bool reOpen();
 private:

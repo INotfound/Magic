@@ -12,7 +12,7 @@ class LogFormatter;
 class Logger : public std::enable_shared_from_this<Logger>{
     friend class LoggerManager;
 public:
-    Logger(const std::string& name = "root");
+    explicit Logger(const std::string& name = "root");
     void addILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void delILogAppender(std::shared_ptr<ILogAppender> logAppender);
     void setFormatPattern(const std::string& formatPattern);
