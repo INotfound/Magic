@@ -22,6 +22,7 @@ void  Logger::delILogAppender(std::shared_ptr<ILogAppender> logAppender){
 	for(;vBegin!=vEnd;vBegin++){
         if(*vBegin == logAppender){
             this->m_ILogAppenders.erase(vBegin);
+            return;
         }
 	}
 }

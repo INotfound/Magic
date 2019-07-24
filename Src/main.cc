@@ -11,7 +11,7 @@ int main(){
     MAGIC_LOG_INFO(log) << "hello XiaoBaiJun2";
     MAGIC_LOG_WARN(log) << "hello XiaoBaiJun3";
     MAGIC_LOG_FATAL(log) << "hello XiaoBaiJun4";
-                
+    
     std::cout.flush();
     std::getchar();
 	return 0;
