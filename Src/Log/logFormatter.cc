@@ -10,42 +10,42 @@ using namespace Magic;
 //format item interface
 class MessageFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getContent().c_str();
     }
 };
 
 class LevelFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << LogLevel::toString(level);
     }
 };
 
 class ElapseFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getElapse();
     }
 };
 
 class LogNameFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getLogName();
     }
 };
 
 class ThreadIdFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getThreadId();
     }
 };
 
 class NewLineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << std::endl;
     }
 };
@@ -57,7 +57,7 @@ public:
             this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
         }
     }
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         time_t time_secounds = event->getTime();
         struct tm nowTime;
 #if defined(_WIN32) || defined(_WIN64)
@@ -75,35 +75,35 @@ private:
 
 class FilePathFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getFile().c_str(); 
     }
 };
 
 class LineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getLine(); 
     }
 };
 
 class TabFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << '\t';
     }
 };
 
 class FiberIdFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getFiberId();
     }
 };
 
 class ThreadNameFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << event->getThreadName().c_str();
     }
 };
@@ -111,7 +111,7 @@ public:
 class StringFormatItem :public ILogFormatItem{
 public:
     explicit StringFormatItem(const std::string & str):m_Str(str){}
-    void format(std::ostream &os, LogLevel::Level level,std::shared_ptr<LogEvent> event) override{
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
         os << this->m_Str.c_str(); 
     }
 private:
@@ -189,11 +189,11 @@ LogFormatter::LogFormatter(const std::string& pattern){
         nomalString.clear();
     }
 
-    static std::map<std::string,std::function<std::shared_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
+    static std::map<std::string,std::function<std::unique_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
 #define Item(str,type) \
-        {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type);}}
+        {#str,[](const std::string& fmt){ return std::unique_ptr<ILogFormatItem>(new type);}}
 #define ItemEx(str,type) \
-        {#str,[](const std::string& fmt){ return std::shared_ptr<ILogFormatItem>(new type(fmt));}}
+        {#str,[](const std::string& fmt){ return std::unique_ptr<ILogFormatItem>(new type(fmt));}}
 
         Item(m, MessageFormatItem),            //m:消息
         Item(p, LevelFormatItem),                    //p:日志级别
@@ -215,20 +215,20 @@ LogFormatter::LogFormatter(const std::string& pattern){
 
         uint32_t flag = std::get<2>(value);
         if(flag == 0){
-            this->m_Items.push_back(std::shared_ptr<ILogFormatItem>(new StringFormatItem(std::get<0>(value))));
+            this->m_Items.push_back(std::move(std::unique_ptr<ILogFormatItem>(new StringFormatItem(std::get<0>(value)))));
         }
         if(flag == 1){
             auto iter = formatItem.find(std::get<0>(value));
             if(iter == formatItem.end()){
                 std::cout << "<(ERROR)>: Not Found Item" << std::endl;
             }else {
-                this->m_Items.push_back(iter->second(std::get<1>(value)));
+                this->m_Items.push_back(std::move(iter->second(std::get<1>(value))));
             }
         }
     }
 }
 
-void LogFormatter::format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event){
+void LogFormatter::format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event){
 	for(auto &v :this->m_Items){
 		v->format(os,level,event);
 	}

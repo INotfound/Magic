@@ -13,15 +13,15 @@ class ILogFormatItem;
 class LogFormatter{
 public:
     explicit LogFormatter(const std::string& pattern);
-    void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event);
+    void format(std::ostream &os, LogLevel::Level level, std::unique_ptr<LogEvent>& event);
 private:
-    std::vector<std::shared_ptr<ILogFormatItem>> m_Items;
+    std::vector<std::unique_ptr<ILogFormatItem>> m_Items;
 };
 
 class ILogFormatItem{
 public:
     virtual ~ILogFormatItem(){};
-    virtual void format(std::ostream &os, LogLevel::Level level, std::shared_ptr<LogEvent> event) =0;
+    virtual void format(std::ostream &os, LogLevel::Level level, std::unique_ptr<LogEvent>& event) =0;
 };
 
 }

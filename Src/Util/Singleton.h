@@ -15,8 +15,8 @@ public:
 template <class T>
 class SingletonPtr{
 public:
-    static std::shared_ptr<T> GetInstance(){
-        static std::shared_ptr<T> v = std::make_shared<T>();
+    static std::unique_ptr<T> GetInstance(){
+        static std::unique_ptr<T> v(new T());
         return v;
     }
 };

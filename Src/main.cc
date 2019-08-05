@@ -4,7 +4,7 @@
 #include "Log/Log.h"
 #include "Util/Util.h"
 
-static std::shared_ptr<Magic::Logger> log = MAGIC_LOG_ROOT();
+static std::unique_ptr<Magic::Logger>& log = MAGIC_LOG_ROOT();
 
 int main(){
     MAGIC_LOG_DEBUG(log) << "hello XiaoBaiJun1";

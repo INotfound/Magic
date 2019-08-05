@@ -10,13 +10,17 @@ class Logger;
 class LoggerManager{
 public:
     LoggerManager();
-    std::shared_ptr<Logger> getRoot();
-    std::shared_ptr<Logger> getLogger(const std::string& name);
+    std::unique_ptr<Logger>& getRoot();
+    std::unique_ptr<Logger>& getLogger(const std::string& name);
 private:
-    std::shared_ptr<Logger> m_Root;
-    std::map<std::string,std::shared_ptr<Logger>> m_Loggers;
+    std::unique_ptr<Logger> m_Root;
+    std::map<std::string,std::unique_ptr<Logger>> m_Loggers;
 };
 
-
+typedef Singleton<LoggerManager>        LoggerMgr;
 
 }
+
+#define MAGIC_LOG_ROOT()                    Magic::LoggerMgr::GetInstance()->getRoot()
+
+#define MAGIC_LOG_NAME(Name)        Magic::LoggerMgr::GetInstance()->getLogger(Name)
