@@ -178,7 +178,7 @@ LogFormatter::LogFormatter(const std::string& pattern){
             continue;
         }
         while (n < length){
-            if (!Status && !std::isalpha(pattern.at(n)) 
+            if (!Status && ! isalpha(pattern.at(n))
                     && pattern.at(n) != '{' && pattern.at(n) != '}'){
                 cmd = pattern.substr(i + 1, n - i - 1);
                 break;

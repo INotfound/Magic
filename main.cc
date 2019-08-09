@@ -4,10 +4,10 @@
 #include "Magic/Log/Log.h"
 #include "Magic/Util/Util.h"
 
-static auto&  log = MAGIC_LOG_ROOT();
+static auto& g_rlog = MAGIC_LOG_ROOT();
 
 int main(){
-    MAGIC_LOG_DEBUG(log) << "hello XiaoBaiJun1";
+    MAGIC_LOG_DEBUG(g_rlog) << "hello XiaoBaiJun1";
     std::cout.flush();
 	return 0;
 }

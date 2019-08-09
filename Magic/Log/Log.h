@@ -13,11 +13,11 @@
                 
 #define MAGIC_LOG_DEBUG(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::DEBUG)
 
-#define MAGIC_LOG_INFO(logger)          MAGIC_LOG_LEVEL(logger,Magic::LogLevel::INFO)
+#define MAGIC_LOG_INFO(logger)        MAGIC_LOG_LEVEL(logger,Magic::LogLevel::INFO)
 
 #define MAGIC_LOG_WARN(logger)        MAGIC_LOG_LEVEL(logger,Magic::LogLevel::WARN)
 
 #define MAGIC_LOG_ERROR(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::ERROR)
 
-#define MAGIC_LOG_FATAL(logger)        MAGIC_LOG_LEVEL(logger,Magic::LogLevel::FATAL)
+#define MAGIC_LOG_FATAL(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::FATAL)
 
