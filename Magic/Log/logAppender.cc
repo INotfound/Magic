@@ -3,6 +3,8 @@
 
 using namespace Magic;
 
+ILogAppender::~ILogAppender(){}
+
 void StdOutLogAppender::log(LogLevel::Level level, std::unique_ptr<LogEvent>& event){
     if(!this->m_Formatter){
         std::cout << "<(ERROR)> : " <<  std::endl;

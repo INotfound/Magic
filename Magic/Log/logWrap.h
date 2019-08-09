@@ -9,7 +9,7 @@ class LogEvent;
 
 class LogWrap{
 public:
-    LogWrap(std::unique_ptr<Logger>& logger,LogLevel::Level level,std::unique_ptr<LogEvent> event);
+    LogWrap(std::unique_ptr<Logger>& logger,LogLevel::Level level,std::unique_ptr<LogEvent>&& event);
     std::stringstream& get();
     ~LogWrap();
 private:

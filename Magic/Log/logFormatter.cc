@@ -1,4 +1,4 @@
- #include "logFormatter.h"
+#include "logFormatter.h"
 
 #include <map>
 #include <tuple>
@@ -7,122 +7,157 @@
 #include "logEvent.h"
 
 using namespace Magic;
-//format item interface
+//format item interface begin
+
+ILogFormatItem::~ILogFormatItem(){
+
+};
+
 class MessageFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getContent().c_str();
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class LevelFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << LogLevel::toString(level);
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class ElapseFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getElapse();
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class LogNameFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getLogName();
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class ThreadIdFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getThreadId();
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class NewLineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << std::endl;
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class DateTimeFormatItem :public ILogFormatItem{
 public:
-    explicit DateTimeFormatItem(const std::string &formatString ="%Y:%m:%d %H:%M:%S"):m_FormatString(formatString){
-        if(this->m_FormatString.empty()){
-            this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
-        }
-    }
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        time_t time_secounds = event->getTime();
-        struct tm nowTime;
-#if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime,&time_secounds);
-#else
-        localtime_r(&time_secounds,&nowTime);
-#endif
-		char buf[1024] = { 0 };
-        strftime(buf,sizeof(buf),this->m_FormatString.c_str(),&nowTime);
-        os << buf;
-    }
+    explicit DateTimeFormatItem(const std::string &formatString ="%Y:%m:%d %H:%M:%S");
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 private:
     std::string m_FormatString;
 };
 
 class FilePathFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getFile().c_str(); 
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class LineFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getLine(); 
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class TabFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << '\t';
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class FiberIdFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getFiberId();
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class ThreadNameFormatItem :public ILogFormatItem{
 public:
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << event->getThreadName().c_str();
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 };
 
 class StringFormatItem :public ILogFormatItem{
 public:
     explicit StringFormatItem(const std::string & str):m_Str(str){}
-    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override{
-        os << this->m_Str.c_str(); 
-    }
+    void format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& event) override;
 private:
-    std::string m_Str; 
+    std::string m_Str;
 };
 
 
 
+void MessageFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getContent().c_str();
+}
+
+void LevelFormatItem::format(std::ostream &os, LogLevel::Level level,std::unique_ptr<LogEvent>& ) {
+    os << LogLevel::toString(level);
+}
+
+void ElapseFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getElapse();
+}
+
+void LogNameFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getLogName();
+}
+
+void ThreadIdFormatItem::format(std::ostream &os, LogLevel::Level,std::unique_ptr<LogEvent>& event) {
+    os << event->getThreadId();
+}
+
+void NewLineFormatItem::format(std::ostream &os, LogLevel::Level,std::unique_ptr<LogEvent>& ) {
+    os << std::endl;
+}
+
+ DateTimeFormatItem::DateTimeFormatItem(const std::string &formatString):m_FormatString(formatString){
+    if(this->m_FormatString.empty()){
+        this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
+    }
+}
+
+void DateTimeFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    time_t time_secounds = static_cast<int32_t>(event->getTime());
+    struct tm nowTime;
+#if defined(_WIN32) || defined(_WIN64)
+    localtime_s(&nowTime,&time_secounds);
+#else
+    localtime_r(&time_secounds,&nowTime);
+#endif
+    char buf[1024] = { 0 };
+    strftime(buf,sizeof(buf),this->m_FormatString.c_str(),&nowTime);
+    os << buf;
+}
+
+void FilePathFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getFile().c_str();
+}
+
+void LineFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getLine();
+}
+
+void TabFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& ) {
+    os << '\t';
+}
+
+void FiberIdFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getFiberId();
+}
+
+void ThreadNameFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& event) {
+    os << event->getThreadName().c_str();
+}
+
+void StringFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr<LogEvent>& ) {
+    os << this->m_Str.c_str();
+}
+
+//format item interface end
+
 LogFormatter::LogFormatter(const std::string& pattern){
     //cmd fmt flag
-    std::vector<std::tuple<std::string, std::string, int>> vec;
+    std::vector<std::tuple<std::string, std::string, uint32_t>> vec;
     std::string nomalString;
     std::string cmd;
     std::string fmt;
@@ -191,7 +226,7 @@ LogFormatter::LogFormatter(const std::string& pattern){
 
     static std::map<std::string,std::function<std::unique_ptr<ILogFormatItem>(const std::string&)>> formatItem ={
 #define Item(str,type) \
-        {#str,[](const std::string& fmt){ return std::unique_ptr<ILogFormatItem>(new type);}}
+        {#str,[](const std::string&){ return std::unique_ptr<ILogFormatItem>(new type);}}
 #define ItemEx(str,type) \
         {#str,[](const std::string& fmt){ return std::unique_ptr<ILogFormatItem>(new type(fmt));}}
 
@@ -215,14 +250,14 @@ LogFormatter::LogFormatter(const std::string& pattern){
 
         uint32_t flag = std::get<2>(value);
         if(flag == 0){
-            this->m_Items.push_back(std::move(std::unique_ptr<ILogFormatItem>(new StringFormatItem(std::get<0>(value)))));
+            this->m_Items.push_back(std::unique_ptr<ILogFormatItem>(new StringFormatItem(std::get<0>(value))));
         }
         if(flag == 1){
             auto iter = formatItem.find(std::get<0>(value));
             if(iter == formatItem.end()){
                 std::cout << "<(ERROR)>: Not Found Item" << std::endl;
             }else {
-                this->m_Items.push_back(std::move(iter->second(std::get<1>(value))));
+                this->m_Items.push_back(iter->second(std::get<1>(value)));
             }
         }
     }

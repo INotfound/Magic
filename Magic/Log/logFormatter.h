@@ -20,7 +20,7 @@ private:
 
 class ILogFormatItem{
 public:
-    virtual ~ILogFormatItem(){};
+    virtual ~ILogFormatItem();
     virtual void format(std::ostream &os, LogLevel::Level level, std::unique_ptr<LogEvent>& event) =0;
 };
 

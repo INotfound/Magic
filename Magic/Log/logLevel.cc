@@ -13,8 +13,6 @@ const char* LogLevel::toString(LogLevel::Level level){
         LEVEL(WARN)
         LEVEL(ERROR)
         LEVEL(FATAL)
-        default:
-            break;
 #undef LEVEL
     }
 	return "<(ERROR)>";

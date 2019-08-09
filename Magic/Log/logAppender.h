@@ -11,7 +11,7 @@ class LogFormatter;
 class ILogAppender{
     friend class Logger;
 public:
-    virtual ~ILogAppender(){};
+    virtual ~ILogAppender();
     virtual void log(LogLevel::Level level,std::unique_ptr<LogEvent>& event) =0;
 protected:
     std::unique_ptr<LogFormatter> m_Formatter;
