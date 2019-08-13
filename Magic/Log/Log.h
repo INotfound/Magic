@@ -1,3 +1,4 @@
+#include <time.h>
 #include "logger.h"
 #include "logWrap.h"
 #include "logLevel.h"

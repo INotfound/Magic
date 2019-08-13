@@ -7,6 +7,8 @@ HEADERS += \
     Magic/Log/logWrap.h \
     Magic/Log/logger.h \
     Magic/Log/loggerManager.h \
+    Magic/Thread/Thread.h \
+    Magic/Util/Noncopyable.h \
     Magic/Util/Singleton.h \
     Magic/Util/Util.h
 
@@ -18,6 +20,7 @@ SOURCES += \
     Magic/Log/logWrap.cc \
     Magic/Log/logger.cc \
     Magic/Log/loggerManager.cc \
+    Magic/Thread/Thread.cc \
     Magic/Util/Adapter/api_Window.cc \
     Magic/Util/Util.cc \
     main.cc
