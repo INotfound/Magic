@@ -6,8 +6,8 @@
 
 using namespace Magic;
 
-static thread_local Thread* g_thread;
-static thread_local std::string g_threadName = "UNKNOW";
+static thread_local Thread* g_thread =nullptr;
+static thread_local std::string g_threadName ="UNKNOW";
 static auto& g_log = MAGIC_LOG_NAME("system");
 
 Thread::Thread(const std::string& threadName,std::function<void()> callback)
@@ -19,7 +19,7 @@ Thread::Thread(const std::string& threadName,std::function<void()> callback)
     if(threadName.empty()){
         m_ThreadName = "UNKNOW";
     }
-    auto err = pthread_create(&m_Pthread,nullptr,&Thread::run,this);
+    auto err = pthread_create(&m_Pthread,nullptr,&Thread::Run,this);
     if(err){
         MAGIC_LOG_DEBUG(g_log) << "pthread_create thread failed! err_code=" << err
                                           <<" thread_name=" << m_ThreadName;
@@ -37,13 +37,15 @@ pid_t Thread::getId(){
     return m_Id;
 }
 
-const std::string& Thread::getName() const{
-    return m_ThreadName;
+const std::string& Thread::GetName(){
+    return g_threadName;
 }
 
 void Thread::join(){
     if(m_Pthread){
-        auto err = pthread_join(m_Pthread,nullptr);
+        void *ret;
+        pthread_cancel(m_Pthread);
+        auto err = pthread_join(m_Pthread,&ret);
         if(err){
             MAGIC_LOG_DEBUG(g_log) << "pthread_join thread failed! err_code=" << err
                                               <<" thread_name=" << m_ThreadName;
@@ -53,10 +55,13 @@ void Thread::join(){
     }
 }
 
-void* Thread::run(void*arg){
+void* Thread::Run(void*arg){
     Thread* thread = reinterpret_cast<Thread*>(arg);
-    thread->m_Id = getThreadId();
+    thread->m_Id = static_cast<pid_t>(getThreadId());
     g_thread = thread;
-    g_threadName = thread->getName();
+    g_threadName = thread->m_ThreadName;
+    std::function<void()> callback;
+    callback.swap(thread->m_Callback);
+    callback();
     return nullptr;
 }

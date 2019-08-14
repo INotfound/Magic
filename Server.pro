@@ -1,3 +1,5 @@
+LIBS+= -lpthread
+
 HEADERS += \
     Magic/Log/Log.h \
     Magic/Log/logAppender.h \
@@ -21,6 +23,5 @@ SOURCES += \
     Magic/Log/logger.cc \
     Magic/Log/loggerManager.cc \
     Magic/Thread/Thread.cc \
-    Magic/Util/Adapter/api_Window.cc \
     Magic/Util/Util.cc \
     main.cc
