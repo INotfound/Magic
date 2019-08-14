@@ -43,9 +43,7 @@ const std::string& Thread::GetName(){
 
 void Thread::join(){
     if(m_Pthread){
-        void *ret;
-        pthread_cancel(m_Pthread);
-        auto err = pthread_join(m_Pthread,&ret);
+        auto err = pthread_join(m_Pthread,nullptr);
         if(err){
             MAGIC_LOG_DEBUG(g_log) << "pthread_join thread failed! err_code=" << err
                                               <<" thread_name=" << m_ThreadName;
