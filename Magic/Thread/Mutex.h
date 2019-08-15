@@ -1,16 +1,15 @@
 #pragma once
 #include <cstdint>
 #include <pthread.h>
-#include "../Util/Noncopyable.h"
 #include "semaphore.h"
 #include "rwMutex.h"
+#include "../Util/Noncopyable.h"
 
 namespace Magic{
 
 
 template<class T>
-class ScopedLockImpl{
-
+class ScopedLockImpl : public Noncopyable{
 public:
     ScopedLockImpl(T& mutex)
         :m_Mutex(mutex),m_Locked(false){
@@ -37,7 +36,7 @@ private:
     bool m_Locked;
 };
 
-class Mutex{
+class Mutex : public Noncopyable{
 public:
     typedef ScopedLockImpl<Mutex> Lock;
     Mutex();

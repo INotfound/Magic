@@ -7,9 +7,9 @@
 #include "Magic/Thread/Mutex.h"
 
 static auto& g_rlog = MAGIC_LOG_ROOT();
-Magic::RWMutex mutex;
+Magic::Mutex mutex;
 void bibo(){
-    Magic::RWMutex::WriteLock lock(mutex);
+    Magic::Mutex::Lock lock(mutex);
     MAGIC_LOG_INFO(g_rlog) << "hello XiaoBaiJun1";
     std::cout.flush();
 }

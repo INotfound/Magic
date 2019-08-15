@@ -1,10 +1,11 @@
 #pragma once
 #include <pthread.h>
+#include "../Util/Noncopyable.h"
 
 namespace Magic {
 
 template<class T>
-class ReadScopedLockImpl{
+class ReadScopedLockImpl : public Noncopyable{
 public:
     ReadScopedLockImpl(T& mutex)
         :m_Mutex(mutex),m_Locked(false){
@@ -32,7 +33,7 @@ private:
 };
 
 template<class T>
-class WriteScopedLockImpl{
+class WriteScopedLockImpl : public Noncopyable{
 public:
     WriteScopedLockImpl(T& mutex)
         :m_Mutex(mutex),m_Locked(false){
@@ -59,7 +60,7 @@ private:
     bool m_Locked;
 };
 
-class RWMutex{
+class RWMutex : public Noncopyable{
 public:
     typedef ReadScopedLockImpl<RWMutex> ReadLock;
     typedef WriteScopedLockImpl<RWMutex> WriteLock;
