@@ -11,6 +11,8 @@ HEADERS += \
     Magic/Log/loggerManager.h \
     Magic/Thread/Thread.h \
     Magic/Thread/Mutex.h \
+    Magic/Thread/rwMutex.h \
+    Magic/Thread/semaphore.h \
     Magic/Util/Noncopyable.h \
     Magic/Util/Singleton.h \
     Magic/Util/Util.h
@@ -23,7 +25,9 @@ SOURCES += \
     Magic/Log/logWrap.cc \
     Magic/Log/logger.cc \
     Magic/Log/loggerManager.cc \
-    Magic/Thread/Thread.cc \
     Magic/Thread/Mutex.cc \
+    Magic/Thread/Thread.cc \
+    Magic/Thread/rwMutex.cc \
+    Magic/Thread/semaphore.cc \
     Magic/Util/Util.cc \
     main.cc
