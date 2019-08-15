@@ -1,4 +1,4 @@
-#include "Semaphore.h"
+#include "Mutex.h"
 #include <stdexcept>
 
 using namespace Magic;
@@ -25,4 +25,20 @@ void Semaphore::notify(){
     }
 }
 
+
+RWMutex::RWMutex(){
+    pthread_rwlock_init(&m_RWLock,nullptr);
+}
+RWMutex::~RWMutex(){
+    pthread_rwlock_destroy(&m_RWLock);
+}
+void RWMutex::readLock(){
+    pthread_rwlock_rdlock(&m_RWLock);
+}
+void RWMutex::wirteLock(){
+    pthread_rwlock_wrlock(&m_RWLock);
+}
+void RWMutex::unlock(){
+    pthread_rwlock_unlock(&m_RWLock);
+}
 

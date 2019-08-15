@@ -1,7 +1,7 @@
 #pragma once
 #include <pthread.h>
 #include <functional>
-#include "Semaphore.h"
+#include "Mutex.h"
 #include "../Util/Noncopyable.h"
 
 namespace Magic{

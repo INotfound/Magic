@@ -14,9 +14,12 @@ void bibo(){
 
 int main(){
     {
-        Magic::Thread thread("233",&bibo);
+        Magic::Thread thread("111",&bibo);
+        Magic::Thread thread1("222",&bibo);
+        Magic::Thread thread2("333",&bibo);
         thread.join();
-        MAGIC_LOG_INFO(g_rlog) << "hello XiaoBaiJun2";
+        thread1.join();
+        thread2.join();
     }
 	return 0;
 }
