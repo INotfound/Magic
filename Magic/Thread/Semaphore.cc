@@ -4,7 +4,7 @@
 using namespace Magic;
 
 Semaphore::Semaphore(uint32_t count){
-    if(sem_init(m_Semaphore,0,count)){
+    if(sem_init(&m_Semaphore,0,count)){
         throw std::logic_error("sem_init error!");
     }
 }
