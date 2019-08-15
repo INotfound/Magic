@@ -51,8 +51,8 @@ private:
 };
 
 class Mutex{
-
 public:
+    typedef ScopedLockImpl<Mutex> Lock;
     Mutex();
     ~Mutex();
 private:
@@ -61,7 +61,6 @@ private:
 
 template<class T>
 class ReadScopedLockImpl{
-
 public:
     ReadScopedLockImpl(T& mutex)
         :m_Mutex(mutex),m_Locked(false){
@@ -89,20 +88,19 @@ private:
 };
 
 template<class T>
-class WirteScopedLockImpl{
-
+class WriteScopedLockImpl{
 public:
-    WirteScopedLockImpl(T& mutex)
+    WriteScopedLockImpl(T& mutex)
         :m_Mutex(mutex),m_Locked(false){
         lock();
     }
-    ~WirteScopedLockImpl(){
+    ~WriteScopedLockImpl(){
         unlock();
     }
 private:
     void lock(){
         if(!m_Locked){
-            m_Mutex.wirteLock();
+            m_Mutex.writeLock();
             m_Locked = true;
         }
     }
@@ -118,12 +116,14 @@ private:
 };
 
 class RWMutex{
-
 public:
+    typedef ReadScopedLockImpl<RWMutex> ReadLock;
+    typedef WriteScopedLockImpl<RWMutex> WriteLock;
+
     RWMutex();
     ~RWMutex();
     void readLock();
-    void wirteLock();
+    void writeLock();
     void unlock();
 private:
     pthread_rwlock_t m_RWLock;

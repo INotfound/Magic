@@ -59,6 +59,7 @@ void* Thread::Run(void*arg){
     thread->m_Id = static_cast<pid_t>(getThreadId());
     g_thread = thread;
     g_threadName = thread->m_ThreadName;
+    pthread_setname_np(pthread_self(),thread->m_ThreadName.substr(0,15).c_str());
     std::function<void()> callback;
     callback.swap(thread->m_Callback);
     thread->m_Semaphore.notify();

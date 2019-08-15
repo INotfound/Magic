@@ -1,5 +1,6 @@
 #include "Mutex.h"
 #include <stdexcept>
+#include "../Log/Log.h"
 
 using namespace Magic;
 
@@ -14,6 +15,9 @@ Semaphore::~Semaphore(){
 }
 
 void Semaphore::wait(){
+    int val;
+    sem_getvalue(&m_Semaphore,&val);
+    MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "sem value =" << val;
     if(sem_wait(&m_Semaphore)){
         throw std::logic_error("Semaphore wait error!"); 
     }
@@ -35,7 +39,7 @@ RWMutex::~RWMutex(){
 void RWMutex::readLock(){
     pthread_rwlock_rdlock(&m_RWLock);
 }
-void RWMutex::wirteLock(){
+void RWMutex::writeLock(){
     pthread_rwlock_wrlock(&m_RWLock);
 }
 void RWMutex::unlock(){
