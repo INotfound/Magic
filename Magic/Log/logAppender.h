@@ -3,7 +3,7 @@
 #include <fstream>
 #include "logLevel.h"
 #include "logFormatter.h"
-   
+#include "../Thread/Mutex.h"
 namespace Magic{
 class LogEvent;
 class LogFormatter;
@@ -14,6 +14,7 @@ public:
     virtual ~ILogAppender();
     virtual void log(LogLevel::Level level,std::unique_ptr<LogEvent>& event) =0;
 protected:
+    Mutex m_Mutex;
     std::unique_ptr<LogFormatter> m_Formatter;
 };
 

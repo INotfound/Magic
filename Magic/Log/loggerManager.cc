@@ -16,15 +16,14 @@ std::unique_ptr<Logger>& LoggerManager::getRoot(){
 }
 
 std::unique_ptr<Logger>& LoggerManager::getLogger(const std::string& name){
+    Mutex::Lock lock(m_Mutex);
     if(name == this->m_Root->m_LogName){
         return this->m_Root;
     }
-    
     auto it = this->m_Loggers.find(name);
     if(it != this->m_Loggers.end()){
         return it->second;
     }
-    
     this->m_Loggers[name].reset(new Logger(name));
     return  this->m_Loggers[name];
 }

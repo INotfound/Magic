@@ -11,14 +11,16 @@ Logger::Logger(const std::string& name) :m_LogName(name),m_Level(LogLevel::DEBUG
 }
 
 void  Logger::addILogAppender(std::unique_ptr<ILogAppender>& logAppender){
-	if(!logAppender->m_Formatter){
+    Mutex::Lock lock(m_Mutex);
+    if(!logAppender->m_Formatter){
 		logAppender->m_Formatter.reset(new LogFormatter(m_Formatter));
 	}
 	this->m_ILogAppenders.push_back(std::move(logAppender));
 }
 
 void  Logger::delILogAppender(std::unique_ptr<ILogAppender>& logAppender){
-	auto vBegin = this->m_ILogAppenders.begin();
+    Mutex::Lock lock(m_Mutex);
+    auto vBegin = this->m_ILogAppenders.begin();
 	auto vEnd	= this->m_ILogAppenders.end();
 	for(;vBegin!=vEnd;vBegin++){
         if(*vBegin == logAppender){
@@ -29,10 +31,12 @@ void  Logger::delILogAppender(std::unique_ptr<ILogAppender>& logAppender){
 }
 
 void Logger::setFormatter(const std::string& pattern){
+    Mutex::Lock lock(m_Mutex);
     this->m_Formatter = pattern;
 }
 
 void Logger::setLevel(LogLevel::Level val){
+    Mutex::Lock lock(m_Mutex);
     this->m_Level = val;
 }
 
@@ -45,11 +49,14 @@ const std::string& Logger::getLogName() const{
 }
 
 void  Logger::log(LogLevel::Level level, std::unique_ptr<LogEvent>& event){
-    if(!this->m_ILogAppenders.empty()){
-        for(auto &v :this->m_ILogAppenders){
-            v->log(level,event);
+    if(level >= m_Level){
+        Mutex::Lock lock(m_Mutex);
+        if(!this->m_ILogAppenders.empty()){
+            for(auto &v :this->m_ILogAppenders){
+                v->log(level,event);
+            }
+        }else if(MAGIC_LOG_ROOT()){
+            MAGIC_LOG_ROOT()->log(level,event);
         }
-    }else if(MAGIC_LOG_ROOT()){
-        MAGIC_LOG_ROOT()->log(level,event);
     }
 }
