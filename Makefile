@@ -58,6 +58,7 @@ SOURCES       = Magic/Log/logAppender.cc \
 		Magic/Log/logger.cc \
 		Magic/Log/loggerManager.cc \
 		Magic/Thread/Thread.cc \
+		Magic/Thread/Semaphore.cc \
 		Magic/Util/Util.cc \
 		main.cc 
 OBJECTS       = logAppender.o \
@@ -68,6 +69,7 @@ OBJECTS       = logAppender.o \
 		logger.o \
 		loggerManager.o \
 		Thread.o \
+		Semaphore.o \
 		Util.o \
 		main.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -151,6 +153,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		Magic/Log/logger.h \
 		Magic/Log/loggerManager.h \
 		Magic/Thread/Thread.h \
+		Magic/Thread/Semaphore.h \
 		Magic/Util/Noncopyable.h \
 		Magic/Util/Singleton.h \
 		Magic/Util/Util.h Magic/Log/logAppender.cc \
@@ -161,6 +164,7 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		Magic/Log/logger.cc \
 		Magic/Log/loggerManager.cc \
 		Magic/Thread/Thread.cc \
+		Magic/Thread/Semaphore.cc \
 		Magic/Util/Util.cc \
 		main.cc
 QMAKE_TARGET  = Server
@@ -340,8 +344,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents Magic/Log/Log.h Magic/Log/logAppender.h Magic/Log/logEvent.h Magic/Log/logFormatter.h Magic/Log/logLevel.h Magic/Log/logWrap.h Magic/Log/logger.h Magic/Log/loggerManager.h Magic/Thread/Thread.h Magic/Util/Noncopyable.h Magic/Util/Singleton.h Magic/Util/Util.h $(DISTDIR)/
-	$(COPY_FILE) --parents Magic/Log/logAppender.cc Magic/Log/logEvent.cc Magic/Log/logFormatter.cc Magic/Log/logLevel.cc Magic/Log/logWrap.cc Magic/Log/logger.cc Magic/Log/loggerManager.cc Magic/Thread/Thread.cc Magic/Util/Util.cc main.cc $(DISTDIR)/
+	$(COPY_FILE) --parents Magic/Log/Log.h Magic/Log/logAppender.h Magic/Log/logEvent.h Magic/Log/logFormatter.h Magic/Log/logLevel.h Magic/Log/logWrap.h Magic/Log/logger.h Magic/Log/loggerManager.h Magic/Thread/Thread.h Magic/Thread/Semaphore.h Magic/Util/Noncopyable.h Magic/Util/Singleton.h Magic/Util/Util.h $(DISTDIR)/
+	$(COPY_FILE) --parents Magic/Log/logAppender.cc Magic/Log/logEvent.cc Magic/Log/logFormatter.cc Magic/Log/logLevel.cc Magic/Log/logWrap.cc Magic/Log/logger.cc Magic/Log/loggerManager.cc Magic/Thread/Thread.cc Magic/Thread/Semaphore.cc Magic/Util/Util.cc main.cc $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -426,6 +430,7 @@ loggerManager.o: Magic/Log/loggerManager.cc Magic/Log/loggerManager.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o loggerManager.o Magic/Log/loggerManager.cc
 
 Thread.o: Magic/Thread/Thread.cc Magic/Thread/Thread.h \
+		Magic/Thread/Semaphore.h \
 		Magic/Util/Noncopyable.h \
 		Magic/Log/Log.h \
 		Magic/Log/logger.h \
@@ -438,6 +443,10 @@ Thread.o: Magic/Thread/Thread.cc Magic/Thread/Thread.h \
 		Magic/Util/Singleton.h \
 		Magic/Util/Util.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Thread.o Magic/Thread/Thread.cc
+
+Semaphore.o: Magic/Thread/Semaphore.cc Magic/Thread/Semaphore.h \
+		Magic/Util/Noncopyable.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Semaphore.o Magic/Thread/Semaphore.cc
 
 Util.o: Magic/Util/Util.cc Magic/Util/Util.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Util.o Magic/Util/Util.cc
@@ -453,6 +462,7 @@ main.o: main.cc Magic/Log/Log.h \
 		Magic/Util/Singleton.h \
 		Magic/Util/Util.h \
 		Magic/Thread/Thread.h \
+		Magic/Thread/Semaphore.h \
 		Magic/Util/Noncopyable.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cc
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <pthread.h>
 #include <functional>
+#include "Semaphore.h"
 #include "../Util/Noncopyable.h"
 
 namespace Magic{
@@ -17,6 +18,7 @@ private:
 private:
     pid_t m_Id =-1;
     pthread_t m_Pthread =0;
+    Semaphore m_Semaphore;
     std::string m_ThreadName;
     std::function<void()> m_Callback;
 };

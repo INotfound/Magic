@@ -25,6 +25,7 @@ Thread::Thread(const std::string& threadName,std::function<void()> callback)
                                           <<" thread_name=" << m_ThreadName;
         throw std::logic_error("pthread_create error");
     }
+    m_Semaphore.wait();
 }
 
 Thread::~Thread(){
@@ -60,6 +61,7 @@ void* Thread::Run(void*arg){
     g_threadName = thread->m_ThreadName;
     std::function<void()> callback;
     callback.swap(thread->m_Callback);
+    thread->m_Semaphore.notify();
     callback();
     return nullptr;
 }
