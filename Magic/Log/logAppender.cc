@@ -6,7 +6,6 @@ using namespace Magic;
 ILogAppender::~ILogAppender(){}
 
 void StdOutLogAppender::log(LogLevel::Level level, std::unique_ptr<LogEvent>& event){
-    Mutex::Lock lock(m_Mutex);
     if(!this->m_Formatter){
         std::cout << "<(ERROR)> : " <<  std::endl;
         return;
@@ -19,7 +18,6 @@ FileLogAppender::FileLogAppender(const std::string &path):m_Path(path){
 }
 
 void FileLogAppender::log(LogLevel::Level level, std::unique_ptr<LogEvent>& event) {
-    Mutex::Lock lock(m_Mutex);
     this->m_Formatter->format(this->m_FileStream,level,event);
 }
 
