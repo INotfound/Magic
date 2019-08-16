@@ -10,8 +10,9 @@
 
 static auto& g_rlog = MAGIC_LOG_ROOT();
 void momo(){
-    MAGIC_LOG_INFO(MAGIC_LOG_NAME("root")) << "this -> root ";
-    MAGIC_LOG_INFO(MAGIC_LOG_NAME("MM")) << "this -> MM";
+    MAGIC_LOG_INFO(MAGIC_LOG_NAME("MM")) << "this MMM";
+    MAGIC_LOG_INFO(MAGIC_LOG_NAME("DD")) << "this DDD";
+    MAGIC_LOG_INFO(MAGIC_LOG_NAME("SS")) << "this SSS";
 }
 int main(){
     std::vector<std::unique_ptr<Magic::Thread>> thrs;
