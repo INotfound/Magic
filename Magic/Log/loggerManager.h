@@ -8,12 +8,13 @@ namespace Magic{
 class Logger;
 
 class LoggerManager{
+    typedef Mutex MutexType;
 public:
     LoggerManager();
     std::unique_ptr<Logger>& getRoot();
     std::unique_ptr<Logger>& getLogger(const std::string& name);
 private:
-    Spinlock m_Mutex;
+    MutexType m_Mutex;
     std::unique_ptr<Logger> m_Root;
     std::map<std::string,std::unique_ptr<Logger>> m_Loggers;
 };

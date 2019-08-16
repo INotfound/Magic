@@ -398,7 +398,13 @@ compiler_clean: compiler_moc_predefs_clean
 
 logAppender.o: Magic/Log/logAppender.cc Magic/Log/logAppender.h \
 		Magic/Log/logLevel.h \
-		Magic/Log/logFormatter.h
+		Magic/Log/logFormatter.h \
+		Magic/Thread/Mutex.h \
+		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o logAppender.o Magic/Log/logAppender.cc
 
 logEvent.o: Magic/Log/logEvent.cc Magic/Log/logEvent.h
@@ -415,11 +421,23 @@ logLevel.o: Magic/Log/logLevel.cc Magic/Log/logLevel.h
 logWrap.o: Magic/Log/logWrap.cc Magic/Log/logWrap.h \
 		Magic/Log/logLevel.h \
 		Magic/Log/logger.h \
+		Magic/Thread/Mutex.h \
+		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h \
 		Magic/Log/logEvent.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o logWrap.o Magic/Log/logWrap.cc
 
 logger.o: Magic/Log/logger.cc Magic/Log/logger.h \
 		Magic/Log/logLevel.h \
+		Magic/Thread/Mutex.h \
+		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h \
 		Magic/Log/logAppender.h \
 		Magic/Log/logFormatter.h \
 		Magic/Log/loggerManager.h \
@@ -427,6 +445,12 @@ logger.o: Magic/Log/logger.cc Magic/Log/logger.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o logger.o Magic/Log/logger.cc
 
 loggerManager.o: Magic/Log/loggerManager.cc Magic/Log/loggerManager.h \
+		Magic/Thread/Mutex.h \
+		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h \
 		Magic/Util/Singleton.h \
 		Magic/Log/logger.h \
 		Magic/Log/logLevel.h \
@@ -435,16 +459,20 @@ loggerManager.o: Magic/Log/loggerManager.cc Magic/Log/loggerManager.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o loggerManager.o Magic/Log/loggerManager.cc
 
 Mutex.o: Magic/Thread/Mutex.cc Magic/Thread/Mutex.h \
+		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
 		Magic/Util/Noncopyable.h \
-		Magic/Thread/semaphore.h \
-		Magic/Thread/rwMutex.h
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Mutex.o Magic/Thread/Mutex.cc
 
 Thread.o: Magic/Thread/Thread.cc Magic/Thread/Thread.h \
 		Magic/Thread/Mutex.h \
-		Magic/Util/Noncopyable.h \
-		Magic/Thread/semaphore.h \
 		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h \
 		Magic/Log/Log.h \
 		Magic/Log/logger.h \
 		Magic/Log/logLevel.h \
@@ -458,9 +486,14 @@ Thread.o: Magic/Thread/Thread.cc Magic/Thread/Thread.h \
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Thread.o Magic/Thread/Thread.cc
 
 rwMutex.o: Magic/Thread/rwMutex.cc Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
 		Magic/Log/Log.h \
 		Magic/Log/logger.h \
 		Magic/Log/logLevel.h \
+		Magic/Thread/Mutex.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h \
 		Magic/Log/logWrap.h \
 		Magic/Log/logEvent.h \
 		Magic/Log/logAppender.h \
@@ -468,10 +501,7 @@ rwMutex.o: Magic/Thread/rwMutex.cc Magic/Thread/rwMutex.h \
 		Magic/Log/loggerManager.h \
 		Magic/Util/Singleton.h \
 		Magic/Util/Util.h \
-		Magic/Thread/Thread.h \
-		Magic/Thread/Mutex.h \
-		Magic/Util/Noncopyable.h \
-		Magic/Thread/semaphore.h
+		Magic/Thread/Thread.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o rwMutex.o Magic/Thread/rwMutex.cc
 
 semaphore.o: Magic/Thread/semaphore.cc Magic/Thread/semaphore.h \
@@ -484,6 +514,12 @@ Util.o: Magic/Util/Util.cc Magic/Util/Util.h
 main.o: main.cc Magic/Log/Log.h \
 		Magic/Log/logger.h \
 		Magic/Log/logLevel.h \
+		Magic/Thread/Mutex.h \
+		Magic/Thread/rwMutex.h \
+		Magic/Thread/scopedlock.h \
+		Magic/Util/Noncopyable.h \
+		Magic/Thread/spinlock.h \
+		Magic/Thread/semaphore.h \
 		Magic/Log/logWrap.h \
 		Magic/Log/logEvent.h \
 		Magic/Log/logAppender.h \
@@ -491,11 +527,7 @@ main.o: main.cc Magic/Log/Log.h \
 		Magic/Log/loggerManager.h \
 		Magic/Util/Singleton.h \
 		Magic/Util/Util.h \
-		Magic/Thread/Thread.h \
-		Magic/Thread/Mutex.h \
-		Magic/Util/Noncopyable.h \
-		Magic/Thread/semaphore.h \
-		Magic/Thread/rwMutex.h
+		Magic/Thread/Thread.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cc
 
 ####### Install

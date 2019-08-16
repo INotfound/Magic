@@ -11,10 +11,12 @@ class LogFormatter;
 class ILogAppender{
     friend class Logger;
 public:
+    typedef Mutex MutexType;
+
     virtual ~ILogAppender();
     virtual void log(LogLevel::Level level,std::unique_ptr<LogEvent>& event) =0;
 protected:
-    Spinlock m_Mutex;
+    MutexType m_Mutex;
     std::unique_ptr<LogFormatter> m_Formatter;
 };
 

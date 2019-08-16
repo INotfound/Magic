@@ -22,7 +22,7 @@ void FileLogAppender::log(LogLevel::Level level, std::unique_ptr<LogEvent>& even
 }
 
 bool FileLogAppender::reOpen(){
-    Spinlock::Lock lock(m_Mutex);
+    MutexType::Lock lock(m_Mutex);
     if(this->m_FileStream){
         this->m_FileStream.close();
 	}

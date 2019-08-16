@@ -11,7 +11,7 @@ Logger::Logger(const std::string& name) :m_LogName(name),m_Level(LogLevel::DEBUG
 }
 
 void  Logger::addILogAppender(std::unique_ptr<ILogAppender>& logAppender){
-    Spinlock::Lock lock(m_Mutex);
+    MutexType::Lock lock(m_Mutex);
     if(!logAppender->m_Formatter){
 		logAppender->m_Formatter.reset(new LogFormatter(m_Formatter));
 	}
@@ -19,7 +19,7 @@ void  Logger::addILogAppender(std::unique_ptr<ILogAppender>& logAppender){
 }
 
 void  Logger::delILogAppender(std::unique_ptr<ILogAppender>& logAppender){
-    Spinlock::Lock lock(m_Mutex);
+    MutexType::Lock lock(m_Mutex);
     auto vBegin = this->m_ILogAppenders.begin();
 	auto vEnd	= this->m_ILogAppenders.end();
 	for(;vBegin!=vEnd;vBegin++){
@@ -31,12 +31,12 @@ void  Logger::delILogAppender(std::unique_ptr<ILogAppender>& logAppender){
 }
 
 void Logger::setFormatter(const std::string& pattern){
-    Spinlock::Lock lock(m_Mutex);
+    MutexType::Lock lock(m_Mutex);
     this->m_Formatter = pattern;
 }
 
 void Logger::setLevel(LogLevel::Level val){
-    Spinlock::Lock lock(m_Mutex);
+    MutexType::Lock lock(m_Mutex);
     this->m_Level = val;
 }
 
@@ -50,7 +50,7 @@ const std::string& Logger::getLogName() const{
 
 void  Logger::log(LogLevel::Level level, std::unique_ptr<LogEvent>& event){
     if(level >= m_Level){
-        Spinlock::Lock lock(m_Mutex);
+        MutexType::Lock lock(m_Mutex);
         if(!this->m_ILogAppenders.empty()){
             for(auto &v :this->m_ILogAppenders){
                 v->log(level,event);

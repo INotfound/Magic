@@ -12,6 +12,7 @@ class LogFormatter;
 
 class Logger {
     friend class LoggerManager;
+    typedef Mutex MutexType;
 public:
     explicit Logger(const std::string& name = "root");
     void addILogAppender(std::unique_ptr<ILogAppender>& logAppender);
@@ -22,7 +23,7 @@ public:
     const std::string& getLogName() const;
     void log(LogLevel::Level level, std::unique_ptr<LogEvent>& event);
 private:
-    Spinlock m_Mutex;
+    MutexType m_Mutex;
     std::string m_LogName;
     std::string m_Formatter;
 	LogLevel::Level m_Level;

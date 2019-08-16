@@ -19,7 +19,7 @@ std::unique_ptr<Logger>& LoggerManager::getLogger(const std::string& name){
     if(name == this->m_Root->m_LogName){
         return this->m_Root;
     }
-    Spinlock::Lock lock(m_Mutex);
+    MutexType::Lock lock(m_Mutex);
     auto it = this->m_Loggers.find(name);
     if(it != this->m_Loggers.end()){
         return it->second;
