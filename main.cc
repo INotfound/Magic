@@ -18,6 +18,10 @@ int main(){
     for(size_t i =0; i<20; i++){
         thrs.push_back(std::unique_ptr<Magic::Thread>(new Magic::Thread(std::to_string(i),&momo)));
     }
+    for (size_t i = 0; i < thrs.size(); i++)
+    {
+        thrs.at(i)->join();
+    }
 	return 0;
 }
 
