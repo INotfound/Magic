@@ -13,7 +13,7 @@ public:
     std::unique_ptr<Logger>& getRoot();
     std::unique_ptr<Logger>& getLogger(const std::string& name);
 private:
-    Mutex m_Mutex;
+    Spinlock m_Mutex;
     std::unique_ptr<Logger> m_Root;
     std::map<std::string,std::unique_ptr<Logger>> m_Loggers;
 };

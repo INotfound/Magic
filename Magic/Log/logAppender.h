@@ -14,7 +14,7 @@ public:
     virtual ~ILogAppender();
     virtual void log(LogLevel::Level level,std::unique_ptr<LogEvent>& event) =0;
 protected:
-    Mutex m_Mutex;
+    Spinlock m_Mutex;
     std::unique_ptr<LogFormatter> m_Formatter;
 };
 

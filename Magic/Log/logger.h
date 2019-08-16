@@ -22,7 +22,7 @@ public:
     const std::string& getLogName() const;
     void log(LogLevel::Level level, std::unique_ptr<LogEvent>& event);
 private:
-    Mutex m_Mutex;
+    Spinlock m_Mutex;
     std::string m_LogName;
     std::string m_Formatter;
 	LogLevel::Level m_Level;
