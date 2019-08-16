@@ -8,21 +8,14 @@ class Spinlock : Noncopyable {
 public:
     typedef ScopedLockImpl<Spinlock> Lock;
 
-    Spinlock() {
-        pthread_spin_init(&m_Mutex, 0);
-    }
+    Spinlock();
 
-    ~Spinlock() {
-        pthread_spin_destroy(&m_Mutex);
-    }
+    ~Spinlock();
 
-    void lock() {
-        pthread_spin_lock(&m_Mutex);
-    }
+    void lock();
 
-    void unlock() {
-        pthread_spin_unlock(&m_Mutex);
-    }
+    void unlock();
+
 private:
     pthread_spinlock_t m_Mutex;
 };
