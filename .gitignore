@@ -32,3 +32,4 @@
 *.app
 /.vs
 /out
+CMakeSettings.json
