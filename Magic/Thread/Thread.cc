@@ -42,6 +42,16 @@ const std::string& Thread::GetName(){
     return g_threadName;
 }
 
+void Thread::SetName(const std::string& threadName) {
+	if (threadName.empty()) {
+		return;
+	}
+	if (g_thread) {
+		g_thread->m_ThreadName.assign(threadName);
+	}
+	g_threadName.assign(threadName);
+}
+
 void Thread::join(){
     if(m_Pthread){
         auto err = pthread_join(m_Pthread,nullptr);
@@ -56,7 +66,7 @@ void Thread::join(){
 
 void* Thread::Run(void*arg){
     Thread* thread = reinterpret_cast<Thread*>(arg);
-    thread->m_Id = static_cast<pid_t>(getThreadId());
+    thread->m_Id = static_cast<pid_t>(GetThreadId());
     g_thread = thread;
     g_threadName = thread->m_ThreadName;
     pthread_setname_np(pthread_self(),thread->m_ThreadName.substr(0,15).c_str());

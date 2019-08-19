@@ -3,26 +3,17 @@
 #include <time.h>
 #include <unistd.h>
 #include <vector>
-#include "Magic/Log/Log.h"
-#include "Magic/Util/Util.h"
-#include "Magic/Thread/Thread.h"
-#include "Magic/Thread/Mutex.h"
+#include "Magic/Magic.h"
 
-static auto& g_rlog = MAGIC_LOG_ROOT();
+static auto& g_log = MAGIC_LOG_NAME("system");
+
 void momo(){
-    MAGIC_LOG_INFO(MAGIC_LOG_NAME("MM")) << "this MMM";
-    MAGIC_LOG_INFO(MAGIC_LOG_NAME("DD")) << "this DDD";
-    MAGIC_LOG_INFO(MAGIC_LOG_NAME("SS")) << "this SSS";
+	MAGIC_LOG_INFO(g_log) << Magic::BackTraceToString(10);
 }
+
 int main(){
-    std::vector<std::unique_ptr<Magic::Thread>> thrs;
-    for(size_t i =0; i<20; i++){
-        thrs.push_back(std::unique_ptr<Magic::Thread>(new Magic::Thread(std::to_string(i),&momo)));
-    }
-    for (size_t i = 0; i < thrs.size(); i++)
-    {
-        thrs.at(i)->join();
-    }
+	Magic::Init();
+	momo();
 	return 0;
 }
 

@@ -13,6 +13,7 @@ public:
     pid_t getId();
     void join();
     static const std::string& GetName();
+	static void SetName(const std::string& threadName);
 private:
     static void* Run(void* arg);
 private:

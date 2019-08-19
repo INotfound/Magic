@@ -27,6 +27,6 @@ private:
     std::string m_LogName;
     std::string m_Formatter;
 	LogLevel::Level m_Level;
-    std::list<std::unique_ptr<ILogAppender>> m_ILogAppenders;
+	std::list<std::unique_ptr<ILogAppender>> m_ILogAppenders;
 };
 }
