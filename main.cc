@@ -15,10 +15,12 @@ void momo(){
 int main(){
 	Magic::Init();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main Begin";
-	std::unique_ptr<Magic::Fiber> fiber(new Magic::Fiber(&momo));
-	fiber->swapIn();
+	std::unique_ptr<Magic::Fiber> superfiber(new Magic::Fiber());
+
+	std::unique_ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo));
+	subfiber->YieldToReady();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main after swapIn";
-	fiber->swapIn();
+	subfiber->YieldToReady();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main End";
 	return 0;
 }
