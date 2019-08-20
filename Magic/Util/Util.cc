@@ -5,15 +5,12 @@
 #include <sys/syscall.h>
 #include "../Log/Log.h"
 #include "../Thread/Thread.h"
-
-static auto& g_log = MAGIC_LOG_NAME("system");
+#include "../Fiber/Fiber.h"
+static auto& g_log = MAGIC_LOG_ROOT();
 
 void Magic::Init(){
-	g_log->setFormatter("[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%c]%T%f:%l%T%m%n");
-	std::unique_ptr<ILogAppender> fileAppender(new FileLogAppender("System.log"));
-	std::unique_ptr<ILogAppender> outAppender(new StdOutLogAppender);
+	std::unique_ptr<ILogAppender> fileAppender(new FileLogAppender("Root.log"));
 	g_log->addILogAppender(fileAppender);
-	g_log->addILogAppender(outAppender);
 	Magic::Thread::SetName("Main");
 }
 
@@ -22,7 +19,7 @@ uint64_t Magic::GetThreadId(){
 }
 
 uint64_t Magic::GetFiberId(){
-    return 0;
+    return Fiber::GetId();
 }
 
 void Magic::BackTrace(std::vector<std::string>& vec, uint32_t size, uint32_t skip){
@@ -45,7 +42,7 @@ std::string Magic::BackTraceToString(uint32_t size, uint32_t skip,const std::str
 	std::stringstream ss;
 	for (size_t i = 0; i <vecString.size(); i++)
 	{
-		ss << std::endl << prefix << vecString.at(i);
+		ss << prefix << vecString.at(i) << std::endl;
 	}
 	ss << std::endl;
 	return ss.str();

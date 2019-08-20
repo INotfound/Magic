@@ -1,4 +1,5 @@
 #pragma once
+#include <atomic>
 #include <pthread.h>
 #include <functional>
 #include "Mutex.h"

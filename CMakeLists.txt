@@ -10,8 +10,10 @@ add_subdirectory(Magic/Thread)
 
 add_subdirectory(Magic/Util)
 
+add_subdirectory(Magic/Fiber)
+
 aux_source_directory(. DIR_SRCS)
 
 add_executable(Server ${DIR_SRCS})
 
-target_link_libraries(Server Log Thread Util)
+target_link_libraries(Server Log Thread Util Fiber)

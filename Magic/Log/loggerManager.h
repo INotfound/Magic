@@ -23,6 +23,6 @@ typedef Singleton<LoggerManager>        LoggerMgr;
 
 }
 
-#define MAGIC_LOG_ROOT()                    Magic::LoggerMgr::GetInstance()->getRoot()
+#define MAGIC_LOG_ROOT()            Magic::LoggerMgr::GetInstance()->getRoot()
 
 #define MAGIC_LOG_NAME(Name)        Magic::LoggerMgr::GetInstance()->getLogger(Name)

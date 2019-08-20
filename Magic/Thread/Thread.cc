@@ -8,7 +8,7 @@ using namespace Magic;
 
 static thread_local Thread* g_thread =nullptr;
 static thread_local std::string g_threadName ="UNKNOW";
-static auto& g_log = MAGIC_LOG_NAME("system");
+static auto& g_log = MAGIC_LOG_ROOT();
 
 Thread::Thread(const std::string& threadName,std::function<void()> callback)
     :m_Id(0)
