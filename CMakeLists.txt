@@ -2,7 +2,7 @@ project(Server)
 
 cmake_minimum_required(VERSION 2.6)
 
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -march=native -O3 -pthread" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -Werror -march=native -O0 -pthread -g2 -ggdb" )
 
 add_subdirectory(Magic/Log)
 

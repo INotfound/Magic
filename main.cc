@@ -7,20 +7,22 @@
 
 void momo(){
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo Begin";
-	Magic::Fiber::YieldToHold();
+	Magic::Fiber::YieldToBack();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo End";
-
 }
-
+void momo1() {
+	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 Begin";
+	Magic::Fiber::YieldToBack();
+	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 End";
+}
 int main(){
 	Magic::Init();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main Begin";
 	std::unique_ptr<Magic::Fiber> superfiber(new Magic::Fiber());
-
 	std::unique_ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo));
-	subfiber->YieldToReady();
-	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main after swapIn";
-	subfiber->YieldToReady();
+	std::unique_ptr<Magic::Fiber> subfiber1(new Magic::Fiber(&momo1));
+	Magic::Fiber::YieldToCall();
+	Magic::Fiber::YieldToCall();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main End";
 	return 0;
 }
