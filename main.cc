@@ -5,25 +5,24 @@
 #include <vector>
 #include "Magic/Magic.h"
 
-void momo(){
-	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo Begin";
-	Magic::Fiber::YieldToBack();
-	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo End";
-}
 void momo1() {
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 Begin";
-	Magic::Fiber::YieldToBack();
+	Magic::Fiber::ToBack();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 End";
 }
+void momo(){
+	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "_____________________";
+	std::unique_ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo1));
+	subfiber->toCall();
+	subfiber->toCall();
+}
+
 int main(){
 	Magic::Init();
-	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main Begin";
-	std::unique_ptr<Magic::Fiber> superfiber(new Magic::Fiber());
-	std::unique_ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo));
-	std::unique_ptr<Magic::Fiber> subfiber1(new Magic::Fiber(&momo1));
-	Magic::Fiber::YieldToCall();
-	Magic::Fiber::YieldToCall();
-	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Main End";
+	Magic::Thread thread("test", momo);
+	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Start Fiber";
+	thread.join();
+	getchar();
 	return 0;
 }
 

@@ -17,15 +17,13 @@ enum State{
 
 class Fiber{
 public:
-	Fiber(std::function<void()> callBack = nullptr, uint64_t stackSize = 1024 * 1024);
+	Fiber(std::function<void()> callBack, uint64_t stackSize = 1024 * 1024);
 	~Fiber();
 	static uint64_t GetId();
-	static void YieldToCall();
-	static void YieldToBack();
+	void toCall();
+	static void ToBack();
 private:
-	void Init();
-	void call();
-	void back();
+	Fiber();
 	uint64_t getId();
 	static Fiber* GetCurrentFiber();
 	static void SetCurrentFiber(Fiber* val);

@@ -3,10 +3,12 @@
 #include "../Util/Macro.h"
 
 using namespace Magic;
+static auto& g_log = MAGIC_LOG_ROOT();
 static std::atomic<uint64_t> g_fiberId(0);
 static std::atomic<uint64_t> g_fiberCount(0);
 static thread_local Fiber* g_currentFiber = nullptr;
 static thread_local std::unique_ptr<Fiber> g_superFiber = nullptr;
+
 class MallocStackAllocator {
 public:
 	static void* Alloc(uint64_t size) {
@@ -19,15 +21,14 @@ public:
 using StackAllocator = MallocStackAllocator;
 
 Fiber::Fiber(std::function<void()> callBack,uint64_t stackSize):m_CallBack(callBack){
+
+	if (!g_superFiber){
+		g_superFiber.reset(new Fiber);
+	}
 	m_Id = g_fiberId;
 	m_State = State::EXEC;
 	g_fiberId++;
 	g_fiberCount++;
-	if (!callBack && !g_currentFiber){
-		SetCurrentFiber(this);
-		MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
-		return;
-	}
 	m_StackSize = stackSize;
 	m_Stack = StackAllocator::Alloc(stackSize);
 	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
@@ -35,8 +36,7 @@ Fiber::Fiber(std::function<void()> callBack,uint64_t stackSize):m_CallBack(callB
 	m_Context.uc_stack.ss_sp = m_Stack;
 	m_Context.uc_stack.ss_size = m_StackSize;
 	makecontext(&m_Context, &Fiber::MainFunc, 0);
-	m_Super = g_currentFiber;
-	SetCurrentFiber(this);
+
 }
 Fiber::~Fiber() {
 	if (m_Stack){
@@ -61,31 +61,24 @@ uint64_t Fiber::GetId(){
 	}
 	return uint64_t(0);
 }
-void Fiber::YieldToCall() {
-	auto* cur = GetCurrentFiber();
-	cur->m_State = State::READY;
-	cur->call();
-	cur->call();
-}
-void Fiber::YieldToBack() {
-	auto* cur = GetCurrentFiber();
-	cur->m_State = State::HOLD;
-	cur->back();
-}
-void Fiber::Init() {
+
+Fiber::Fiber() {
 	m_Id = g_fiberId;
 	m_State = State::EXEC;
 	g_fiberId++;
 	g_fiberCount++;
-	SetCurrentFiber(this);
 	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
-	return;
 }
-void Fiber::call() {
-	MAGIC_ASSERT(swapcontext(&(m_Super->m_Context), &m_Context) == 0, "swapcontext return error(-1)")
+void Fiber::toCall() {
+	SetCurrentFiber(this);
+	m_State = State::READY;
+	MAGIC_ASSERT(swapcontext(&(g_superFiber->m_Context), &m_Context) == 0, "swapcontext return error(-1)")
 }
-void Fiber::back() {
-	MAGIC_ASSERT(swapcontext(&m_Context, &(m_Super->m_Context)) == 0, "swapcontext return error(-1)")
+void Fiber::ToBack() {
+	auto* cur = GetCurrentFiber();
+	cur->m_State = State::HOLD;
+	SetCurrentFiber(g_superFiber.get());
+	MAGIC_ASSERT(swapcontext(&(cur->m_Context), &(g_superFiber->m_Context)) == 0, "swapcontext return error(-1)")
 }
 uint64_t Fiber::getId(){
 	return m_Id;
@@ -110,8 +103,8 @@ void Fiber::MainFunc() {
 	}
 	catch (const std::exception& exp)
 	{
-		MAGIC_LOG_ERROR(MAGIC_LOG_ROOT()) << "Fiber Except: " << exp.what();
+		MAGIC_LOG_ERROR(g_log) << "Fiber Except: " << exp.what();
 	}
-	SetCurrentFiber(g_currentFiber->m_Super);
-	MAGIC_ASSERT(swapcontext(&(cur->m_Context), &(cur->m_Super->m_Context)) == 0, "swapcontext return error(-1)")
+	SetCurrentFiber(g_superFiber.get());
+	MAGIC_ASSERT(swapcontext(&(cur->m_Context), &(g_superFiber->m_Context)) == 0, "swapcontext return error(-1)")
 } 
