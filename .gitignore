@@ -33,4 +33,5 @@
 /.vscode
 /.vs
 /out
+tags
 CMakeSettings.json
