@@ -6,6 +6,7 @@
 #include "../Thread/Thread.h"
 
 namespace Magic{
+
 enum State{
 	INIT,	// 初始
 	HOLD,	// 停止
