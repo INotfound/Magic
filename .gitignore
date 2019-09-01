@@ -30,8 +30,5 @@
 *.exe
 *.out
 *.app
-/.vscode
-/.vs
-/out
-tags
+/build
 CMakeSettings.json
