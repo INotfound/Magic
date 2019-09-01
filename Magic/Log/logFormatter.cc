@@ -7,8 +7,8 @@
 #include "logEvent.h"
 
 using namespace Magic;
-//format item interface begin
 
+//format item interface begin
 ILogFormatItem::~ILogFormatItem(){
 
 };
@@ -154,7 +154,6 @@ void StringFormatItem::format(std::ostream &os, LogLevel::Level ,std::unique_ptr
 }
 
 //format item interface end
-
 LogFormatter::LogFormatter(const std::string& pattern){
     //cmd fmt flag
     std::vector<std::tuple<std::string, std::string, uint32_t>> vec;
@@ -231,16 +230,16 @@ LogFormatter::LogFormatter(const std::string& pattern){
         {#str,[](const std::string& fmt){ return std::unique_ptr<ILogFormatItem>(new type(fmt));}}
 
         Item(m, MessageFormatItem),            //m:消息
-        Item(p, LevelFormatItem),                    //p:日志级别
-        Item(r, ElapseFormatItem),                  //r:累计毫秒数
+        Item(p, LevelFormatItem),              //p:日志级别
+        Item(r, ElapseFormatItem),             //r:累计毫秒数
         Item(c, LogNameFormatItem),            //c:日志名称
-        Item(t, ThreadIdFormatItem),              //t:线程id
-        Item(n, NewLineFormatItem),              //n:换行
-        Item(f, FilePathFormatItem),                //f:文件名
-        Item(l, LineFormatItem),                        //l:行号
-        Item(T, TabFormatItem),                        //T:Tab
-        Item(F, FiberIdFormatItem),                  //F:协程id
-        Item(N, ThreadNameFormatItem),       //N:线程名称
+        Item(t, ThreadIdFormatItem),           //t:线程id
+        Item(n, NewLineFormatItem),            //n:换行
+        Item(f, FilePathFormatItem),           //f:文件名
+        Item(l, LineFormatItem),               //l:行号
+        Item(T, TabFormatItem),                //T:Tab
+        Item(F, FiberIdFormatItem),            //F:协程id
+        Item(N, ThreadNameFormatItem),         //N:线程名称
         ItemEx(d, DateTimeFormatItem),         //d:时间
 #undef ItemEx
 #undef Item
