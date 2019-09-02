@@ -10,6 +10,7 @@ void momo1() {
 	Magic::Fiber::ToBack();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 End";
 }
+
 void momo(){
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "_____________________";
 	std::unique_ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo1));
