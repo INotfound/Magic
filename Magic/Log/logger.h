@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include "logLevel.h"
+#include "../Define.h"
 #include "../Thread/Mutex.h"
 
 namespace Magic{
@@ -15,18 +16,18 @@ class Logger {
     typedef Mutex MutexType;
 public:
     explicit Logger(const std::string& name = "root");
-    void addILogAppender(std::unique_ptr<ILogAppender>& logAppender);
-    void delILogAppender(std::unique_ptr<ILogAppender>& logAppender);
+    void addILogAppender(MagicPtr<ILogAppender>& logAppender);
+    void delILogAppender(MagicPtr<ILogAppender>& logAppender);
     void setFormatter(const std::string& pattern);
     void setLevel(LogLevel::Level);
     LogLevel::Level getLevel() const;
     const std::string& getLogName() const;
-    void log(LogLevel::Level level, std::unique_ptr<LogEvent>& event);
+    void log(LogLevel::Level level, MagicPtr<LogEvent>& event);
 private:
     MutexType m_Mutex;
     std::string m_LogName;
     std::string m_Formatter;
 	LogLevel::Level m_Level;
-	std::list<std::unique_ptr<ILogAppender>> m_ILogAppenders;
+	std::list<MagicPtr<ILogAppender>> m_ILogAppenders;
 };
 }

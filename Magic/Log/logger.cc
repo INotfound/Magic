@@ -10,7 +10,7 @@ Logger::Logger(const std::string& name) :m_LogName(name),m_Level(LogLevel::DEBUG
 	
 }
 
-void  Logger::addILogAppender(std::unique_ptr<ILogAppender>& logAppender){
+void  Logger::addILogAppender(MagicPtr<ILogAppender>& logAppender){
     MutexType::Lock lock(m_Mutex);
     if(!logAppender->m_Formatter){
 		logAppender->m_Formatter.reset(new LogFormatter(m_Formatter));
@@ -18,7 +18,7 @@ void  Logger::addILogAppender(std::unique_ptr<ILogAppender>& logAppender){
 	this->m_ILogAppenders.push_back(std::move(logAppender));
 }
 
-void  Logger::delILogAppender(std::unique_ptr<ILogAppender>& logAppender){
+void  Logger::delILogAppender(MagicPtr<ILogAppender>& logAppender){
     MutexType::Lock lock(m_Mutex);
     auto vBegin = this->m_ILogAppenders.begin();
 	auto vEnd	= this->m_ILogAppenders.end();
@@ -48,7 +48,7 @@ const std::string& Logger::getLogName() const{
 	return this->m_LogName;
 }
 
-void  Logger::log(LogLevel::Level level, std::unique_ptr<LogEvent>& event){
+void  Logger::log(LogLevel::Level level, MagicPtr<LogEvent>& event){
     if(level >= m_Level){
         MutexType::Lock lock(m_Mutex);
         if(!this->m_ILogAppenders.empty()){

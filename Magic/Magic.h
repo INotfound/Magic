@@ -1,3 +1,4 @@
+#include "Define.h"
 #include "Log/Log.h"
 //#include "Fiber/Fiber.h"
 #include "Fiber/Fiber.h"

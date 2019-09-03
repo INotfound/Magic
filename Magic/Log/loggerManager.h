@@ -2,6 +2,7 @@
 #include <map>
 #include <string>
 #include <memory> 
+#include "../Define.h"
 #include "../Thread/Mutex.h"
 #include "../Util/Singleton.h"
 namespace Magic{
@@ -11,12 +12,12 @@ class LoggerManager{
     typedef Mutex MutexType;
 public:
     LoggerManager();
-    std::unique_ptr<Logger>& getRoot();
-    std::unique_ptr<Logger>& getLogger(const std::string& name);
+    MagicPtr<Logger>& getRoot();
+    MagicPtr<Logger>& getLogger(const std::string& name);
 private:
     MutexType m_Mutex;
-    std::unique_ptr<Logger> m_Root;
-    std::map<std::string,std::unique_ptr<Logger>> m_Loggers;
+    MagicPtr<Logger> m_Root;
+    std::map<std::string,MagicPtr<Logger>> m_Loggers;
 };
 
 typedef Singleton<LoggerManager>        LoggerMgr;

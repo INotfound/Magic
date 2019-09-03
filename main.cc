@@ -13,7 +13,7 @@ void momo1() {
 
 void momo(){
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "_____________________";
-	std::unique_ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo1));
+	MagicPtr<Magic::Fiber> subfiber(new Magic::Fiber(&momo1));
 	subfiber->toCall();
 	subfiber->toCall();
 }

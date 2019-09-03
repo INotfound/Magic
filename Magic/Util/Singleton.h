@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-
+#include "../Define.h"
 namespace Magic{
 
 template <class T>
@@ -15,8 +15,8 @@ public:
 template <class T>
 class SingletonPtr{
 public:
-    static std::unique_ptr<T> GetInstance(){
-        static std::unique_ptr<T> v(new T());
+    static MagicPtr<T> GetInstance(){
+        static MagicPtr<T> v(new T());
         return v;
     }
 };
