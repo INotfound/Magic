@@ -7,13 +7,13 @@
 #include "logFormatter.h"
 #include "loggerManager.h"
 
-#include "../Define.h"
 #include "../Util/Util.h"
+#include "../Util/Macro.h"
 #include "../Thread/Thread.h"
 
 #define  MAGIC_LOG_LEVEL(logger,level) \
                 if(level >= logger->getLevel()) \
-                    Magic::LogWrap(logger,level,MagicPtr<Magic::LogEvent>(new Magic::LogEvent(__LINE__,static_cast<uint64_t>(time(nullptr)),1,Magic::GetFiberId(),Magic::GetThreadId(),__FILE__,logger->getLogName(),Magic::Thread::GetName()))).get()
+                    Magic::LogWrap(logger,level,Ptr<Magic::LogEvent>(new Magic::LogEvent(__LINE__,static_cast<uint64_t>(time(nullptr)),1,Magic::GetFiberId(),Magic::GetThreadId(),__FILE__,logger->getLogName(),Magic::Thread::GetName()))).get()
                 
 #define MAGIC_LOG_DEBUG(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::DEBUG)
 

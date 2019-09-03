@@ -5,7 +5,7 @@ using namespace Magic;
 
 ILogAppender::~ILogAppender(){}
 
-void StdOutLogAppender::log(LogLevel::Level level, MagicPtr<LogEvent>& event){
+void StdOutLogAppender::log(LogLevel::Level level, Ptr<LogEvent>& event){
     if(!this->m_Formatter){
         std::cout << "<(ERROR)> : " <<  std::endl;
         return;
@@ -17,7 +17,7 @@ FileLogAppender::FileLogAppender(const std::string &path):m_Path(path){
     this->reOpen();
 }
 
-void FileLogAppender::log(LogLevel::Level level, MagicPtr<LogEvent>& event) {
+void FileLogAppender::log(LogLevel::Level level, Ptr<LogEvent>& event) {
     this->m_Formatter->format(this->m_FileStream,level,event);
 }
 

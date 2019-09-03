@@ -7,15 +7,15 @@ using namespace Magic;
 LoggerManager::LoggerManager(){
     this->m_Root.reset(new Logger());
     this->m_Root->setFormatter("[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%c]%T%f:%l%T%m%n");
-    MagicPtr<ILogAppender> appender(new StdOutLogAppender);
+    Ptr<ILogAppender> appender(new StdOutLogAppender);
     this->m_Root->addILogAppender(appender);
 }
 
-MagicPtr<Logger>& LoggerManager::getRoot(){
+Ptr<Logger>& LoggerManager::getRoot(){
     return this->m_Root;
 }
 
-MagicPtr<Logger>& LoggerManager::getLogger(const std::string& name){
+Ptr<Logger>& LoggerManager::getLogger(const std::string& name){
     if(name == this->m_Root->m_LogName){
         return this->m_Root;
     }

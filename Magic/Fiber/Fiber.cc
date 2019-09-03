@@ -1,6 +1,6 @@
 #include "Fiber.h"
 #include <atomic>
-#include "../Util/Macro.h"
+#include "../Util/Assert.h"
 
 using namespace Magic;
 static auto& g_log = MAGIC_LOG_ROOT();

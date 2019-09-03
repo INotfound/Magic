@@ -4,7 +4,7 @@
 #include <memory>
 #include <iostream>
 #include "logLevel.h"
-#include "../Define.h"
+#include "../Util/Macro.h"
 namespace Magic{
 
 class LogEvent;
@@ -13,15 +13,15 @@ class ILogFormatItem;
 class LogFormatter{
 public:
     explicit LogFormatter(const std::string& pattern);
-    void format(std::ostream &os, LogLevel::Level level, MagicPtr<LogEvent>& event);
+    void format(std::ostream &os, LogLevel::Level level, Ptr<LogEvent>& event);
 private:
-    std::vector<MagicPtr<ILogFormatItem>> m_Items;
+    std::vector<Ptr<ILogFormatItem>> m_Items;
 };
 
 class ILogFormatItem{
 public:
     virtual ~ILogFormatItem();
-    virtual void format(std::ostream &os, LogLevel::Level level, MagicPtr<LogEvent>& event) =0;
+    virtual void format(std::ostream &os, LogLevel::Level level, Ptr<LogEvent>& event) =0;
 };
 
 }

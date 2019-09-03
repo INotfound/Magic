@@ -2,7 +2,7 @@
 #include <memory>
 #include <sstream>
 #include "logLevel.h"
-#include "../Define.h"
+#include "../Util/Macro.h"
 
 namespace Magic{
 class Logger;
@@ -10,13 +10,13 @@ class LogEvent;
 
 class LogWrap{
 public:
-    LogWrap(MagicPtr<Logger>& logger,LogLevel::Level level,MagicPtr<LogEvent>&& event);
+    LogWrap(Ptr<Logger>& logger,LogLevel::Level level,Ptr<LogEvent>&& event);
     std::stringstream& get();
     ~LogWrap();
 private:
-    MagicPtr<Logger>& m_Logger;
+    Ptr<Logger>& m_Logger;
     LogLevel::Level m_Level;
-    MagicPtr<LogEvent> m_Event;
+    Ptr<LogEvent> m_Event;
 };
 
 }
