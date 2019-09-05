@@ -21,7 +21,6 @@ public:
 using StackAllocator = MallocStackAllocator;
 
 Fiber::Fiber(std::function<void()> callBack,uint64_t stackSize):m_CallBack(callBack){
-
 	if (!g_superFiber){
 		g_superFiber.reset(new Fiber);
 	}

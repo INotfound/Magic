@@ -1,7 +1,9 @@
 #pragma once
 #include <string>
 #include <cassert>
+
 #include "Util.h"
+
 #include "../Log/Log.h"
 
 #define MAGIC_ASSERT(exp,msg) \

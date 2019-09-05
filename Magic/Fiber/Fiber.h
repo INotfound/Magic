@@ -9,10 +9,10 @@ namespace Magic{
 
 enum State{
 	INIT,	// 初始
-	HOLD,	// 停止
-	EXEC,	// 执行
-	TERM,	// 结束
 	READY,	// 准备
+	EXEC,	// 执行
+	HOLD,	// 停止
+	TERM,	// 结束
 	EXCEPT	// 异常
 };
 
