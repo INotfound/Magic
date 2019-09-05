@@ -3,7 +3,7 @@
 #include <fstream>
 #include "logLevel.h"
 #include "logFormatter.h"
-#include "../Util/Macro.h"
+#include "../Util/Define.h"
 #include "../Thread/Mutex.h"
 namespace Magic{
 class LogEvent;

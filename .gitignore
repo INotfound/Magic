@@ -33,3 +33,4 @@
 /build
 tags
 CMakeSettings.json
+.ycm_extra_conf.py

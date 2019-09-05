@@ -2,7 +2,7 @@
 #include <memory>
 #include <sstream>
 #include "logLevel.h"
-#include "../Util/Macro.h"
+#include "../Util/Define.h"
 
 namespace Magic{
 class Logger;

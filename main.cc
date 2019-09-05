@@ -20,10 +20,10 @@ void momo(){
 
 int main(){
 	Magic::Init();
+	MAGIC_LOG_ROOT();
 	Ptr<Magic::Thread> thread(new Magic::Thread("test",momo));
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Start Fiber";
-	thread->join();
-	//Use(thread)->join();
+	Use(thread)->join();
 	getchar();
 	return 0;
 }
