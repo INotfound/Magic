@@ -7,7 +7,7 @@ static auto& g_log = MAGIC_LOG_ROOT();
 static std::atomic<uint64_t> g_fiberId(0);
 static std::atomic<uint64_t> g_fiberCount(0);
 static thread_local Fiber* g_currentFiber = nullptr;
-static thread_local std::unique_ptr<Fiber> g_superFiber = nullptr;
+static thread_local Ptr<Fiber> g_superFiber = nullptr;
 
 class MallocStackAllocator {
 public:

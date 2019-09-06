@@ -23,7 +23,9 @@ int main(){
 	MAGIC_LOG_ROOT();
 	Ptr<Magic::Thread> thread(new Magic::Thread("test",momo));
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "Start Fiber";
-	Use(thread).join();
+	thread->join();
+	Ptr<Magic::Thread> threads;
+	IsPointer(threads);
 	getchar();
 	return 0;
 }
