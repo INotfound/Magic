@@ -17,4 +17,4 @@
 		assert(exp); \
 	}
 
-#define Use(Var) UsePointer(Var,MAGIC_ASSERT(Var != nullptr, #Var << " => Pointer is nullptr"))
+#define Use(Var) UsePointer(Var,MAGIC_ASSERT(Var != nullptr,"\033[31;4mPointer Name: " << #Var << " => nullPtr \033[0m"))
