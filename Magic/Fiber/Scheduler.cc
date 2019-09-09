@@ -2,6 +2,8 @@
 
 using namespace Magic;
 
+static thread_local Scheduler* g_Scheduler = nullptr;
+static thread_local Fiber*	g_Fiber = nullptr;
 FiberAndThread::FiberAndThread(Ptr<Fiber> &fiber,uint32_t thread)
 	: m_ThreadId(thread){
 	m_Fiber = std::move(fiber);
@@ -23,6 +25,11 @@ Scheduler::~Scheduler(){
 
 Scheduler::Scheduler(uint32_t threads, bool useCaller,const std::string &name)
 	: m_Name(name){
+	
+		if(useCaller){
+
+		}
+
 	
 }
 

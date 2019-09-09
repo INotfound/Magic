@@ -3,7 +3,7 @@
 #include <string>
 #include <memory>
 #include <stdint.h>
-#include "../Util/Define.h"
+#include "../Util/Macro.h"
 #include "../Thread/Mutex.h"
 #include "../Util/Singleton.h"
 namespace Magic{

@@ -7,7 +7,7 @@
 #include "logFormatter.h"
 #include "loggerManager.h"
 #include "../Util/Util.h"
-#include "../Util/Define.h"
+#include "../Util/Macro.h"
 #include "../Thread/Thread.h"
 
 #define  MAGIC_LOG_LEVEL(logger,level) \

@@ -4,7 +4,7 @@
 #include <memory>
 #include <iostream>
 #include "logLevel.h"
-#include "../Util/Define.h"
+#include "../Util/Macro.h"
 namespace Magic{
 
 class LogEvent;
