@@ -7,13 +7,14 @@
 
 void momo1() {
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 Begin";
-	Magic::Fiber::ToBack();
+	Magic::Fiber::YieldToHold();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "momo1 End";
 }
 
 void momo(){
+	Magic::Fiber::Init();
 	MAGIC_LOG_INFO(MAGIC_LOG_ROOT()) << "_____________________";
-	Ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo1));
+	Ptr<Magic::Fiber> subfiber(new Magic::Fiber(&momo1,true));
 	subfiber->toCall();
 	subfiber->toCall();
 }

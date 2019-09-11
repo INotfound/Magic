@@ -1,7 +1,5 @@
 #include "Fiber.h"
-#include <atomic>
-#include "../Util/Macro.h"
-
+#include "Scheduler.h"
 using namespace Magic;
 static auto& g_log = MAGIC_LOG_ROOT();
 static std::atomic<uint64_t> g_fiberId(0);
@@ -20,12 +18,9 @@ public:
 };
 using StackAllocator = MallocStackAllocator;
 
-Fiber::Fiber(std::function<void()> callBack,uint64_t stackSize):m_CallBack(callBack){
-	if (!g_superFiber){
-		g_superFiber.reset(new Fiber);
-	}
+Fiber::Fiber(std::function<void()> callBack,bool useCaller,uint64_t stackSize):m_CallBack(callBack){
 	m_Id = g_fiberId;
-	m_State = State::EXEC;
+	m_State = State::INIT;
 	g_fiberId++;
 	g_fiberCount++;
 	m_StackSize = stackSize;
@@ -34,8 +29,11 @@ Fiber::Fiber(std::function<void()> callBack,uint64_t stackSize):m_CallBack(callB
 	m_Context.uc_link = nullptr;
 	m_Context.uc_stack.ss_sp = m_Stack;
 	m_Context.uc_stack.ss_size = m_StackSize;
-	makecontext(&m_Context, &Fiber::MainFunc, 0);
-
+	if(useCaller){
+		makecontext(&m_Context, &Fiber::CallerMainFunc, 0);
+	}else{
+		makecontext(&m_Context, &Fiber::MainFunc, 0);
+	}
 }
 Fiber::~Fiber() {
 	if (m_Stack){
@@ -64,21 +62,57 @@ uint64_t Fiber::GetId(){
 Fiber::Fiber() {
 	m_Id = g_fiberId;
 	m_State = State::EXEC;
+	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
 	g_fiberId++;
 	g_fiberCount++;
-	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
 }
 void Fiber::toCall() {
 	SetCurrentFiber(this);
-	m_State = State::READY;
+	MAGIC_ASSERT(m_State != EXEC,"toCall State != EXEC");
+	m_State = State::EXEC;
 	MAGIC_ASSERT(swapcontext(&(g_superFiber->m_Context), &m_Context) == 0, "swapcontext return error(-1)")
 }
-void Fiber::ToBack() {
+
+void Fiber::toBack() {
+	SetCurrentFiber(g_superFiber.get());
+	MAGIC_ASSERT(swapcontext(&(this->m_Context), &(g_superFiber->m_Context)) == 0, "swapcontext return error(-1)")
+}
+void Fiber::swapIn(){
+	SetCurrentFiber(this);
+	MAGIC_ASSERT(m_State != EXEC,"toCall State != EXEC");
+	m_State = State::EXEC;
+	MAGIC_ASSERT(swapcontext(&(Scheduler::GetMainFiber()->m_Context), &m_Context) == 0, "swapcontext return error(-1)")
+}
+
+void Fiber::swapOut(){
+	SetCurrentFiber(Scheduler::GetMainFiber());
+	MAGIC_ASSERT(swapcontext(&(this->m_Context), &(Scheduler::GetMainFiber()->m_Context)) == 0, "swapcontext return error(-1)")
+}
+
+Fiber::State Fiber::getState(){
+	return m_State;
+}
+
+
+Ptr<Fiber>& Fiber::Init(){
+	if (g_superFiber){
+		return g_superFiber;
+	}
+	g_superFiber.reset(new Fiber);
+	return g_superFiber;
+}
+
+void Fiber::YieldToHold(){
 	auto* cur = GetCurrentFiber();
 	cur->m_State = State::HOLD;
-	SetCurrentFiber(g_superFiber.get());
-	MAGIC_ASSERT(swapcontext(&(cur->m_Context), &(g_superFiber->m_Context)) == 0, "swapcontext return error(-1)")
+	cur->swapOut();
 }
+void Fiber::YieldToReady(){
+	auto* cur = GetCurrentFiber();
+	cur->m_State = State::READY;
+	cur->swapOut();
+}
+
 uint64_t Fiber::getId(){
 	return m_Id;
 }
@@ -89,9 +123,11 @@ Fiber* Fiber::GetCurrentFiber() {
 	MAGIC_ASSERT(g_currentFiber, "Global Current Fiber is nullptr");
 	return nullptr;
 }
+
 void Fiber::SetCurrentFiber(Fiber *val) {
 	g_currentFiber = val;
 }
+
 void Fiber::MainFunc() {
 	auto* cur = GetCurrentFiber();
 	try
@@ -104,6 +140,22 @@ void Fiber::MainFunc() {
 	{
 		MAGIC_LOG_ERROR(g_log) << "Fiber Except: " << exp.what();
 	}
-	SetCurrentFiber(g_superFiber.get());
-	MAGIC_ASSERT(swapcontext(&(cur->m_Context), &(g_superFiber->m_Context)) == 0, "swapcontext return error(-1)")
+	cur->swapOut();
+	MAGIC_ASSERT(false,"Never reach to FiberID = "+std::to_string(cur->getId()));
 } 
+void Fiber::CallerMainFunc(){
+	auto* cur = GetCurrentFiber();
+	try
+	{
+		cur->m_CallBack();
+		cur->m_CallBack = nullptr;
+		cur->m_State = State::TERM;
+	}
+	catch (const std::exception& exp)
+	{
+		MAGIC_LOG_ERROR(g_log) << "Fiber Except: " << exp.what();
+	}
+	cur->toBack();
+	MAGIC_ASSERT(false,"Never reach to FiberID = "+std::to_string(cur->getId()));
+}
+

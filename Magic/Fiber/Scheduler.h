@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "Fiber.h"
-
+#include "../Util/Util.h"
 #include "../Util/Macro.h"
 #include "../Thread/Mutex.h"
 #include "../Thread/Thread.h"
@@ -24,6 +24,7 @@ private:
 };
 
 class Scheduler{
+	friend class Fiber;
 	typedef Mutex MutexType; 
 public:
 	virtual ~Scheduler();
@@ -60,7 +61,14 @@ public:
 	}
 
 protected:
-	virtual void tickle();//why name is tickkle?
+
+	void run();
+	/*
+	why name is tickkle?
+	tickle is notify?
+	*/
+	virtual void tickle();	
+	virtual bool stopping();
 	static Scheduler* GetThis();
 	static Fiber* GetMainFiber();
 
@@ -75,16 +83,17 @@ private:
 		return need_tickle;
 	}
 protected:
-	std::vector<int> m_ThreadIds;
 	bool m_Stopping = true;
 	bool m_AutoStop = false;
-	uint32_t m_rootThread = 0;
+	std::vector<int> m_ThreadIds;
+	uint32_t m_RootThread = -1;
 	uint32_t m_ThreadCount = 0;
 	uint32_t m_ActiveThreadCount = 0;
 	uint32_t m_IdleThreadCount = 0;
 private:
 	MutexType m_Mutex;
 	std::string m_Name;
+	Ptr<Fiber> m_RootFiber;
 	std::vector<Ptr<Thread>> m_Threads;
 	std::list<Ptr<FiberAndThread>> m_Fibers;
 
