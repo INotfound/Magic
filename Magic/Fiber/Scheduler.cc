@@ -91,15 +91,54 @@ void Scheduler::stop(){
 		tickle();
 	}
 	if(m_RootFiber){
-		tickle();
+		tickle();//notify
 		if(!stopping()){
 			m_RootFiber->toCall();
 		}			
 	}
 }
 
+void Scheduler::idle(){
+
+}
+
 void Scheduler::run(){
-	
+	this->setThis();
+	if(Magic::GetThreadId() != m_RootThread){
+		g_fiber = Fiber::Init().get();
+	}
+	Ptr<Fiber> idleFiber(new Fiber(&Scheduler::idle,false));
+	Ptr<Fiber> callBackFiber;
+	FiberAndThread fiberAndThread;
+	while(iter != m_Fiber.end()){
+		{
+			bool tickle = false;
+			auto iter = m_Fiber.begin();
+			MutexType::Lock lock(m_Mutex);
+			if(iter->m_ThreadId != -1 && iter->m_ThreadId != Magic::GetThreadId()){
+				iter++;
+				tickle = true;
+				continue;
+			}
+			if(iter->m_Fiber && iter->m_Fiber->getState() == Fiber::EXEC){
+				iter++;
+				continue;
+			}
+			fiberAndThread = *iter;
+			auto& temp = iter;
+			iter++;
+			m_Fiber.erase(temp);
+			m_ActiveThreadCount++;
+			break;
+		}
+
+	}
+
+
+}
+
+void Scheduler::setThis(){
+	g_scheduler = this;
 }
 
 void Scheduler::tickle(){

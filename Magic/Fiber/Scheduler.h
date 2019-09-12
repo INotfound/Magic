@@ -61,8 +61,9 @@ public:
 	}
 
 protected:
-
 	void run();
+	void idle();
+	void setThis();
 	/*
 	why name is tickkle?
 	tickle is notify?

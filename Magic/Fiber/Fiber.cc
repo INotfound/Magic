@@ -18,23 +18,6 @@ public:
 };
 using StackAllocator = MallocStackAllocator;
 
-Fiber::Fiber(std::function<void()> callBack,bool useCaller,uint64_t stackSize):m_CallBack(callBack){
-	m_Id = g_fiberId;
-	m_State = State::INIT;
-	g_fiberId++;
-	g_fiberCount++;
-	m_StackSize = stackSize;
-	m_Stack = StackAllocator::Alloc(stackSize);
-	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
-	m_Context.uc_link = nullptr;
-	m_Context.uc_stack.ss_sp = m_Stack;
-	m_Context.uc_stack.ss_size = m_StackSize;
-	if(useCaller){
-		makecontext(&m_Context, &Fiber::CallerMainFunc, 0);
-	}else{
-		makecontext(&m_Context, &Fiber::MainFunc, 0);
-	}
-}
 Fiber::~Fiber() {
 	if (m_Stack){
 		MAGIC_ASSERT(m_State == State::TERM 
@@ -52,6 +35,25 @@ Fiber::~Fiber() {
 	}
 	g_fiberCount--;
 }
+
+Fiber::Fiber(std::function<void()> callBack,bool useCaller,uint64_t stackSize):m_CallBack(callBack){
+	m_Id = g_fiberId;
+	m_State = State::INIT;
+	g_fiberId++;
+	g_fiberCount++;
+	m_StackSize = stackSize;
+	m_Stack = StackAllocator::Alloc(stackSize);
+	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
+	m_Context.uc_link = nullptr;
+	m_Context.uc_stack.ss_sp = m_Stack;
+	m_Context.uc_stack.ss_size = m_StackSize;
+	if(useCaller){
+		makecontext(&m_Context, &Fiber::CallerMainFunc, 0);
+	}else{
+		makecontext(&m_Context, &Fiber::MainFunc, 0);
+	}
+}
+
 uint64_t Fiber::GetId(){
 	if (g_currentFiber){
 		return g_currentFiber->getId();
@@ -66,6 +68,7 @@ Fiber::Fiber() {
 	g_fiberId++;
 	g_fiberCount++;
 }
+
 void Fiber::toCall() {
 	SetCurrentFiber(this);
 	MAGIC_ASSERT(m_State != EXEC,"toCall State != EXEC");
@@ -93,6 +96,18 @@ Fiber::State Fiber::getState(){
 	return m_State;
 }
 
+void Fiber::reset(std::function<void()> callBack){
+	MAGIC_ASSERT(m_Stack);
+	MAGIC_ASSERT(m_State == Fiber::INIT
+		||m_State == Fiber::TERM
+		||m_State == Fiber::EXCEPT);
+	m_CallBack = callBack;
+	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
+	m_Context.uc_link = nullptr;
+	m_Context.uc_stack.ss_sp = m_Stack;
+	m_Context.uc_stack.ss_size = m_StackSize;
+	makecontext(&m_Context, &Fiber::MainFunc, 0);
+}
 
 Ptr<Fiber>& Fiber::Init(){
 	if (g_superFiber){

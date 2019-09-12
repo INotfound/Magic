@@ -23,13 +23,16 @@ public:
 		TERM,	// 结束
 		EXCEPT	// 异常
 	};
-	Fiber(std::function<void()> callBack,bool useCaller,uint64_t stackSize = 1024 * 1024);
 	~Fiber();
+	Fiber(std::function<void()> callBack,bool useCaller,uint64_t stackSize = 1024 * 1024);
+
+	
 	void toCall();
 	void toBack();
 	void swapIn();
 	void swapOut();
 	State getState();
+	void reset(std::function<void()> callBack);
 	static uint64_t GetId();
 	static Ptr<Fiber>& Init();
 	static void YieldToHold();
@@ -50,6 +53,5 @@ private:
 	ucontext_t m_Context;
 	void* m_Stack = nullptr;
 };
-
 
 }
