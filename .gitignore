@@ -31,6 +31,7 @@
 *.out
 *.app
 /build
+/.vscode
 tags
 CMakeSettings.json
 .ycm_extra_conf.py
