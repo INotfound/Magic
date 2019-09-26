@@ -6,7 +6,9 @@ namespace Magic{
 	
 class LogEvent{
 public:
-	LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,uint64_t threadId,const std::string& file,const std::string& LogName,const std::string& threadName);
+	LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t fiberId,
+    uint64_t threadId,const std::string& file,const std::string& LogName,
+    const std::string& threadName);
     uint32_t getLine()                  const;
     uint64_t getTime()                  const;
     uint64_t getElapse()                const;

@@ -97,10 +97,10 @@ Fiber::State Fiber::getState(){
 }
 
 void Fiber::reset(std::function<void()> callBack){
-	MAGIC_ASSERT(m_Stack);
+	MAGIC_ASSERT(m_Stack,"Stack is nullptr");
 	MAGIC_ASSERT(m_State == Fiber::INIT
 		||m_State == Fiber::TERM
-		||m_State == Fiber::EXCEPT);
+		||m_State == Fiber::EXCEPT,"State Error!");
 	m_CallBack = callBack;
 	MAGIC_ASSERT(getcontext(&m_Context) == 0, "getcontext return error(-1)");
 	m_Context.uc_link = nullptr;
@@ -160,14 +160,12 @@ void Fiber::MainFunc() {
 } 
 void Fiber::CallerMainFunc(){
 	auto* cur = GetCurrentFiber();
-	try
-	{
+	try{
 		cur->m_CallBack();
 		cur->m_CallBack = nullptr;
 		cur->m_State = State::TERM;
 	}
-	catch (const std::exception& exp)
-	{
+	catch (const std::exception& exp){
 		MAGIC_LOG_ERROR(g_log) << "Fiber Except: " << exp.what();
 	}
 	cur->toBack();

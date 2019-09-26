@@ -13,7 +13,7 @@ class ILogFormatItem;
 class LogFormatter{
 public:
     explicit LogFormatter(const std::string& pattern);
-    void format(std::ostream &os, LogLevel::Level level, Ptr<LogEvent>& event);
+    void format(std::ostream &os,const LogLevel::Level level,const Ptr<LogEvent>& event);
 private:
     std::vector<Ptr<ILogFormatItem>> m_Items;
 };
@@ -21,7 +21,7 @@ private:
 class ILogFormatItem{
 public:
     virtual ~ILogFormatItem();
-    virtual void format(std::ostream &os, LogLevel::Level level, Ptr<LogEvent>& event) =0;
+    virtual void format(std::ostream &os,const LogLevel::Level level,const Ptr<LogEvent>& event) =0;
 };
 
 }

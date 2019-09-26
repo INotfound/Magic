@@ -1,6 +1,7 @@
 #pragma once
 #include <list>
 #include <vector>
+#include <functional>
 
 #include "Fiber.h"
 #include "../Util/Util.h"
@@ -18,7 +19,7 @@ public:
 	void reset();
 
 private:
-	uint32_t m_ThreadId = -1;
+	int32_t m_ThreadId = -1;
 	Ptr<Fiber> m_Fiber = nullptr;
 	std::function<void()> m_CallBack;
 };
@@ -87,7 +88,7 @@ protected:
 	bool m_Stopping = true;
 	bool m_AutoStop = false;
 	std::vector<int> m_ThreadIds;
-	uint32_t m_RootThread = -1;
+	int32_t m_RootThread = -1;
 	uint32_t m_ThreadCount = 0;
 	uint32_t m_ActiveThreadCount = 0;
 	uint32_t m_IdleThreadCount = 0;
@@ -97,7 +98,6 @@ private:
 	Ptr<Fiber> m_RootFiber;
 	std::vector<Ptr<Thread>> m_Threads;
 	std::list<Ptr<FiberAndThread>> m_Fibers;
-
 };
 
 }

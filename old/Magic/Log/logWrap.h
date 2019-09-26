@@ -10,7 +10,7 @@ class LogEvent;
 
 class LogWrap{
 public:
-    LogWrap(Ptr<Logger>& logger,LogLevel::Level level,Ptr<LogEvent>&& event);
+    LogWrap(Ptr<Logger>& logger,const LogLevel::Level level,Ptr<LogEvent>&& event);
     std::stringstream& get();
     ~LogWrap();
 private:
