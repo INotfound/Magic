@@ -9,22 +9,21 @@
 
 #include "Core.h"
 #include "Util.h"
+#include "Mutex.h"
 
-typedef std::mutex Mutex;
-typedef std::lock_guard<Mutex> MutexLock;
+typedef Magic::Mutex Mutex;
+typedef Magic::Mutex::Lock MutexLock;
 
 namespace Magic{
 
-namespace LogLevel{
-    enum Level{
-        DEBUG   =1,
-        INFO    =2,
-        WARN    =3,
-        ERROR   =4,
-        FATAL   =5
-    };
-    const char* ToString(const LogLevel::Level level);
+enum class LogLevel{
+    LogDebug   =1,
+    LogInfo    =2,
+    LogWarn    =3,
+    LogError   =4,
+    LogFatal   =5
 };
+const char* ToString(const LogLevel level);
 
 class LogEvent{
 public:
@@ -55,15 +54,15 @@ private:
 class ILogFormatItem{
 public:
     virtual ~ILogFormatItem();
-    virtual void format(std::ostream &os,const LogLevel::Level  level,const Ptr<LogEvent>& event) =0;
+    virtual void format(std::ostream &os,const LogLevel  level,const MagicPtr<LogEvent>& event) =0;
 };
 
 class LogFormatter{
 public:
     explicit LogFormatter(const std::string& pattern);
-    void format(std::ostream &os,const LogLevel::Level  level,const Ptr<LogEvent>& event);
+    void format(std::ostream &os,const LogLevel  level,const MagicPtr<LogEvent>& event);
 private:
-    std::vector<Ptr<ILogFormatItem>> m_Items;
+    std::vector<MagicPtr<ILogFormatItem>> m_Items;
 };
 
 
@@ -71,20 +70,20 @@ class ILogAppender{
     friend class Logger;
 public:
     virtual ~ILogAppender();
-    virtual void log(LogLevel::Level level,Ptr<LogEvent>& event) =0;
+    virtual void log(LogLevel level,MagicPtr<LogEvent>& event) =0;
 protected:
-    Ptr<LogFormatter> m_Formatter;
+    MagicPtr<LogFormatter> m_Formatter;
 };
 
 class StdOutLogAppender :public ILogAppender{
 public:
-    void log(LogLevel::Level level,Ptr<LogEvent>& event) override;
+    void log(LogLevel level,MagicPtr<LogEvent>& event) override;
 };
 
 class FileLogAppender :public ILogAppender{
 public:
     explicit FileLogAppender(const std::string &path);
-    void log(LogLevel::Level level,Ptr<LogEvent>& event) override;
+    void log(LogLevel level,MagicPtr<LogEvent>& event) override;
     bool reOpen();
 private:
     Mutex m_Mutex;
@@ -96,41 +95,41 @@ class Logger {
     friend class LoggerManager;
 public:
     explicit Logger(const std::string &name = "root");
-    void addILogAppender(Ptr<ILogAppender>& logAppender);
-    void delILogAppender(Ptr<ILogAppender>& logAppender);
+    void addILogAppender(MagicPtr<ILogAppender>& logAppender);
+    void delILogAppender(MagicPtr<ILogAppender>& logAppender);
     void setFormatter(const std::string &pattern);
-    void setLevel(LogLevel::Level);
-    LogLevel::Level getLevel() const;
+    void setLevel(LogLevel);
+    LogLevel getLevel() const;
     const std::string& getLogName() const;
-    void log(LogLevel::Level level,Ptr<LogEvent>& event);
+    void log(LogLevel level,MagicPtr<LogEvent>& event);
 private:
     Mutex m_Mutex;
     std::string m_LogName;
     std::string m_Formatter;
-	LogLevel::Level m_Level;
-	std::list<Ptr<ILogAppender>> m_ILogAppenders;
+	LogLevel m_Level;
+	std::list<MagicPtr<ILogAppender>> m_ILogAppenders;
 };
 
 class LoggerManager{
 public:
     LoggerManager();
-    Ptr<Logger>& getRoot();
-    Ptr<Logger>& getLogger(const std::string& name);
+    MagicPtr<Logger>& getRoot();
+    MagicPtr<Logger>& getLogger(const std::string& name);
 private:
-    Ptr<Logger> m_Root;
-    std::map<std::string,Ptr<Logger>> m_Loggers;
+    MagicPtr<Logger> m_Root;
+    std::map<std::string,MagicPtr<Logger>> m_Loggers;
 };
 typedef Singleton<LoggerManager>        LoggerMgr;
 
 class LogWrap{
 public:
-    LogWrap(Ptr<Logger>& logger,const LogLevel::Level level,Ptr<LogEvent>&& event);
+    LogWrap(MagicPtr<Logger>& logger,const LogLevel level,MagicPtr<LogEvent>&& event);
     std::stringstream& get();
     ~LogWrap();
 private:
-    Ptr<Logger>& m_Logger;
-    LogLevel::Level m_Level;
-    Ptr<LogEvent> m_Event;
+    MagicPtr<Logger>& m_Logger;
+    LogLevel m_Level;
+    MagicPtr<LogEvent> m_Event;
 };
 
 

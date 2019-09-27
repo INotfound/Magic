@@ -30,8 +30,10 @@
 *.exe
 *.out
 *.app
-/build
+/.vs
 /.vscode
+/out
+/build
 tags
 CMakeSettings.json
 .ycm_extra_conf.py

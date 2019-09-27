@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <functional>
 
-#define Ptr std::unique_ptr
+#define MagicPtr std::unique_ptr
 
 /**/
 class Noncopyable{
@@ -27,8 +27,8 @@ public:
 template <class T>
 class SingletonPtr{
 public:
-    static Ptr<T> GetInstance(){
-        static Ptr<T> v(new T());
+    static MagicPtr<T> GetInstance(){
+        static MagicPtr<T> v(new T());
         return v;
     }
 };
