@@ -10,26 +10,26 @@ namespace Magic {
 	static auto& g_Log = MAGIC_LOG_ROOT();
 
 	RWMutex::RWMutex() {
-		InitializeSRWLock(m_RWLock.lock);
+		InitializeSRWLock(&m_RWLock.lock);
 	}
 	RWMutex::~RWMutex() {
 	}
 	void RWMutex::readLock() {
-		AcquireSRWLockShared(m_RWLock.lock);
+		AcquireSRWLockShared(&m_RWLock.lock);
 		m_RWLock.flag = RW::Read;
 	}
 	void RWMutex::writeLock() {
-		AcquireSRWLockExclusive(m_RWLock.lock);
+		AcquireSRWLockExclusive(&m_RWLock.lock);
 		m_RWLock.flag = RW::Wirte;
 	}
 	void RWMutex::unlock() {
 		switch (m_RWLock.flag)
 		{
 		case RW::Read:
-			ReleaseSRWLockShared(m_RWLock.lock);
+			ReleaseSRWLockShared(&m_RWLock.lock);
 			break;
 		case RW::Wirte:
-			ReleaseSRWLockExclusive(m_RWLock.lock);
+			ReleaseSRWLockExclusive(&m_RWLock.lock);
 			break;
 		}
 	}
@@ -63,7 +63,6 @@ namespace Magic {
 		ReleaseMutex(m_Mutex);
 	}
 
-
 	Semaphore::Semaphore(uint32_t count) {
 		m_Semaphore = CreateSemaphore(nullptr, count, 1, nullptr);
 	}
@@ -78,6 +77,12 @@ namespace Magic {
 
 	void Semaphore::notify() {
 		ReleaseSemaphore(m_Semaphore, 1, nullptr);
+	}
+
+	uint32_t GetProcessorsNumber() {
+		SYSTEM_INFO info;
+		GetSystemInfo(&info);
+		return info.dwNumberOfProcessors;
 	}
 
 	int64_t GetThreadId() {

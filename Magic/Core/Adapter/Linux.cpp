@@ -32,7 +32,7 @@ namespace Magic {
 	}
 
 	Spinlock::Spinlock() {
-		pthread_spin_init(&m_Mutex, 0);
+		pthread_spin_init(&m_Mutex, PTHREAD_PROCESS_PRIVATE);
 	}
 
 	Spinlock::~Spinlock() {
@@ -84,7 +84,11 @@ namespace Magic {
 
 
 
-
+	uint32_t GetProcessorsNumber() {
+		unsigned int count = 1;
+		count = sysconf(_SC_NPROCESSORS_CONF);
+		return count;
+	}
 
 	int64_t GetThreadId() {
 		return syscall(SYS_gettid);

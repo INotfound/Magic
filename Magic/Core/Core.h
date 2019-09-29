@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <string>
 #include <memory>
 #include <stdint.h>
@@ -115,4 +116,41 @@ private:
 private:
     T& m_Mutex;
     bool m_Locked;
+};
+
+/*
+** enum class State{
+**	Init, //Normal State
+**  InitToRun, // Invoke State
+**  Run //Normal State
+** };
+**  Only Save [Invoke State] And [Invoke State Func]
+** S : Normal State
+** I : Invoke State
+** F : Invoke Func
+*/
+template<class S,class I, class F>
+class StateMachine
+{
+public:
+	StateMachine(S normal) :m_CurrentState(normal) {
+	}
+	~StateMachine() {}
+	void invoke(const I invokeState,const S setState) {
+		m_CurrentState = setState;
+		auto& callback = m_Map[invokeState];
+		if(!callback){ 
+			throw std::logic_error("Func is nullptr");
+		}
+		callback();
+	}
+	void addFunc(const I invokeState,const F callback) {
+		m_Map[invokeState] = callback;
+	}
+	S& GetState() {
+		return m_CurrentState;
+	}
+private:
+	S m_CurrentState;
+	std::map<I, F> m_Map;
 };

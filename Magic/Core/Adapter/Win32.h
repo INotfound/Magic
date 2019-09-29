@@ -9,7 +9,7 @@ enum class RW {
 };
 typedef struct{
 	RW flag;
-	PSRWLOCK lock;
+	SRWLOCK lock;
 }WinRWLock;
 
 typedef HANDLE				sem_t;

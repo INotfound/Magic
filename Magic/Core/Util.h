@@ -4,6 +4,8 @@
 
 namespace Magic{
 
+uint32_t GetProcessorsNumber();
+
 uint64_t GetFiberId();
 
 int64_t GetThreadId();

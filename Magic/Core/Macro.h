@@ -26,8 +26,8 @@
 #define MAGIC_ASSERT(exp,msg) \
 	if(!(exp)) { \
 		MAGIC_LOG_ERROR(MAGIC_LOG_ROOT()) << "ASSERTION: " << #exp \
-			<< "\n" << msg \
+			<< "\n=>" << msg \
+			<< "\nBackTrace:\n" \
 			<< Magic::BackTraceToString(); \
 		assert(exp); \
-}
-
+	}

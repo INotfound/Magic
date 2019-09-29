@@ -9,7 +9,7 @@ namespace Magic{
 class Thread{
     typedef Semaphore Mutex;
 public:
-    Thread(const std::string& threadName,std::function<void()> callback);
+    Thread(const std::string& threadName,const std::function<void()> callback);
 	~Thread();
 	void join();
     int64_t getId();
