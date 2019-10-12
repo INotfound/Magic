@@ -6,10 +6,12 @@
 
 enum class TestState{
 	Init,
-	InitToRun,
 	Run,
 };
-
+enum class TestStateEvent {
+	InitToRun,
+	RunToInit
+};
 
 void func() {
 	MAGIC_LOG_DEBUG(MAGIC_LOG_ROOT()) << "ProcessorsNumber:" << Magic::GetProcessorsNumber();
@@ -17,9 +19,9 @@ void func() {
 
 int main(void) {
 	Magic::Init();
-	StateMachine<TestState, std::function<void()>> State(TestState::Init);
-	State.addFunc(TestState::InitToRun, func);
-	State.invoke(TestState::InitToRun, TestState::Run);
+	StateMachine<TestState, TestStateEvent,std::function<void()>> State(TestState::Init);
+	State.addFunc(TestStateEvent::InitToRun, TestState::Run, func);
+	State.invoke(TestStateEvent::InitToRun);
 	getchar();
 	return -1;
 }

@@ -3,11 +3,11 @@
 #if defined(_WIN32) || defined(_WIN64)
 
 #include <windows.h>
-enum class RW {
-	Read,
-	Wirte
-};
 typedef struct{
+	enum class RW {
+		Read,
+		Wirte
+	};
 	RW flag;
 	SRWLOCK lock;
 }WinRWLock;

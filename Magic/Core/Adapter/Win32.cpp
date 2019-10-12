@@ -16,19 +16,19 @@ namespace Magic {
 	}
 	void RWMutex::readLock() {
 		AcquireSRWLockShared(&m_RWLock.lock);
-		m_RWLock.flag = RW::Read;
+		m_RWLock.flag = WinRWLock::RW::Read;
 	}
 	void RWMutex::writeLock() {
 		AcquireSRWLockExclusive(&m_RWLock.lock);
-		m_RWLock.flag = RW::Wirte;
+		m_RWLock.flag = WinRWLock::RW::Wirte;
 	}
 	void RWMutex::unlock() {
 		switch (m_RWLock.flag)
 		{
-		case RW::Read:
+		case WinRWLock::RW::Read:
 			ReleaseSRWLockShared(&m_RWLock.lock);
 			break;
-		case RW::Wirte:
+		case WinRWLock::RW::Wirte:
 			ReleaseSRWLockExclusive(&m_RWLock.lock);
 			break;
 		}

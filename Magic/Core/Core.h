@@ -129,28 +129,36 @@ private:
 ** I : Invoke State
 ** F : Invoke Func
 */
-template<class S,class I, class F>
+template<class S,class E, class F>
 class StateMachine
 {
+private:
+	typedef struct {
+		S state;
+		F function;
+	}StateEvent;
 public:
 	StateMachine(S normal) :m_CurrentState(normal) {
 	}
 	~StateMachine() {}
-	void invoke(const I invokeState,const S setState) {
-		m_CurrentState = setState;
-		auto& callback = m_Map[invokeState];
+	void invoke(const E invokeState) {
+		auto& tStateEvent = m_Map[invokeState];
+		m_CurrentState = tStateEvent.state;
+		auto& callback = tStateEvent.function;
 		if(!callback){ 
 			throw std::logic_error("Func is nullptr");
 		}
 		callback();
 	}
-	void addFunc(const I invokeState,const F callback) {
-		m_Map[invokeState] = callback;
+	void addFunc(const E invokeState, const S toState, const F callback) {
+		auto& tStateEvent = m_Map[invokeState];
+		tStateEvent.state = toState;
+		tStateEvent.function = callback;
 	}
 	S& GetState() {
 		return m_CurrentState;
 	}
 private:
 	S m_CurrentState;
-	std::map<I, F> m_Map;
+	std::map<E,StateEvent> m_Map;
 };
