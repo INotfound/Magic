@@ -135,7 +135,7 @@ class StateMachine
 private:
 	typedef struct {
 		S state;
-		F function;
+		std::function<F> function;
 	}StateEvent;
 public:
 	StateMachine(S normal) :m_CurrentState(normal) {
@@ -145,15 +145,15 @@ public:
 		auto& tStateEvent = m_Map[invokeState];
 		m_CurrentState = tStateEvent.state;
 		auto& callback = tStateEvent.function;
-		if(!callback){ 
+		if(!callback){
 			throw std::logic_error("Func is nullptr");
 		}
 		callback();
 	}
-	void addFunc(const E invokeState, const S toState, const F callback) {
+	void addFunc(const E invokeState,const S toState,const std::function<F> handleFunc) {
 		auto& tStateEvent = m_Map[invokeState];
 		tStateEvent.state = toState;
-		tStateEvent.function = callback;
+		tStateEvent.function = handleFunc;
 	}
 	S& GetState() {
 		return m_CurrentState;

@@ -3,11 +3,27 @@
 #include <string>
 #include <iostream>
 
+enum class MusicState {
+	UnReady,
+	Ready,
+	Playing,
+	Pause,
+	Stop
+};
 
-enum class TestState{
+enum class PlayerEvent {
+	Init,
+	Select,
+	Play,
+	Pause,
+	Stop
+};
+
+enum class TestState {
 	Init,
 	Run,
 };
+
 enum class TestStateEvent {
 	InitToRun,
 	RunToInit
@@ -19,7 +35,7 @@ void func() {
 
 int main(void) {
 	Magic::Init();
-	StateMachine<TestState, TestStateEvent,std::function<void()>> State(TestState::Init);
+	StateMachine<TestState, TestStateEvent,void()> State(TestState::Init);
 	State.addFunc(TestStateEvent::InitToRun, TestState::Run, func);
 	State.invoke(TestStateEvent::InitToRun);
 	getchar();
