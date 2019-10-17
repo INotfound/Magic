@@ -18,12 +18,9 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
 
     add_library(Magic ${SRC})
     target_link_libraries(Magic pthread)
 endif()
-
-
