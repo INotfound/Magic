@@ -21,7 +21,7 @@ enum class PlayerEvent {
 
 enum class TestState {
 	Init,
-	Run,
+	Run
 };
 
 enum class TestStateEvent {
@@ -38,6 +38,7 @@ int main(void) {
 	StateMachine<TestState, TestStateEvent,void()> State(TestState::Init);
 	State.addFunc(TestStateEvent::InitToRun, TestState::Run, func);
 	State.invoke(TestStateEvent::InitToRun);
+
 	getchar();
 	return -1;
 }
