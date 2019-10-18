@@ -1,4 +1,8 @@
+#include "Magic/Core/Core.h"
 #include "Magic/Magic.h"
+#include <bits/stdint-uintn.h>
+#include <cctype>
+#include <sstream>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -28,19 +32,85 @@ enum class TestStateEvent {
 	InitToRun,
 	RunToInit
 };
+class ConfigValue{
+public:
+    ConfigValue(const std::string& value,const std::string& comment)
+        :m_Value(value),m_Comment(comment){
+        }
+    void write(std::ostream& os);
+private:
+    std::string m_Value;
+    std::string m_Comment;
+};
 
-void parse(std::string str) {
-	std::string infoString;
-	std::string normalString;
-	std::string valueString;
-	std::map<std::string, std::string> keyValue;
-	std::map<std::string, std::map<std::string, std::string>> configMap;
-	uint32_t length = str.length();
-	uint32_t i = 0;
+class ConfigFile{
+public:
+    ConfigFile(const std::string& path){
+    }
+    void write(const ConfigValue& config);
+private:
+    std::string m_FilePath;
+    std::ofstream m_File;
+};
+
+class Config{
+public:
+    Config(){}
+    template<class T>
+    T& at(const std::string& name,const std::string& defaultValue,const std::string& defaultComment){
+        return m_ConfigMap[name];
+    }
+private:
+    template<class T>
+    std::string asString(const T& value){
+        m_FormatStream.clear();
+        m_FormatStream << value;
+        return m_FormatStream.str();
+    }
+    template<class T>
+    T stringAs(const std::string& value){
+        m_FormatStream.clear();
+        T temp;
+        m_FormatStream << value;
+        m_FormatStream >> temp;
+        return temp;
+    }
+    template<>
+    inline std::string stringAs<std::string>(const std::string& value){
+        return value;
+    }
+    template<>
+    bool stringAs<bool>(const std::string& value){
+        bool isOk = true;
+        std::string tValue = value;
+        {
+            auto begin = tValue.begin();
+            auto end   = tValue.end();
+            for (;begin!=end;begin++)
+                *begin = std::toupper(*begin);
+        }
+        if(tValue==std::string("FALSE") || tValue==std::string("NO") ||  tValue==std::string("0"))
+            isOk = false;
+        return isOk;
+    }
+private:
+    std::stringstream m_FormatStream;
+    std::map<std::string,MagicPtr<ConfigValue>> m_ConfigMap;
+ };
+
+
+
+
+
+void parse(std::string& str){
+    std::map<std::string,std::string> keyValue;
+    std::string normalString;
+    std::string valueString;
 	bool isInfo = false;
 	bool isValue = false;
 	bool isComment = false;
-	for (; i < length; i++) {
+    uint32_t length = 0;
+	for (uint32_t i = 0; i < length; i++) {
 		std::string::value_type charValue = str.at(i);
 		//Comment
 		if (charValue == '#') {
@@ -57,22 +127,7 @@ void parse(std::string str) {
 		//empty
 		if (charValue == ' ' || charValue == '\r')
 			continue;
-		//title(info)String
-		if (charValue == ']') {
-			isInfo = false;
-			continue;
-		}else if (isInfo == true) {
-			infoString.append(1, charValue);
-			continue;
-		}else if (charValue == '[') {
-			isInfo = true;
-			if (!infoString.empty()) {
-				configMap[infoString] = keyValue;
-				infoString.clear();
-				keyValue.clear();
-			}
-			continue;
-		}
+
 		//normalSting and value(n = v)
  		if ((charValue == '\n' || i == (length - 1)) && isValue) {
 			isValue = false;
@@ -90,14 +145,7 @@ void parse(std::string str) {
 			continue;
 		}
 
-		if (charValue == '\n')
-			continue;
 		normalString.append(1, charValue);
-	}
-	if (!infoString.empty()) {
-		configMap[infoString] = keyValue;
-		infoString.clear();
-		keyValue.clear();
 	}
 }
 
