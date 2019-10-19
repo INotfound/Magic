@@ -81,7 +81,7 @@ namespace Magic{
 		}
         this->m_FileStream.open(this->m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
 		if (isFile)
-			this->m_FileStream << welcome.c_str();
+			this->m_FileStream << welcome.c_str() << std::endl;
 		this->m_FileStream.flush();
     }
     void ConfigFile::Read(std::ostringstream& contentStream){
