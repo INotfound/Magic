@@ -36,10 +36,11 @@ void func() {
 	MAGIC_LOG_DEBUG(MAGIC_LOG_ROOT()) << "ProcessorsNumber:" << Magic::GetProcessorsNumber();
 	MAGIC_CONFIG()->at<uint32_t>("test", 123456789, "#this is test!");
 	MAGIC_CONFIG()->at<uint32_t>("test1", 1234567890);
+	MAGIC_CONFIG()->revise<std::string>("test", "123456789", "#this is xxx");
 }
 
 int main(void) {
-	Magic::Core();
+	Magic::Init();
 	StateMachine<TestState, TestStateEvent,void()> State(TestState::Init);
 	State.addFunc(TestStateEvent::InitToRun, TestState::Run, func);
 	State.invoke(TestStateEvent::InitToRun);
