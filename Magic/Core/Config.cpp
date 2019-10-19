@@ -1,6 +1,6 @@
 #include "Config.h"
 #include <sstream>
-#include <io.h>
+#include "Adapter/Adapter.h"
 namespace Magic{
     ConfigValue::ConfigValue(const std::string& name,const std::string& value,const std::string& comment)
         :m_Name(name),m_Value(value),m_Comment(comment){
