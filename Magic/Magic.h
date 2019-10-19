@@ -4,7 +4,7 @@
 #include "Core/Macro.h"
 #include "Core/Mutex.h"
 #include "Core/Thread.h"
-
+#include "Core/Config.h"
 namespace Magic{
 
 void Init(){

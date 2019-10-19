@@ -2,6 +2,7 @@ set(SRC
 	Core/Log.cpp
 	Core/Util.cpp
 	Core/Thread.cpp
+    Core/Config.cpp
 	Core/Adapter/Win32.cpp
 	Core/Adapter/Linux.cpp
 )
