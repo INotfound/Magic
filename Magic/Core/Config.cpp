@@ -1,6 +1,6 @@
 #include "Config.h"
 #include <sstream>
-
+#include <io.h>
 namespace Magic{
     ConfigValue::ConfigValue(const std::string& name,const std::string& value,const std::string& comment)
         :m_Name(name),m_Value(value),m_Comment(comment){
@@ -12,8 +12,14 @@ namespace Magic{
         return m_Comment;
     }
     void ConfigValue::write(std::ostream& os){
-        os << m_Comment << std::endl;
-        os << m_Name << '=' << m_Value << std::endl;
+		if (!m_Comment.empty())
+		{
+			os << std::endl << m_Comment << std::endl;
+		}
+		else {
+			os << std::endl;
+		}
+        os << m_Name << '=' << m_Value;
     }
 
     void ConfigFormatter::Parse(std::string& content,ConfigKeyValue& keyValue){
@@ -22,13 +28,14 @@ namespace Magic{
         std::string commentString;
         bool isValue = false;
         bool isComment = false;
-        uint32_t length = 0;
+        uint32_t length = content.length();
         for (uint32_t i = 0; i < length; i++) {
             std::string::value_type charValue = content.at(i);
             //Comment
             if (charValue == '#') {
                 isComment = true;
                 commentString.append(1,charValue);
+				continue;
             }else if (isComment == true) {
                 if (charValue != '\n') {
                     commentString.append(1,charValue);
@@ -39,9 +46,6 @@ namespace Magic{
                     continue;
                 }
             }
-            //empty
-            if (charValue == ' ' || charValue == '\r')
-                continue;
 
             //normalSting and value(n = v)
             if ((charValue == '\n' || i == (length - 1)) && isValue) {
@@ -61,13 +65,24 @@ namespace Magic{
                 isValue = true;
                 continue;
             }
+			//empty
+			if (charValue == ' ' || charValue == '\r' || charValue == '\n')
+				continue;
+
             normalString.append(1, charValue);
         }
     }
 
-    ConfigFile::ConfigFile(const std::string& path)
+    ConfigFile::ConfigFile(const std::string& path,const std::string &welcome)
         :m_Path(path){
-        this->m_FileStream.open(this->m_Path, std::ios_base::out);
+		bool isFile = false;
+		if (access(m_Path.c_str(), 0) == -1) {
+			isFile = true;
+		}
+        this->m_FileStream.open(this->m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+		if (isFile)
+			this->m_FileStream << welcome.c_str();
+		this->m_FileStream.flush();
     }
     void ConfigFile::Read(std::ostringstream& contentStream){
         if(this->m_FileStream.is_open()){
@@ -76,6 +91,7 @@ namespace Magic{
     }
     void ConfigFile::write(MagicPtr<ConfigValue>& config){
         config->write(m_FileStream);
+		m_FileStream.flush();
     }
 
     void Config::addConfigFile(MagicPtr<ConfigFile>& configFile){
@@ -85,7 +101,7 @@ namespace Magic{
         std::string content = oss.str();
         ConfigFormatter::Parse(content,m_ConfigMap);
     }
-    void Config::buildConfig(){
+    void Config::reBuild(){
         auto iter = m_ConfigMap.begin();
         auto end  = m_ConfigMap.end();
         for(;iter!=end;iter++){

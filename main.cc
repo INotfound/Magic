@@ -1,7 +1,4 @@
-#include "Magic/Core/Config.h"
-#include "Magic/Core/Core.h"
 #include "Magic/Magic.h"
-#include <bits/stdint-uintn.h>
 #include <cctype>
 #include <sstream>
 #include <vector>
@@ -37,14 +34,12 @@ enum class TestStateEvent {
 
 void func() {
 	MAGIC_LOG_DEBUG(MAGIC_LOG_ROOT()) << "ProcessorsNumber:" << Magic::GetProcessorsNumber();
-    MagicPtr<Magic::ConfigFile> configFile(new Magic::ConfigFile("config.ini"));
-    Magic::MagicConfig::GetInstance()->addConfigFile(configFile);
-    int port = Magic::MagicConfig::GetInstance()->at<int>("NetWork",2020, "#this test");
-    std::cout << "get network port: " << port << std::endl;
+	MAGIC_CONFIG()->at<uint32_t>("test", 123456789, "#this is test!");
+	MAGIC_CONFIG()->at<uint32_t>("test1", 1234567890);
 }
 
 int main(void) {
-	Magic::Init();
+	Magic::Core();
 	StateMachine<TestState, TestStateEvent,void()> State(TestState::Init);
 	State.addFunc(TestStateEvent::InitToRun, TestState::Run, func);
 	State.invoke(TestStateEvent::InitToRun);

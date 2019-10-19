@@ -12,6 +12,40 @@ class ConfigFormatter;
 typedef std::map<std::string,MagicPtr<ConfigValue>> ConfigKeyValue;
 
 
+template<class T>
+std::string asString(const T& value) {
+	std::ostringstream formatStream;
+	formatStream << value;
+	return formatStream.str();
+}
+template<class T>
+T stringAs(const std::string& value) {
+	std::stringstream formatStream;
+	formatStream.clear();
+	T temp;
+	formatStream << value;
+	formatStream >> temp;
+	return temp;
+}
+template<>
+inline std::string stringAs<std::string>(const std::string& value) {
+	return value;
+}
+template<>
+inline bool stringAs<bool>(const std::string& value) {
+	bool isOk = true;
+	std::string tValue = value;
+	{
+		auto begin = tValue.begin();
+		auto end = tValue.end();
+		for (; begin != end; begin++)
+			*begin = std::toupper(*begin);
+	}
+	if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
+		isOk = false;
+	return isOk;
+}
+
 class ConfigValue{
 public:
     ConfigValue(const std::string& name,const std::string& value,const std::string& comment);
@@ -32,7 +66,7 @@ public:
 
 class ConfigFile{
 public:
-    ConfigFile(const std::string& path);
+    ConfigFile(const std::string& path,const std::string& welcome);
     void Read(std::ostringstream& content);
     void write(MagicPtr<ConfigValue>& config);
 private:
@@ -45,62 +79,22 @@ class Config{
 public:
     Config(){};
     void addConfigFile(MagicPtr<ConfigFile>& configFile);
-    void buildConfig();
+    void reBuild();
     template<class T>
-    T at(const std::string& defaultName,const T& defaultValue,const std::string& defaultComment){
+    T at(const std::string& defaultName,const T& defaultValue,const std::string& defaultComment=""){
         auto iter = m_ConfigMap.find(defaultName);
         if(iter != m_ConfigMap.end()){
             return stringAs<T>(iter->second->getValue());
         }
 
         MagicPtr<ConfigValue> value(new ConfigValue(defaultName,asString<T>(defaultValue),defaultComment));
+		m_ConfigFile->write(value);
         m_ConfigMap[defaultName] = std::move(value);
         return stringAs<T>(m_ConfigMap[defaultName]->getValue());
     }
-
-    template<class T>
-    std::string asString(const T& value);
-    template<class T>
-    T stringAs(const std::string& value);
 
 private:
     MagicPtr<ConfigFile> m_ConfigFile;
     ConfigKeyValue m_ConfigMap;
  };
-
-template<class T>
-std::string Config::asString(const T& value){
-    std::ostringstream formatStream;
-    formatStream << value;
-    return formatStream.str();
-}
-template<class T>
-T Config::stringAs(const std::string& value){
-    std::stringstream formatStream;
-    formatStream.clear();
-    T temp;
-    formatStream << value;
-    formatStream >> temp;
-    return temp;
-}
-template<>
-std::string Config::stringAs<std::string>(const std::string& value){
-    return value;
-}
-template<>
-bool Config::stringAs<bool>(const std::string& value){
-    bool isOk = true;
-    std::string tValue = value;
-    {
-        auto begin = tValue.begin();
-        auto end = tValue.end();
-        for (;begin!=end;begin++)
-            *begin = std::toupper(*begin);
-    }
-    if(tValue==std::string("FALSE") || tValue==std::string("NO") ||  tValue==std::string("0"))
-        isOk = false;
-    return isOk;
-}
-
-typedef Singleton<Config>   MagicConfig;
 }

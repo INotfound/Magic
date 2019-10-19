@@ -3,6 +3,7 @@
 #include "Log.h"
 #include "Util.h"
 #include "Thread.h"
+#include "Config.h"
 #include "Adapter/Adapter.h"
 
 #define  MAGIC_LOG_LEVEL(logger,level) \
@@ -31,3 +32,5 @@
 			<< Magic::BackTraceToString(); \
 		assert(exp); \
 	}
+
+#define MAGIC_CONFIG() Singleton<Magic::Config>::GetInstance()
