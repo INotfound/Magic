@@ -11,8 +11,7 @@
 #include "Util.h"
 #include "Mutex.h"
 
-typedef Magic::Mutex Mutex;
-typedef Magic::Mutex::Lock MutexLock;
+
 
 namespace Magic{
 
@@ -86,7 +85,7 @@ public:
     void log(LogLevel level,MagicPtr<LogEvent>& event) override;
     bool reOpen();
 private:
-    Mutex m_Mutex;
+	MutexType m_Mutex;
     std::string m_Path;
     std::ofstream m_FileStream;
 };
@@ -103,7 +102,7 @@ public:
     const std::string& getLogName() const;
     void log(LogLevel level,MagicPtr<LogEvent>& event);
 private:
-    Mutex m_Mutex;
+	MutexType m_Mutex;
     std::string m_LogName;
     std::string m_Formatter;
 	LogLevel m_Level;

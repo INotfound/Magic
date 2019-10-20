@@ -3,6 +3,7 @@
 #include <sstream>
 #include "Adapter/Adapter.h"
 namespace Magic {
+
 	ConfigValue::ConfigValue(const std::string& name, const std::string& value, const std::string& comment)
 		:m_Name(name), m_Value(value), m_Comment(comment) {
 	}
@@ -23,7 +24,7 @@ namespace Magic {
 		os << m_Name << '=' << m_Value;
 	}
 
-	void ConfigFormatter::Parse(std::string& content, ConfigKeyValue& keyValue) {
+	void ConfigFormatter::Parse(const std::string& content, ConfigKeyValue& keyValue) {
 		std::string normalString;
 		std::string valueString;
 		std::string commentString;
@@ -76,6 +77,7 @@ namespace Magic {
 			normalString.append(1, charValue);
 		}
 	}
+	
 	ConfigFile::~ConfigFile() {
 		this->close();
 	}
@@ -97,7 +99,7 @@ namespace Magic {
 	}
 	void ConfigFile::open() {
 		bool isFile = false;
-		if (access(m_Path.c_str(), 0) == -1) {
+		if (_access(m_Path.c_str(), 0) == -1) {
 			isFile = true;
 		}
 		this->m_FileStream.open(this->m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
@@ -112,18 +114,24 @@ namespace Magic {
 	}
 
 	Config::~Config() {
-		m_ConfigFile->close();
-		std::remove(m_ConfigFile->getPath().c_str());
-		m_ConfigFile->open();
-		auto iter = m_ConfigMap.begin();
-		auto end = m_ConfigMap.end();
-		for (; iter != end; iter++) {
-			m_ConfigFile->write(iter->second);
+		MutexLock lock(m_Mutex);
+		if (m_IsChange)
+		{
+			m_ConfigFile->close();
+			std::remove(m_ConfigFile->getPath().c_str());
+			m_ConfigFile->open();
+			auto iter = m_ConfigMap.begin();
+			auto end = m_ConfigMap.end();
+			for (; iter != end; iter++) {
+				m_ConfigFile->write(iter->second);
+			}
 		}
 	}
-	Config::Config() {
+	Config::Config()
+		:m_IsChange(false){
 	}
 	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
+		MutexLock lock(m_Mutex);
 		m_ConfigFile = std::move(configFile);
 		std::ostringstream oss;
 		m_ConfigFile->read(oss);

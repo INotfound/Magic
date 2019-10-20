@@ -60,4 +60,6 @@ private:
     sem_t m_Semaphore;
 };
 
+typedef Magic::Mutex MutexType;
+typedef Magic::Mutex::Lock MutexLock;
 }
