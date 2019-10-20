@@ -77,7 +77,7 @@ namespace Magic {
 			normalString.append(1, charValue);
 		}
 	}
-	
+
 	ConfigFile::~ConfigFile() {
 		this->close();
 	}
@@ -99,7 +99,7 @@ namespace Magic {
 	}
 	void ConfigFile::open() {
 		bool isFile = false;
-		if (_access(m_Path.c_str(), 0) == -1) {
+		if (access(m_Path.c_str(), 0) == -1) {
 			isFile = true;
 		}
 		this->m_FileStream.open(this->m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
