@@ -16,12 +16,12 @@ namespace Magic {
 	void ConfigValue::write(std::ostream& os) {
 		if (!m_Comment.empty())
 		{
-			os << std::endl << m_Comment << std::endl;
+			os << std::endl << '#' << m_Comment << std::endl;
 		}
 		else {
 			os << std::endl;
 		}
-		os << m_Name << '=' << m_Value;
+		os << m_Name << " = " << m_Value;
 	}
 
 	void ConfigFormatter::Parse(const std::string& content, ConfigKeyValue& keyValue) {

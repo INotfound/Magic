@@ -224,7 +224,7 @@ namespace Magic {
 			uint32_t n = i + 1;
 			uint32_t Status = 0;
 			uint32_t Index = 0;
-			if (pattern.at(n) == '%' && n <= length) {
+			if (n < length && pattern.at(n) == '%') {
 				nomalString.append(1, '%');
 				i = n;
 				continue;
@@ -408,9 +408,6 @@ namespace Magic {
 
 	LoggerManager::LoggerManager() {
 		m_Root.reset(new Logger());
-		m_Root->setFormatter("[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%c]%T%f:%l%T%m%n");
-		MagicPtr<ILogAppender> appender(new StdOutLogAppender);
-		m_Root->addILogAppender(appender);
 	}
 
 	MagicPtr<Logger>& LoggerManager::getRoot() {

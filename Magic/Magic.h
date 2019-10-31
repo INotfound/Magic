@@ -8,9 +8,19 @@
 namespace Magic {
 	void Init(){
 		Magic::Thread::SetName("Main");
-		MagicPtr<ILogAppender> logAppender(new FileLogAppender("system.log"));
-		MagicPtr<Magic::ConfigFile> configFile(new Magic::ConfigFile("config.ini", "#Configuration!!!"));
-		MAGIC_LOG_ROOT()->addILogAppender(logAppender);
+		MagicPtr<Magic::ConfigFile> configFile(
+			new Magic::ConfigFile("config.ini", "#Configuration!!!")
+		);
 		MAGIC_CONFIG()->addConfigFile(configFile);
+
+		MAGIC_LOG_ROOT()->setFormatter(
+			MAGIC_CONFIG()->at<std::string>("LogFormater","[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%c]%T%f:%l%T%m%n")
+		);
+		MagicPtr<ILogAppender> logFileAppender(
+			new FileLogAppender(MAGIC_CONFIG()->at<std::string>("LogRootPath", "system.log"))
+		);
+		MagicPtr<ILogAppender> logStdOutAppender(new StdOutLogAppender);
+		MAGIC_LOG_ROOT()->addILogAppender(logFileAppender);
+		MAGIC_LOG_ROOT()->addILogAppender(logStdOutAppender);
 	}
 }
