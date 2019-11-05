@@ -14,6 +14,7 @@ namespace Magic {
 		return m_Comment;
 	}
 	void ConfigValue::write(std::ostream& os) {
+		os << std::endl;
 		if (!m_Comment.empty())
 		{
 			os << std::endl << '#' << m_Comment << std::endl;

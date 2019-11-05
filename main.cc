@@ -34,7 +34,7 @@ enum class TestStateEvent {
 void func() {
 	MAGIC_LOG_DEBUG(MAGIC_LOG_ROOT()) << "ProcessorsNumber:" << Magic::GetProcessorsNumber();
 	MAGIC_CONFIG()->at<uint32_t>("test", 123456789, "this is test!");
-	uint32_t i = MAGIC_CONFIG()->at<uint32_t>("test1", 1234);
+	uint64_t i = MAGIC_CONFIG()->at<uint64_t>("test1", 1234);
 	std::cout << i;
 }
 
