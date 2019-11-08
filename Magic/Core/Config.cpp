@@ -31,9 +31,10 @@ namespace Magic {
 		std::string commentString;
 		bool isValue = false;
 		bool isComment = false;
-		uint32_t length = content.length();
-		for (uint32_t i = 0; i < length; i++) {
+		uint64_t length = content.length();
+		for (uint64_t i = 0; i < length; i++) {
 			std::string::value_type charValue = content.at(i);
+
 			//Comment
 			if (charValue == '#') {
 				isComment = true;
@@ -63,14 +64,18 @@ namespace Magic {
 				valueString.clear();
 				continue;
 			}
-			else if (isValue == true) {
+			else if (isValue == true){
 				valueString.append(1, charValue);
 				continue;
 			}
 			else if (charValue == '=') {
 				isValue = true;
+				charValue = content.at(i+1);
+				if (charValue == ' ')
+					i++;
 				continue;
 			}
+
 			//empty
 			if (charValue == ' ' || charValue == '\r' || charValue == '\n')
 				continue;
