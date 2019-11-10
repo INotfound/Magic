@@ -29,10 +29,12 @@ namespace Magic {
 		std::string normalString;
 		std::string valueString;
 		std::string commentString;
+		bool isEmpty = true;
 		bool isValue = false;
 		bool isComment = false;
 		uint64_t length = content.length();
 		for (uint64_t i = 0; i < length; i++) {
+
 			std::string::value_type charValue = content.at(i);
 
 			//Comment
@@ -54,6 +56,7 @@ namespace Magic {
 
 			//normalSting and value(n = v)
 			if ((charValue == '\n' || i == (length - 1)) && isValue) {
+				isEmpty = true;
 				isValue = false;
 				if (i == (length - 1) && charValue != '\n')
 					valueString.append(1, charValue);
@@ -65,14 +68,14 @@ namespace Magic {
 				continue;
 			}
 			else if (isValue == true){
-				valueString.append(1, charValue);
+				if (!(charValue == ' ' && isEmpty)) {
+					isEmpty = false;
+					valueString.append(1, charValue);
+				}
 				continue;
 			}
 			else if (charValue == '=') {
 				isValue = true;
-				charValue = content.at(i+1);
-				if (charValue == ' ')
-					i++;
 				continue;
 			}
 
