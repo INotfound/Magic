@@ -90,7 +90,7 @@ namespace Magic {
 		return count;
 	}
 
-	int64_t GetThreadId() {
+	uint64_t GetThreadId() {
 		return syscall(SYS_gettid);
 	}
 

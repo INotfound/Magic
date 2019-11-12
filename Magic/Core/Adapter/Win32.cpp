@@ -85,7 +85,7 @@ namespace Magic {
 		return info.dwNumberOfProcessors;
 	}
 
-	int64_t GetThreadId() {
+	uint64_t GetThreadId() {
 		return GetCurrentThreadId();
 	}
 

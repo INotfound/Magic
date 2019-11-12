@@ -6,9 +6,22 @@
 #include "Config.h"
 #include "Adapter/Adapter.h"
 
-#define  MAGIC_LOG_LEVEL(logger,level) \
-                if(level >= logger->getLevel()) \
-                    Magic::LogWrap(logger,level,MagicPtr<Magic::LogEvent>(new Magic::LogEvent(__LINE__,static_cast<uint64_t>(time(nullptr)),1,Magic::GetFiberId(),Magic::GetThreadId(),__FILE__,logger->getLogName(),Magic::Thread::GetName()))).get()
+#define  MAGIC_LOG_LEVEL(logger,level)									\
+                if(level >= logger->getLevel())							\
+                    Magic::LogWrap{										\
+						logger,											\
+						level,											\
+						MagicPtr<Magic::LogEvent>{						\
+							new Magic::LogEvent{						\
+								__LINE__,								\
+								static_cast<uint64_t>(time(nullptr)),	\
+								1,										\
+								Magic::GetFiberId(),					\
+								Magic::GetThreadId(),					\
+								__FILE__,								\
+								logger->getLogName(),					\
+								Magic::Thread::GetName()				\
+					}}}.get()
 
 #define MAGIC_LOG_DEBUG(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::LogDebug)
 

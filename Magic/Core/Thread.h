@@ -19,7 +19,7 @@ protected:
     void run();
 private:
     Mutex m_Mutex;
-    int64_t m_Id = -1;
+    int64_t m_Id = 0;
     std::string m_ThreadName;
     std::function<void()> m_CallBack;
 	std::thread m_Thread;
