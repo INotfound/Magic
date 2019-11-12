@@ -5,7 +5,7 @@
 namespace Magic {
 
 	ConfigValue::ConfigValue(const std::string& name, const std::string& value, const std::string& comment)
-		:m_Name(name), m_Value(value), m_Comment(comment) {
+		:m_Name{ name }, m_Value{ value }, m_Comment{ comment } {
 	}
 	const std::string& ConfigValue::getValue() const {
 		return m_Value;
@@ -26,9 +26,9 @@ namespace Magic {
 	}
 
 	void ConfigFormatter::Parse(const std::string& content, ConfigKeyValue& keyValue) {
-		std::string normalString;
-		std::string valueString;
-		std::string commentString;
+		std::string normalString{};
+		std::string valueString{};
+		std::string commentString{};
 		bool isEmpty = true;
 		bool isValue = false;
 		bool isComment = false;
@@ -60,7 +60,7 @@ namespace Magic {
 				isValue = false;
 				if (i == (length - 1) && charValue != '\n')
 					valueString.append(1, charValue);
-				MagicPtr<ConfigValue> value(new ConfigValue(normalString, valueString, commentString));
+				MagicPtr<ConfigValue> value{ new ConfigValue{ normalString, valueString, commentString } };
 				keyValue[normalString] = std::move(value);
 				commentString.clear();
 				normalString.clear();
@@ -91,7 +91,7 @@ namespace Magic {
 		this->close();
 	}
 	ConfigFile::ConfigFile(const std::string& path, const std::string& welcome)
-		:m_Path(path),m_Welcome(welcome){
+		:m_Path{ path }, m_Welcome{ welcome }{
 		this->open();
 	}
 	const std::string& ConfigFile::getPath() const {
@@ -123,7 +123,7 @@ namespace Magic {
 	}
 
 	Config::~Config() {
-		MutexLock lock(m_Mutex);
+		MutexLock lock{ m_Mutex };
 		if (m_IsChange)
 		{
 			m_ConfigFile->close();
@@ -140,9 +140,9 @@ namespace Magic {
 		:m_IsChange(false){
 	}
 	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
-		MutexLock lock(m_Mutex);
+		MutexLock lock{ m_Mutex };
 		m_ConfigFile = std::move(configFile);
-		std::ostringstream oss;
+		std::ostringstream oss{};
 		m_ConfigFile->read(oss);
 		std::string content = oss.str();
 		ConfigFormatter::Parse(content, m_ConfigMap);

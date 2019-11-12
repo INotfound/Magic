@@ -29,7 +29,7 @@ template <class T>
 class SingletonPtr{
 public:
     static MagicPtr<T> GetInstance(){
-        static MagicPtr<T> v(new T());
+		static MagicPtr<T> v{ new T{} };
         return v;
     }
 };

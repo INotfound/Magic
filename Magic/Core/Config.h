@@ -88,7 +88,7 @@ public:
 	T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "") {
 		MutexLock lock(m_Mutex);
 		m_IsChange = true;
-		MagicPtr<ConfigValue> value(new ConfigValue(defaultName, asString<T>(defaultValue), defaultComment));
+		MagicPtr<ConfigValue> value{new ConfigValue{ defaultName, asString<T>(defaultValue), defaultComment }};
 		m_ConfigMap[defaultName].reset();
 		m_ConfigMap[defaultName] = std::move(value);
 		return stringAs<T>(m_ConfigMap[defaultName]->getValue());
@@ -101,7 +101,7 @@ public:
 			return stringAs<T>(iter->second->getValue());
 		}
 		//New Config Item
-		MagicPtr<ConfigValue> value(new ConfigValue(defaultName, asString<T>(defaultValue), defaultComment));
+		MagicPtr<ConfigValue> value{new ConfigValue{ defaultName, asString<T>(defaultValue), defaultComment }};
 		m_ConfigFile->write(value);
 		m_ConfigMap[defaultName] = std::move(value);
 		return stringAs<T>(m_ConfigMap[defaultName]->getValue());
