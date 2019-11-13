@@ -29,11 +29,11 @@ namespace Magic {
 		std::string normalString{};
 		std::string valueString{};
 		std::string commentString{};
-		bool isEmpty = true;
-		bool isValue = false;
-		bool isComment = false;
-		uint64_t length = content.length();
-		for (uint64_t i = 0; i < length; i++) {
+		bool isEmpty{ true };
+		bool isValue{ false };
+		bool isComment{ false };
+		uint64_t length{ content.length() };
+		for (uint64_t i{ 0 }; i < length; i++) {
 
 			std::string::value_type charValue = content.at(i);
 
@@ -107,7 +107,7 @@ namespace Magic {
 		m_FileStream.flush();
 	}
 	void ConfigFile::open() {
-		bool isFile = false;
+		bool isFile{ false };
 		if (access(m_Path.c_str(), 0) == -1) {
 			isFile = true;
 		}
@@ -129,8 +129,8 @@ namespace Magic {
 			m_ConfigFile->close();
 			std::remove(m_ConfigFile->getPath().c_str());
 			m_ConfigFile->open();
-			auto iter = m_ConfigMap.begin();
-			auto end = m_ConfigMap.end();
+			auto iter{ m_ConfigMap.begin() };
+			auto end{ m_ConfigMap.end() };
 			for (; iter != end; iter++) {
 				m_ConfigFile->write(iter->second);
 			}
@@ -144,7 +144,7 @@ namespace Magic {
 		m_ConfigFile = std::move(configFile);
 		std::ostringstream oss{};
 		m_ConfigFile->read(oss);
-		std::string content = oss.str();
+		std::string content{ oss.str() };
 		ConfigFormatter::Parse(content, m_ConfigMap);
 	}
 

@@ -4,8 +4,8 @@
 
 using namespace Magic;
 
-static thread_local Thread* g_Thread =nullptr;
-static thread_local std::string g_ThreadName ="UNKNOW";
+static thread_local Thread* g_Thread{ nullptr };
+static thread_local std::string g_ThreadName{ "UNKNOW" };
 static auto& g_Log = MAGIC_LOG_ROOT();
 
 Thread::Thread(const std::string& threadName,const std::function<void()> callback)

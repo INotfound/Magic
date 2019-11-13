@@ -13,7 +13,7 @@
 
 namespace Magic {
 
-	static auto& g_Log = MAGIC_LOG_ROOT();
+	static auto& g_Log{ MAGIC_LOG_ROOT() };
 
 	RWMutex::RWMutex() {
 		pthread_rwlock_init(&m_RWLock, nullptr);
@@ -85,7 +85,7 @@ namespace Magic {
 
 
 	uint32_t GetProcessorsNumber() {
-		unsigned int count = 1;
+		unsigned int count{ 1 };
 		count = sysconf(_SC_NPROCESSORS_CONF);
 		return count;
 	}
@@ -102,17 +102,17 @@ namespace Magic {
 			MAGIC_LOG_ERROR(g_Log) << "backtrace_symbols error!";
 		}
 		uint32_t newValue = static_cast<uint32_t>(retValue);
-		for (uint32_t i = skip; i < newValue; i++) {
+		for (uint32_t i{ skip }; i < newValue; i++) {
 			vec.push_back(string[i]);
 		}
 		free(buffer);
 	}
 
 	std::string BackTraceToString(uint32_t size, uint32_t skip, const std::string& prefix) {
-		std::vector<std::string> vecString;
+		std::vector<std::string> vecString{};
 		BackTrace(vecString, size, skip);
-		std::stringstream ss;
-		for (size_t i = 0; i < vecString.size(); i++)
+		std::stringstream ss{};
+		for (size_t i{ 0 }; i < vecString.size(); i++)
 		{
 			ss << prefix << vecString.at(i) << std::endl;
 		}

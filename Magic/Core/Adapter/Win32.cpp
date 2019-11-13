@@ -7,7 +7,7 @@
 
 namespace Magic {
 
-	static auto& g_Log = MAGIC_LOG_ROOT();
+	static auto& g_Log{ MAGIC_LOG_ROOT() };
 
 	RWMutex::RWMutex() {
 		InitializeSRWLock(&m_RWLock.lock);
@@ -80,7 +80,7 @@ namespace Magic {
 	}
 
 	uint32_t GetProcessorsNumber() {
-		SYSTEM_INFO info;
+		SYSTEM_INFO info{};
 		GetSystemInfo(&info);
 		return info.dwNumberOfProcessors;
 	}

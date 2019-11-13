@@ -184,7 +184,7 @@ namespace Magic {
 #else
 		localtime_r(&time_secounds, &nowTime);
 #endif
-		char buf[1024] = { 0 };
+		char buf[1024]{ 0 };
 		strftime(buf, sizeof(buf), this->m_FormatString.c_str(), &nowTime);
 		os << buf;
 	}
@@ -219,8 +219,8 @@ namespace Magic {
 		std::string nomalString{};
 		std::string cmd{};
 		std::string fmt{};
-		uint32_t length = pattern.size();
-		for (uint32_t i = 0; i < length; i++) {
+		uint64_t length{ pattern.size() };
+		for (uint32_t i{ 0 }; i < length; i++) {
 			cmd.clear();
 			fmt.clear();
 			if (pattern.at(i) != '%') {
@@ -229,7 +229,7 @@ namespace Magic {
 			}
 			uint32_t n{ i + 1 };
 			uint32_t Status{};
-			uint32_t Index;
+			uint32_t Index{};
 			if (n < length && pattern.at(n) == '%') {
 				nomalString.append(1, '%');
 				i = n;
@@ -304,7 +304,7 @@ namespace Magic {
 		};
 
 		for (auto& value : vec) {
-			uint32_t flag = std::get<2>(value);
+			uint32_t flag{ std::get<2>(value) };
 			if (flag == 0) {
 				this->m_Items.push_back(MagicPtr<ILogFormatItem>{new StringFormatItem{ std::get<0>(value) }});
 			}
@@ -370,8 +370,8 @@ namespace Magic {
 
 	void  Logger::delILogAppender(MagicPtr<ILogAppender>& logAppender) {
 		MutexLock lock{ m_Mutex };
-		auto vBegin = this->m_ILogAppenders.begin();
-		auto vEnd = this->m_ILogAppenders.end();
+		auto vBegin{ this->m_ILogAppenders.begin() };
+		auto vEnd { this->m_ILogAppenders.end()};
 		for (; vBegin != vEnd; vBegin++) {
 			if (*vBegin == logAppender) {
 				this->m_ILogAppenders.erase(vBegin);
@@ -424,7 +424,7 @@ namespace Magic {
 		if (name == m_Root->m_LogName) {
 			return m_Root;
 		}
-		auto it = m_Loggers.find(name);
+		auto it{ m_Loggers.find(name) };
 		if (it != m_Loggers.end()) {
 			return it->second;
 		}
