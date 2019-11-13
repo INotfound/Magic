@@ -37,15 +37,12 @@ namespace Magic {
 	Spinlock::Spinlock() {
 		InitializeCriticalSectionAndSpinCount(&m_Mutex, 0);
 	}
-
 	Spinlock::~Spinlock() {
 		DeleteCriticalSection(&m_Mutex);
 	}
-
 	void Spinlock::lock() {
 		EnterCriticalSection(&m_Mutex);
 	}
-
 	void Spinlock::unlock() {
 		LeaveCriticalSection(&m_Mutex);
 	}
@@ -66,15 +63,12 @@ namespace Magic {
 	Semaphore::Semaphore(uint32_t count) {
 		m_Semaphore = CreateSemaphore(nullptr, count, 1, nullptr);
 	}
-
 	Semaphore::~Semaphore() {
 		CloseHandle(m_Semaphore);
 	}
-
 	void Semaphore::wait() {
 		WaitForSingleObject(m_Semaphore, INFINITE);
 	}
-
 	void Semaphore::notify() {
 		ReleaseSemaphore(m_Semaphore, 1, nullptr);
 	}
@@ -95,4 +89,3 @@ namespace Magic {
 
 }
 #endif
-

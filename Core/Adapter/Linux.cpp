@@ -34,15 +34,12 @@ namespace Magic {
 	Spinlock::Spinlock() {
 		pthread_spin_init(&m_Mutex, PTHREAD_PROCESS_PRIVATE);
 	}
-
 	Spinlock::~Spinlock() {
 		pthread_spin_destroy(&m_Mutex);
 	}
-
 	void Spinlock::lock() {
 		pthread_spin_lock(&m_Mutex);
 	}
-
 	void Spinlock::unlock() {
 		pthread_spin_unlock(&m_Mutex);
 	}
@@ -65,23 +62,19 @@ namespace Magic {
 			throw std::logic_error("sem_init error!");
 		}
 	}
-
 	Semaphore::~Semaphore() {
 		sem_destroy(&m_Semaphore);
 	}
-
 	void Semaphore::wait() {
 		if (sem_wait(&m_Semaphore)) {
 			throw std::logic_error("Semaphore wait error!");
 		}
 	}
-
 	void Semaphore::notify() {
 		if (sem_post(&m_Semaphore)) {
 			throw std::logic_error("Semaphore notify error!");
 		}
 	}
-
 
 
 	uint32_t GetProcessorsNumber() {
@@ -96,12 +89,12 @@ namespace Magic {
 
 	static void BackTrace(std::vector<std::string>& vec, uint32_t size, uint32_t skip) {
 		void** buffer = static_cast<void**>(std::malloc(sizeof(void*) * size));
-		int32_t retValue = backtrace(buffer, size);
+		int32_t retValue{ backtrace(buffer, size) };
 		char** string = backtrace_symbols(buffer, retValue);
 		if (string == nullptr) {
 			MAGIC_LOG_ERROR(g_Log) << "backtrace_symbols error!";
 		}
-		uint32_t newValue = static_cast<uint32_t>(retValue);
+		uint32_t newValue{ static_cast<uint32_t>(retValue) };
 		for (uint32_t i{ skip }; i < newValue; i++) {
 			vec.push_back(string[i]);
 		}
