@@ -20,7 +20,7 @@ template <class T>
 class Singleton{
 public:
     static T* GetInstance(){
-        static T v;
+		static T v{};
         return &v;
     }
 };
@@ -38,7 +38,7 @@ template<class T>
 class ScopedLockImpl : public Noncopyable{
 public:
     ScopedLockImpl(T& mutex)
-        :m_Mutex(mutex),m_Locked(false){
+		:m_Mutex{ mutex }, m_Locked{ false }{
         lock();
     }
     ~ScopedLockImpl(){
@@ -66,7 +66,7 @@ template<class T>
 class ReadScopedLockImpl : public Noncopyable{
 public:
     ReadScopedLockImpl(T& mutex)
-        :m_Mutex(mutex),m_Locked(false){
+		:m_Mutex{ mutex }, m_Locked{ false }{
         lock();
     }
     ~ReadScopedLockImpl(){
@@ -94,7 +94,7 @@ template<class T>
 class WriteScopedLockImpl : public Noncopyable{
 public:
     WriteScopedLockImpl(T& mutex)
-        :m_Mutex(mutex),m_Locked(false){
+		:m_Mutex{ mutex }, m_Locked{ false }{
         lock();
     }
     ~WriteScopedLockImpl(){

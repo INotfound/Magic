@@ -1,8 +1,11 @@
+cmake_minimum_required(VERSION 3.0)
+project(Magic)
+
 set(SRC
 	Core/Log.cpp
 	Core/Util.cpp
 	Core/Thread.cpp
-    	Core/Config.cpp
+	Core/Config.cpp
 	Core/Adapter/Win32.cpp
 	Core/Adapter/Linux.cpp
 )
@@ -25,3 +28,6 @@ elseif(UNIX AND NOT ANDROID)
     add_library(Magic ${SRC})
     target_link_libraries(Magic pthread)
 endif()
+
+add_executable(Test Test/Test.cc)
+target_link_libraries(Test Magic)

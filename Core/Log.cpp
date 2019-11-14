@@ -15,10 +15,10 @@ namespace Magic {
         case LogLevel::Name: \
             return #Name;
 			LEVEL(LogDebug)
-			LEVEL(LogInfo)
-			LEVEL(LogWarn)
-			LEVEL(LogError)
-			LEVEL(LogFatal)
+				LEVEL(LogInfo)
+				LEVEL(LogWarn)
+				LEVEL(LogError)
+				LEVEL(LogFatal)
 #undef LEVEL
 		}
 		return "<(LogError)>";
@@ -144,8 +144,6 @@ namespace Magic {
 		std::string m_Str;
 	};
 
-
-
 	void MessageFormatItem::format(std::ostream& os, const LogLevel, const MagicPtr<LogEvent>& event) {
 		os << event->getContent().c_str();
 	}
@@ -177,7 +175,7 @@ namespace Magic {
 	}
 
 	void DateTimeFormatItem::format(std::ostream& os, const LogLevel, const MagicPtr<LogEvent>& event) {
-		time_t time_secounds = static_cast<int32_t>(event->getTime());
+		time_t time_secounds{ static_cast<int32_t>(event->getTime()) };
 		struct tm nowTime {};
 #if defined(_WIN32) || defined(_WIN64)
 		localtime_s(&nowTime, &time_secounds);
@@ -282,7 +280,7 @@ namespace Magic {
 			nomalString.clear();
 		}
 
-		static std::map<std::string, std::function<MagicPtr<ILogFormatItem>(const std::string&)>> formatItem = {
+		static std::map<std::string, std::function<MagicPtr<ILogFormatItem>(const std::string&)>> formatItem {
 	#define Item(str,type) \
 	        {#str,[](const std::string&){ return MagicPtr<ILogFormatItem>{new type};}}
 	#define ItemEx(str,type) \
@@ -309,7 +307,7 @@ namespace Magic {
 				this->m_Items.push_back(MagicPtr<ILogFormatItem>{new StringFormatItem{ std::get<0>(value) }});
 			}
 			if (flag == 1) {
-				auto iter = formatItem.find(std::get<0>(value));
+				auto iter{ formatItem.find(std::get<0>(value)) };
 				if (iter == formatItem.end()) {
 					std::cout << "<(LogError)>: Not Found Item" << std::endl;
 				}
@@ -338,7 +336,7 @@ namespace Magic {
 		this->m_Formatter->format(std::cout, level, event);
 	}
 
-	FileLogAppender::FileLogAppender(const std::string& path) :m_Path(path) {
+	FileLogAppender::FileLogAppender(const std::string& path) :m_Path{ path } {
 		this->reOpen();
 	}
 
@@ -357,7 +355,8 @@ namespace Magic {
 
 
 	Logger::Logger(const std::string& name)
-		:m_LogName(name), m_Level(LogLevel::LogDebug) {
+		:m_LogName{ name }, 
+		m_Level{ LogLevel::LogDebug } {
 	}
 
 	void  Logger::addILogAppender(MagicPtr<ILogAppender>& logAppender) {
@@ -371,7 +370,7 @@ namespace Magic {
 	void  Logger::delILogAppender(MagicPtr<ILogAppender>& logAppender) {
 		MutexLock lock{ m_Mutex };
 		auto vBegin{ this->m_ILogAppenders.begin() };
-		auto vEnd { this->m_ILogAppenders.end()};
+		auto vEnd { this->m_ILogAppenders.end() };
 		for (; vBegin != vEnd; vBegin++) {
 			if (*vBegin == logAppender) {
 				this->m_ILogAppenders.erase(vBegin);
@@ -432,7 +431,10 @@ namespace Magic {
 		return  m_Loggers[name];
 	}
 
-	LogWrap::LogWrap(MagicPtr<Logger>& logger, const LogLevel level, MagicPtr<LogEvent>&& event) :m_Logger(logger), m_Level(level), m_Event(std::move(event)) {
+	LogWrap::LogWrap(MagicPtr<Logger>& logger, const LogLevel level, MagicPtr<LogEvent>&& event) 
+		:m_Logger{ logger }, 
+		m_Level{ level }, 
+		m_Event{ std::move(event) } {
 	}
 	std::stringstream& LogWrap::get() {
 		return this->m_Event->getStream();

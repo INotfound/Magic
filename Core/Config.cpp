@@ -35,7 +35,7 @@ namespace Magic {
 		uint64_t length{ content.length() };
 		for (uint64_t i{ 0 }; i < length; i++) {
 
-			std::string::value_type charValue = content.at(i);
+			std::string::value_type charValue{ content.at(i) };
 
 			//Comment
 			if (charValue == '#') {
@@ -137,12 +137,12 @@ namespace Magic {
 		}
 	}
 	Config::Config()
-		:m_IsChange(false){
+		:m_IsChange{ false } {
 	}
 	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
 		MutexLock lock{ m_Mutex };
-		m_ConfigFile = std::move(configFile);
 		std::ostringstream oss{};
+		m_ConfigFile = std::move(configFile);
 		m_ConfigFile->read(oss);
 		std::string content{ oss.str() };
 		ConfigFormatter::Parse(content, m_ConfigMap);

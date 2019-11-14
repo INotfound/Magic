@@ -14,15 +14,15 @@ typedef std::map<std::string, MagicPtr<ConfigValue>> ConfigKeyValue;
 
 template<class T>
 std::string asString(const T& value) {
-	std::ostringstream formatStream;
+	std::ostringstream formatStream{};
 	formatStream << value;
 	return formatStream.str();
 }
 template<class T>
 T stringAs(const std::string& value) {
-	std::stringstream formatStream;
+	std::stringstream formatStream{};
 	formatStream.clear();
-	T temp;
+	T temp{};
 	formatStream << value;
 	formatStream >> temp;
 	return temp;
@@ -33,11 +33,11 @@ inline std::string stringAs<std::string>(const std::string& value) {
 }
 template<>
 inline bool stringAs<bool>(const std::string& value) {
-	bool isOk = true;
-	std::string tValue = value;
+	bool isOk{ true };
+	std::string tValue{ value };
 	{
-		auto begin = tValue.begin();
-		auto end = tValue.end();
+		auto begin{ tValue.begin() };
+		auto end{ tValue.end() };
 		for (; begin != end; begin++)
 			*begin = std::toupper(*begin);
 	}
@@ -86,7 +86,7 @@ public:
 	void addConfigFile(MagicPtr<ConfigFile>& configFile);
 	template<class T>
 	T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "") {
-		MutexLock lock(m_Mutex);
+		MutexLock lock{ m_Mutex };
 		m_IsChange = true;
 		MagicPtr<ConfigValue> value{new ConfigValue{ defaultName, asString<T>(defaultValue), defaultComment }};
 		m_ConfigMap[defaultName].reset();
@@ -95,8 +95,8 @@ public:
 	}
 	template<class T>
 	T at(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "") {
-		MutexLock lock(m_Mutex);
-		auto iter = m_ConfigMap.find(defaultName);
+		MutexLock lock{ m_Mutex };
+		auto iter{ m_ConfigMap.find(defaultName) };
 		if (iter != m_ConfigMap.end()) {
 			return stringAs<T>(iter->second->getValue());
 		}
