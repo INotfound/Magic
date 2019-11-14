@@ -58,8 +58,8 @@ private:
         }
     }
 private:
-    T& m_Mutex;
-    bool m_Locked;
+	T& m_Mutex{};
+	bool m_Locked{ false };
 };
 
 template<class T>
@@ -86,8 +86,8 @@ private:
         }
     }
 private:
-    T& m_Mutex;
-    bool m_Locked;
+	T& m_Mutex{};
+	bool m_Locked{ false };
 };
 
 template<class T>
@@ -114,6 +114,6 @@ private:
         }
     }
 private:
-    T& m_Mutex;
-    bool m_Locked;
+	T& m_Mutex{};
+	bool m_Locked{ false };
 };

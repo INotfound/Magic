@@ -136,9 +136,9 @@ namespace Magic {
 			}
 		}
 	}
-	Config::Config()
-		:m_IsChange{ false } {
-	}
+
+	Config::Config(){}
+
 	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
 		MutexLock lock{ m_Mutex };
 		std::ostringstream oss{};

@@ -39,15 +39,15 @@ public:
     const std::string& getThreadName()  const;
     std::stringstream& getStream();
 private:
-    uint32_t m_Line     =0;
-    uint64_t m_Time     =0;
-    uint64_t m_Elapse   =0;
-    uint64_t m_FiberId  =0;
-    uint64_t m_ThreadId =0;
-    std::string m_File;
-    std::string m_LogName;
-    std::string m_ThreadName;
-    std::stringstream m_StringStream;
+	uint32_t m_Line{};
+	uint64_t m_Time{};
+	uint64_t m_Elapse{};
+	uint64_t m_FiberId{};
+	uint64_t m_ThreadId{};
+	std::string m_File{};
+	std::string m_LogName{};
+	std::string m_ThreadName{};
+	std::stringstream m_StringStream{};
 };
 
 class ILogFormatItem{
@@ -61,7 +61,7 @@ public:
     explicit LogFormatter(const std::string& pattern);
     void format(std::ostream &os,const LogLevel  level,const MagicPtr<LogEvent>& event);
 private:
-    std::vector<MagicPtr<ILogFormatItem>> m_Items;
+	std::vector<MagicPtr<ILogFormatItem>> m_Items{};
 };
 
 
@@ -71,7 +71,7 @@ public:
     virtual ~ILogAppender();
     virtual void log(LogLevel level,MagicPtr<LogEvent>& event) =0;
 protected:
-    MagicPtr<LogFormatter> m_Formatter;
+	MagicPtr<LogFormatter> m_Formatter{};
 };
 
 class StdOutLogAppender :public ILogAppender{
@@ -85,9 +85,9 @@ public:
     void log(LogLevel level,MagicPtr<LogEvent>& event) override;
     bool reOpen();
 private:
-	MutexType m_Mutex;
-    std::string m_Path;
-    std::ofstream m_FileStream;
+	MutexType m_Mutex{};
+	std::string m_Path{};
+	std::ofstream m_FileStream{};
 };
 
 class Logger {
@@ -102,11 +102,11 @@ public:
     const std::string& getLogName() const;
     void log(LogLevel level,MagicPtr<LogEvent>& event);
 private:
-	MutexType m_Mutex;
-    std::string m_LogName;
-    std::string m_Formatter;
-	LogLevel m_Level;
-	std::list<MagicPtr<ILogAppender>> m_ILogAppenders;
+	MutexType m_Mutex{};
+	std::string m_LogName{};
+	std::string m_Formatter{};
+	LogLevel m_Level{};
+	std::list<MagicPtr<ILogAppender>> m_ILogAppenders{};
 };
 
 class LoggerManager{
@@ -115,8 +115,8 @@ public:
     MagicPtr<Logger>& getRoot();
     MagicPtr<Logger>& getLogger(const std::string& name);
 private:
-    MagicPtr<Logger> m_Root;
-    std::map<std::string,MagicPtr<Logger>> m_Loggers;
+	MagicPtr<Logger> m_Root{};
+	std::map<std::string, MagicPtr<Logger>> m_Loggers{};
 };
 typedef Singleton<LoggerManager>        LoggerMgr;
 
@@ -126,9 +126,9 @@ public:
     std::stringstream& get();
     ~LogWrap();
 private:
-    MagicPtr<Logger>& m_Logger;
-    LogLevel m_Level;
-    MagicPtr<LogEvent> m_Event;
+	MagicPtr<Logger>& m_Logger{};
+	LogLevel m_Level{};
+	MagicPtr<LogEvent> m_Event{};
 };
 
 

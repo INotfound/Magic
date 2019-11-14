@@ -53,9 +53,9 @@ public:
 	const std::string& getComment() const;
 	void write(std::ostream& os);
 private:
-	std::string m_Name;
-	std::string m_Value;
-	std::string m_Comment;
+	std::string m_Name{};
+	std::string m_Value{};
+	std::string m_Comment{};
 };
 
 class ConfigFormatter {
@@ -73,9 +73,9 @@ public:
 	void open();
 	void close();
 private:
-	std::string m_Path;
-	std::string m_Welcome;
-	std::fstream m_FileStream;
+	std::string m_Path{};
+	std::string m_Welcome{};
+	std::fstream m_FileStream{};
 };
 
 
@@ -107,10 +107,9 @@ public:
 		return stringAs<T>(m_ConfigMap[defaultName]->getValue());
 	}
 private:
-	bool m_IsChange;
-	MutexType m_Mutex;
-	ConfigKeyValue m_ConfigMap;
-	MagicPtr<ConfigFile> m_ConfigFile;
-
+	bool m_IsChange{false};
+	MutexType m_Mutex{};
+	ConfigKeyValue m_ConfigMap{};
+	MagicPtr<ConfigFile> m_ConfigFile{};
 };
 }
