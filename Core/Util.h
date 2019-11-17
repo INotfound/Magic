@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#include "Adapter/Adapter.h"
+#include "Adapter.h"
 
 namespace Magic{
 

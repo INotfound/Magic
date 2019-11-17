@@ -1,13 +1,18 @@
 #include "Log.h"
-#include <map>
 #include <tuple>
 #include <time.h>
 #include <iostream>
 
-
-
 namespace Magic {
-
+	class Logger;
+	class LogWrap;
+	class LogEvent;
+	class ILogAppender;
+	class LogFormatter;
+	class LoggerManager;
+	class ILogFormatItem;
+	class FileLogAppender;
+	class StdOutLogAppender;
 	const char* ToString(const LogLevel  level) {
 		switch (level)
 		{
@@ -24,7 +29,73 @@ namespace Magic {
 		return "<(LogError)>";
 	}
 
+	Logger::Logger(const std::string& name)
+		:m_LogName{ name }{
+	}
 
+	void  Logger::addILogAppender(MagicPtr<ILogAppender>& logAppender) {
+		MutexLock lock{ m_Mutex };
+		if (!logAppender->m_Formatter) {
+			logAppender->m_Formatter.reset(new LogFormatter{ m_Formatter });
+		}
+		this->m_ILogAppenders.push_back(std::move(logAppender));
+	}
+
+	void  Logger::delILogAppender(MagicPtr<ILogAppender>& logAppender) {
+		MutexLock lock{ m_Mutex };
+		auto vBegin{ this->m_ILogAppenders.begin() };
+		auto vEnd{ this->m_ILogAppenders.end() };
+		for (; vBegin != vEnd; vBegin++) {
+			if (*vBegin == logAppender) {
+				this->m_ILogAppenders.erase(vBegin);
+				return;
+			}
+		}
+	}
+
+	void Logger::setFormatter(const std::string& pattern) {
+		MutexLock lock{ m_Mutex };
+		this->m_Formatter = pattern;
+	}
+
+	void Logger::setLevel(LogLevel val) {
+		MutexLock lock{ m_Mutex };
+		this->m_Level = val;
+	}
+
+	LogLevel Logger::getLevel() const {
+		return this->m_Level;
+	}
+
+	const std::string& Logger::getLogName() const {
+		return this->m_LogName;
+	}
+
+	void  Logger::log(LogLevel level, MagicPtr<LogEvent>& event) {
+		if (level >= m_Level) {
+			MutexLock lock{ m_Mutex };
+			if (!this->m_ILogAppenders.empty()) {
+				for (auto& v : this->m_ILogAppenders) {
+					v->log(level, event);
+				}
+			}
+			else if (LoggerMgr::GetInstance()->getRoot()) {
+				LoggerMgr::GetInstance()->getRoot()->log(level, event);
+			}
+		}
+	}
+
+	LogWrap::LogWrap(const LogLevel level,MagicPtr<Logger>& logger, MagicPtr<LogEvent>&& event)
+		:m_Level{ level },
+		m_Logger{ logger },
+		m_Event{ std::move(event) } {
+	}
+	std::stringstream& LogWrap::get() {
+		return this->m_Event->getStream();
+	}
+	LogWrap::~LogWrap() {
+		this->m_Logger->log(this->m_Level, this->m_Event);
+	}
 
 	LogEvent::LogEvent(uint32_t line, uint64_t time, uint64_t elapse, uint64_t fiberId,
 		uint64_t threadId, const std::string& file, const std::string& logName, const std::string& threadName)
@@ -68,8 +139,7 @@ namespace Magic {
 		return m_StringStream;
 	}
 
-	//FormatterItem
-	//###############################BEGIN##################################
+//###############################BEGIN##################################
 	ILogFormatItem::~ILogFormatItem() {}
 
 	class MessageFormatItem :public ILogFormatItem {
@@ -210,6 +280,7 @@ namespace Magic {
 	void StringFormatItem::format(std::ostream& os, const LogLevel, const MagicPtr<LogEvent>&) {
 		os << this->m_Str.c_str();
 	}
+	//###############################*END*##################################
 
 	LogFormatter::LogFormatter(const std::string& pattern) {
 		//cmd fmt flag
@@ -280,23 +351,23 @@ namespace Magic {
 			nomalString.clear();
 		}
 
-		static std::map<std::string, std::function<MagicPtr<ILogFormatItem>(const std::string&)>> formatItem {
+		static std::map<std::string, std::function<MagicPtr<ILogFormatItem>(const std::string&)>> formatItem{
 	#define Item(str,type) \
 	        {#str,[](const std::string&){ return MagicPtr<ILogFormatItem>{new type};}}
 	#define ItemEx(str,type) \
 	        {#str,[](const std::string& fmt){ return MagicPtr<ILogFormatItem>{new type{fmt}};}}
-			Item(m, MessageFormatItem),            //m:æ¶ˆæ¯
-			Item(p, LevelFormatItem),              //p:æ—¥å¿—çº§åˆ«
-			Item(r, ElapseFormatItem),             //r:ç´¯è®¡æ¯«ç§’æ•°
-			Item(c, LogNameFormatItem),            //c:æ—¥å¿—åç§°
-			Item(t, ThreadIdFormatItem),           //t:çº¿ç¨‹id
-			Item(n, NewLineFormatItem),            //n:æ¢è¡Œ
-			Item(f, FilePathFormatItem),           //f:æ–‡ä»¶å
-			Item(l, LineFormatItem),               //l:è¡Œå·
+			Item(m, MessageFormatItem),            //m:ÏûÏ¢
+			Item(p, LevelFormatItem),              //p:ÈÕÖ¾¼¶±ð
+			Item(r, ElapseFormatItem),             //r:ÀÛ¼ÆºÁÃëÊý
+			Item(c, LogNameFormatItem),            //c:ÈÕÖ¾Ãû³Æ
+			Item(t, ThreadIdFormatItem),           //t:Ïß³Ìid
+			Item(n, NewLineFormatItem),            //n:»»ÐÐ
+			Item(f, FilePathFormatItem),           //f:ÎÄ¼þÃû
+			Item(l, LineFormatItem),               //l:ÐÐºÅ
 			Item(T, TabFormatItem),                //T:Tab
-			Item(F, FiberIdFormatItem),            //F:åç¨‹id
-			Item(N, ThreadNameFormatItem),         //N:çº¿ç¨‹åç§°
-			ItemEx(d, DateTimeFormatItem),         //d:æ—¶é—´
+			Item(F, FiberIdFormatItem),            //F:Ð­³Ìid
+			Item(N, ThreadNameFormatItem),         //N:Ïß³ÌÃû³Æ
+			ItemEx(d, DateTimeFormatItem),         //d:Ê±¼ä
 	#undef ItemEx
 	#undef Item
 		};
@@ -323,93 +394,6 @@ namespace Magic {
 			v->format(os, level, event);
 		}
 	}
-	//###############################*END*##################################
-
-
-	ILogAppender::~ILogAppender() {}
-
-	void StdOutLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event) {
-		if (!this->m_Formatter) {
-			std::cout << "<(LogError)> : " << std::endl;
-			return;
-		}
-		this->m_Formatter->format(std::cout, level, event);
-	}
-
-	FileLogAppender::FileLogAppender(const std::string& path) :m_Path{ path } {
-		this->reOpen();
-	}
-
-	void FileLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event) {
-		this->m_Formatter->format(this->m_FileStream, level, event);
-	}
-
-	bool FileLogAppender::reOpen() {
-		MutexLock lock{ m_Mutex };
-		if (this->m_FileStream) {
-			this->m_FileStream.close();
-		}
-		this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
-		return this->m_FileStream.is_open();
-	}
-
-
-	Logger::Logger(const std::string& name)
-		:m_LogName{ name }, 
-		m_Level{ LogLevel::LogDebug } {
-	}
-
-	void  Logger::addILogAppender(MagicPtr<ILogAppender>& logAppender) {
-		MutexLock lock{ m_Mutex };
-		if (!logAppender->m_Formatter) {
-			logAppender->m_Formatter.reset(new LogFormatter{ m_Formatter });
-		}
-		this->m_ILogAppenders.push_back(std::move(logAppender));
-	}
-
-	void  Logger::delILogAppender(MagicPtr<ILogAppender>& logAppender) {
-		MutexLock lock{ m_Mutex };
-		auto vBegin{ this->m_ILogAppenders.begin() };
-		auto vEnd { this->m_ILogAppenders.end() };
-		for (; vBegin != vEnd; vBegin++) {
-			if (*vBegin == logAppender) {
-				this->m_ILogAppenders.erase(vBegin);
-				return;
-			}
-		}
-	}
-
-	void Logger::setFormatter(const std::string& pattern) {
-		MutexLock lock{ m_Mutex };
-		this->m_Formatter = pattern;
-	}
-
-	void Logger::setLevel(LogLevel val) {
-		MutexLock lock{ m_Mutex };
-		this->m_Level = val;
-	}
-
-	LogLevel Logger::getLevel() const {
-		return this->m_Level;
-	}
-
-	const std::string& Logger::getLogName() const {
-		return this->m_LogName;
-	}
-
-	void  Logger::log(LogLevel level, MagicPtr<LogEvent>& event) {
-		if (level >= m_Level) {
-			MutexLock lock{ m_Mutex };
-			if (!this->m_ILogAppenders.empty()) {
-				for (auto& v : this->m_ILogAppenders) {
-					v->log(level, event);
-				}
-			}
-			else if (LoggerMgr::GetInstance()->getRoot()) {
-				LoggerMgr::GetInstance()->getRoot()->log(level, event);
-			}
-		}
-	}
 
 	LoggerManager::LoggerManager() {
 		m_Root.reset(new Logger{});
@@ -427,20 +411,33 @@ namespace Magic {
 		if (it != m_Loggers.end()) {
 			return it->second;
 		}
-		m_Loggers[name].reset(new Logger{name});
+		m_Loggers[name].reset(new Logger{ name });
 		return  m_Loggers[name];
 	}
 
-	LogWrap::LogWrap(MagicPtr<Logger>& logger, const LogLevel level, MagicPtr<LogEvent>&& event) 
-		:m_Logger{ logger }, 
-		m_Level{ level }, 
-		m_Event{ std::move(event) } {
-	}
-	std::stringstream& LogWrap::get() {
-		return this->m_Event->getStream();
-	}
-	LogWrap::~LogWrap() {
-		this->m_Logger->log(this->m_Level, this->m_Event);
+	FileLogAppender::FileLogAppender(const std::string& path) 
+		:m_Path{ path } {
+		this->reOpen();
 	}
 
+	void FileLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event) {
+		this->m_Formatter->format(this->m_FileStream, level, event);
+	}
+
+	bool FileLogAppender::reOpen() {
+		MutexLock lock{ m_Mutex };
+		if (this->m_FileStream) {
+			this->m_FileStream.close();
+		}
+		this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
+		return this->m_FileStream.is_open();
+	}
+
+	void StdOutLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event) {
+		if (!this->m_Formatter) {
+			std::cout << "<(LogError)> "<< std::endl;
+			return;
+		}
+		this->m_Formatter->format(std::cout, level, event);
+	}
 }

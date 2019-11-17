@@ -117,3 +117,40 @@ private:
 	T& m_Mutex{};
 	bool m_Locked{ false };
 };
+
+template<class T>
+std::string AsString(const T& value) {
+	std::ostringstream formatStream{};
+	formatStream << value;
+	return formatStream.str();
+}
+
+template<class T>
+T StringAs(const std::string& value) {
+	std::stringstream formatStream{};
+	formatStream.clear();
+	T temp{};
+	formatStream << value;
+	formatStream >> temp;
+	return temp;
+}
+
+template<>
+inline std::string StringAs<std::string>(const std::string& value) {
+	return value;
+}
+
+template<>
+inline bool StringAs<bool>(const std::string& value) {
+	bool isOk{ true };
+	std::string tValue{ value };
+	{
+		auto begin{ tValue.begin() };
+		auto end{ tValue.end() };
+		for (; begin != end; begin++)
+			*begin = std::toupper(*begin);
+	}
+	if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
+		isOk = false;
+	return isOk;
+}

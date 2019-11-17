@@ -4,13 +4,13 @@
 #include "Util.h"
 #include "Thread.h"
 #include "Config.h"
-#include "Adapter/Adapter.h"
+#include "Adapter.h"
 
 #define  MAGIC_LOG_LEVEL(logger,level)									\
                 if(level >= logger->getLevel())							\
                     Magic::LogWrap{										\
-						logger,											\
 						level,											\
+						logger,											\
 						MagicPtr<Magic::LogEvent>{						\
 							new Magic::LogEvent{						\
 								__LINE__,								\
