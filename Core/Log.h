@@ -22,11 +22,11 @@ namespace Magic{
 	class StdOutLogAppender;
 
 	enum class LogLevel {
-		LogDebug = 1,
-		LogInfo = 2,
-		LogWarn = 3,
-		LogError = 4,
-		LogFatal = 5
+		LogDebug	= 1,
+		LogInfo		= 2,
+		LogWarn		= 3,
+		LogError	= 4,
+		LogFatal	= 5
 	};
 	const char* ToString(const LogLevel level);
 

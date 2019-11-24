@@ -9,14 +9,16 @@ namespace Magic {
 	class Config;
 	class ConfigFile;
 	class ConfigValue;
-	class ConfigFormatter;
+	class IConfigFormatter;
+	class InIConfigFormatter;
+
 	typedef std::map<std::string, MagicPtr<ConfigValue>> ConfigKeyValue;
 
 	class Config{
 	public:
 		~Config();
 		Config();
-		void addConfigFile(MagicPtr<ConfigFile>& configFile);
+		void addConfigFile(MagicPtr<ConfigFile>& configFile,MagicPtr<IConfigFormatter>& configFormatter);
 		template<class T>
 		T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "") {
 			MutexLock lock{ m_Mutex };
@@ -74,9 +76,14 @@ namespace Magic {
 		std::string m_Comment{};
 	};
 
-	class ConfigFormatter {
+	class IConfigFormatter {
 	public:
-		static void Parse(const std::string& content, ConfigKeyValue& keyValue);
+		~IConfigFormatter() {};
+		virtual void parse(const std::string& content, ConfigKeyValue& keyValue) = 0;
 	};
 
+	class InIConfigFormatter :public IConfigFormatter {
+	public:
+		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
+	};
 }

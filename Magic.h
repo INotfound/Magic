@@ -11,13 +11,14 @@ namespace Magic {
 		MagicPtr<Magic::ConfigFile> configFile{
 			new Magic::ConfigFile{"Config.ini","#Configuration!!!"}
 		};
-
-		MAGIC_CONFIG()->addConfigFile(configFile);
+		MagicPtr<Magic::IConfigFormatter> configFormatter{
+			new Magic::InIConfigFormatter{}
+		};
+		MAGIC_CONFIG()->addConfigFile(configFile,configFormatter);
 
 		MagicPtr<ILogAppender> logFileAppender{
 			new FileLogAppender{MAGIC_CONFIG()->at<std::string>("LogPath", "System.log")}
 		};
-
 		MagicPtr<ILogAppender> logStdOutAppender{ new StdOutLogAppender };
 
 		MAGIC_LOG_ROOT()->setFormatter(

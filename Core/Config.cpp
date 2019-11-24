@@ -19,12 +19,12 @@ namespace Magic {
 	}
 	Config::Config() {
 	}
-	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
+	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile,MagicPtr<IConfigFormatter>& configFormatter) {
 		MutexLock lock{ m_Mutex };
 		std::ostringstream oss{};
 		m_ConfigFile = std::move(configFile);
 		m_ConfigFile->read(oss);
-		ConfigFormatter::Parse(oss.str(), m_ConfigMap);
+		configFormatter->parse(oss.str(), m_ConfigMap);
 	}
 
 	ConfigFile::~ConfigFile() {
@@ -82,7 +82,7 @@ namespace Magic {
 		os << m_Name << "=" << m_Value;
 	}
 
-	void ConfigFormatter::Parse(const std::string& content, ConfigKeyValue& keyValue) {
+	void InIConfigFormatter::parse(const std::string& content, ConfigKeyValue& keyValue) {
 		std::string normalString{};
 		std::string valueString{};
 		std::string commentString{};
