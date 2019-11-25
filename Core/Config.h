@@ -18,7 +18,7 @@ namespace Magic {
 	public:
 		~Config();
 		Config();
-		void addConfigFile(MagicPtr<ConfigFile>& configFile,MagicPtr<IConfigFormatter>& configFormatter);
+		void addConfigFile(MagicPtr<ConfigFile>& configFile);
 		template<class T>
 		T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "") {
 			MutexLock lock{ m_Mutex };
@@ -53,23 +53,25 @@ namespace Magic {
 	public:
 		~ConfigFile();
 		ConfigFile(const std::string& path, const std::string& welcome);
-		const std::string& getPath() const;
-		void read(std::ostringstream& content);
-		void write(MagicPtr<ConfigValue>& config);
 		void open();
 		void close();
+		const std::string& getPath() const;
+		void read(ConfigKeyValue& keyValue);
+		void write(MagicPtr<ConfigValue>& config);
+		void addFormatter(MagicPtr<IConfigFormatter>& configFormatter);
 	private:
 		std::string m_Path{};
 		std::string m_Welcome{};
 		std::fstream m_FileStream{};
+		MagicPtr<IConfigFormatter> m_Formatter{};
 	};
 
 	class ConfigValue {
 	public:
 		ConfigValue(const std::string& name, const std::string& value, const std::string& comment);
+		const std::string& getName() const;
 		const std::string& getValue() const;
 		const std::string& getComment() const;
-		void write(std::ostream& os);
 	private:
 		std::string m_Name{};
 		std::string m_Value{};
@@ -80,10 +82,12 @@ namespace Magic {
 	public:
 		~IConfigFormatter() {};
 		virtual void parse(const std::string& content, ConfigKeyValue& keyValue) = 0;
+		virtual void write(MagicPtr<ConfigValue>& configValue, std::ostream& os) =0;
 	};
 
 	class InIConfigFormatter :public IConfigFormatter {
 	public:
 		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
+		void write(MagicPtr<ConfigValue>& configValue, std::ostream& os) override;
 	};
 }

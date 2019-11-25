@@ -8,14 +8,17 @@
 namespace Magic {
 	void Init(){
 		Magic::Thread::SetName("Main");
+		//Config
 		MagicPtr<Magic::ConfigFile> configFile{
 			new Magic::ConfigFile{"Config.ini","#Configuration!!!"}
 		};
 		MagicPtr<Magic::IConfigFormatter> configFormatter{
 			new Magic::InIConfigFormatter{}
 		};
-		MAGIC_CONFIG()->addConfigFile(configFile,configFormatter);
+		configFile->addFormatter(configFormatter);
+		MAGIC_CONFIG()->addConfigFile(configFile);
 
+		//Log
 		MagicPtr<ILogAppender> logFileAppender{
 			new FileLogAppender{MAGIC_CONFIG()->at<std::string>("LogPath", "System.log")}
 		};
