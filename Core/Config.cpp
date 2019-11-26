@@ -5,16 +5,10 @@ namespace Magic {
 	Config::~Config() {
 		MutexLock lock{ m_Mutex };
 		if (m_IsChange){
-			auto iter{ m_ConfigMap.begin() };
-			auto end{ m_ConfigMap.end() };
-
 			m_ConfigFile->close();
 			std::remove(m_ConfigFile->getPath().c_str());
 			m_ConfigFile->open();
-
-			for (; iter != end; iter++){
-				m_ConfigFile->write(iter->second);
-			}
+			m_ConfigFile->write(m_ConfigMap);
 		}
 	}
 	Config::Config() {
@@ -28,18 +22,13 @@ namespace Magic {
 	ConfigFile::~ConfigFile() {
 		this->close();
 	}
-	ConfigFile::ConfigFile(const std::string& path, const std::string& welcome)
-		:m_Path{ path }, m_Welcome{ welcome } {
+	ConfigFile::ConfigFile(const std::string& path)
+		:m_Path{ path } {
 		this->open();
 	}
 	void ConfigFile::open() {
-		bool isFile{ false };
-		if (access(m_Path.c_str(), 0) == -1)
-			isFile = true;
-		this->m_FileStream.open(this->m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
-		if (isFile)
-			this->m_FileStream << m_Welcome.c_str();
-		this->m_FileStream.flush();
+		this->m_FileStream.open(m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
+		
 	}
 	void ConfigFile::close() {
 		if (this->m_FileStream.is_open()) {
@@ -56,8 +45,8 @@ namespace Magic {
 			m_Formatter->parse(content.str(), keyValue);
 		}
 	}
-	void ConfigFile::write(MagicPtr<ConfigValue>& config) {
-		m_Formatter->write(config,m_FileStream);
+	void ConfigFile::write(ConfigKeyValue& config) {
+		m_Formatter->write(m_FileStream,config);
 		m_FileStream.flush();
 	}
 	void ConfigFile::addFormatter(MagicPtr<IConfigFormatter>& configFormatter) {
@@ -78,6 +67,18 @@ namespace Magic {
 		return m_Comment;
 	}
 
+	void InIConfigFormatter::write(std::ostream& os, ConfigKeyValue& KeyValue) {
+		auto iter{ KeyValue.begin() };
+		auto end{ KeyValue.end() };
+		for (; iter != end; iter++) {
+			MagicPtr<ConfigValue>& value{ iter->second };
+			if (!value->getComment().empty()) {
+				os << "#" << value->getComment() << std::endl;
+			}
+			os << value->getName() << "=" << value->getValue() << std::endl;
+			os << std::endl;
+		}
+	}
 	void InIConfigFormatter::parse(const std::string& content, ConfigKeyValue& keyValue) {
 		std::string normalString{};
 		std::string valueString{};
@@ -135,14 +136,5 @@ namespace Magic {
 			normalString.append(1, charValue);
 		}
 	}
-	void InIConfigFormatter::write(MagicPtr<ConfigValue>& configValue, std::ostream& os) {
-		os << std::endl;
-		if (!configValue->getComment().empty()) {
-			os << std::endl << "#" << configValue->getComment() << std::endl;
-		}
-		else {
-			os << std::endl;
-		}
-		os << configValue->getName() << "=" << configValue->getValue();
-	}
+	
 }

@@ -10,7 +10,7 @@ namespace Magic {
 		Magic::Thread::SetName("Main");
 		//Config
 		MagicPtr<Magic::ConfigFile> configFile{
-			new Magic::ConfigFile{"Config.ini","#Configuration!!!"}
+			new Magic::ConfigFile{"Config.ini"}
 		};
 		MagicPtr<Magic::IConfigFormatter> configFormatter{
 			new Magic::InIConfigFormatter{}

@@ -27,10 +27,10 @@ namespace Magic {
 				return StringAs<T>(iter->second->getValue());
 			}
 			//New Config Item
+			m_IsChange = true;
 			MagicPtr<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
-			m_ConfigFile->write(value);
 			m_ConfigMap[defaultName] = std::move(value);
-			return StringAs<T>(m_ConfigMap[defaultName]->getValue());
+			return defaultValue;
 		}
 		template<class T>
 		T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "") {
@@ -39,7 +39,7 @@ namespace Magic {
 			MagicPtr<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
 			m_ConfigMap[defaultName].reset();
 			m_ConfigMap[defaultName] = std::move(value);
-			return StringAs<T>(m_ConfigMap[defaultName]->getValue);
+			return defaultValue;
 		}
 
 	private:
@@ -52,16 +52,15 @@ namespace Magic {
 	class ConfigFile {
 	public:
 		~ConfigFile();
-		ConfigFile(const std::string& path, const std::string& welcome);
+		ConfigFile(const std::string& path);
 		void open();
 		void close();
 		const std::string& getPath() const;
 		void read(ConfigKeyValue& keyValue);
-		void write(MagicPtr<ConfigValue>& config);
+		void write(ConfigKeyValue& config);
 		void addFormatter(MagicPtr<IConfigFormatter>& configFormatter);
 	private:
 		std::string m_Path{};
-		std::string m_Welcome{};
 		std::fstream m_FileStream{};
 		MagicPtr<IConfigFormatter> m_Formatter{};
 	};
@@ -81,13 +80,13 @@ namespace Magic {
 	class IConfigFormatter {
 	public:
 		~IConfigFormatter() {};
+		virtual void write(std::ostream& os, ConfigKeyValue& KeyValue) = 0;
 		virtual void parse(const std::string& content, ConfigKeyValue& keyValue) = 0;
-		virtual void write(MagicPtr<ConfigValue>& configValue, std::ostream& os) =0;
 	};
 
 	class InIConfigFormatter :public IConfigFormatter {
 	public:
+		void write(std::ostream& os, ConfigKeyValue& KeyValue) override;
 		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
-		void write(MagicPtr<ConfigValue>& configValue, std::ostream& os) override;
 	};
 }
