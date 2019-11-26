@@ -1,7 +1,8 @@
 #pragma once
 #include <map>
-#include <string>
 #include <memory>
+#include <string>
+#include <sstream>
 #include <stdint.h>
 #include <functional>
 
