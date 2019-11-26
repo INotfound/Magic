@@ -12,7 +12,9 @@ set(SRC
 
 if(WIN32 AND NOT MINGW)
     message("~~~~~~~~~WIN32 Configuration~~~~~~~~")
-    add_library(Magic ${SRC})
+    add_library(Magic SHARED ${SRC})
+	set(LIBS
+	)
 elseif(WIN32 AND MINGW)
     message("~~~~~~~~~MINGW Configuration~~~~~~~~")
 elseif(UNIX AND NOT ANDROID)
@@ -25,9 +27,11 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
 
-    add_library(Magic ${SRC})
-    target_link_libraries(Magic pthread)
+    add_library(Magic SHARED ${SRC})
+	#target_link_libraries(Magic ${libs})
+	set(LIBS
+		pthread
+	)
 endif()
-
 add_executable(Test Test/Test.cc)
 target_link_libraries(Test Magic)

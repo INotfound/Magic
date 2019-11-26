@@ -1,3 +1,3 @@
-[submodule "ThirdParty"]
-	path = ThirdParty
+[submodule "ThirdParty/Json"]
+	path = ThirdParty/Json
 	url = https://github.com/nlohmann/json
