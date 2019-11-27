@@ -20,28 +20,9 @@ namespace Magic {
 		Config();
 		void addConfigFile(MagicPtr<ConfigFile>& configFile);
 		template<class T>
-		T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "") {
-			MutexLock lock{ m_Mutex };
-			auto iter{ m_ConfigMap.find(defaultName) };
-			if (iter != m_ConfigMap.end()) {
-				return StringAs<T>(iter->second->getValue());
-			}
-			//New Config Item
-			m_IsChange = true;
-			MagicPtr<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
-			m_ConfigMap[defaultName] = std::move(value);
-			return defaultValue;
-		}
+		T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "");
 		template<class T>
-		T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "") {
-			MutexLock lock{ m_Mutex };
-			m_IsChange = true;
-			MagicPtr<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
-			m_ConfigMap[defaultName].reset();
-			m_ConfigMap[defaultName] = std::move(value);
-			return defaultValue;
-		}
-
+		T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "");
 	private:
 		MutexType m_Mutex{};
 		bool m_IsChange{ false };
@@ -89,4 +70,27 @@ namespace Magic {
 		void write(std::ostream& os, ConfigKeyValue& KeyValue) override;
 		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
 	};
+
+	template<class T>
+	T Config::at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment) {
+		MutexLock lock{ m_Mutex };
+		auto iter{ m_ConfigMap.find(defaultName) };
+		if (iter != m_ConfigMap.end()) {
+			return StringAs<T>(iter->second->getValue());
+		}
+		//New Config Item
+		m_IsChange = true;
+		MagicPtr<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
+		m_ConfigMap[defaultName] = std::move(value);
+		return defaultValue;
+	}
+	template<class T>
+	T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
+		MutexLock lock{ m_Mutex };
+		m_IsChange = true;
+		MagicPtr<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
+		m_ConfigMap[defaultName].reset();
+		m_ConfigMap[defaultName] = std::move(value);
+		return defaultValue;
+	}
 }
