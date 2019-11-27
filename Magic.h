@@ -8,14 +8,15 @@
 namespace Magic {
 	void Init(){
 		Magic::Thread::SetName("Main");
+
 		//Config
 		MagicPtr<Magic::ConfigFile> configFile{
-			new Magic::ConfigFile{"Config.ini"}
+			new Magic::ConfigFile{"Config.json"}
 		};
-		MagicPtr<Magic::IConfigFormatter> configFormatter{
-			new Magic::InIConfigFormatter{}
+		MagicPtr<Magic::IConfigFormatter> jsonConfigFormatter{
+					new Magic::JsonConfigFormatter{}
 		};
-		configFile->addFormatter(configFormatter);
+		configFile->addFormatter(jsonConfigFormatter);
 		MAGIC_CONFIG()->addConfigFile(configFile);
 
 		//Log

@@ -1,6 +1,7 @@
 #include "Config.h"
-
+#include "nlohmann/json.hpp"
 namespace Magic {
+	using Json = nlohmann::json;
 
 	Config::~Config() {
 		MutexLock lock{ m_Mutex };
@@ -55,7 +56,11 @@ namespace Magic {
 
 	ConfigValue::ConfigValue(const std::string& name, const std::string& value, const std::string& comment)
 		:m_Name{ name }, m_Value{ value }, m_Comment{ comment } {
-
+		if (!m_Comment.empty())
+			m_IsComment = true;
+	}
+	bool ConfigValue::isComment() const{
+		return m_IsComment;
 	}
 	const std::string& ConfigValue::getName() const {
 		return m_Name;
@@ -137,4 +142,29 @@ namespace Magic {
 		}
 	}
 	
+	void JsonConfigFormatter::write(std::ostream& os, ConfigKeyValue& KeyValue) {
+		MagicPtr<Json> json{ new Json{} };
+		for(auto&v : KeyValue)
+		{
+			auto& configValue{ v.second };
+			if (configValue->isComment())
+				(*json)[v.first + "Comment"] = configValue->getComment();
+			(*json)[v.first] = configValue->getValue();
+		}
+		os << (*json);
+	}
+	void JsonConfigFormatter::parse(const std::string& content, ConfigKeyValue& keyValue) {
+		if (content.empty())
+			return;
+		MagicPtr<Json> json{ new Json{ Json::parse(content) } };
+		auto& iter{ json->begin() };
+		auto& end{ json->end() };
+		for (; iter != end; iter++)
+		{
+			std::string keyName{ iter.key() };
+			MagicPtr<ConfigValue> value{ new ConfigValue{keyName,iter.value()} };
+			keyValue[keyName] = std::move(value);
+		}
+	}
+
 }

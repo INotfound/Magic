@@ -10,12 +10,13 @@ set(SRC
 	Core/Adapter/Linux.cpp
 )
 
+
+
 if(WIN32 AND NOT MINGW)
     message("~~~~~~~~~WIN32 Configuration~~~~~~~~")
-    add_library(Magic SHARED ${SRC})
+    add_library(Magic ${SRC})
 	set(LIBS
-	)
-	target_link_libraries(Magic ${LIBS})
+    )
 elseif(WIN32 AND MINGW)
     message("~~~~~~~~~MINGW Configuration~~~~~~~~")
 elseif(UNIX AND NOT ANDROID)
@@ -28,11 +29,18 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
 
-    add_library(Magic SHARED ${SRC})
+    add_library(Magic ${SRC})
 	set(LIBS
 		pthread
 	)
-	target_link_libraries(Magic ${LIBS})
 endif()
+target_link_libraries(Magic ${LIBS})
+
+#nlohmann_json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(ThirdParty/Json)
+include_directories(ThirdParty/Json/single_include)
+target_link_libraries(Magic PRIVATE nlohmann_json::nlohmann_json)
+
 add_executable(Test Test/Test.cc)
 target_link_libraries(Test Magic)

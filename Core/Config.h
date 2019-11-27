@@ -48,7 +48,8 @@ namespace Magic {
 
 	class ConfigValue {
 	public:
-		ConfigValue(const std::string& name, const std::string& value, const std::string& comment);
+		ConfigValue(const std::string& name, const std::string& value, const std::string& comment = "");
+		bool isComment() const;
 		const std::string& getName() const;
 		const std::string& getValue() const;
 		const std::string& getComment() const;
@@ -56,6 +57,7 @@ namespace Magic {
 		std::string m_Name{};
 		std::string m_Value{};
 		std::string m_Comment{};
+		bool m_IsComment{ false };
 	};
 
 	class IConfigFormatter {
@@ -67,6 +69,14 @@ namespace Magic {
 
 	class InIConfigFormatter :public IConfigFormatter {
 	public:
+		~InIConfigFormatter() {};
+		void write(std::ostream& os, ConfigKeyValue& KeyValue) override;
+		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
+	};
+
+	class JsonConfigFormatter :public IConfigFormatter {
+	public:
+		~JsonConfigFormatter() {};
 		void write(std::ostream& os, ConfigKeyValue& KeyValue) override;
 		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
 	};
