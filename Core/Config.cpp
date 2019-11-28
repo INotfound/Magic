@@ -1,6 +1,7 @@
 #include "Config.h"
 #include "nlohmann/json.hpp"
 namespace Magic {
+
 	using Json = nlohmann::json;
 
 	Config::~Config() {
@@ -39,14 +40,14 @@ namespace Magic {
 	const std::string& ConfigFile::getPath() const {
 		return m_Path;
 	}
-	void ConfigFile::read(ConfigKeyValue& keyValue) {
+	void ConfigFile::read(ConfigMap& keyValue) {
 		std::ostringstream content{};
 		if (this->m_FileStream.is_open()) {
 			content << m_FileStream.rdbuf();
 			m_Formatter->parse(content.str(), keyValue);
 		}
 	}
-	void ConfigFile::write(ConfigKeyValue& config) {
+	void ConfigFile::write(ConfigMap& config) {
 		m_Formatter->write(m_FileStream,config);
 		m_FileStream.flush();
 	}
@@ -72,7 +73,7 @@ namespace Magic {
 		return m_Comment;
 	}
 
-	void InIConfigFormatter::write(std::ostream& os, ConfigKeyValue& KeyValue) {
+	void InIConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
 		auto iter{ KeyValue.begin() };
 		auto end{ KeyValue.end() };
 		for (; iter != end; iter++) {
@@ -84,7 +85,7 @@ namespace Magic {
 			os << std::endl;
 		}
 	}
-	void InIConfigFormatter::parse(const std::string& content, ConfigKeyValue& keyValue) {
+	void InIConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
 		std::string normalString{};
 		std::string valueString{};
 		std::string commentString{};
@@ -142,7 +143,7 @@ namespace Magic {
 		}
 	}
 	
-	void JsonConfigFormatter::write(std::ostream& os, ConfigKeyValue& KeyValue) {
+	void JsonConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
 		MagicPtr<Json> json{ new Json{} };
 		for(auto&v : KeyValue)
 		{
@@ -153,7 +154,7 @@ namespace Magic {
 		}
 		os << (*json);
 	}
-	void JsonConfigFormatter::parse(const std::string& content, ConfigKeyValue& keyValue) {
+	void JsonConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
 		if (content.empty())
 			return;
 		MagicPtr<Json> json{ new Json{ Json::parse(content) } };

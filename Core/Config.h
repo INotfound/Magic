@@ -12,7 +12,7 @@ namespace Magic {
 	class IConfigFormatter;
 	class InIConfigFormatter;
 
-	typedef std::map<std::string, MagicPtr<ConfigValue>> ConfigKeyValue;
+	typedef std::map<std::string, MagicPtr<ConfigValue>> ConfigMap;
 
 	class Config{
 	public:
@@ -26,7 +26,7 @@ namespace Magic {
 	private:
 		MutexType m_Mutex{};
 		bool m_IsChange{ false };
-		ConfigKeyValue m_ConfigMap{};
+		ConfigMap m_ConfigMap{};
 		MagicPtr<ConfigFile> m_ConfigFile{};
 	};
 
@@ -37,8 +37,8 @@ namespace Magic {
 		void open();
 		void close();
 		const std::string& getPath() const;
-		void read(ConfigKeyValue& keyValue);
-		void write(ConfigKeyValue& config);
+		void read(ConfigMap& keyValue);
+		void write(ConfigMap& config);
 		void addFormatter(MagicPtr<IConfigFormatter>& configFormatter);
 	private:
 		std::string m_Path{};
@@ -63,22 +63,22 @@ namespace Magic {
 	class IConfigFormatter {
 	public:
 		~IConfigFormatter() {};
-		virtual void write(std::ostream& os, ConfigKeyValue& KeyValue) = 0;
-		virtual void parse(const std::string& content, ConfigKeyValue& keyValue) = 0;
+		virtual void write(std::ostream& os, ConfigMap& KeyValue) = 0;
+		virtual void parse(const std::string& content, ConfigMap& keyValue) = 0;
 	};
 
 	class InIConfigFormatter :public IConfigFormatter {
 	public:
 		~InIConfigFormatter() {};
-		void write(std::ostream& os, ConfigKeyValue& KeyValue) override;
-		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
+		void write(std::ostream& os, ConfigMap& KeyValue) override;
+		void parse(const std::string& content, ConfigMap& keyValue) override;
 	};
 
 	class JsonConfigFormatter :public IConfigFormatter {
 	public:
 		~JsonConfigFormatter() {};
-		void write(std::ostream& os, ConfigKeyValue& KeyValue) override;
-		void parse(const std::string& content, ConfigKeyValue& keyValue) override;
+		void write(std::ostream& os, ConfigMap& KeyValue) override;
+		void parse(const std::string& content, ConfigMap& keyValue) override;
 	};
 
 	template<class T>

@@ -34,13 +34,12 @@ elseif(UNIX AND NOT ANDROID)
 		pthread
 	)
 endif()
-target_link_libraries(Magic ${LIBS})
 
 #nlohmann_json
-set(JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory(ThirdParty/Json)
 include_directories(ThirdParty/Json/single_include)
-target_link_libraries(Magic PRIVATE nlohmann_json::nlohmann_json)
+
+
+target_link_libraries(Magic ${LIBS})
 
 add_executable(Test Test/Test.cc)
 target_link_libraries(Test Magic)
