@@ -36,7 +36,7 @@ elseif(UNIX AND NOT ANDROID)
 endif()
 
 #nlohmann_json
-include_directories(ThirdParty/Json/single_include)
+include_directories(ThirdParty/RapidJSON/include)
 
 
 target_link_libraries(Magic ${LIBS})

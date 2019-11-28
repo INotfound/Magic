@@ -25,8 +25,8 @@ namespace Magic {
 		T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "");
 	private:
 		MutexType m_Mutex{};
-		bool m_IsChange{ false };
 		ConfigMap m_ConfigMap{};
+		bool m_IsChange{ false };
 		MagicPtr<ConfigFile> m_ConfigFile{};
 	};
 
@@ -84,7 +84,7 @@ namespace Magic {
 	template<class T>
 	T Config::at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment) {
 		MutexLock lock{ m_Mutex };
-		auto iter{ m_ConfigMap.find(defaultName) };
+		auto &iter = m_ConfigMap.find(defaultName);
 		if (iter != m_ConfigMap.end()) {
 			return StringAs<T>(iter->second->getValue());
 		}

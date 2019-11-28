@@ -1,8 +1,9 @@
 #include "Config.h"
-#include "nlohmann/json.hpp"
-namespace Magic {
+#include "rapidjson/writer.h"
+#include "rapidjson/document.h"
+#include "rapidjson/stringbuffer.h"
 
-	using Json = nlohmann::json;
+namespace Magic {
 
 	Config::~Config() {
 		MutexLock lock{ m_Mutex };
@@ -74,8 +75,8 @@ namespace Magic {
 	}
 
 	void InIConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-		auto iter{ KeyValue.begin() };
-		auto end{ KeyValue.end() };
+		auto &iter = KeyValue.begin();
+		auto &end = KeyValue.end();
 		for (; iter != end; iter++) {
 			MagicPtr<ConfigValue>& value{ iter->second };
 			if (!value->getComment().empty()) {
@@ -144,26 +145,39 @@ namespace Magic {
 	}
 	
 	void JsonConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-		MagicPtr<Json> json{ new Json{} };
+		MagicPtr<rapidjson::Document> json{ new rapidjson::Document{} };
+		rapidjson::Document::AllocatorType& allocator = json->GetAllocator();
+		json->SetObject();
 		for(auto&v : KeyValue)
 		{
-			auto& configValue{ v.second };
-			if (configValue->isComment())
-				(*json)[v.first + "Comment"] = configValue->getComment();
-			(*json)[v.first] = configValue->getValue();
+			auto& configValue = v.second ;
+			
+			if (configValue->isComment()) {
+				std::string commentName{ v.first + "Comment" };
+				rapidjson::Value jsonName{ commentName.c_str(), allocator };
+				rapidjson::Value jsonValue{ configValue->getComment().c_str() , allocator };
+				json->AddMember(jsonName, jsonValue, allocator);
+			}
+			rapidjson::Value jsonName{ v.first.c_str(), allocator };
+			rapidjson::Value jsonValue{ configValue->getValue().c_str() , allocator };
+			json->AddMember(jsonName, jsonValue, allocator);
 		}
-		os << (*json);
+		MagicPtr<rapidjson::StringBuffer> buffer{ new rapidjson::StringBuffer{} };
+		MagicPtr<rapidjson::Writer<rapidjson::StringBuffer>> writer{ new rapidjson::Writer<rapidjson::StringBuffer>{*buffer} };
+		json->Accept(*writer);
+		os << buffer->GetString();
 	}
 	void JsonConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
 		if (content.empty())
 			return;
-		MagicPtr<Json> json{ new Json{ Json::parse(content) } };
-		auto& iter{ json->begin() };
-		auto& end{ json->end() };
+		MagicPtr<rapidjson::Document> json{ new rapidjson::Document{} };
+		json->Parse(content.c_str());
+		auto &iter = json->MemberBegin();
+		auto &end = json->MemberEnd();
 		for (; iter != end; iter++)
 		{
-			std::string keyName{ iter.key() };
-			MagicPtr<ConfigValue> value{ new ConfigValue{keyName,iter.value()} };
+			std::string keyName{ iter->name.GetString() };
+			MagicPtr<ConfigValue> value{ new ConfigValue{ keyName,iter->value.GetString() } };
 			keyValue[keyName] = std::move(value);
 		}
 	}

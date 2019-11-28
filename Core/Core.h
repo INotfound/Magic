@@ -146,12 +146,12 @@ inline bool StringAs<bool>(const std::string& value) {
 	bool isOk{ true };
 	std::string tValue{ value };
 	{
-		auto begin{ tValue.begin() };
-		auto end{ tValue.end() };
+		auto &begin = tValue.begin();
+		auto &end = tValue.end();
 		for (; begin != end; begin++)
 			*begin = std::toupper(*begin);
 	}
-	if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
+	if (tValue == std::string{ "FALSE" } || tValue == std::string{ "NO" } || tValue == std::string{ "0" })
 		isOk = false;
 	return isOk;
 }

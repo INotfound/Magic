@@ -13,7 +13,7 @@
 
 namespace Magic {
 
-	static auto& g_Log{ MAGIC_LOG_ROOT() };
+	static auto& g_Log = MAGIC_LOG_ROOT();
 
 	RWMutex::RWMutex() {
 		pthread_rwlock_init(&m_RWLock, nullptr);

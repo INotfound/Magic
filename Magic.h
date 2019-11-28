@@ -6,12 +6,12 @@
 #include "Core/Thread.h"
 #include "Core/Config.h"
 namespace Magic {
-	void Init(){
-		Magic::Thread::SetName("Main");
+	void Init(const std::string& Name){
+		Magic::Thread::SetName("Main_" + Name);
 
 		//Config
 		MagicPtr<Magic::ConfigFile> configFile{
-			new Magic::ConfigFile{"Config.json"}
+			new Magic::ConfigFile{ Name + ".conf" }
 		};
 		MagicPtr<Magic::IConfigFormatter> jsonConfigFormatter{
 					new Magic::JsonConfigFormatter{}
@@ -21,7 +21,7 @@ namespace Magic {
 
 		//Log
 		MagicPtr<ILogAppender> logFileAppender{
-			new FileLogAppender{MAGIC_CONFIG()->at<std::string>("LogPath", "System.log")}
+			new FileLogAppender{MAGIC_CONFIG()->at<std::string>("LogPath", Name + ".log")}
 		};
 		MagicPtr<ILogAppender> logStdOutAppender{ new StdOutLogAppender };
 
