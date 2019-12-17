@@ -1,3 +1,3 @@
 [submodule "ThirdParty/RapidJSON"]
 	path = ThirdParty/RapidJSON
-	url = https://github.com/Tencent/rapidjson
+	url = https://gitee.com/mirrors/RapidJSON.git
