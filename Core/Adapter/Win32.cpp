@@ -7,7 +7,6 @@
 
 namespace Magic {
 
-	static auto& g_Log = MAGIC_LOG_ROOT();
 
 	RWMutex::RWMutex() {
 		InitializeSRWLock(&m_RWLock.lock);

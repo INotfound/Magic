@@ -13,8 +13,6 @@
 
 namespace Magic {
 
-	static auto& g_Log = MAGIC_LOG_ROOT();
-
 	RWMutex::RWMutex() {
 		pthread_rwlock_init(&m_RWLock, nullptr);
 	}
@@ -92,7 +90,7 @@ namespace Magic {
 		int32_t retValue{ backtrace(buffer, size) };
 		char** string = backtrace_symbols(buffer, retValue);
 		if (string == nullptr) {
-			MAGIC_LOG_ERROR(g_Log) << "backtrace_symbols error!";
+			MAGIC_LOG(Magic::LogLevel::LogError) << "backtrace_symbols error!";
 		}
 		uint32_t newValue{ static_cast<uint32_t>(retValue) };
 		for (uint32_t i{ skip }; i < newValue; i++) {

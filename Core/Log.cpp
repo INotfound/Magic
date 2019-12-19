@@ -43,8 +43,8 @@ namespace Magic {
 
 	void  Logger::delILogAppender(MagicPtr<ILogAppender>& logAppender) {
 		MutexLock lock{ m_Mutex };
-		auto &vBegin = this->m_ILogAppenders.begin();
-		auto &vEnd = this->m_ILogAppenders.end();
+		auto vBegin{ this->m_ILogAppenders.begin() };
+		auto vEnd{ this->m_ILogAppenders.end() };
 		for (; vBegin != vEnd; vBegin++) {
 			if (*vBegin == logAppender) {
 				this->m_ILogAppenders.erase(vBegin);
@@ -378,7 +378,7 @@ namespace Magic {
 				this->m_Items.push_back(MagicPtr<ILogFormatItem>{new StringFormatItem{ std::get<0>(value) }});
 			}
 			if (flag == 1) {
-				auto &iter = formatItem.find(std::get<0>(value));
+				auto iter{ formatItem.find(std::get<0>(value)) };
 				if (iter == formatItem.end()) {
 					std::cout << "<(LogError)>: Not Found Item" << std::endl;
 				}

@@ -37,6 +37,8 @@
 
 #define MAGIC_LOG_NAME(Name)          Magic::LoggerMgr::GetInstance()->getLogger(Name)
 
+#define MAGIC_LOG(Level)			  MAGIC_LOG_LEVEL(MAGIC_LOG_ROOT(),Level)
+
 #define MAGIC_ASSERT(exp,msg) \
 	if(!(exp)) { \
 		MAGIC_LOG_ERROR(MAGIC_LOG_ROOT()) << "ASSERTION: " << #exp \

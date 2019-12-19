@@ -1,4 +1,5 @@
 #include "Config.h"
+#include "Macro.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
@@ -16,6 +17,14 @@ namespace Magic {
 	}
 	Config::Config() {
 	}
+    void Config::update(){
+        MutexLock lock{ m_Mutex };
+        MAGIC_LOG(LogLevel::LogDebug) << "Change Config File...";
+        m_ConfigFile->close();
+        std::remove(m_ConfigFile->getPath().c_str());
+        m_ConfigFile->open();
+        m_ConfigFile->write(m_ConfigMap);
+    }
 	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
 		MutexLock lock{ m_Mutex };
 		m_ConfigFile = std::move(configFile);
@@ -75,8 +84,8 @@ namespace Magic {
 	}
 
 	void InIConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-		auto &iter = KeyValue.begin();
-		auto &end = KeyValue.end();
+		auto iter{ KeyValue.begin() };
+		auto end{ KeyValue.end() };
 		for (; iter != end; iter++) {
 			MagicPtr<ConfigValue>& value{ iter->second };
 			if (!value->getComment().empty()) {
@@ -149,17 +158,15 @@ namespace Magic {
 		rapidjson::Document::AllocatorType& allocator = json->GetAllocator();
 		json->SetObject();
 		for(auto&v : KeyValue)
-		{
-			auto& configValue = v.second ;
-			
-			if (configValue->isComment()) {
+		{			
+			if (v.second->isComment()) {
 				std::string commentName{ v.first + "Comment" };
 				rapidjson::Value jsonName{ commentName.c_str(), allocator };
-				rapidjson::Value jsonValue{ configValue->getComment().c_str() , allocator };
+				rapidjson::Value jsonValue{ v.second->getComment().c_str() , allocator };
 				json->AddMember(jsonName, jsonValue, allocator);
 			}
 			rapidjson::Value jsonName{ v.first.c_str(), allocator };
-			rapidjson::Value jsonValue{ configValue->getValue().c_str() , allocator };
+			rapidjson::Value jsonValue{ v.second->getValue().c_str() , allocator };
 			json->AddMember(jsonName, jsonValue, allocator);
 		}
 		MagicPtr<rapidjson::StringBuffer> buffer{ new rapidjson::StringBuffer{} };
@@ -172,8 +179,8 @@ namespace Magic {
 			return;
 		MagicPtr<rapidjson::Document> json{ new rapidjson::Document{} };
 		json->Parse(content.c_str());
-		auto &iter = json->MemberBegin();
-		auto &end = json->MemberEnd();
+		auto iter{ json->MemberBegin() };
+		auto end{ json->MemberEnd() };
 		for (; iter != end; iter++)
 		{
 			std::string keyName{ iter->name.GetString() };

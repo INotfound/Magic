@@ -6,7 +6,6 @@ using namespace Magic;
 
 static thread_local Thread* g_Thread{ nullptr };
 static thread_local std::string g_ThreadName{ "UNKNOW" };
-static auto& g_Log = MAGIC_LOG_ROOT();
 
 Thread::Thread(const std::string& threadName,const std::function<void()> callback)
     :m_ThreadName{ threadName }
@@ -17,7 +16,7 @@ Thread::Thread(const std::string& threadName,const std::function<void()> callbac
         m_ThreadName = "UNKNOW";
     }
     if(!m_CallBack){
-        MAGIC_LOG_ERROR(g_Log) << "Thread-CallBack is null";
+		MAGIC_LOG(Magic::LogLevel::LogError) << "Thread-CallBack is null";
     }
     m_Mutex.wait();
 }
