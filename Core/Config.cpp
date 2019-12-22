@@ -19,7 +19,6 @@ namespace Magic {
 	}
     void Config::update(){
         MutexLock lock{ m_Mutex };
-        MAGIC_LOG(LogLevel::LogDebug) << "Change Config File...";
         m_ConfigFile->close();
         std::remove(m_ConfigFile->getPath().c_str());
         m_ConfigFile->open();

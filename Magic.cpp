@@ -1,7 +1,7 @@
 #include "Magic.h"
 namespace Magic {
 	void Init(const std::string& Name){
-		Magic::Thread::SetName("Main_" + Name);
+        Magic::Thread::SetName("Main");
 
 		//Config
 		MagicPtr<Magic::ConfigFile> configFile{
