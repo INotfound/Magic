@@ -4,10 +4,31 @@
 #include "../Util.h"
 #include "../Mutex.h"
 #include "../Macro.h"
+#include "../Plugin.h"
 
 namespace Magic {
+	
+	Plugin::~Plugin() {
+		FreeLibrary(m_Handle);
+	}
+	Plugin::Plugin(const std::string& name, const std::string& path)
+		:m_Name(name){
+		m_Handle = LoadLibrary(path.c_str());
+		MAGIC_LOG(LogLevel::LogInfo) << "Loading Plugin Module: " << path.c_str();
+		if (m_Handle) {
+			m_IsInstance = true;
 
-
+			m_Create = reinterpret_cast<create_t>(GetProcAddress(m_Handle, "Create"));
+			MAGIC_ASSERT(m_Create, "Not Found Function");
+		}
+		else {
+			m_IsInstance = false;
+			MAGIC_LOG(LogLevel::LogError) << "Plugin Module: " << path.c_str();
+		}
+	}
+	std::string Plugin::getName() const {
+		return m_Name;
+	}
 	RWMutex::RWMutex() {
 		InitializeSRWLock(&m_RWLock.lock);
 	}
@@ -83,7 +104,7 @@ namespace Magic {
 	}
 
 	std::string BackTraceToString(uint32_t, uint32_t, const std::string&) {
-		return "";
+		return "Plase use WinDbg!!!";
 	}
 
 }

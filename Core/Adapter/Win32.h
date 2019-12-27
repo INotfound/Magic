@@ -4,6 +4,7 @@
 
 #include <windows.h>
 #include <io.h>
+
 typedef struct{
 	enum class RW {
 		Read,
@@ -15,6 +16,8 @@ typedef struct{
 
 typedef HANDLE				sem_t;
 typedef HANDLE				mutex_t;
-typedef CRITICAL_SECTION	spinlock_t;
 typedef WinRWLock			rwlock_t;
+typedef HINSTANCE			plugin_t;
+typedef CRITICAL_SECTION	spinlock_t;
+
 #endif

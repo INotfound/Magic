@@ -5,6 +5,7 @@
 #include "Core/Mutex.h"
 #include "Core/Thread.h"
 #include "Core/Config.h"
+#include "Core/Plugin.h"
 namespace Magic {
 	void Init(const std::string& Name);
 }

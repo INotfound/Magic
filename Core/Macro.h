@@ -4,6 +4,7 @@
 #include "Util.h"
 #include "Thread.h"
 #include "Config.h"
+#include "Plugin.h"
 #include "Adapter.h"
 
 #define  MAGIC_LOG_LEVEL(logger,level)									\
@@ -35,9 +36,9 @@
 
 #define MAGIC_LOG_ROOT()              Magic::LoggerMgr::GetInstance()->getRoot()
 
-#define MAGIC_LOG_NAME(Name)          Magic::LoggerMgr::GetInstance()->getLogger(Name)
+#define MAGIC_LOG_NAME(name)          Magic::LoggerMgr::GetInstance()->getLogger(name)
 
-#define MAGIC_LOG(Level)              MAGIC_LOG_LEVEL(MAGIC_LOG_ROOT(),Level)
+#define MAGIC_LOG(level)              MAGIC_LOG_LEVEL(MAGIC_LOG_ROOT(),level)
 
 #define MAGIC_ASSERT(exp,msg) \
 	if(!(exp)) { \
@@ -49,3 +50,6 @@
 	}
 
 #define MAGIC_CONFIG() Singleton<Magic::Config>::GetInstance()
+
+#define MAGIC_PLUGIN() Singleton<Magic::PluginManager>::GetInstance()
+#define MAGIC_PLUGINEX(name) Singleton<Magic::PluginManager>::GetInstance()->at(name)

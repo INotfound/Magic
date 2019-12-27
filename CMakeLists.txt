@@ -2,11 +2,12 @@ cmake_minimum_required(VERSION 3.0)
 project(Magic)
 
 set(SRC
-        Magic.cpp
+    Magic.cpp
 	Core/Log.cpp
 	Core/Util.cpp
 	Core/Thread.cpp
 	Core/Config.cpp
+	Core/Plugin.cpp
 	Core/Adapter/Win32.cpp
 	Core/Adapter/Linux.cpp
 )
@@ -51,5 +52,6 @@ endif()
 #RapidJSON
 include_directories(ThirdParty/RapidJSON/include)
 
-#add_executable(Test Test/Test.cc)
-#target_link_libraries(Test Magic)
+add_library(TestLib MODULE Test/TestPlugin.cc)
+add_executable(Test Test/Test.cc)
+target_link_libraries(Test Magic)
