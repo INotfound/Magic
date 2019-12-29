@@ -21,7 +21,7 @@ namespace Magic {
 		MAGIC_LOG(LogLevel::LogInfo) << "Loading Plugin Module: " << name.c_str();
 		if (m_Handle) {
 			m_IsInstance = true;
-			m_Create = reinterpret_cast<create_t>(dlsym(m_Handle, "Create"));
+			m_Create = reinterpret_cast<create_t>(dlsym(m_Handle, "create"));
 			MAGIC_ASSERT(m_Create, "Not Found Function");
 		}
 		else {

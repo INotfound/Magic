@@ -4,16 +4,16 @@
 
 /*
 
-class IPlugin {
+class IPluginModule {
 public:
-	~IPlugin();
+	virtual ~IPlugin() {};
 };
 
 extern "C"
 {
-	_declspec(dllexport) void* Create()
+	_declspec(dllexport) void* create()
 	{
-		return new IPlugin;
+		return new IPluginModule;
 	}
 }
 
@@ -28,7 +28,7 @@ namespace Magic {
 		std::string getName() const;
 		template<class T>
 		MagicPtr<T> getInstance() {
-			return MagicPtr<T>(reinterpret_cast<T*>(m_Create()));
+			return MagicPtr<T>(static_cast<T*>(m_Create()));
 		}
 	private:
 		plugin_t m_Handle{};

@@ -18,7 +18,7 @@ namespace Magic {
 		if (m_Handle) {
 			m_IsInstance = true;
 
-			m_Create = reinterpret_cast<create_t>(GetProcAddress(m_Handle, "Create"));
+			m_Create = reinterpret_cast<create_t>(GetProcAddress(m_Handle, "create"));
 			MAGIC_ASSERT(m_Create, "Not Found Function");
 		}
 		else {

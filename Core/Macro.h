@@ -51,5 +51,5 @@
 
 #define MAGIC_CONFIG() Singleton<Magic::Config>::GetInstance()
 
-#define MAGIC_PLUGIN() Singleton<Magic::PluginManager>::GetInstance()
-#define MAGIC_PLUGINEX(name) Singleton<Magic::PluginManager>::GetInstance()->at(name)
+#define MAGIC_PLUGINMGR() Singleton<Magic::PluginManager>::GetInstance()
+#define MAGIC_PLUGIN(name) Singleton<Magic::PluginManager>::GetInstance()->at(name)
