@@ -19,7 +19,8 @@ extern "C"
 
 */
 namespace Magic {
-
+	class Plugin;
+	class PluginManager;
 	typedef void* (*create_t)();
 	class Plugin {
 	public:
@@ -44,7 +45,7 @@ namespace Magic {
 		MagicPtr<Plugin>& at(const std::string& name);
 		std::map<std::string, MagicPtr<Plugin>>& all();
 	private:
-		std::map<std::string, MagicPtr<Plugin>> m_PluginMap;
+		std::map<std::string, MagicPtr<Plugin>> m_PluginMap{};
 	};
 
 }

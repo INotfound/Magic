@@ -18,6 +18,7 @@ public:
 		return 6666666;
 	}
 };
+
 extern "C"
 {
 	_declspec(dllexport) void* create()
