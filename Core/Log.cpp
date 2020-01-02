@@ -208,10 +208,10 @@ namespace Magic {
 
 	class StringFormatItem :public ILogFormatItem {
 	public:
-		explicit StringFormatItem(const std::string& str) :m_Str(str) {}
+		explicit StringFormatItem(const std::string& str) :m_String(str) {}
 		void format(std::ostream& os, const LogLevel level, const MagicPtr<LogEvent>& event) override;
 	private:
-		std::string m_Str;
+		std::string m_String;
 	};
 
 	void MessageFormatItem::format(std::ostream& os, const LogLevel, const MagicPtr<LogEvent>& event) {
@@ -278,7 +278,7 @@ namespace Magic {
 	}
 
 	void StringFormatItem::format(std::ostream& os, const LogLevel, const MagicPtr<LogEvent>&) {
-		os << this->m_Str.c_str();
+		os << this->m_String.c_str();
 	}
 	//###############################*END*##################################
 

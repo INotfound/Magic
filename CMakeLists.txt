@@ -8,6 +8,7 @@ set(SRC
 	Core/Thread.cpp
 	Core/Config.cpp
 	Core/Plugin.cpp
+	Core/ByteArray.cpp
 	Core/Adapter/Win32.cpp
 	Core/Adapter/Linux.cpp
 )
