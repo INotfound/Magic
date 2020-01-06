@@ -11,12 +11,12 @@ Thread::Thread(const std::string& threadName,const std::function<void()> callbac
     :m_ThreadName{ threadName }
 	, m_CallBack{ callback }
 	, m_Thread{ &Thread::run,this }{
-	
+	MAGIC_LOG(LogLevel::LogDebug) << "Start thread: " << threadName;
     if(threadName.empty()){
         m_ThreadName = "UNKNOW";
     }
     if(!m_CallBack){
-		MAGIC_LOG(Magic::LogLevel::LogError) << "Thread-CallBack is null";
+		MAGIC_LOG(LogLevel::LogError) << "Thread-CallBack is null";
     }
     m_Mutex.wait();
 }

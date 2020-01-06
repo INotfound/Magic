@@ -12,9 +12,9 @@ namespace Magic {
 		FreeLibrary(m_Handle);
 	}
 	Plugin::Plugin(const std::string& name, const std::string& path)
-		:m_Name(name){
+		:m_Name{ name } {
 		m_Handle = LoadLibrary(path.c_str());
-		MAGIC_LOG(LogLevel::LogInfo) << "Loading Plugin Module: " << path.c_str();
+		MAGIC_LOG(LogLevel::LogDebug) << "Loading Plugin Module: " << path.c_str();
 		if (m_Handle) {
 			m_IsInstance = true;
 

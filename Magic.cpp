@@ -2,7 +2,6 @@
 namespace Magic {
 	void Init(const std::string& Name){
         Magic::Thread::SetName("Main");
-
 		//Config
 		MagicPtr<Magic::ConfigFile> configFile{
 			new Magic::ConfigFile{ Name + ".conf" }
@@ -14,8 +13,8 @@ namespace Magic {
 		MAGIC_CONFIG()->addConfigFile(configFile);
 
 		//Log
-		MagicPtr<ILogAppender> logFileAppender{
-			new FileLogAppender{MAGIC_CONFIG()->at<std::string>("LogPath", Name + ".log")}
+		MagicPtr<ILogAppender> logHtmlAppender{
+			new HtmlLogAppender{MAGIC_CONFIG()->at<std::string>("LogPath", Name + ".html")}
 		};
 		MagicPtr<ILogAppender> logStdOutAppender{ new StdOutLogAppender };
 
@@ -23,7 +22,8 @@ namespace Magic {
 			MAGIC_CONFIG()->at<std::string>("LogFormater", "[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T%F%T[%c]%T%f:%l%T%m%n")
 		);
 
-		MAGIC_LOG_ROOT()->addILogAppender(logFileAppender);
+		MAGIC_LOG_ROOT()->addILogAppender(logHtmlAppender);
 		MAGIC_LOG_ROOT()->addILogAppender(logStdOutAppender);
+		MAGIC_LOG(LogLevel::LogInfo) << "Magic initialized successfully";
 	}
 }

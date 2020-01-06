@@ -11,6 +11,7 @@ typedef pthread_mutex_t		mutex_t;
 typedef pthread_spinlock_t	spinlock_t;
 typedef pthread_rwlock_t	rwlock_t;
 typedef void*				plugin_t;
+#define IS_FILE(Path)		access(Path,0)
 #endif
 
 

@@ -2,17 +2,126 @@
 #include <tuple>
 #include <time.h>
 #include <iostream>
-
+#include "Adapter.h"
 namespace Magic {
-	class Logger;
-	class LogWrap;
-	class LogEvent;
-	class ILogAppender;
-	class LogFormatter;
-	class LoggerManager;
-	class ILogFormatItem;
-	class FileLogAppender;
-	class StdOutLogAppender;
+
+	static const std::string g_HtmlTemplate{R"Template(
+		<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+		<html>
+		<head>
+			<title>Logger</title>
+			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+			<style type="text/css" id="logCss">
+				body {
+					background: #18242b;
+					color: #afc6d1;
+					margin-right: 20px;
+					margin-left: 20px;
+					font-size: 14px;
+					font-family: Arial, sans-serif, sans;
+				}
+				a {
+					text-decoration: none;
+				}
+
+				a:link {
+					color: #a0b2bb;
+				}
+
+				a:active {
+					color: #f59504;
+				}
+
+				a:visited {
+					color: #adc7d4;
+				}
+
+				a:hover {
+					color: #e49115;
+				}
+
+				h1 {
+					text-align: center;
+				}
+
+				h2 {
+					color: #ebe5e5;
+				}
+
+				.LogDebug,
+				.LogWarn,
+				.LogError,
+				.LogFatal,
+				.LogInfo
+
+				.LogDebug {
+					background-color: #0f1011;
+					color: #a8c1ce;
+				}
+
+				.LogInfo {
+					background-color: #294453;
+					color: #a8c1ce;
+				}
+
+				.LogWarn {
+					background-color: #7993a0;
+					color: #1b2329;
+				}
+
+				.LogError {
+					background-color: #ff952b;
+					color: #1d2930;
+				}
+
+				.LogFatal {
+					background-color: #fc0808;
+					color: #19242b;
+				}
+			</style>
+		</head>
+
+		<body>
+			<h1> Log File </h1>
+			<script type="text/JavaScript">
+				function objHide(obj) {
+					obj.style.display="none"
+				}
+				function objShow(obj) {
+					obj.style.display="block"
+				}
+				function selectType() {
+					var sel = document.getElementById("typeSelect");
+					const hideList = new Set(['LogDebug', 'LogInfo', 'LogWarn', 'LogError', 'LogFatal']);
+					if (sel.value === 'a') {
+						hideList.forEach(element => {
+							var list = document.querySelectorAll('.' + element);
+							list.forEach(objShow);
+						});
+					} else {
+						var ss = hideList;
+						ss.delete(sel.value);
+						ss.forEach(element => {
+							var list = document.querySelectorAll('.' + element);
+							list.forEach(objHide);
+						});
+						var showList = document.querySelectorAll('.' + sel.value);
+						showList.forEach(objShow);
+					}
+				}
+			</script>
+			<select id="typeSelect" onchange="selectType()">
+				<option value='a' selected="selected">All</option>
+				<option value='LogDebug'>Debug</option>
+				<option value='LogInfo'>Info</option>
+				<option value='LogWarn'>Warn</option>
+				<option value='LogError'>Error</option>
+				<option value='LogFatal'>Fatal</option>
+			</select>
+		)Template" 
+	};
+
 	const char* ToString(const LogLevel  level) {
 		switch (level)
 		{
@@ -417,20 +526,31 @@ namespace Magic {
 
 	FileLogAppender::FileLogAppender(const std::string& path) 
 		:m_Path{ path } {
-		this->reOpen();
+		MutexLock lock{ m_Mutex };
+		this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
 	}
 
 	void FileLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event) {
 		this->m_Formatter->format(this->m_FileStream, level, event);
 	}
 
-	bool FileLogAppender::reOpen() {
+	HtmlLogAppender::HtmlLogAppender(const std::string& path)
+		:m_Path{path} {
 		MutexLock lock{ m_Mutex };
-		if (this->m_FileStream) {
-			this->m_FileStream.close();
+		if (IS_FILE(path.c_str()) != 0) {
+			this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
+			this->m_FileStream << g_HtmlTemplate.c_str();
 		}
-		this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
-		return this->m_FileStream.is_open();
+		else {
+			this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
+		}
+	}
+
+	void HtmlLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event){
+		this->m_FileStream << "<div class=\"" << ToString(level) << "\">";
+		this->m_Formatter->format(this->m_FileStream, level, event);
+		this->m_FileStream << "</div>";
+		this->m_FileStream.flush();
 	}
 
 	void StdOutLogAppender::log(LogLevel level, MagicPtr<LogEvent>& event) {
@@ -440,4 +560,5 @@ namespace Magic {
 		}
 		this->m_Formatter->format(std::cout, level, event);
 	}
+
 }

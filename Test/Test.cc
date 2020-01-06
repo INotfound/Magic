@@ -14,7 +14,7 @@ int main() {
 	MagicPtr<Magic::Plugin> plugin{ new Magic::Plugin("TestLib", "TestLib.dll") };
 	MAGIC_PLUGINMGR()->addPlugin(plugin);
 	MagicPtr<IPluginModule> pp{ MAGIC_PLUGIN("TestLib")->getInstance<IPluginModule>() };
-	std::cout << pp->arg();
+	MAGIC_LOG(Magic::LogLevel::LogInfo) << pp->arg();
 	std::getchar();
 	return 0;
 }

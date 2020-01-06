@@ -5,6 +5,7 @@
 #include "Core.h"
 #include "Mutex.h"
 
+
 namespace Magic {
 	class Config;
 	class ConfigFile;
@@ -90,6 +91,7 @@ namespace Magic {
 			return StringAs<T>(iter->second->getValue());
 		}
 		//New Config Item
+		//MAGIC_LOG(LogLevel::LogDebug) << "New configuration items";
 		m_IsChange = true;
 		MagicPtr<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
 		m_ConfigMap[defaultName] = std::move(value);
@@ -98,6 +100,7 @@ namespace Magic {
 	template<class T>
 	T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
 		MutexLock lock{ m_Mutex };
+		//MAGIC_LOG(LogLevel::LogDebug) << "Modify configuration items";
 		m_IsChange = true;
 		MagicPtr<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
 		m_ConfigMap[defaultName].reset();

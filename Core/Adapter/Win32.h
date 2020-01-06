@@ -19,5 +19,5 @@ typedef HANDLE				mutex_t;
 typedef WinRWLock			rwlock_t;
 typedef HINSTANCE			plugin_t;
 typedef CRITICAL_SECTION	spinlock_t;
-
+#define IS_FILE(Path)		_access(Path,0)
 #endif

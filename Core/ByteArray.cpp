@@ -106,7 +106,7 @@ namespace Magic {
 	}
 
 	std::string ByteArray::toString(){
-
+		return std::string();
 	}
 
 	ByteArray& ByteArray::setInt8(int8_t value){

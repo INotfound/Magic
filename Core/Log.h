@@ -19,6 +19,7 @@ namespace Magic{
 	class LoggerManager;
 	class ILogFormatItem;
 	class FileLogAppender;
+	class HtmlLogAppender;
 	class StdOutLogAppender;
 
 	enum class LogLevel {
@@ -124,7 +125,16 @@ namespace Magic{
 	public:
 		explicit FileLogAppender(const std::string& path);
 		void log(LogLevel level, MagicPtr<LogEvent>& event) override;
-		bool reOpen();
+	private:
+		MutexType m_Mutex{};
+		std::string m_Path{};
+		std::ofstream m_FileStream{};
+	};
+	
+	class HtmlLogAppender :public ILogAppender {
+	public:
+		explicit HtmlLogAppender(const std::string& path);
+		void log(LogLevel level, MagicPtr<LogEvent>& event) override;
 	private:
 		MutexType m_Mutex{};
 		std::string m_Path{};

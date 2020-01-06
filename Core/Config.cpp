@@ -23,6 +23,7 @@ namespace Magic {
         std::remove(m_ConfigFile->getPath().c_str());
         m_ConfigFile->open();
         m_ConfigFile->write(m_ConfigMap);
+		MAGIC_LOG(LogLevel::LogDebug) << "Update configuration items";
     }
 	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
 		MutexLock lock{ m_Mutex };
