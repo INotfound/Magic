@@ -1,4 +1,3 @@
-#pragma once 
 #include <memory>
 
 
@@ -19,9 +18,18 @@ public:
 	}
 };
 
+// extern "C"
+// {
+// 	_declspec(dllexport) void* create()
+// 	{
+// 		return new PluginModule;
+// 	}
+// }
+
+
 extern "C"
 {
-	_declspec(dllexport) void* create()
+	void* create()
 	{
 		return new PluginModule;
 	}

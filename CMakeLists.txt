@@ -32,7 +32,7 @@ elseif(WIN32 AND MINGW)
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
      set(LIBS
      )
-    add_library(Magic ${LIBS} ${SRC})
+    add_library(Magic ${SRC})
 
 elseif(UNIX AND NOT ANDROID)
     message("~~~~~~~~~UNIX Configuration~~~~~~~~~")
@@ -43,10 +43,12 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
-	set(LIBS
+     set(LIBS
+        dl 
         pthread
-	)
-    add_library(Magic ${LIBS} ${SRC})
+     )
+    add_library(Magic ${SRC})
+    target_link_libraries(Magic ${LIBS})
 
 endif()
 
