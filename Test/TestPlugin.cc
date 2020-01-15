@@ -26,7 +26,6 @@ public:
 // 	}
 // }
 
-
 extern "C"
 {
 	void* create()

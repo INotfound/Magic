@@ -9,8 +9,13 @@ set(SRC
 	Core/Config.cpp
 	Core/Plugin.cpp
 	Core/ByteArray.cpp
-	Core/Adapter/Win32.cpp
-	Core/Adapter/Linux.cpp
+	
+    Core/Adapter/WinUtil.cpp
+    Core/Adapter/WinMutex.cpp
+    Core/Adapter/WinPlugin.cpp
+    Core/Adapter/LinuxUtil.cpp
+    Core/Adapter/LinuxMutex.cpp
+	Core/Adapter/LinuxPlugin.cpp
 )
 
 
