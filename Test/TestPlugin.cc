@@ -17,15 +17,19 @@ public:
 		return 6666666;
 	}
 };
+#if defined(_WIN32) || defined(_WIN64)
+//Win
+ extern "C"
+ {
+ 	_declspec(dllexport) void* create()
+ 	{
+ 		return new PluginModule;
+ 	}
+ }
+#endif
 
-// extern "C"
-// {
-// 	_declspec(dllexport) void* create()
-// 	{
-// 		return new PluginModule;
-// 	}
-// }
-
+#if defined(linux) || defined(__linux__)
+//Linux
 extern "C"
 {
 	void* create()
@@ -33,3 +37,4 @@ extern "C"
 		return new PluginModule;
 	}
 }
+#endif
