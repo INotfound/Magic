@@ -44,7 +44,7 @@ namespace Magic {
 			ss << prefix << vecString.at(i) << std::endl;
 		}
 		ss << std::endl;
-		return "\nBackTrace:\n" + ss.str();
+		return ss.str();
 	}
 }
 #endif
