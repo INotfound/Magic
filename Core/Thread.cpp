@@ -7,6 +7,8 @@ using namespace Magic;
 static thread_local Thread* g_Thread{ nullptr };
 static thread_local std::string g_ThreadName{ "UNKNOW" };
 
+Thread::~Thread() {
+}
 Thread::Thread(const std::string& threadName,const std::function<void()> callback)
     :m_ThreadName{ threadName }
 	, m_CallBack{ callback }
@@ -20,11 +22,12 @@ Thread::Thread(const std::string& threadName,const std::function<void()> callbac
     }
     m_Mutex.wait();
 }
-Thread::~Thread() {
-	m_Thread.detach();
-}
+
 void Thread::join() {
 	m_Thread.join();
+}
+void Thread::detach(){
+    m_Thread.detach();
 }
 int64_t Thread::getId(){
     return m_Id;

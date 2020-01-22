@@ -1,5 +1,6 @@
 #include "Util.h"
+#include "Fiber.h"
 
 uint64_t Magic::GetFiberId(){
-	return 0;
+	return Fiber::GetId();
 }
