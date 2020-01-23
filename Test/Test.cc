@@ -1,5 +1,4 @@
-#include "../Magic.h"
-#include <bits/stdint-uintn.h>
+#include "Magic.h"
 #include <iostream>
 #include <string>
 #include <vector>
