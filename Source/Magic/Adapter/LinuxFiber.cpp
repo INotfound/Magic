@@ -1,11 +1,9 @@
-#include <bits/stdint-uintn.h>
-#include <cstdlib>
-#include <ucontext.h>
 #if defined(linux) || defined(__linux__)
 #include <atomic>
-#include "../Fiber.h"
-#include "../Macro.h"
-#include "../Scheduler.h"
+#include "Fiber.h"
+#include "Macro.h"
+#include "Scheduler.h"
+#include "Adapter/Linux.h"
 
 namespace Magic{
     static std::atomic<uint64_t> g_FiberId{0};

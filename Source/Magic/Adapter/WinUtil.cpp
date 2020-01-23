@@ -1,8 +1,7 @@
 #if defined(_WIN32) || defined(_WIN64)
-#include "Win32.h"
-#include "../Util.h"
-#include "../Macro.h"
-
+#include "Util.h"
+#include "Macro.h"
+#include "Adapter/Win32.h"
 
 namespace Magic {
 	uint32_t GetProcessorsNumber() {

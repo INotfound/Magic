@@ -1,7 +1,6 @@
 #pragma once
 #include "Core.h"
 #include "Adapter.h"
-#include <bits/stdint-uintn.h>
 #include <functional>
 
 namespace Magic{

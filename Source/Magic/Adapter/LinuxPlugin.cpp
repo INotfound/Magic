@@ -1,8 +1,8 @@
 #if defined(linux) || defined(__linux__)
-#include "Linux.h"
-#include "../Macro.h"
-#include "../Plugin.h"
 
+#include "Macro.h"
+#include "Plugin.h"
+#include "Adapter/Linux.h"
 namespace Magic{
     Plugin::~Plugin() {
 		dlclose(m_Handle);

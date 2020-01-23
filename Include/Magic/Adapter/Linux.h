@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <execinfo.h>
+#include <ucontext.h>
 #include <semaphore.h>
 #include <sys/syscall.h>
-#include <sys/ucontext.h>
 
 typedef sem_t				sem_t;
 typedef pthread_mutex_t		mutex_t;

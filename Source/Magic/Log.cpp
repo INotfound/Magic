@@ -465,18 +465,18 @@ namespace Magic {
 	        {#str,[](const std::string&){ return MagicPtr<ILogFormatItem>{new type{}};}}
 	#define ItemEx(str,type) \
 	        {#str,[](const std::string& fmt){ return MagicPtr<ILogFormatItem>{new type{fmt}};}}
-			Item(m, MessageFormatItem),            //m:ÏûÏ¢
-			Item(p, LevelFormatItem),              //p:ÈÕÖ¾¼¶±ð
-			Item(r, ElapseFormatItem),             //r:ÀÛ¼ÆºÁÃëÊý
-			Item(c, LogNameFormatItem),            //c:ÈÕÖ¾Ãû³Æ
-			Item(t, ThreadIdFormatItem),           //t:Ïß³Ìid
-			Item(n, NewLineFormatItem),            //n:»»ÐÐ
-			Item(f, FilePathFormatItem),           //f:ÎÄ¼þÃû
-			Item(l, LineFormatItem),               //l:ÐÐºÅ
+			Item(m, MessageFormatItem),            //m:ï¿½ï¿½Ï¢
+			Item(p, LevelFormatItem),              //p:ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+			Item(r, ElapseFormatItem),             //r:ï¿½Û¼Æºï¿½ï¿½ï¿½ï¿½ï¿½
+			Item(c, LogNameFormatItem),            //c:ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½
+			Item(t, ThreadIdFormatItem),           //t:ï¿½ß³ï¿½id
+			Item(n, NewLineFormatItem),            //n:ï¿½ï¿½ï¿½ï¿½
+			Item(f, FilePathFormatItem),           //f:ï¿½Ä¼ï¿½ï¿½ï¿½
+			Item(l, LineFormatItem),               //l:ï¿½Ðºï¿½
 			Item(T, TabFormatItem),                //T:Tab
-			Item(F, FiberIdFormatItem),            //F:Ð­³Ìid
-			Item(N, ThreadNameFormatItem),         //N:Ïß³ÌÃû³Æ
-			ItemEx(d, DateTimeFormatItem),         //d:Ê±¼ä
+			Item(F, FiberIdFormatItem),            //F:Ð­ï¿½ï¿½id
+			Item(N, ThreadNameFormatItem),         //N:ï¿½ß³ï¿½ï¿½ï¿½ï¿½ï¿½
+			ItemEx(d, DateTimeFormatItem),         //d:Ê±ï¿½ï¿½
 	#undef ItemEx
 	#undef Item
 		};

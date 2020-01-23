@@ -1,8 +1,7 @@
 #if defined(_WIN32) || defined(_WIN64)
-#include "Win32.h"
-#include "../Macro.h"
-#include "../Plugin.h"
-
+#include "Macro.h"
+#include "Plugin.h"
+#include "Adapter/Win32.h"
 namespace Magic{
 	Plugin::~Plugin() {
 		FreeLibrary(m_Handle);

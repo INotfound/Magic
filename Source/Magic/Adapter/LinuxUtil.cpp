@@ -4,10 +4,9 @@
 #include <sstream>
 #include <iostream>
 
-#include "Linux.h"
-#include "../Util.h"
-#include "../Macro.h"
-
+#include "Util.h"
+#include "Macro.h"
+#include "Adapter/Linux.h"
 
 namespace Magic {
 

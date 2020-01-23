@@ -1,10 +1,9 @@
 #if defined(linux) || defined(__linux__)
 #include <stdexcept>
 
-#include "Linux.h"
-#include "../Mutex.h"
-#include "../Macro.h"
-
+#include "Mutex.h"
+#include "Macro.h"
+#include "Adapter/Linux.h"
 
 namespace Magic{
 	RWMutex::RWMutex() {
