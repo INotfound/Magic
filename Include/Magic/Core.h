@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <stdint.h>
+#include <algorithm>
 #include <functional>
 
 #define MagicPtr std::unique_ptr

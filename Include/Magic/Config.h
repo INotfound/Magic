@@ -90,9 +90,6 @@ namespace Magic {
 		if (iter != m_ConfigMap.end()) {
 			return StringAs<T>(iter->second->getValue());
 		}
-		//New Config Item
-		//MAGIC_LOG(LogLevel::LogDebug) << "New configuration items";
-		m_IsChange = true;
 		MagicPtr<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
 		m_ConfigMap[defaultName] = std::move(value);
 		return defaultValue;
@@ -101,7 +98,6 @@ namespace Magic {
 	T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
 		MutexLock lock{ m_Mutex };
 		//MAGIC_LOG(LogLevel::LogDebug) << "Modify configuration items";
-		m_IsChange = true;
 		MagicPtr<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
 		m_ConfigMap[defaultName].reset();
 		m_ConfigMap[defaultName] = std::move(value);

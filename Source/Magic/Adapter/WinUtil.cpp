@@ -17,6 +17,8 @@ namespace Magic {
 	std::string BackTraceToString(uint32_t, uint32_t, const std::string&) {
 		return "Plase use WinDbg!!!";
 	}
-
+	bool CompareNoCase(const std::string& dest,const std::string& src){
+		return stricmp(dest.c_str(), src.c_str()) == 0;
+	}
 }
 #endif

@@ -7,12 +7,8 @@
 namespace Magic {
 
 	Config::~Config() {
-		MutexLock lock{ m_Mutex };
 		if (m_IsChange){
-			m_ConfigFile->close();
-			std::remove(m_ConfigFile->getPath().c_str());
-			m_ConfigFile->open();
-			m_ConfigFile->write(m_ConfigMap);
+			this->update();
 		}
 	}
 	Config::Config() {

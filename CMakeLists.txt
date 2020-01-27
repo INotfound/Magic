@@ -10,17 +10,24 @@ set(SRC
 	Source/Magic/Thread.cpp
 	Source/Magic/Config.cpp
 	Source/Magic/Plugin.cpp
-	Source/Magic/ByteArray.cpp
-	Source/Magic/Scheduler.cpp
+    Source/Magic/IoPool.cpp
+    Source/Magic/Http/Http.cpp
+    Source/Magic/Http/HttpParser.cpp
     Source/Magic/Adapter/WinUtil.cpp
     Source/Magic/Adapter/WinMutex.cpp
     Source/Magic/Adapter/WinPlugin.cpp
     Source/Magic/Adapter/LinuxUtil.cpp
-    Source/Magic/Adapter/LinuxFiber.cpp
     Source/Magic/Adapter/LinuxMutex.cpp
 	Source/Magic/Adapter/LinuxPlugin.cpp
+    Source/Magic/Http/Util/http11_parser.rl.cpp
+    Source/Magic/Http/Util/httpclient_parser.rl.cpp
 )
 
+#RapidJSON
+include_directories(ThirdParty/RapidJSON/include)
+
+#ASIO
+include_directories(ThirdParty/Asio/asio/include)
 
 
 if(WIN32 AND NOT MINGW)
@@ -52,16 +59,14 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
-     set(LIBS
+    set(LIBS
         dl
-     )
+    )
     add_library(Magic ${SRC})
     target_link_libraries(Magic ${LIBS})
 
 endif()
 
-#RapidJSON
-include_directories(ThirdParty/RapidJSON/include)
 
 add_library(TestLib MODULE Test/TestPlugin.cc)
 add_executable(Test Test/Test.cc)

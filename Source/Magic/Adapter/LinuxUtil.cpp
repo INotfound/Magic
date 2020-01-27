@@ -4,6 +4,8 @@
 #include <sstream>
 #include <iostream>
 
+#include <strings.h>
+
 #include "Util.h"
 #include "Macro.h"
 #include "Adapter/Linux.h"
@@ -44,6 +46,10 @@ namespace Magic {
 		}
 		ss << std::endl;
 		return ss.str();
+	}
+
+	bool CompareNoCase(const std::string& dest,const std::string& src){
+		return !strcasecmp(dest.c_str(), src.c_str());
 	}
 }
 #endif

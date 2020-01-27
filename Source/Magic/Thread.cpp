@@ -11,8 +11,8 @@ Thread::~Thread() {
 }
 Thread::Thread(const std::string& threadName,const std::function<void()> callback)
     :m_ThreadName{ threadName }
-	, m_CallBack{ callback }
-	, m_Thread{ &Thread::run,this }{
+	,m_CallBack{ callback }
+	,m_Thread{ &Thread::run,this }{
 	MAGIC_LOG(LogLevel::LogDebug) << "Start thread: " << threadName;
     if(threadName.empty()){
         m_ThreadName = "UNKNOW";

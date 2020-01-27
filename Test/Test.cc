@@ -1,7 +1,10 @@
 #include "Magic.h"
+#include "asio.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
+#include "IoPool.h"
+#include "Http/HttpParser.h"
 
 class IPluginModule {
 public:
@@ -19,30 +22,43 @@ void Plugin(){
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << pp->arg();
 }
 
-uint32_t i {0};
-void RunInFiber(){
-    i++;
-    Magic::Fiber::GetThis()->back();
-    MAGIC_LOG(Magic::LogLevel::LogDebug) << " number: " << i;
-}
+void Http(){
+	Magic::Http::HttpRequest req;
+	Magic::Http::HttpRequest::KeyValue value;
+	value.emplace("Host","www.XiaoBaiJun.com");
+	req.setHeaders(value);
+	req.setBody("hello XiaoBaiJun");
+	req.setMethod(Magic::Http::HttpMethod::POST);
+	req.dump(std::cout) << std::endl;
 
-MagicPtr<Magic::Fiber> g_mainFiber;
-Magic::Mutex mutex;
-void Fiber(){
-    MAGIC_LOG(Magic::LogLevel::LogDebug) << "Fiber Begin";
-    {
-        Magic::Fiber::Root();
-        MagicPtr<Magic::Fiber> fiber(new Magic::Fiber(RunInFiber,true));
-        fiber->call();
-        MAGIC_LOG(Magic::LogLevel::LogDebug) << "Fiber SwapIn";
-        fiber->call();
-    }
-    MAGIC_LOG(Magic::LogLevel::LogDebug) << "Fiber End";
+	Magic::Http::HttpResponse resp;
+	Magic::Http::HttpResponse::KeyValue resValue;
+	resValue.emplace("X-X","XIAOBAIJUN");
+	resp.setHeaders(resValue);
+	resp.setBody("hello XiaoBaiJun");
+	resp.setStatus(Magic::Http::HttpStatus::BAD_REQUEST);
+	resp.dump(std::cout) << std::endl;
 }
-
+char testRequestData[] = "GET / HTTP/1.1\r\n"
+						"Host: www.top.com\r\n"
+						"Content-Length: 10\r\n\r\n"
+						"1234567890";
+void HttpParser(){
+	Magic::Http::HttpRequestParser requestParser;
+	std::string tmp {testRequestData,68};
+	uint32_t s = requestParser.execute(testRequestData,tmp.size());
+	MAGIC_LOG(Magic::LogLevel::LogInfo) << "execute rt= " <<  s
+		<<" has_error= " << requestParser.hasError()
+		<<" Finished= " << requestParser.isFinished();
+	std::string val{""};
+	MAGIC_LOG(Magic::LogLevel::LogInfo) << requestParser.getData()->hasHeader("Host",val);
+	MAGIC_LOG(Magic::LogLevel::LogInfo) << val.c_str();
+	requestParser.getData()->dump(std::cout) << std::endl;
+}
 int main() {
 	Magic::Init("test");
-    Fiber();
+	
+	HttpParser();
 	std::getchar();
 	return 0;
 }
