@@ -50,7 +50,7 @@ namespace Http{
     }
 
     bool CaseInsensitiveLess::operator()(const std::string& lhs,const std::string& rhs) const{
-        return CompareNoCase(lhs,rhs) < 0;
+        return StringCompareNoCase(lhs,rhs) < 0;
     }
 
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
@@ -179,7 +179,7 @@ namespace Http{
             << "\r\n";
         os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         for(auto& v : m_Headers){
-            if(CompareNoCase(v.first,"Connection")){
+            if(StringCompareNoCase(v.first,"Connection") == 0){
                 continue;
             }
             os << v.first << ": " << v.second << "\r\n";

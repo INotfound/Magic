@@ -52,9 +52,10 @@ void HttpParser(){
 		<<" has_error= " << requestParser.hasError()
 		<<" Finished= " << requestParser.isFinished();
 	std::string val{""};
-	MAGIC_LOG(Magic::LogLevel::LogInfo) << requestParser.getData()->hasHeader("Host",val);
+	MAGIC_LOG(Magic::LogLevel::LogInfo) << requestParser.getData()->hasHeader("Content-Length",val);
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << val.c_str();
 	requestParser.getData()->dump(std::cout) << std::endl;
+	std::cout << testRequestData << std::endl;
 }
 int main() {
 	Magic::Init("test");
