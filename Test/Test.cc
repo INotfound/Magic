@@ -6,7 +6,7 @@
 #include "IoPool.h"
 #include "Http/HttpParser.h"
 #include "TcpServer.h"
-#include "asio.hpp"
+
 class IPluginModule {
 public:
 	virtual int arg() = 0;
@@ -91,24 +91,39 @@ class EchoServer : public Magic::TcpServer{
 
 		}
 	protected:
-		virtual void hanldeFunc(std::shared_ptr<asio::ip::tcp::socket> socket) {
-		auto readbuf = std::make_shared<asio::streambuf>();
-		asio::async_read(*socket,*readbuf,[this,readbuf](const asio::error_code& ec,size_t len){
-			if(err){
-                //TODO: ...
-                MAGIC_LOG(Magic::LogLevel::LogWarn) << err.message();
-                return;
-            }
-			std::cout.rdbuf(readbuf);
-			MAGIC_LOG(Magic::LogLevel::LogInfo) << "Post!";
-		});
+		virtual void hanldeFunc(std::shared_ptr<asio::ip::tcp::socket> socket){
+			auto streambuf = std::make_shared<asio::streambuf>();
+			//asio::async_read(*socket, *streambuf, asio::transfer_exactly(1), [this,socket](const asio::error_code& err, size_t len) {
+			//	printf("%d\n", GetCurrentThreadId());
+			
+				asio::async_write(*socket, asio::buffer(str), [this, socket = std::move(socket)](const asio::error_code& err, size_t len) {
+					if (err) {
+						//TODO: ...
+						MAGIC_LOG(Magic::LogLevel::LogWarn) << err.message();
+						return;
+					}
+					MAGIC_LOG(Magic::LogLevel::LogInfo) << "Post!";
+					this->hanldeFunc(socket);
+				});
+
+
+			//});
 	}
 };
 
 
 void Server(){
-	EchoServer server("127.0.0.1",6060,Magic::GetProcessorsNumber()*2);
-	server.run();
+	/*MagicPtr<Magic::TcpServer> server(new EchoServer("127.0.0.1",6060,4));
+	server->run();*/
+	Magic::TcpServer server("127.0.0.1", 6060, 2);
+	try
+	{
+		server.run();
+	}
+	catch (const std::exception & ec)
+	{
+		MAGIC_LOG(Magic::LogLevel::LogError) << ec.what();
+	}
 }
 
 int main() {
