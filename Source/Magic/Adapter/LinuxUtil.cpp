@@ -48,8 +48,8 @@ namespace Magic {
 		return ss.str();
 	}
 
-	bool CompareNoCase(const std::string& dest,const std::string& src){
-		return !strcasecmp(dest.c_str(), src.c_str());
+	int32_t CompareNoCase(const std::string& dest,const std::string& src){
+		return strcasecmp(dest.c_str(), src.c_str());
 	}
 }
 #endif

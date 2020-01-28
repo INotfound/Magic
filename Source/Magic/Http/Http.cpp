@@ -1,7 +1,7 @@
 #include "Http/Http.h"
 #include <cstring>
 #include "Util.h"
-#include "Macro.h"
+
 namespace Magic{
 namespace Http{
 
@@ -50,7 +50,7 @@ namespace Http{
     }
 
     bool CaseInsensitiveLess::operator()(const std::string& lhs,const std::string& rhs) const{
-        return CompareNoCase(lhs,rhs);
+        return CompareNoCase(lhs,rhs) < 0;
     }
 
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
@@ -99,8 +99,7 @@ namespace Http{
     }
 
     void HttpRequest::setHeader(const std::string& key,const std::string& value){
-        m_Headers[key] = value;
-        MAGIC_LOG(LogLevel::LogDebug) << " : " << m_Headers[key];
+        m_Headers.emplace(key, value);
     }
 
     bool HttpRequest::getkeepAlive() const{
@@ -150,7 +149,6 @@ namespace Http{
     }
     bool HttpRequest::hasHeader(const std::string& key,std::string& value){
         auto iter = m_Headers.find(key);
-        MAGIC_LOG(LogLevel::LogDebug) << "hasHeader f:" << iter->first << " : " << iter->second;
         if(iter == m_Headers.end()){
             return false;
         }

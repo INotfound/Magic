@@ -1,6 +1,5 @@
 #include "Http/HttpParser.h"
 #include <cstring>
-#include "Macro.h"
 namespace Magic{
 namespace Http{
 
@@ -52,8 +51,9 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        MAGIC_LOG(LogLevel::LogDebug) << std::string(field,flen) <<" : " << std::string(value,vlen);
-        parser->getData()->setHeader(std::string(field,flen),std::string(value,vlen));
+        std::string key(field, flen);
+        std::string val(value, vlen);
+        parser->getData()->setHeader(key, val);
     }
 
     HttpRequestParser::HttpRequestParser()

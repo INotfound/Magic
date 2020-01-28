@@ -2,11 +2,13 @@
 #include <map>
 #include <string>
 #include <ostream>
+#include <unordered_map>
 #include "Core.h"
-
 
 namespace Magic{
 namespace Http{
+
+
 
 /* Request Methods */
     #define HTTP_METHOD_MAP(XX)         \
@@ -134,11 +136,11 @@ namespace Http{
     const char* HttpStatusToString(const HttpStatus & status);
     class CaseInsensitiveLess{
     public:
-        bool operator()(const std::string& lhs,const std::string& rhs)const;
+        bool operator()(const std::string&, const std::string&) const;
     };
     class HttpRequest{
     public:
-        typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
+        typedef std::map<std::string,std::string> KeyValue;
     public:
         HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
         void setVersion(uint8_t ver);
@@ -192,7 +194,7 @@ namespace Http{
 
     class HttpResponse{
     public:
-        typedef std:: map<std::string,std::string,CaseInsensitiveLess> KeyValue;
+        typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:
         HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
         void setVersion(uint8_t ver);

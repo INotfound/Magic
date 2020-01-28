@@ -34,6 +34,7 @@ void Http(){
 	Magic::Http::HttpResponse resp;
 	Magic::Http::HttpResponse::KeyValue resValue;
 	resValue.emplace("X-X","XIAOBAIJUN");
+	resValue.emplace("Content-Length", "23333");
 	resp.setHeaders(resValue);
 	resp.setBody("hello XiaoBaiJun");
 	resp.setStatus(Magic::Http::HttpStatus::BAD_REQUEST);
@@ -57,7 +58,7 @@ void HttpParser(){
 }
 int main() {
 	Magic::Init("test");
-	
+	Http();
 	HttpParser();
 	std::getchar();
 	return 0;

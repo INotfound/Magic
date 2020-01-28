@@ -1,6 +1,6 @@
 #pragma once
 #include "Core.h"
-#include "Adapter.h"
+
 
 namespace Magic{
 
@@ -12,7 +12,7 @@ uint64_t GetThreadId();
 
 std::string BackTraceToString(uint32_t size = 64, uint32_t skip = 2, const std::string& prefix = "    ");
 
-bool CompareNoCase(const std::string& dest,const std::string& src);
+int32_t CompareNoCase(const std::string& dest,const std::string& src);
 
 }
 
