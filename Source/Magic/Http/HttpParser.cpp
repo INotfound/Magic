@@ -7,11 +7,11 @@ namespace Http{
     }
     void OnRequestPath(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setUrlPath(std::string(at,length));
+        parser->getData()->setUrlPath(std::string{at,length});
     }
     void OnRequestQuery(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setQuery(std::string(at,length));
+        parser->getData()->setQuery(std::string{at,length});
     }
     void OnRequestMethod(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
@@ -39,7 +39,7 @@ namespace Http{
     }
     void OnRequestFragment(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setFragment(std::string(at,length));
+        parser->getData()->setFragment(std::string{at,length});
     }
     void OnRequestHeaderDone(void *data,const char*at,size_t length){
         //HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
@@ -51,9 +51,7 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        std::string key(field, flen);
-        std::string val(value, vlen);
-        parser->getData()->setHeader(key, val);
+        parser->getData()->setHeader(std::string{field, flen}, std::string{value, vlen});
     }
 
     HttpRequestParser::HttpRequestParser()
@@ -80,7 +78,15 @@ namespace Http{
     void HttpRequestParser::setError(bool val){
         m_Error = val;
     }
-
+    uint32_t HttpRequestParser::getContentLength(){
+        std::string length{};
+        if(m_Data->hasHeader("Content-Length",length)){
+            return StringAs<uint32_t>(length);
+        }else if(m_Data->hasHeader("content-length",length)){
+            return StringAs<uint32_t>(length);
+        }
+        return 0;
+    }
     MagicPtr<HttpRequest>& HttpRequestParser::getData(){
         return m_Data;
     }
@@ -129,7 +135,7 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        parser->getData()->setHeader(std::string(field,flen),std::string(value,vlen));
+        parser->getData()->setHeader(std::string{field,flen},std::string{value,vlen});
     }
     HttpResponseParser::HttpResponseParser()
         :m_Error{false}{
@@ -152,6 +158,15 @@ namespace Http{
     }
     void HttpResponseParser::setError(bool val){
         m_Error = val;
+    }
+    uint32_t HttpResponseParser::getContentLength(){
+        std::string length{};
+        if(m_Data->hasHeader("Content-Length",length)){
+            return StringAs<uint32_t>(length);
+        }else if(m_Data->hasHeader("content-length",length)){
+            return StringAs<uint32_t>(length);
+        }
+        return 0;
     }
     MagicPtr<HttpResponse>& HttpResponseParser::getData(){
         return m_Data;

@@ -11,6 +11,7 @@ set(SRC
 	Source/Magic/Config.cpp
 	Source/Magic/Plugin.cpp
     Source/Magic/IoPool.cpp
+    Source/Magic/TcpServer.cpp
     Source/Magic/Http/Http.cpp
     Source/Magic/Http/HttpParser.cpp
     Source/Magic/Adapter/WinUtil.cpp

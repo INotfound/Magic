@@ -143,6 +143,32 @@ inline std::string StringAs<std::string>(const std::string& value) {
 }
 
 template<>
+inline int32_t StringAs<int32_t>(const std::string& value) {
+	return std::stoi(value);
+}
+
+template<>
+inline int64_t StringAs<int64_t>(const std::string& value) {
+	return std::stol(value);
+}
+template<>
+inline uint32_t StringAs<uint32_t>(const std::string& value) {
+	return static_cast<uint32_t>(std::stoul(value));
+}
+template<>
+inline uint64_t StringAs<uint64_t>(const std::string& value) {
+	return static_cast<uint64_t>(std::stoul(value));
+}
+template<>
+inline float StringAs<float>(const std::string& value) {
+	return std::stof(value);
+}
+template<>
+inline double StringAs<double>(const std::string& value) {
+	return std::stod(value);
+}
+
+template<>
 inline bool StringAs<bool>(const std::string& value) {
 	bool isOk{ true };
 	std::string tValue{ value };

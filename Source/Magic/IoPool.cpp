@@ -24,6 +24,7 @@ namespace Magic{
         }
         for(uint32_t i{0}; i<threads.size(); i++){
             threads.at(i)->join();
+            MAGIC_LOG(Magic::LogLevel::LogInfo) << "Free: "  << threads.at(i)->GetName();
         }
     }
     void IoPool::stop(){

@@ -92,10 +92,10 @@ namespace Http{
     }
 
     void HttpRequest::setParam(const std::string& key,const std::string& value){
-        m_Params[key] = value;
+        m_Params.emplace(key,value);
     }
     void HttpRequest::setCookie(const std::string& key,const std::string& value){
-        m_Cookies[key] = value;
+        m_Cookies.emplace(key,value);
     }
 
     void HttpRequest::setHeader(const std::string& key,const std::string& value){
@@ -222,10 +222,10 @@ namespace Http{
         m_Headers = val;
     }
     void HttpResponse::setCookie(const std::string& key,const std::string& value){
-        m_Cookies[key] = value;
+        m_Cookies.emplace(key,value);
     }
     void HttpResponse::setHeader(const std::string& key,const std::string& value){
-        m_Headers[key] = value;
+        m_Headers.emplace(key,value);
     }
 
     bool HttpResponse::getkeepAlive() const{
@@ -287,7 +287,7 @@ namespace Http{
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
             << "\r\n";
         for(auto& v : m_Headers){
-            if(CompareNoCase(v.first,"Connection")){
+            if(StringCompareNoCase(v.first,"Connection") == 0){
                 continue;
             }
             os << v.first << ": " << v.second << "\r\n";

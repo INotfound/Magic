@@ -12,6 +12,7 @@ namespace Http{
         bool hasError();
         bool isFinished();
         void setError(bool val);
+        uint32_t getContentLength();
         MagicPtr<HttpRequest>& getData();
         uint32_t execute(char* data,uint32_t length);
 
@@ -26,6 +27,7 @@ namespace Http{
         bool hasError();
         bool isFinished();
         void setError(bool val);
+        uint32_t getContentLength();
         MagicPtr<HttpResponse>& getData();
         uint32_t execute(char* data,uint32_t length);
 
