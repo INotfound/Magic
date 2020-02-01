@@ -165,7 +165,7 @@ namespace Http{
     void HttpRequest::delHeader(const std::string& key){
         m_Headers.erase(key);
     }
-    std::ostream& HttpRequest::dump(std::ostream& os){
+    std::ostream& HttpRequest::toStream(std::ostream& os){
         os  << HttpMethodToString(m_Method) << ' '
             << m_UrlPath
             << (m_Query.empty() ? "" : "?")
@@ -177,6 +177,7 @@ namespace Http{
             << '.'
             << static_cast<uint32_t>(m_Version & 0x0F)
             << "\r\n";
+
         os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         for(auto& v : m_Headers){
             if(StringCompareNoCase(v.first,"Connection") == 0){
@@ -184,6 +185,7 @@ namespace Http{
             }
             os << v.first << ": " << v.second << "\r\n";
         }
+
         if(!m_Body.empty()){
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
                 << m_Body;
@@ -197,7 +199,6 @@ namespace Http{
         :m_KeepAlive{keepAlive}
         ,m_Version{version}
         ,m_Status{HttpStatus::OK}{
-
     }
     void HttpResponse::setVersion(uint8_t ver){
         m_Version = ver;
@@ -214,15 +215,8 @@ namespace Http{
     void HttpResponse::setReason(const std::string& reason){
         m_Reason = reason;
     }
-
-    void HttpResponse::setCookies(const KeyValue& val){
-        m_Cookies = val;
-    }
     void HttpResponse::setHeaders(const KeyValue& val){
         m_Headers = val;
-    }
-    void HttpResponse::setCookie(const std::string& key,const std::string& value){
-        m_Cookies.emplace(key,value);
     }
     void HttpResponse::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key,value);
@@ -245,21 +239,10 @@ namespace Http{
         return m_Reason;
     }
 
-    HttpResponse::KeyValue& HttpResponse::getCookies(){
-        return m_Cookies;
-    }
     HttpResponse::KeyValue& HttpResponse::getHeaders(){
         return m_Headers;
     }
 
-    bool HttpResponse::hasCookie(const std::string& key,std::string& value){
-        auto iter = m_Cookies.find(key);
-        if(iter == m_Cookies.end()){
-            return false;
-        }
-        value.assign(iter->second);
-        return true;
-    }
     bool HttpResponse::hasHeader(const std::string& key,std::string& value){
         auto iter = m_Headers.find(key);
         if(iter == m_Headers.end()){
@@ -269,14 +252,12 @@ namespace Http{
         return true;
     }
 
-    void HttpResponse::delCookie(const std::string& key){
-        m_Cookies.erase(key);
-    }
+
     void HttpResponse::delHeader(const std::string& key){
         m_Headers.erase(key);
     }
 
-    std::ostream& HttpResponse::dump(std::ostream& os){
+    std::ostream& HttpResponse::toStream(std::ostream& os){
         os  << "HTTP/"
             << static_cast<uint32_t>(m_Version >> 4)
             << '.'
@@ -286,11 +267,16 @@ namespace Http{
             << ' '
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
             << "\r\n";
+        os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         for(auto& v : m_Headers){
             if(StringCompareNoCase(v.first,"Connection") == 0){
                 continue;
             }
             os << v.first << ": " << v.second << "\r\n";
+        }
+        
+        for(auto& v : m_Cookies){
+            os << "Set-Cookie: " << v << "\r\n";
         }
         if(!m_Body.empty()){
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
@@ -300,6 +286,11 @@ namespace Http{
         }
         return os;
     }
-
+    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpRequest>& request){
+        return request->toStream(os);
+    }
+    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpResponse>& response){
+        return response->toStream(os);
+    }
 }
 }

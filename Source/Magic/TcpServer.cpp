@@ -1,15 +1,8 @@
-#include "TcpServer.h"
 #include "Macro.h"
+#include "TcpServer.h"
+
 
 namespace Magic{
-
-    Session::Session(asio::io_context& io, uint32_t) 
-        :m_Socket(io){
-
-    }
-    asio::ip::tcp::socket& Session::socket() {
-        return m_Socket;
-    }
 
 
     TcpServer::~TcpServer(){
@@ -20,56 +13,39 @@ namespace Magic{
         ,m_IoPool{new IoPool{threadCount}}{
         auto endpoint = asio::ip::tcp::endpoint{asio::ip::address::from_string(addr),port};
         m_Acceptor.reset(new asio::ip::tcp::acceptor{m_IoPool->get(),endpoint});
-        m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(1));
-        m_Acceptor->listen();
+
     }
     void TcpServer::run(){
         if(m_Stop){
             return;
         }
         //TODO: ...
+        MAGIC_LOG(LogLevel::LogInfo)  << "Server running";
         accept();
         m_IoPool->run();
     }
     void TcpServer::stop(){
         //TODO: ...
+        MAGIC_LOG(LogLevel::LogInfo)  << "Server stoping";
         m_Stop = true;
     }
                 
-    char str[] = "HTTP/1.0 200 OK\r\n\r\n"
-        "<html>hello from http server</html>";
-    char strbuf[1024] = { 0 };
     void TcpServer::accept(){
-        std::shared_ptr<Session> session{ new Session{m_IoPool->get(),20} };
+        std::shared_ptr<Session> session = std::make_shared<Session>(m_IoPool->get());
         auto& socket = session->socket();
-        m_Acceptor->async_accept(socket,[this, session = std::move(session)](const asio::error_code& err){
-            MAGIC_LOG(Magic::LogLevel::LogInfo) << "accept";
+        m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
             if(err){
                 //TODO: ...
-                MAGIC_LOG(Magic::LogLevel::LogWarn) << err.message();
+                MAGIC_LOG(LogLevel::LogWarn) << err.message();
                 return;
             }
-            
-            session->socket().async_read_some(asio::buffer(strbuf,1024) ,[session = std::move(session)](const asio::error_code& err, size_t len) {
-                printf("%llu", Magic::GetThreadId());
-                auto& socket = session->socket();
-                socket.async_write_some(asio::buffer(str), [session = std::move(session)](const asio::error_code& err, size_t len) {
-                    if (err) {
-                        //TODO: ...
-                        MAGIC_LOG(Magic::LogLevel::LogWarn) << err.message();
-                        return;
-                    }
-                    MAGIC_LOG(Magic::LogLevel::LogInfo) << "Post!";
-
-                });
-            });
-            
+            this->handleFunc(session);
             if(!m_Stop){
                 accept();
             }
         });
     }
 
-    void TcpServer::hanldeFunc(std::shared_ptr<asio::ip::tcp::socket> socket){
+    void TcpServer::handleFunc(std::shared_ptr<Session> session){
     }
 }

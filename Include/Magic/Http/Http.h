@@ -2,7 +2,6 @@
 #include <map>
 #include <string>
 #include <ostream>
-#include <unordered_map>
 #include "Core.h"
 
 namespace Magic{
@@ -178,7 +177,7 @@ namespace Http{
         void delCookie(const std::string& key);
         void delHeader(const std::string& key);
 
-        std::ostream& dump(std::ostream& os);
+        std::ostream& toStream(std::ostream& os);
     private:
         bool m_KeepAlive{};
         uint8_t m_Version{};
@@ -203,10 +202,10 @@ namespace Http{
         void setBody(const std::string& body);
         void setReason(const std::string& reason);
 
-        void setCookies(const KeyValue& val);
+//        void setCookies(const KeyValue& val);
         void setHeaders(const KeyValue& val);
 
-        void setCookie(const std::string& key,const std::string& value);
+//        void setCookie(const std::string& key,const std::string& value);
         void setHeader(const std::string& key,const std::string& value);
 
         bool getkeepAlive() const;
@@ -215,25 +214,26 @@ namespace Http{
         const std::string& getBody() const;
         const std::string& getReason() const;
 
-        KeyValue& getCookies();
+        // KeyValue& getCookies();
         KeyValue& getHeaders(); 
 
-        bool hasCookie(const std::string& key,std::string& value);
+        // bool hasCookie(const std::string& key,std::string& value);
         bool hasHeader(const std::string& key,std::string& value);
 
-        void delCookie(const std::string& key);
+        // void delCookie(const std::string& key);
         void delHeader(const std::string& key);
 
-        std::ostream& dump(std::ostream& os);
+        std::ostream& toStream(std::ostream& os);
     private:
         bool m_KeepAlive{};
         uint8_t m_Version{};
         std::string m_Body{};
         std::string m_Reason{};
-        KeyValue m_Cookies{};
         KeyValue m_Headers{};
         HttpStatus m_Status{}; 
+        std::vector<std::string> m_Cookies;
     };
-
+    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpResponse>& request);
+    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpResponse>& response);
 }
 }

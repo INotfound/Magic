@@ -1,12 +1,16 @@
 #include "Magic.h"
 #include "asio.hpp"
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
 #include "IoPool.h"
 #include "Http/HttpParser.h"
 #include "TcpServer.h"
-
+#include "Http/Http.h"
+#include "Http/HttpServlet.h"
+#include "Http/HttpServer.h"
+#include "Http/HttpSession.h"
 class IPluginModule {
 public:
 	virtual int arg() = 0;
@@ -30,7 +34,7 @@ void Http(){
 	req.setHeaders(value);
 	req.setBody("hello XiaoBaiJun");
 	req.setMethod(Magic::Http::HttpMethod::POST);
-	req.dump(std::cout) << std::endl;
+	req.toStream(std::cout) << std::endl;
 
 	Magic::Http::HttpResponse resp;
 	Magic::Http::HttpResponse::KeyValue resValue;
@@ -39,7 +43,7 @@ void Http(){
 	resp.setHeaders(resValue);
 	resp.setBody("hello XiaoBaiJun");
 	resp.setStatus(Magic::Http::HttpStatus::BAD_REQUEST);
-	resp.dump(std::cout) << std::endl;
+	resp.toStream(std::cout) << std::endl;
 }
 char testRequestData[] = "GET / HTTP/1.1\r\n"
 						"Host: www.top.com\r\n"
@@ -55,7 +59,7 @@ void HttpRequestParser(){
 	std::string val{""};
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << requestParser.getData()->hasHeader("Content-Length",val);
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << val.c_str();
-	requestParser.getData()->dump(std::cout);
+	requestParser.getData()->toStream(std::cout);
 	std::cout << testRequestData << std::endl;
 }
 char testResponseData[] = "HTTP/1.1 200 OK\r\n"
@@ -79,51 +83,57 @@ void HttpResponseParser(){
 		<<" has_error= " << responseParser.hasError()
 		<<" Finished= " << responseParser.isFinished()
 		<<" Content-Length= "<< responseParser.getContentLength();
-	responseParser.getData()->dump(std::cout);
+	responseParser.getData()->toStream(std::cout);
 	std::cout << testResponseData << std::endl;
 }
-
-char str[] = "HTTP/1.0 200 OK\r\n\r\n"
-          "<html>hello from http server</html>";
-class EchoServer : public Magic::TcpServer{
+class DeafultServlet :public Magic::Http::HttpServlet{
 	public:
-		EchoServer(std::string addr,uint16_t p,uint32_t s):Magic::TcpServer(addr,p,s){
-
+		DeafultServlet()
+			:HttpServlet("DeafultServlet"){
 		}
-	protected:
-		virtual void hanldeFunc(std::shared_ptr<asio::ip::tcp::socket> socket){
-			auto streambuf = std::make_shared<asio::streambuf>();
-			//asio::async_read(*socket, *streambuf, asio::transfer_exactly(1), [this,socket](const asio::error_code& err, size_t len) {
-			//	printf("%d\n", GetCurrentThreadId());
-			
-				asio::async_write(*socket, asio::buffer(str), [this, socket = std::move(socket)](const asio::error_code& err, size_t len) {
-					if (err) {
-						//TODO: ...
-						MAGIC_LOG(Magic::LogLevel::LogWarn) << err.message();
-						return;
-					}
-					MAGIC_LOG(Magic::LogLevel::LogInfo) << "Post!";
-					this->hanldeFunc(socket);
-				});
+		void handle (const std::shared_ptr<Magic::Http::HttpSession>& session,MagicPtr<Magic::Http::HttpRequest>& request,MagicPtr<Magic::Http::HttpResponse>& response) override{
+			response->setStatus(Magic::Http::HttpStatus::NOT_FOUND);
+			std::string notfound{R"Template(<html>
+				<head><title>404 Not Found</title></head>
+				<body>
+				<center><h1>404 Not Found</h1></center>
+				<hr><center>Magic/0.0.1</center>
+				</body>
+				</html>)Template"};
+			response->setBody(notfound);
+			return;
+		}
+};
 
-
-			//});
-	}
+class LogServlet :public Magic::Http::HttpServlet{
+	public:
+		LogServlet()
+			:HttpServlet("LogServlet"){
+		}
+		void handle (const std::shared_ptr<Magic::Http::HttpSession>& session,MagicPtr<Magic::Http::HttpRequest>& request,MagicPtr<Magic::Http::HttpResponse>& response) override{
+			response->setStatus(Magic::Http::HttpStatus::OK);
+			std::fstream stream;
+			response->setHeader("Content-type","text/html");
+			stream.open("test.html",std::ios::in);
+			stream.seekg(0,std::ios_base::end);
+			uint32_t size = stream.tellg();
+			std::shared_ptr<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
+			stream.seekg(0,std::ios_base::beg);
+			stream.read(buffer.get(),size);
+			std::string log{buffer.get(),size};
+			response->setBody(log);
+			return;
+		}
 };
 
 
 void Server(){
-	/*MagicPtr<Magic::TcpServer> server(new EchoServer("127.0.0.1",6060,4));
-	server->run();*/
-	Magic::TcpServer server("127.0.0.1", 6060, 2);
-	try
-	{
-		server.run();
-	}
-	catch (const std::exception & ec)
-	{
-		MAGIC_LOG(Magic::LogLevel::LogError) << ec.what();
-	}
+	Magic::Http::HttpServer server("0.0.0.0",80,Magic::GetProcessorsNumber()*2);
+	MagicPtr<Magic::Http::HttpServlet> log{new LogServlet};
+	MagicPtr<Magic::Http::HttpServlet> deafult{new DeafultServlet};
+	server.getHttpServletDispatch()->setDeafultServlet(deafult);
+	server.getHttpServletDispatch()->addServlet("/log",log);
+	server.run();
 }
 
 int main() {

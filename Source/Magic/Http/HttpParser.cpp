@@ -78,12 +78,12 @@ namespace Http{
     void HttpRequestParser::setError(bool val){
         m_Error = val;
     }
-    uint32_t HttpRequestParser::getContentLength(){
+    uint64_t HttpRequestParser::getContentLength(){
         std::string length{};
         if(m_Data->hasHeader("Content-Length",length)){
-            return StringAs<uint32_t>(length);
+            return StringAs<uint64_t>(length);
         }else if(m_Data->hasHeader("content-length",length)){
-            return StringAs<uint32_t>(length);
+            return StringAs<uint64_t>(length);
         }
         return 0;
     }

@@ -7,8 +7,10 @@
 #include <algorithm>
 #include <functional>
 
-#define MagicPtr std::unique_ptr
+#include "asio.hpp"
 
+#define MagicPtr std::unique_ptr
+typedef asio::ip::tcp::socket Socket; 
 /**/
 class Noncopyable{
 public:
