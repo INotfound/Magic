@@ -36,7 +36,7 @@ namespace Magic{
         m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
             if(err){
                 //TODO: ...
-                MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                 return;
             }
             this->handleFunc(session);
@@ -46,6 +46,4 @@ namespace Magic{
         });
     }
 
-    void TcpServer::handleFunc(std::shared_ptr<Session> session){
-    }
 }

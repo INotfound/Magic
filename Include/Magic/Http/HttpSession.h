@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+
 #include "Core.h"
 #include "Session.h"
 namespace Magic{

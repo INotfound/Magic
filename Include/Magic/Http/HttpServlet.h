@@ -1,5 +1,4 @@
 #pragma once
-#include <functional>
 #include <unordered_map>
 
 #include "Core.h"
@@ -23,6 +22,7 @@ namespace Http{
         HttpServletDispatch();
         void setDeafultServlet(MagicPtr<HttpServlet>& servlet);
         void addServlet(const std::string& name,MagicPtr<HttpServlet>& servlet);
+        void addGlobServlet(const std::string& name,MagicPtr<HttpServlet>& servlet);
         void handle(const std::shared_ptr<HttpSession>& session,MagicPtr<HttpRequest>& request,MagicPtr<HttpResponse>& response) override;
     private:
         MagicPtr<HttpServlet>& getMatchedServlet(const std::string& name);
@@ -30,6 +30,7 @@ namespace Http{
         RWMutex m_Mutex{};
         MagicPtr<HttpServlet> m_DeafultServlet{};
         std::unordered_map<std::string,MagicPtr<HttpServlet>> m_Servlets{};
+        std::unordered_map<std::string,MagicPtr<HttpServlet>> m_GlobServlets{};
     };
 
 }

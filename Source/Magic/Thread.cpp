@@ -1,6 +1,6 @@
-#include "Thread.h"
 #include "Util.h"
 #include "Macro.h"
+#include "Thread.h"
 
 using namespace Magic;
 

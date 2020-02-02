@@ -15,7 +15,7 @@ namespace Http{
         m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
             if(err){
                 //TODO: ...
-                MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                 return;
             }
             this->handleFunc(session);
@@ -42,7 +42,7 @@ namespace Http{
             ,[this,session,readStreamBuffer,buffer](const asio::error_code &err, std::size_t length){
                 if(err){
                     //TODO: ...
-                    MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                    MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                     return;
                 }
                 std::shared_ptr<HttpRequestParser> requestParser = std::make_shared<HttpRequestParser>();
@@ -62,20 +62,21 @@ namespace Http{
 
                     asio::async_read(*session->socket()
                         ,*readStreamBuffer
+                        ,asio::transfer_exactly(contentLength)
                         ,[this,session,requestParser,readStreamBuffer,buffer,lastLength](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
-                                MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                                 return;
                             }
 
-                            std::string data{};
+                            std::string body{};
                             auto& request = requestParser->getData();
                             auto streamBuffer = readStreamBuffer->data();
-                            data.resize(length + lastLength);
-                            data.append(buffer.get(),lastLength);
-                            data.append(asio::buffers_begin(streamBuffer),asio::buffers_end(streamBuffer));
-                            request->setBody(data);
+                            body.resize(length + lastLength);
+                            body.append(buffer.get(),lastLength);
+                            body.append(asio::buffers_begin(streamBuffer),asio::buffers_end(streamBuffer));
+                            request->setBody(body);
 
                             MagicPtr<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
                             response->setHeader("Server","MagicServer");
@@ -89,7 +90,7 @@ namespace Http{
                                 ,[this,session](const asio::error_code &err, std::size_t length){
                                     if(err){
                                         //TODO: ...
-                                        MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                                        MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                                         return;
                                     }
                                     process(session);
@@ -107,7 +108,7 @@ namespace Http{
                         ,[this,session](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
-                                MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                                 return;
                             }
                             process(session);
