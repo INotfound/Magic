@@ -12,7 +12,7 @@
                     Magic::LogWrap{										\
 						level,											\
 						logger,											\
-						MagicPtr<Magic::LogEvent>{						\
+						Safe<Magic::LogEvent>{						\
 							new Magic::LogEvent{						\
 								__LINE__,								\
 								static_cast<uint64_t>(time(nullptr)),	\

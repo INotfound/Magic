@@ -286,10 +286,10 @@ namespace Http{
         }
         return os;
     }
-    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpRequest>& request){
+    std::ostream& operator<<(std::ostream& os, const Safe<HttpRequest>& request){
         return request->toStream(os);
     }
-    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpResponse>& response){
+    std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& response){
         return response->toStream(os);
     }
 }

@@ -7,7 +7,7 @@ namespace Magic{
     Session::Session(asio::io_context& io){
         m_Socket.reset(new Socket{io});
     }
-    MagicPtr<Socket>& Session::socket() {
+    Safe<Socket>& Session::socket() {
         return m_Socket;
     }
 }

@@ -10,7 +10,7 @@ namespace Http{
         ,m_ServletDispatch{new HttpServletDispatch}{
     }
     void HttpServer::accept(){
-        std::shared_ptr<Session> session{new HttpSession{m_IoPool->get()}};
+        Share<Session> session{new HttpSession{m_IoPool->get()}};
         auto& socket = session->socket();
         m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
             if(err){
@@ -24,17 +24,17 @@ namespace Http{
             }
         });
     }
-    MagicPtr<HttpServletDispatch>& HttpServer::getHttpServletDispatch(){
+    Safe<HttpServletDispatch>& HttpServer::getHttpServletDispatch(){
         return m_ServletDispatch;
     }
-    void HttpServer::handleFunc(std::shared_ptr<Session> session){
+    void HttpServer::handleFunc(Share<Session> session){
         //TODO:: ...
-        std::shared_ptr<HttpSession> httpSession = std::static_pointer_cast<HttpSession>(session);
+        Share<HttpSession> httpSession = std::static_pointer_cast<HttpSession>(session);
         process(httpSession);
     }
-    void HttpServer::process(std::shared_ptr<HttpSession> session){
+    void HttpServer::process(Share<HttpSession> session){
         uint32_t bufferSize = 1024*4;
-        std::shared_ptr<char> buffer(new char[bufferSize],[](char* ptr){delete[] ptr;});
+        Share<char> buffer(new char[bufferSize],[](char* ptr){delete[] ptr;});
         auto readStreamBuffer = std::make_shared<asio::streambuf>();
         asio::async_read_until(*session->socket()
             ,*readStreamBuffer
@@ -45,7 +45,7 @@ namespace Http{
                     MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
                     return;
                 }
-                std::shared_ptr<HttpRequestParser> requestParser = std::make_shared<HttpRequestParser>();
+                Share<HttpRequestParser> requestParser = std::make_shared<HttpRequestParser>();
                 readStreamBuffer->sgetn(buffer.get(),length);
                 uint32_t parserLength = requestParser->execute(buffer.get(),length);
                 uint32_t lastLength = length - parserLength;
@@ -78,7 +78,7 @@ namespace Http{
                             body.append(asio::buffers_begin(streamBuffer),asio::buffers_end(streamBuffer));
                             request->setBody(body);
 
-                            MagicPtr<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
+                            Safe<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
                             response->setHeader("Server","MagicServer");
                             m_ServletDispatch->handle(session,request,response);
                             auto writeBuffer = std::make_shared<asio::streambuf>();
@@ -98,7 +98,7 @@ namespace Http{
                         });
                 }else{
                     auto& request = requestParser->getData();
-                    MagicPtr<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
+                    Safe<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
                     m_ServletDispatch->handle(session,requestParser->getData(),response);
                     auto writeBuffer = std::make_shared<asio::streambuf>();
                     std::ostream responseStream(writeBuffer.get());

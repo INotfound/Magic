@@ -21,7 +21,7 @@ namespace Magic {
         m_ConfigFile->write(m_ConfigMap);
 		MAGIC_LOG(LogLevel::LogDebug) << "Update configuration items";
     }
-	void Config::addConfigFile(MagicPtr<ConfigFile>& configFile) {
+	void Config::addConfigFile(Safe<ConfigFile>& configFile) {
 		MutexLock lock{ m_Mutex };
 		m_ConfigFile = std::move(configFile);
 		m_ConfigFile->read(m_ConfigMap);
@@ -57,7 +57,7 @@ namespace Magic {
 		m_Formatter->write(m_FileStream,config);
 		m_FileStream.flush();
 	}
-	void ConfigFile::addFormatter(MagicPtr<IConfigFormatter>& configFormatter) {
+	void ConfigFile::addFormatter(Safe<IConfigFormatter>& configFormatter) {
 		m_Formatter = std::move(configFormatter);
 	}
 
@@ -83,7 +83,7 @@ namespace Magic {
 		auto iter{ KeyValue.begin() };
 		auto end{ KeyValue.end() };
 		for (; iter != end; iter++) {
-			MagicPtr<ConfigValue>& value{ iter->second };
+			Safe<ConfigValue>& value{ iter->second };
 			if (!value->getComment().empty()) {
 				os << "#" << value->getComment() << std::endl;
 			}
@@ -123,7 +123,7 @@ namespace Magic {
 				isValue = false;
 				if (i == (length - 1) && charValue != '\n')
 					valueString.append(1, charValue);
-				MagicPtr<ConfigValue> value{ new ConfigValue{normalString,valueString,commentString} };
+				Safe<ConfigValue> value{ new ConfigValue{normalString,valueString,commentString} };
 				keyValue[normalString] = std::move(value);
 				commentString.clear();
 				normalString.clear();
@@ -150,7 +150,7 @@ namespace Magic {
 	}
 	
 	void JsonConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-		MagicPtr<rapidjson::Document> json{ new rapidjson::Document{} };
+		Safe<rapidjson::Document> json{ new rapidjson::Document{} };
 		rapidjson::Document::AllocatorType& allocator = json->GetAllocator();
 		json->SetObject();
 		for(auto&v : KeyValue)
@@ -165,22 +165,22 @@ namespace Magic {
 			rapidjson::Value jsonValue{ v.second->getValue().c_str() , allocator };
 			json->AddMember(jsonName, jsonValue, allocator);
 		}
-		MagicPtr<rapidjson::StringBuffer> buffer{ new rapidjson::StringBuffer{} };
-		MagicPtr<rapidjson::Writer<rapidjson::StringBuffer>> writer{ new rapidjson::Writer<rapidjson::StringBuffer>{*buffer} };
+		Safe<rapidjson::StringBuffer> buffer{ new rapidjson::StringBuffer{} };
+		Safe<rapidjson::Writer<rapidjson::StringBuffer>> writer{ new rapidjson::Writer<rapidjson::StringBuffer>{*buffer} };
 		json->Accept(*writer);
 		os << buffer->GetString();
 	}
 	void JsonConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
 		if (content.empty())
 			return;
-		MagicPtr<rapidjson::Document> json{ new rapidjson::Document{} };
+		Safe<rapidjson::Document> json{ new rapidjson::Document{} };
 		json->Parse(content.c_str());
 		auto iter{ json->MemberBegin() };
 		auto end{ json->MemberEnd() };
 		for (; iter != end; iter++)
 		{
 			std::string keyName{ iter->name.GetString() };
-			MagicPtr<ConfigValue> value{ new ConfigValue{ keyName,iter->value.GetString() } };
+			Safe<ConfigValue> value{ new ConfigValue{ keyName,iter->value.GetString() } };
 			keyValue[keyName] = std::move(value);
 		}
 	}

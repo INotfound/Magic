@@ -8,17 +8,17 @@ namespace Magic{
         :m_PoolSize{poolSize}{
         MAGIC_ASSERT(poolSize >= 0,"threadCount < 0 Or = 0");
         for(uint32_t i{0}; i<m_PoolSize; i++){
-            MagicPtr<asio::io_context> io{ new asio::io_context };
-            m_IOServiceWork.push_back(MagicPtr<asio::io_context::work>{new asio::io_context::work(*io)});
+            Safe<asio::io_context> io{ new asio::io_context };
+            m_IOServiceWork.push_back(Safe<asio::io_context::work>{new asio::io_context::work(*io)});
             m_IOService.push_back(std::move(io));
             
         }
 
     }
     void IoPool::run(){
-        std::vector<MagicPtr<Thread>> threads{};
+        std::vector<Safe<Thread>> threads{};
         for(uint32_t i{0}; i<m_PoolSize; i++){
-            threads.push_back(MagicPtr<Thread>{
+            threads.push_back(Safe<Thread>{
                 new Thread{"IoPool/"+std::to_string(i),
                     [this,i](){
                         m_IOService.at(i)->run();

@@ -19,11 +19,11 @@ public:
 
 void Plugin(){
     MAGIC_CONFIG()->at<int64_t>("test",124567891,"233333333");
-	MagicPtr<Magic::Plugin> plugin{ 
+	Safe<Magic::Plugin> plugin{ 
 		new Magic::Plugin("TestLib", MAGIC_CONFIG()->at<std::string>("Library","TestLib.DLL"))
 	};
 	MAGIC_PLUGINMGR()->addPlugin(plugin);
-	MagicPtr<IPluginModule> pp{ MAGIC_PLUGIN("TestLib")->getInstance<IPluginModule>() };
+	Safe<IPluginModule> pp{ MAGIC_PLUGIN("TestLib")->getInstance<IPluginModule>() };
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << pp->arg();
 }
 
@@ -91,7 +91,7 @@ class DeafultServlet :public Magic::Http::HttpServlet{
 		DeafultServlet()
 			:HttpServlet("DeafultServlet"){
 		}
-		void handle (const std::shared_ptr<Magic::Http::HttpSession>& session,MagicPtr<Magic::Http::HttpRequest>& request,MagicPtr<Magic::Http::HttpResponse>& response) override{
+		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::NOT_FOUND);
 			std::string notfound{R"Template(<html>
 				<head><title>404 Not Found</title></head>
@@ -110,14 +110,14 @@ class LogServlet :public Magic::Http::HttpServlet{
 		LogServlet()
 			:HttpServlet("LogServlet"){
 		}
-		void handle (const std::shared_ptr<Magic::Http::HttpSession>& session,MagicPtr<Magic::Http::HttpRequest>& request,MagicPtr<Magic::Http::HttpResponse>& response) override{
+		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
 			std::fstream stream;
 			response->setHeader("Content-type","text/html");
 			stream.open("test.html",std::ios::in);
 			stream.seekg(0,std::ios_base::end);
 			uint32_t size = stream.tellg();
-			std::shared_ptr<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
+			Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
 			stream.seekg(0,std::ios_base::beg);
 			stream.read(buffer.get(),size);
 			std::string log{buffer.get(),size};
@@ -129,8 +129,8 @@ class LogServlet :public Magic::Http::HttpServlet{
 
 void Server(){
 	Magic::Http::HttpServer server("0.0.0.0",80,Magic::GetProcessorsNumber()*2);
-	MagicPtr<Magic::Http::HttpServlet> log{new LogServlet};
-	MagicPtr<Magic::Http::HttpServlet> deafult{new DeafultServlet};
+	Safe<Magic::Http::HttpServlet> log{new LogServlet};
+	Safe<Magic::Http::HttpServlet> deafult{new DeafultServlet};
 	server.getHttpServletDispatch()->setDeafultServlet(deafult);
 	server.getHttpServletDispatch()->addServlet("/log",log);
 	server.run();

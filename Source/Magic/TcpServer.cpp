@@ -31,7 +31,7 @@ namespace Magic{
     }
                 
     void TcpServer::accept(){
-        std::shared_ptr<Session> session = std::make_shared<Session>(m_IoPool->get());
+        Share<Session> session = std::make_shared<Session>(m_IoPool->get());
         auto& socket = session->socket();
         m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
             if(err){

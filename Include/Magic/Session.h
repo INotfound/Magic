@@ -7,8 +7,8 @@ namespace Magic{
     public:
         virtual ~Session();
         Session(asio::io_context& io);
-        MagicPtr<Socket>& socket();
+        Safe<Socket>& socket();
     protected:
-        MagicPtr<Socket> m_Socket{};
+        Safe<Socket> m_Socket{};
     };
 }

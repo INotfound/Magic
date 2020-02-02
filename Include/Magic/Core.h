@@ -9,7 +9,9 @@
 
 #include "asio.hpp"
 
-#define MagicPtr std::unique_ptr
+#define Safe std::unique_ptr
+#define Share std::shared_ptr
+
 typedef asio::ip::tcp::socket Socket; 
 /**/
 class Noncopyable{
@@ -32,8 +34,8 @@ public:
 template <class T>
 class SingletonPtr{
 public:
-    static MagicPtr<T> GetInstance(){
-		static MagicPtr<T> v{ new T{} };
+    static Safe<T> GetInstance(){
+		static Safe<T> v{ new T{} };
         return v;
     }
 };

@@ -13,14 +13,14 @@ namespace Magic {
 	class IConfigFormatter;
 	class InIConfigFormatter;
 
-	typedef std::map<std::string, MagicPtr<ConfigValue>> ConfigMap;
+	typedef std::map<std::string, Safe<ConfigValue>> ConfigMap;
 
 	class Config{
 	public:
 		~Config();
 		Config();
         void update();
-		void addConfigFile(MagicPtr<ConfigFile>& configFile);
+		void addConfigFile(Safe<ConfigFile>& configFile);
 		template<class T>
 		T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "");
 		template<class T>
@@ -29,7 +29,7 @@ namespace Magic {
 		MutexType m_Mutex{};
 		ConfigMap m_ConfigMap{};
 		bool m_IsChange{ false };
-		MagicPtr<ConfigFile> m_ConfigFile{};
+		Safe<ConfigFile> m_ConfigFile{};
 	};
 
 	class ConfigFile {
@@ -41,11 +41,11 @@ namespace Magic {
 		const std::string& getPath() const;
 		void read(ConfigMap& keyValue);
 		void write(ConfigMap& config);
-		void addFormatter(MagicPtr<IConfigFormatter>& configFormatter);
+		void addFormatter(Safe<IConfigFormatter>& configFormatter);
 	private:
 		std::string m_Path{};
 		std::fstream m_FileStream{};
-		MagicPtr<IConfigFormatter> m_Formatter{};
+		Safe<IConfigFormatter> m_Formatter{};
 	};
 
 	class ConfigValue {
@@ -90,7 +90,7 @@ namespace Magic {
 		if (iter != m_ConfigMap.end()) {
 			return StringAs<T>(iter->second->getValue());
 		}
-		MagicPtr<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
+		Safe<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
 		m_ConfigMap[defaultName] = std::move(value);
 		return defaultValue;
 	}
@@ -98,7 +98,7 @@ namespace Magic {
 	T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
 		MutexLock lock{ m_Mutex };
 		//MAGIC_LOG(LogLevel::LogDebug) << "Modify configuration items";
-		MagicPtr<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
+		Safe<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
 		m_ConfigMap[defaultName].reset();
 		m_ConfigMap[defaultName] = std::move(value);
 		return defaultValue;

@@ -87,7 +87,7 @@ namespace Http{
         }
         return 0;
     }
-    MagicPtr<HttpRequest>& HttpRequestParser::getData(){
+    Safe<HttpRequest>& HttpRequestParser::getData(){
         return m_Data;
     }
     uint32_t HttpRequestParser::execute(char* data,uint32_t length){
@@ -168,7 +168,7 @@ namespace Http{
         }
         return 0;
     }
-    MagicPtr<HttpResponse>& HttpResponseParser::getData(){
+    Safe<HttpResponse>& HttpResponseParser::getData(){
         return m_Data;
     }
     uint32_t HttpResponseParser::execute(char* data,uint32_t length){

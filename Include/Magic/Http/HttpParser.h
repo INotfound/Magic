@@ -12,13 +12,13 @@ namespace Http{
         bool isFinished();
         void setError(bool val);
         uint64_t getContentLength();
-        MagicPtr<HttpRequest>& getData();
+        Safe<HttpRequest>& getData();
         uint32_t execute(char* data,uint32_t length);
 
     private:
         bool m_Error{};
         http_parser m_Parser;
-        MagicPtr<HttpRequest> m_Data;
+        Safe<HttpRequest> m_Data;
     };
     class HttpResponseParser{
     public:
@@ -27,13 +27,13 @@ namespace Http{
         bool isFinished();
         void setError(bool val);
         uint32_t getContentLength();
-        MagicPtr<HttpResponse>& getData();
+        Safe<HttpResponse>& getData();
         uint32_t execute(char* data,uint32_t length);
 
     private:
         bool m_Error{};
         httpclient_parser m_Parser{};
-        MagicPtr<HttpResponse> m_Data{};
+        Safe<HttpResponse> m_Data{};
     };
 }
 }

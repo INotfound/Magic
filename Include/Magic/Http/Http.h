@@ -233,7 +233,7 @@ namespace Http{
         HttpStatus m_Status{}; 
         std::vector<std::string> m_Cookies;
     };
-    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpResponse>& request);
-    std::ostream& operator<<(std::ostream& os, const MagicPtr<HttpResponse>& response);
+    std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& request);
+    std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& response);
 }
 }

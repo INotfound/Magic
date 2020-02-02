@@ -39,26 +39,26 @@ namespace Magic{
 		LogLevel getLevel() const;
 		const std::string& getLogName() const;
 		void setFormatter(const std::string& pattern);
-		void log(LogLevel level, MagicPtr<LogEvent>& event);
-		void addILogAppender(MagicPtr<ILogAppender>& logAppender);
-		void delILogAppender(MagicPtr<ILogAppender>& logAppender);
+		void log(LogLevel level, Safe<LogEvent>& event);
+		void addILogAppender(Safe<ILogAppender>& logAppender);
+		void delILogAppender(Safe<ILogAppender>& logAppender);
 	private:
 		MutexType m_Mutex{};
 		std::string m_LogName{};
 		std::string m_Formatter{};
 		LogLevel m_Level{ LogLevel::LogDebug };
-		std::list<MagicPtr<ILogAppender>> m_ILogAppenders{};
+		std::list<Safe<ILogAppender>> m_ILogAppenders{};
 	};
 
 	class LogWrap {
 	public:
-		LogWrap(const LogLevel level ,MagicPtr<Logger>& logger, MagicPtr<LogEvent>&& event);
+		LogWrap(const LogLevel level ,Safe<Logger>& logger, Safe<LogEvent>&& event);
 		std::stringstream& get();
 		~LogWrap();
 	private:
 		LogLevel m_Level{};
-		MagicPtr<Logger>& m_Logger;
-		MagicPtr<LogEvent> m_Event{};
+		Safe<Logger>& m_Logger;
+		Safe<LogEvent> m_Event{};
 	};
 
 	class LogEvent {
@@ -91,40 +91,40 @@ namespace Magic{
 		friend class Logger;
 	public:
 		virtual ~ILogAppender() {};
-		virtual void log(LogLevel level, MagicPtr<LogEvent>& event) = 0;
+		virtual void log(LogLevel level, Safe<LogEvent>& event) = 0;
 	protected:
-		MagicPtr<LogFormatter> m_Formatter{};
+		Safe<LogFormatter> m_Formatter{};
 	};
 
 	class LogFormatter {
 	public:
 		explicit LogFormatter(const std::string& pattern);
-		void format(std::ostream& os, const LogLevel  level, const MagicPtr<LogEvent>& event);
+		void format(std::ostream& os, const LogLevel  level, const Safe<LogEvent>& event);
 	private:
-		std::vector<MagicPtr<ILogFormatItem>> m_Items{};
+		std::vector<Safe<ILogFormatItem>> m_Items{};
 	};
 
 	class LoggerManager {
 	public:
 		LoggerManager();
-		MagicPtr<Logger>& getRoot();
-		MagicPtr<Logger>& getLogger(const std::string& name);
+		Safe<Logger>& getRoot();
+		Safe<Logger>& getLogger(const std::string& name);
 	private:
-		MagicPtr<Logger> m_Root{};
-		std::map<std::string, MagicPtr<Logger>> m_Loggers{};
+		Safe<Logger> m_Root{};
+		std::map<std::string, Safe<Logger>> m_Loggers{};
 	};
 	typedef Singleton<LoggerManager>        LoggerMgr;
 
 	class ILogFormatItem {
 	public:
 		virtual ~ILogFormatItem();
-		virtual void format(std::ostream& os, const LogLevel  level, const MagicPtr<LogEvent>& event) = 0;
+		virtual void format(std::ostream& os, const LogLevel  level, const Safe<LogEvent>& event) = 0;
 	};
 
 	class FileLogAppender :public ILogAppender {
 	public:
 		explicit FileLogAppender(const std::string& path);
-		void log(LogLevel level, MagicPtr<LogEvent>& event) override;
+		void log(LogLevel level, Safe<LogEvent>& event) override;
 	private:
 		MutexType m_Mutex{};
 		std::string m_Path{};
@@ -134,7 +134,7 @@ namespace Magic{
 	class HtmlLogAppender :public ILogAppender {
 	public:
 		explicit HtmlLogAppender(const std::string& path);
-		void log(LogLevel level, MagicPtr<LogEvent>& event) override;
+		void log(LogLevel level, Safe<LogEvent>& event) override;
 	private:
 		MutexType m_Mutex{};
 		std::string m_Path{};
@@ -143,6 +143,6 @@ namespace Magic{
 
 	class StdOutLogAppender :public ILogAppender {
 	public:
-		void log(LogLevel level, MagicPtr<LogEvent>& event) override;
+		void log(LogLevel level, Safe<LogEvent>& event) override;
 	};
 }

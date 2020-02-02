@@ -9,14 +9,14 @@ namespace Http{
     class HttpServer: public TcpServer{
     public:
         HttpServer(const std::string& addr,uint16_t port,uint32_t threadCount);
-        MagicPtr<HttpServletDispatch>& getHttpServletDispatch();
+        Safe<HttpServletDispatch>& getHttpServletDispatch();
     protected:
         void accept() override;
-        void handleFunc(std::shared_ptr<Session> session) override;
+        void handleFunc(Share<Session> session) override;
     private:
-        void process(std::shared_ptr<HttpSession> session);
+        void process(Share<HttpSession> session);
     private:
-        MagicPtr<HttpServletDispatch> m_ServletDispatch;
+        Safe<HttpServletDispatch> m_ServletDispatch;
     };
 }
 } 

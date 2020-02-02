@@ -12,12 +12,12 @@ namespace Magic{
         void stop();
     protected:
         virtual void accept();
-        virtual void handleFunc(std::shared_ptr<Session> session) =0;
+        virtual void handleFunc(Share<Session> session) =0;
     protected:
         bool m_Stop{false};
         std::string m_Address{};
         uint16_t m_NetworkPort{};
-        MagicPtr<IoPool> m_IoPool{};
-        MagicPtr<asio::ip::tcp::acceptor> m_Acceptor{};
+        Safe<IoPool> m_IoPool{};
+        Safe<asio::ip::tcp::acceptor> m_Acceptor{};
     };
 }
