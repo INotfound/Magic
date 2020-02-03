@@ -7,8 +7,6 @@
 namespace Magic{
 namespace Http{
 
-
-
 /* Request Methods */
     #define HTTP_METHOD_MAP(XX)         \
         XX(0,  DELETE,      DELETE)       \
@@ -116,6 +114,32 @@ namespace Http{
         XX(510, NOT_EXTENDED,                    Not Extended)                    \
         XX(511, NETWORK_AUTHENTICATION_REQUIRED, Network Authentication Required) \
 
+    #define HTTP_CONTENT_TYPE(XX) \
+        XX(TEXT_CSS,                     "text/css; charset=utf-8")                  \
+        XX(TEXT_XML,                     "text/xml; charset=utf-8")                  \
+        XX(TEXT_XSL,                     "text/xsl; charset=utf-8")                  \
+        XX(TEXT_PLAIN,                   "text/plain; charset=utf-8")                \
+        XX(TEXT_HTML,                    "text/html; charset=utf-8")                 \
+        XX(IMAGE_PNG,                    "image/png")                                \
+        XX(IMAGE_JPG,                    "image/jpeg")                               \
+        XX(IMAGE_GIF,                    "image/gif")                                \
+        XX(IMAGE_XICON,                  "image/x-icon")                             \
+        XX(IMAGE_BMP,                    "image/bmp")                                \
+        XX(IMAGE_ICNS,                   "image/icns")                               \
+        XX(IMAGE_SVG_XML,                "image/svg+xml")                            \
+        XX(APPLICATION_XML,              "application/xml; charset=utf-8")           \
+        XX(APPLICATION_JSON,             "application/json; charset=utf-8")          \
+        XX(APPLICATION_WASM,             "application/wasm")                         \
+        XX(APPLICATION_X_FORM,           "application/x-www-form-urlencoded")        \
+        XX(APPLICATION_FONT_WOFF,        "application/font-woff")                    \
+        XX(APPLICATION_FONT_WOFF2,       "application/font-woff2")                   \
+        XX(APPLICATION_X_JAVASCRIPT,     "application/x-javascript; charset=utf-8")  \
+        XX(APPLICATION_OCTET_STREAM,     "application/octet-stream")                 \
+        XX(APPLICATION_VND_MS_FONTOBJ,   "application/vnd.ms-fontobject")            \
+        XX(APPLICATION_X_FONT_TRUETYPE,  "application/x-font-truetype")              \
+        XX(APPLICATION_X_FONT_OPENTYPE,  "application/x-font-opentype")
+
+
     enum class HttpMethod{
         #define XX(num,name,string) name = num,
             HTTP_METHOD_MAP(XX)
@@ -129,14 +153,25 @@ namespace Http{
         #undef XX
         INVALID_METHOD = 255
     };
+
+    enum class HttpContentType{
+        #define XX(name,desc) name,
+            HTTP_CONTENT_TYPE(XX)
+        #undef XX
+    };
+
     HttpMethod CharsToHttpMethod(const char* str);
-    HttpMethod StringToHttpMethod(const std::string &str);
-    const char* HttpMethodToString(const HttpMethod & method);
-    const char* HttpStatusToString(const HttpStatus & status);
+    HttpMethod StringToHttpMethod(const std::string& str);
+    const char* HttpMethodToString(const HttpMethod& method);
+    const char* HttpStatusToString(const HttpStatus& status);
+    HttpContentType FileTypeToHttpContentType(const std::string& fileName);
+    const char* HttpContentTypeToString(const HttpContentType& contentType);
+
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string&, const std::string&) const;
     };
+
     class HttpRequest{
     public:
         typedef std::map<std::string,std::string> KeyValue;
@@ -149,13 +184,11 @@ namespace Http{
         void setQuery(const std::string& query);
         void setUrlPath(const std::string& urlPath);
         void setFragment(const std::string& fragment);
-        
+
         void setParams(const KeyValue& val);
-        void setCookies(const KeyValue& val);
         void setHeaders(const KeyValue& val);
 
         void setParam(const std::string& key,const std::string& value);
-        void setCookie(const std::string& key,const std::string& value);
         void setHeader(const std::string& key,const std::string& value);
 
         bool getkeepAlive() const;
@@ -166,29 +199,25 @@ namespace Http{
         const std::string& getUrlPath() const;
 
         KeyValue& getParams();
-        KeyValue& getCookies();
         KeyValue& getHeaders(); 
 
         bool hasParam(const std::string& key,std::string& value);
-        bool hasCookie(const std::string& key,std::string& value);
         bool hasHeader(const std::string& key,std::string& value);
 
         void delParam(const std::string& key);
-        void delCookie(const std::string& key);
         void delHeader(const std::string& key);
 
         std::ostream& toStream(std::ostream& os);
     private:
-        bool m_KeepAlive{};
-        uint8_t m_Version{};
-        HttpMethod m_Method{};
-        std::string m_Body{};
-        std::string m_Query{};
-        std::string m_UrlPath{};
-        std::string m_Fragment{};
-        KeyValue m_Params{};
-        KeyValue m_Cookies{};
-        KeyValue m_Headers{};
+        bool m_KeepAlive;
+        uint8_t m_Version;
+        KeyValue m_Params;
+        KeyValue m_Headers;
+        HttpMethod m_Method;
+        std::string m_Body;
+        std::string m_Query;
+        std::string m_UrlPath;
+        std::string m_Fragment;
     };
 
     class HttpResponse{
@@ -201,36 +230,29 @@ namespace Http{
         void setkeepAlive(bool keepAlive);
         void setBody(const std::string& body);
         void setReason(const std::string& reason);
+        void setContentType(const HttpContentType contentType);
 
-//        void setCookies(const KeyValue& val);
         void setHeaders(const KeyValue& val);
-
-//        void setCookie(const std::string& key,const std::string& value);
         void setHeader(const std::string& key,const std::string& value);
 
+        KeyValue& getHeaders(); 
         bool getkeepAlive() const;
         uint8_t getVersion() const;
         HttpStatus getStatus() const;
         const std::string& getBody() const;
         const std::string& getReason() const;
 
-        // KeyValue& getCookies();
-        KeyValue& getHeaders(); 
-
-        // bool hasCookie(const std::string& key,std::string& value);
         bool hasHeader(const std::string& key,std::string& value);
-
-        // void delCookie(const std::string& key);
         void delHeader(const std::string& key);
-
         std::ostream& toStream(std::ostream& os);
     private:
-        bool m_KeepAlive{};
-        uint8_t m_Version{};
-        std::string m_Body{};
-        std::string m_Reason{};
-        KeyValue m_Headers{};
-        HttpStatus m_Status{}; 
+        bool m_KeepAlive;
+        uint8_t m_Version;
+        std::string m_Body;
+        std::string m_Reason;
+        KeyValue m_Headers;
+        HttpStatus m_Status; 
+        HttpContentType m_ContentType;
         std::vector<std::string> m_Cookies;
     };
     std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& request);

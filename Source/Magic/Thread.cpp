@@ -1,21 +1,22 @@
-#include "Util.h"
+#include "Core.h"
 #include "Macro.h"
 #include "Thread.h"
 
 using namespace Magic;
 
-static thread_local Thread* g_Thread{ nullptr };
-static thread_local std::string g_ThreadName{ "UNKNOW" };
+static thread_local Thread* g_Thread = nullptr;
+static thread_local std::string g_ThreadName = "UNKNOW";
 
 Thread::~Thread() {
 }
 Thread::Thread(const std::string& threadName,const std::function<void()> callback)
-    :m_ThreadName{ threadName }
-	,m_CallBack{ callback }
-	,m_Thread{ &Thread::run,this }{
+    :m_Id(-1)
+    ,m_Name(threadName)
+	,m_Thread(&Thread::run,this)
+	,m_CallBack(callback){
 	MAGIC_LOG(LogLevel::LogDebug) << "Start thread: " << threadName;
     if(threadName.empty()){
-        m_ThreadName = "UNKNOW";
+        m_Name = "UNKNOW";
     }
     if(!m_CallBack){
 		MAGIC_LOG(LogLevel::LogError) << "Thread-CallBack is null";
@@ -40,7 +41,7 @@ void Thread::SetName(const std::string& threadName){
 }
 void Thread::run(){
     g_Thread = this;
-    SetName(m_ThreadName);
+    SetName(m_Name);
     m_Id = Magic::GetThreadId();
     m_Mutex.notify();
 	m_CallBack();

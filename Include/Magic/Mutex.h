@@ -15,7 +15,7 @@ public:
 	void writeLock();
 	void unlock();
 private:
-	rwlock_t m_RWLock{};
+	rwlock_t m_RWLock;
 };
 
 class Spinlock : Noncopyable {
@@ -31,7 +31,7 @@ public:
 	void unlock();
 
 private:
-	spinlock_t m_Mutex{};
+	spinlock_t m_Mutex;
 };
 
 class Mutex : public Noncopyable {
@@ -42,7 +42,7 @@ public:
 	void lock();
 	void unlock();
 private:
-	mutex_t m_Mutex{};
+	mutex_t m_Mutex;
 };
 
 class Semaphore : public Noncopyable{
@@ -55,7 +55,7 @@ public:
 
     void notify();
 private:
-	sem_t m_Semaphore{};
+	sem_t m_Semaphore;
 };
 
 typedef Magic::Mutex MutexType;

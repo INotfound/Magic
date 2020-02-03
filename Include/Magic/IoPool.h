@@ -11,9 +11,9 @@ namespace Magic{
         void stop();
         asio::io_context& get();
     private:
-        uint32_t m_Next{ 0 };
-        uint32_t m_PoolSize{0};
-        std::vector<Safe<asio::io_context>> m_IOService{};
-        std::vector<Safe<asio::io_context::work>> m_IOServiceWork{};
+        uint32_t m_Next;
+        uint32_t m_PoolSize;
+        std::vector<Safe<asio::io_context>> m_IOService;
+        std::vector<Safe<asio::io_context::work>> m_IOServiceWork;
     };
 }

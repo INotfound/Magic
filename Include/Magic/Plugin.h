@@ -6,22 +6,47 @@
 
 class IPluginModule {
 public:
-	virtual ~IPlugin() {};
+	virtual int arg() =0;
+	virtual ~IPluginModule() {}
 };
 
+
+class PluginModule:public IPluginModule {
+public:
+	~PluginModule() {}
+	PluginModule() {}
+	int arg() override{
+		return 6666666;
+	}
+};
+#if defined(_WIN32) || defined(_WIN64)
+//Win
+ extern "C"
+ {
+ 	_declspec(dllexport) void* create()
+ 	{
+ 		return new PluginModule;
+ 	}
+ }
+#endif
+
+#if defined(linux) || defined(__linux__)
+//Linux
 extern "C"
 {
-	_declspec(dllexport) void* create()
+	void* create()
 	{
-		return new IPluginModule;
+		return new PluginModule;
 	}
 }
+#endif
 
 */
 namespace Magic {
 	class Plugin;
 	class PluginManager;
 	typedef void* (*create_t)();
+
 	class Plugin {
 	public:
 		~Plugin();
@@ -32,11 +57,12 @@ namespace Magic {
 			return Safe<T>(static_cast<T*>(m_Create()));
 		}
 	private:
-		plugin_t m_Handle{};
-		create_t m_Create{};
-		bool m_IsInstance{};
-		std::string m_Name{};
+		std::string m_Name;
+		create_t m_Create;
+		plugin_t m_Handle;
+		bool m_IsInstance;
 	};
+
 	class PluginManager {
 	public:
 		PluginManager();
@@ -45,7 +71,7 @@ namespace Magic {
 		Safe<Plugin>& at(const std::string& name);
 		std::map<std::string, Safe<Plugin>>& all();
 	private:
-		std::map<std::string, Safe<Plugin>> m_PluginMap{};
+		std::map<std::string, Safe<Plugin>> m_PluginMap;
 	};
 
 }

@@ -6,16 +6,16 @@
 namespace Magic{
 namespace Http{
     HttpServer::HttpServer(const std::string& addr,uint16_t port,uint32_t threadCount)
-        :TcpServer{addr,port,threadCount}
-        ,m_ServletDispatch{new HttpServletDispatch}{
+        :TcpServer(addr,port,threadCount)
+        ,m_ServletDispatch(new HttpServletDispatch){
     }
     void HttpServer::accept(){
-        Share<Session> session{new HttpSession{m_IoPool->get()}};
+        Share<Session> session(new HttpSession(m_IoPool->get()));
         auto& socket = session->socket();
         m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
             if(err){
                 //TODO: ...
-                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
+                MAGIC_LOG(LogLevel::LogWarn) << err.message();
                 return;
             }
             this->handleFunc(session);
@@ -42,7 +42,7 @@ namespace Http{
             ,[this,session,readStreamBuffer,buffer](const asio::error_code &err, std::size_t length){
                 if(err){
                     //TODO: ...
-                    MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
+                    MAGIC_LOG(LogLevel::LogWarn) << err.message();
                     return;
                 }
                 Share<HttpRequestParser> requestParser = std::make_shared<HttpRequestParser>();
@@ -66,11 +66,11 @@ namespace Http{
                         ,[this,session,requestParser,readStreamBuffer,buffer,lastLength](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
-                                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
+                                MAGIC_LOG(LogLevel::LogWarn) << err.message();
                                 return;
                             }
 
-                            std::string body{};
+                            std::string body;
                             auto& request = requestParser->getData();
                             auto streamBuffer = readStreamBuffer->data();
                             body.resize(length + lastLength);
@@ -78,8 +78,7 @@ namespace Http{
                             body.append(asio::buffers_begin(streamBuffer),asio::buffers_end(streamBuffer));
                             request->setBody(body);
 
-                            Safe<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
-                            response->setHeader("Server","MagicServer");
+                            Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
                             m_ServletDispatch->handle(session,request,response);
                             auto writeBuffer = std::make_shared<asio::streambuf>();
                             std::ostream responseStream(writeBuffer.get());
@@ -90,7 +89,7 @@ namespace Http{
                                 ,[this,session](const asio::error_code &err, std::size_t length){
                                     if(err){
                                         //TODO: ...
-                                        MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
+                                        MAGIC_LOG(LogLevel::LogWarn) << err.message();
                                         return;
                                     }
                                     process(session);
@@ -98,7 +97,7 @@ namespace Http{
                         });
                 }else{
                     auto& request = requestParser->getData();
-                    Safe<HttpResponse> response{new HttpResponse{request->getkeepAlive(),request->getVersion()}};
+                    Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
                     m_ServletDispatch->handle(session,requestParser->getData(),response);
                     auto writeBuffer = std::make_shared<asio::streambuf>();
                     std::ostream responseStream(writeBuffer.get());
@@ -108,7 +107,7 @@ namespace Http{
                         ,[this,session](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
-                                MAGIC_LOG(LogLevel::LogWarn) <<"ErrorCode: " << err.value() <<" ErrorMsg: "  << err.message();
+                                MAGIC_LOG(LogLevel::LogWarn) << err.message();
                                 return;
                             }
                             process(session);

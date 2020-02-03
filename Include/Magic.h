@@ -1,6 +1,6 @@
 #pragma once
 #include "Log.h"
-#include "Util.h"
+#include "Core.h"
 #include "Macro.h"
 #include "Mutex.h"
 #include "Thread.h"

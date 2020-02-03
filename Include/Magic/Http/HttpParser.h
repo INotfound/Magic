@@ -16,7 +16,7 @@ namespace Http{
         uint32_t execute(char* data,uint32_t length);
 
     private:
-        bool m_Error{};
+        bool m_Error;
         http_parser m_Parser;
         Safe<HttpRequest> m_Data;
     };
@@ -31,9 +31,9 @@ namespace Http{
         uint32_t execute(char* data,uint32_t length);
 
     private:
-        bool m_Error{};
-        httpclient_parser m_Parser{};
-        Safe<HttpResponse> m_Data{};
+        bool m_Error;
+        Safe<HttpResponse> m_Data;
+        httpclient_parser m_Parser;
     };
 }
 }

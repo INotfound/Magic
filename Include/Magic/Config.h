@@ -26,10 +26,10 @@ namespace Magic {
 		template<class T>
 		T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "");
 	private:
-		MutexType m_Mutex{};
-		ConfigMap m_ConfigMap{};
-		bool m_IsChange{ false };
-		Safe<ConfigFile> m_ConfigFile{};
+		bool m_IsChange;
+		MutexType m_Mutex;
+		ConfigMap m_ConfigMap;
+		Safe<ConfigFile> m_ConfigFile;
 	};
 
 	class ConfigFile {
@@ -43,9 +43,9 @@ namespace Magic {
 		void write(ConfigMap& config);
 		void addFormatter(Safe<IConfigFormatter>& configFormatter);
 	private:
-		std::string m_Path{};
-		std::fstream m_FileStream{};
-		Safe<IConfigFormatter> m_Formatter{};
+		std::string m_Path;
+		std::fstream m_FileStream;
+		Safe<IConfigFormatter> m_Formatter;
 	};
 
 	class ConfigValue {
@@ -56,10 +56,10 @@ namespace Magic {
 		const std::string& getValue() const;
 		const std::string& getComment() const;
 	private:
-		std::string m_Name{};
-		std::string m_Value{};
-		std::string m_Comment{};
-		bool m_IsComment{ false };
+		std::string m_Name;
+		std::string m_Value;
+		std::string m_Comment;
+		bool m_IsComment;
 	};
 
 	class IConfigFormatter {
@@ -85,20 +85,20 @@ namespace Magic {
 
 	template<class T>
 	T Config::at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment) {
-		MutexLock lock{ m_Mutex };
-		auto iter{ m_ConfigMap.find(defaultName) };
+		MutexLock lock(m_Mutex);
+		auto iter = m_ConfigMap.find(defaultName);
 		if (iter != m_ConfigMap.end()) {
 			return StringAs<T>(iter->second->getValue());
 		}
-		Safe<ConfigValue> value{ new ConfigValue{ defaultName, AsString<T>(defaultValue), defaultComment } };
+		Safe<ConfigValue> value( new ConfigValue(defaultName, AsString<T>(defaultValue), defaultComment));
 		m_ConfigMap[defaultName] = std::move(value);
 		return defaultValue;
 	}
 	template<class T>
 	T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
-		MutexLock lock{ m_Mutex };
+		MutexLock lock(m_Mutex);
 		//MAGIC_LOG(LogLevel::LogDebug) << "Modify configuration items";
-		Safe<ConfigValue> value{ new ConfigValue{defaultName,AsString<T>(defaultValue),defaultComment } };
+		Safe<ConfigValue> value( new ConfigValue(defaultName, AsString<T>(defaultValue), defaultComment));
 		m_ConfigMap[defaultName].reset();
 		m_ConfigMap[defaultName] = std::move(value);
 		return defaultValue;

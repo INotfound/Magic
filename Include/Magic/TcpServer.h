@@ -14,10 +14,10 @@ namespace Magic{
         virtual void accept();
         virtual void handleFunc(Share<Session> session) =0;
     protected:
-        bool m_Stop{false};
-        std::string m_Address{};
-        uint16_t m_NetworkPort{};
-        Safe<IoPool> m_IoPool{};
-        Safe<asio::ip::tcp::acceptor> m_Acceptor{};
+        bool m_Stop;
+        Safe<IoPool> m_IoPool;
+        std::string m_Address;
+        uint16_t m_NetworkPort;
+        Safe<asio::ip::tcp::acceptor> m_Acceptor;
     };
 }

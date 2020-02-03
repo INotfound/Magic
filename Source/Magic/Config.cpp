@@ -11,10 +11,11 @@ namespace Magic {
 			this->update();
 		}
 	}
-	Config::Config() {
+	Config::Config()
+		:m_IsChange(false){
 	}
     void Config::update(){
-        MutexLock lock{ m_Mutex };
+        MutexLock lock(m_Mutex);
         m_ConfigFile->close();
         std::remove(m_ConfigFile->getPath().c_str());
         m_ConfigFile->open();
@@ -22,7 +23,7 @@ namespace Magic {
 		MAGIC_LOG(LogLevel::LogDebug) << "Update configuration items";
     }
 	void Config::addConfigFile(Safe<ConfigFile>& configFile) {
-		MutexLock lock{ m_Mutex };
+		MutexLock lock(m_Mutex);
 		m_ConfigFile = std::move(configFile);
 		m_ConfigFile->read(m_ConfigMap);
 	}
@@ -31,7 +32,7 @@ namespace Magic {
 		this->close();
 	}
 	ConfigFile::ConfigFile(const std::string& path)
-		:m_Path{ path } {
+		:m_Path(path) {
 		this->open();
 	}
 	void ConfigFile::open() {
@@ -47,7 +48,7 @@ namespace Magic {
 		return m_Path;
 	}
 	void ConfigFile::read(ConfigMap& keyValue) {
-		std::ostringstream content{};
+		std::ostringstream content;
 		if (this->m_FileStream.is_open()) {
 			content << m_FileStream.rdbuf();
 			m_Formatter->parse(content.str(), keyValue);
@@ -62,7 +63,7 @@ namespace Magic {
 	}
 
 	ConfigValue::ConfigValue(const std::string& name, const std::string& value, const std::string& comment)
-		:m_Name{ name }, m_Value{ value }, m_Comment{ comment } {
+		:m_Name(name), m_Value(value), m_Comment(comment) {
 		if (!m_Comment.empty())
 			m_IsComment = true;
 	}
@@ -80,10 +81,10 @@ namespace Magic {
 	}
 
 	void InIConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-		auto iter{ KeyValue.begin() };
-		auto end{ KeyValue.end() };
+		auto iter = KeyValue.begin();
+		auto end  = KeyValue.end();
 		for (; iter != end; iter++) {
-			Safe<ConfigValue>& value{ iter->second };
+			Safe<ConfigValue>& value = iter->second;
 			if (!value->getComment().empty()) {
 				os << "#" << value->getComment() << std::endl;
 			}
@@ -92,15 +93,15 @@ namespace Magic {
 		}
 	}
 	void InIConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
-		std::string normalString{};
-		std::string valueString{};
-		std::string commentString{};
-		bool isEmpty{ true };
-		bool isValue{ false };
-		bool isComment{ false };
-		uint64_t length{ content.length() };
-		for (uint64_t i{0}; i < length; i++){
-			std::string::value_type charValue{ content.at(i) };
+		std::string valueString;
+		std::string normalString;
+		std::string commentString;
+		bool isEmpty = true;
+		bool isValue = false;
+		bool isComment = false;
+		uint64_t length = content.length();
+		for (uint64_t i = 0; i < length; i++){
+			std::string::value_type charValue = content.at(i);
 			//Comment
 			if (charValue == '#') {
 				isComment = true;
@@ -123,7 +124,7 @@ namespace Magic {
 				isValue = false;
 				if (i == (length - 1) && charValue != '\n')
 					valueString.append(1, charValue);
-				Safe<ConfigValue> value{ new ConfigValue{normalString,valueString,commentString} };
+				Safe<ConfigValue> value(new ConfigValue(normalString,valueString,commentString));
 				keyValue[normalString] = std::move(value);
 				commentString.clear();
 				normalString.clear();
@@ -150,37 +151,37 @@ namespace Magic {
 	}
 	
 	void JsonConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-		Safe<rapidjson::Document> json{ new rapidjson::Document{} };
+		Safe<rapidjson::Document> json(new rapidjson::Document);
 		rapidjson::Document::AllocatorType& allocator = json->GetAllocator();
 		json->SetObject();
 		for(auto&v : KeyValue)
 		{			
 			if (v.second->isComment()) {
-				std::string commentName{ v.first + "Comment" };
-				rapidjson::Value jsonName{ commentName.c_str(), allocator };
-				rapidjson::Value jsonValue{ v.second->getComment().c_str() , allocator };
+				std::string commentName(v.first + "Comment");
+				rapidjson::Value jsonName(commentName.c_str(), allocator);
+				rapidjson::Value jsonValue(v.second->getComment().c_str() , allocator);
 				json->AddMember(jsonName, jsonValue, allocator);
 			}
-			rapidjson::Value jsonName{ v.first.c_str(), allocator };
-			rapidjson::Value jsonValue{ v.second->getValue().c_str() , allocator };
+			rapidjson::Value jsonName(v.first.c_str(), allocator);
+			rapidjson::Value jsonValue(v.second->getValue().c_str() , allocator);
 			json->AddMember(jsonName, jsonValue, allocator);
 		}
-		Safe<rapidjson::StringBuffer> buffer{ new rapidjson::StringBuffer{} };
-		Safe<rapidjson::Writer<rapidjson::StringBuffer>> writer{ new rapidjson::Writer<rapidjson::StringBuffer>{*buffer} };
+		Safe<rapidjson::StringBuffer> buffer(new rapidjson::StringBuffer);
+		Safe<rapidjson::Writer<rapidjson::StringBuffer>> writer(new rapidjson::Writer<rapidjson::StringBuffer>(*buffer));
 		json->Accept(*writer);
 		os << buffer->GetString();
 	}
 	void JsonConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
 		if (content.empty())
 			return;
-		Safe<rapidjson::Document> json{ new rapidjson::Document{} };
+		Safe<rapidjson::Document> json(new rapidjson::Document);
 		json->Parse(content.c_str());
-		auto iter{ json->MemberBegin() };
-		auto end{ json->MemberEnd() };
+		auto iter = json->MemberBegin();
+		auto end = json->MemberEnd();
 		for (; iter != end; iter++)
 		{
-			std::string keyName{ iter->name.GetString() };
-			Safe<ConfigValue> value{ new ConfigValue{ keyName,iter->value.GetString() } };
+			std::string keyName(iter->name.GetString());
+			Safe<ConfigValue> value(new ConfigValue(keyName,iter->value.GetString()));
 			keyValue[keyName] = std::move(value);
 		}
 	}

@@ -1,12 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 project(Magic)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 include_directories(Include)
 include_directories(Include/Magic)
 set(SRC
     Source/Magic.cpp
 	Source/Magic/Log.cpp
-	Source/Magic/Util.cpp
 	Source/Magic/Thread.cpp
 	Source/Magic/Config.cpp
 	Source/Magic/Plugin.cpp

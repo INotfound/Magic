@@ -1,11 +1,11 @@
 #if defined(_WIN32) || defined(_WIN64)
-#include "Util.h"
+#include "Core.h"
 #include "Macro.h"
 #include "Adapter/Win32.h"
 
 namespace Magic {
 	uint32_t GetProcessorsNumber() {
-		SYSTEM_INFO info{};
+		SYSTEM_INFO info;
 		GetSystemInfo(&info);
 		return info.dwNumberOfProcessors;
 	}

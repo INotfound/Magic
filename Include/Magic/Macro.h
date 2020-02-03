@@ -1,7 +1,7 @@
 #pragma once
 #include <assert.h>
 #include "Log.h"
-#include "Util.h"
+#include "Core.h"
 #include "Thread.h"
 #include "Config.h"
 #include "Plugin.h"
@@ -9,20 +9,19 @@
 
 #define  MAGIC_LOG_LEVEL(logger,level)									\
                 if(level >= logger->getLevel())							\
-                    Magic::LogWrap{										\
+                    Magic::LogWrap(										\
 						level,											\
 						logger,											\
-						Safe<Magic::LogEvent>{						\
-							new Magic::LogEvent{						\
+						Safe<Magic::LogEvent>(							\
+							new Magic::LogEvent(						\
 								__LINE__,								\
 								static_cast<uint64_t>(time(nullptr)),	\
 								1,										\
-								Magic::GetFiberId(),					\
 								Magic::GetThreadId(),					\
 								__FILE__,								\
 								logger->getLogName(),					\
 								Magic::Thread::GetName()				\
-					}}}.get()
+					))).get()
 
 #define MAGIC_LOG_DEBUG(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::LogDebug)
 

@@ -9,6 +9,6 @@ namespace Magic{
         Session(asio::io_context& io);
         Safe<Socket>& socket();
     protected:
-        Safe<Socket> m_Socket{};
+        Safe<Socket> m_Socket;
     };
 }

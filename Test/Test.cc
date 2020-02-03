@@ -23,40 +23,23 @@ void Plugin(){
 		new Magic::Plugin("TestLib", MAGIC_CONFIG()->at<std::string>("Library","TestLib.DLL"))
 	};
 	MAGIC_PLUGINMGR()->addPlugin(plugin);
-	Safe<IPluginModule> pp{ MAGIC_PLUGIN("TestLib")->getInstance<IPluginModule>() };
+	Safe<IPluginModule> pp(MAGIC_PLUGIN("TestLib")->getInstance<IPluginModule>());
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << pp->arg();
 }
 
-void Http(){
-	Magic::Http::HttpRequest req;
-	Magic::Http::HttpRequest::KeyValue value;
-	value.emplace("Host","www.XiaoBaiJun.com");
-	req.setHeaders(value);
-	req.setBody("hello XiaoBaiJun");
-	req.setMethod(Magic::Http::HttpMethod::POST);
-	req.toStream(std::cout) << std::endl;
 
-	Magic::Http::HttpResponse resp;
-	Magic::Http::HttpResponse::KeyValue resValue;
-	resValue.emplace("X-X","XIAOBAIJUN");
-	resValue.emplace("Content-Length", "23333");
-	resp.setHeaders(resValue);
-	resp.setBody("hello XiaoBaiJun");
-	resp.setStatus(Magic::Http::HttpStatus::BAD_REQUEST);
-	resp.toStream(std::cout) << std::endl;
-}
 char testRequestData[] = "GET / HTTP/1.1\r\n"
 						"Host: www.top.com\r\n"
 						"Content-Length: 10\r\n\r\n"
 						"1234567890";
 void HttpRequestParser(){
 	Magic::Http::HttpRequestParser requestParser;
-	std::string tmp {testRequestData,68};
+	std::string tmp(testRequestData,68);
 	uint32_t s = requestParser.execute(testRequestData,tmp.size());
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << "execute rt= " <<  s
 		<<" has_error= " << requestParser.hasError()
 		<<" Finished= " << requestParser.isFinished();
-	std::string val{""};
+	std::string val("");
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << requestParser.getData()->hasHeader("Content-Length",val);
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << val.c_str();
 	requestParser.getData()->toStream(std::cout);
@@ -120,7 +103,30 @@ class LogServlet :public Magic::Http::HttpServlet{
 			Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
 			stream.seekg(0,std::ios_base::beg);
 			stream.read(buffer.get(),size);
-			std::string log{buffer.get(),size};
+			std::string log(buffer.get(),size);
+			response->setBody(log);
+			return;
+		}
+};
+
+
+class MainServlet :public Magic::Http::HttpServlet{
+	public:
+		MainServlet()
+			:HttpServlet("MainServlet"){
+		}
+		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+			response->setStatus(Magic::Http::HttpStatus::OK);
+			std::fstream stream;
+			response->setHeader("Content-type","text/html");
+
+			stream.open("",std::ios::in);
+			stream.seekg(0,std::ios_base::end);
+			uint32_t size = stream.tellg();
+			Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
+			stream.seekg(0,std::ios_base::beg);
+			stream.read(buffer.get(),size);
+			std::string log(buffer.get(),size);
 			response->setBody(log);
 			return;
 		}
@@ -129,8 +135,8 @@ class LogServlet :public Magic::Http::HttpServlet{
 
 void Server(){
 	Magic::Http::HttpServer server("0.0.0.0",80,Magic::GetProcessorsNumber()*2);
-	Safe<Magic::Http::HttpServlet> log{new LogServlet};
-	Safe<Magic::Http::HttpServlet> deafult{new DeafultServlet};
+	Safe<Magic::Http::HttpServlet> log(new LogServlet);
+	Safe<Magic::Http::HttpServlet> deafult(new DeafultServlet);
 	server.getHttpServletDispatch()->setDeafultServlet(deafult);
 	server.getHttpServletDispatch()->addServlet("/log",log);
 	server.run();

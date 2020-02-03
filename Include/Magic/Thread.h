@@ -1,7 +1,6 @@
 #pragma once
 #include <thread>
 #include "Core.h"
-#include "Util.h"
 #include "Mutex.h"
 
 namespace Magic{
@@ -19,11 +18,12 @@ public:
 protected:
     void run();
 private:
-	Mutex m_Mutex{};
-	int64_t m_Id{-1};
-	std::string m_ThreadName{};
-	std::function<void()> m_CallBack{};
-	std::thread m_Thread{};
+	int64_t                 m_Id;
+	std::string             m_Name;
+	Mutex                   m_Mutex;
+	std::thread             m_Thread;
+	std::function<void()>   m_CallBack;
+
 };
 
 }

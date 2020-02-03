@@ -1,6 +1,5 @@
 #include "Http/Http.h"
 #include <cstring>
-#include "Util.h"
 
 namespace Magic{
 namespace Http{
@@ -42,7 +41,107 @@ namespace Http{
             #define XX(code,name,desc) \
             case HttpStatus::name : \
                 return #desc;
-                HTTP_STATUS_MAP(XX)
+            HTTP_STATUS_MAP(XX)
+            #undef XX
+            default:
+                return "<unknown>";
+        }
+    }
+
+    HttpContentType FileTypeToHttpContentType(const std::string& fileName){
+        std::string extName;
+        auto pos = fileName.rfind('.');
+        if(pos != std::string::npos){
+            extName = fileName.substr(pos+1);
+            std::transform(extName.begin(),extName.end(),extName.begin(),tolower);
+        }
+        switch(extName.length()){
+            case 0:
+                return HttpContentType::APPLICATION_OCTET_STREAM;
+            case 2:
+                if(extName == "js"){
+                    return HttpContentType::APPLICATION_X_JAVASCRIPT;
+                }
+                return HttpContentType::APPLICATION_OCTET_STREAM;
+            case 3:
+                switch(extName[0]){
+                    case 'b':
+                        if(extName == "bmp")
+                            return HttpContentType::IMAGE_BMP;
+                        break;
+                    case 'c':
+                        if(extName == "css")
+                            return HttpContentType::TEXT_CSS;
+                        break;
+                    case 'e':
+                        if(extName == "eot")
+                            return HttpContentType::APPLICATION_VND_MS_FONTOBJ;
+                        break;
+                    case 'g':
+                        if(extName == "gif")
+                            return HttpContentType::IMAGE_GIF;
+                        break;
+                    case 'i':
+                        if(extName == "ico")
+                            return HttpContentType::IMAGE_XICON;
+                        break;
+                    case 'j':
+                        if(extName == "jpg")
+                            return HttpContentType::IMAGE_JPG;
+                        break;
+                    case 'o':
+                        if(extName == "otf")
+                            return HttpContentType::APPLICATION_X_FONT_OPENTYPE;
+                        break;
+                    case 'p':
+                        if(extName == "png")
+                            return HttpContentType::IMAGE_PNG;
+                        break;
+                    case 's':
+                        if(extName == "svg")
+                            return HttpContentType::IMAGE_SVG_XML;
+                        break;
+                    case 't':
+                        if(extName == "txt")
+                            return HttpContentType::TEXT_PLAIN;
+                        else if(extName == "ttf")
+                            return HttpContentType::APPLICATION_X_FONT_TRUETYPE;
+                        break;
+                    case 'x':
+                        if(extName == "xml")
+                            return HttpContentType::TEXT_XML;
+                        else if(extName == "xsl")
+                            return HttpContentType::TEXT_XSL;
+                        break;
+                    default:
+                        break;
+                }
+                return HttpContentType::APPLICATION_OCTET_STREAM;
+            case 4:
+                if(extName == "html")
+                    return HttpContentType::TEXT_HTML;
+                else if(extName == "jpeg")
+                    return HttpContentType::IMAGE_JPG;
+                else if(extName == "icns")
+                    return HttpContentType::IMAGE_ICNS;
+                else if(extName == "woff")
+                    return HttpContentType::APPLICATION_FONT_WOFF;
+                return HttpContentType::APPLICATION_OCTET_STREAM;
+            case 5:
+                if(extName == "woff2")
+                    return HttpContentType::APPLICATION_FONT_WOFF2;
+                return HttpContentType::APPLICATION_OCTET_STREAM;
+            default:
+                return HttpContentType::APPLICATION_OCTET_STREAM;
+        }
+    }
+
+    const char* HttpContentTypeToString(const HttpContentType& contentType){
+        switch(contentType){
+            #define XX(name,desc) \
+            case HttpContentType::name: \
+                return desc;
+            HTTP_CONTENT_TYPE(XX);
             #undef XX
             default:
                 return "<unknown>";
@@ -54,9 +153,9 @@ namespace Http{
     }
 
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
-        :m_KeepAlive{keepAlive}
-        ,m_Version{version}
-        ,m_UrlPath{"/"}{
+        :m_KeepAlive(keepAlive)
+        ,m_Version(version)
+        ,m_UrlPath("/"){
     }
     void HttpRequest::setVersion(uint8_t ver){
         m_Version = ver;
@@ -84,18 +183,12 @@ namespace Http{
     void HttpRequest::setParams(const KeyValue& v){
         m_Params = v;
     }
-    void HttpRequest::setCookies(const KeyValue& v){
-        m_Cookies = v;
-    }
     void HttpRequest::setHeaders(const KeyValue& v){
         m_Headers = v;
     }
 
     void HttpRequest::setParam(const std::string& key,const std::string& value){
         m_Params.emplace(key,value);
-    }
-    void HttpRequest::setCookie(const std::string& key,const std::string& value){
-        m_Cookies.emplace(key,value);
     }
 
     void HttpRequest::setHeader(const std::string& key,const std::string& value){
@@ -124,9 +217,6 @@ namespace Http{
     HttpRequest::KeyValue& HttpRequest::getParams() {
         return m_Params;
     }
-    HttpRequest::KeyValue& HttpRequest::getCookies() {
-        return m_Cookies;
-    }
     HttpRequest::KeyValue& HttpRequest::getHeaders() {
         return m_Headers;
     }
@@ -134,14 +224,6 @@ namespace Http{
     bool HttpRequest::hasParam(const std::string& key,std::string& value){
         auto iter = m_Params.find(key);
         if(iter == m_Params.end()){
-            return false;
-        }
-        value.assign(iter->second);
-        return true;
-    }
-    bool HttpRequest::hasCookie(const std::string& key,std::string& value){
-        auto iter = m_Cookies.find(key);
-        if(iter == m_Cookies.end()){
             return false;
         }
         value.assign(iter->second);
@@ -158,9 +240,6 @@ namespace Http{
 
     void HttpRequest::delParam(const std::string& key){
         m_Params.erase(key);
-    }
-    void HttpRequest::delCookie(const std::string& key){
-        m_Cookies.erase(key);
     }
     void HttpRequest::delHeader(const std::string& key){
         m_Headers.erase(key);
@@ -196,9 +275,10 @@ namespace Http{
     }
 
     HttpResponse::HttpResponse(bool keepAlive,uint8_t version)
-        :m_KeepAlive{keepAlive}
-        ,m_Version{version}
-        ,m_Status{HttpStatus::OK}{
+        :m_KeepAlive(keepAlive)
+        ,m_Version(version)
+        ,m_Status(HttpStatus::OK)
+        ,m_ContentType(HttpContentType::TEXT_HTML){
     }
     void HttpResponse::setVersion(uint8_t ver){
         m_Version = ver;
@@ -215,8 +295,8 @@ namespace Http{
     void HttpResponse::setReason(const std::string& reason){
         m_Reason = reason;
     }
-    void HttpResponse::setHeaders(const KeyValue& val){
-        m_Headers = val;
+    void HttpResponse::setContentType(const HttpContentType contentType){
+        m_ContentType = contentType;
     }
     void HttpResponse::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key,value);
@@ -239,10 +319,6 @@ namespace Http{
         return m_Reason;
     }
 
-    HttpResponse::KeyValue& HttpResponse::getHeaders(){
-        return m_Headers;
-    }
-
     bool HttpResponse::hasHeader(const std::string& key,std::string& value){
         auto iter = m_Headers.find(key);
         if(iter == m_Headers.end()){
@@ -251,7 +327,6 @@ namespace Http{
         value.assign(iter->second);
         return true;
     }
-
 
     void HttpResponse::delHeader(const std::string& key){
         m_Headers.erase(key);
@@ -268,8 +343,9 @@ namespace Http{
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
             << "\r\n";
         os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
+        os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
         for(auto& v : m_Headers){
-            if(StringCompareNoCase(v.first,"Connection") == 0){
+            if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type")){
                 continue;
             }
             os << v.first << ": " << v.second << "\r\n";

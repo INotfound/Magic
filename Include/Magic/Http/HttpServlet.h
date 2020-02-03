@@ -13,7 +13,7 @@ namespace Http{
         const std::string getName() const;
         virtual void handle (const Share<HttpSession>& session,Safe<HttpRequest>& request,Safe<HttpResponse>& response) =0;
     private:
-        std::string m_Name{};
+        std::string m_Name;
     };
 
     class HttpServletDispatch :HttpServlet{
@@ -27,10 +27,10 @@ namespace Http{
     private:
         Safe<HttpServlet>& getMatchedServlet(const std::string& name);
     private:
-        RWMutex m_Mutex{};
-        Safe<HttpServlet> m_DeafultServlet{};
-        std::unordered_map<std::string,Safe<HttpServlet>> m_Servlets{};
-        std::unordered_map<std::string,Safe<HttpServlet>> m_GlobServlets{};
+        RWMutex m_Mutex;
+        Safe<HttpServlet> m_DeafultServlet;
+        std::unordered_map<std::string,Safe<HttpServlet>> m_Servlets;
+        std::unordered_map<std::string,Safe<HttpServlet>> m_GlobServlets;
     };
 
 }
