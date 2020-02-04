@@ -59,7 +59,6 @@ namespace Http{
                 }while(true);
                 uint64_t contentLength = requestParser->getContentLength();
                 if(contentLength > 0){
-
                     asio::async_read(*session->socket()
                         ,*readStreamBuffer
                         ,asio::transfer_exactly(contentLength)
@@ -93,7 +92,8 @@ namespace Http{
                                         return;
                                     }
                                     process(session);
-                            });
+                                }
+                            );
                         });
                 }else{
                     auto& request = requestParser->getData();

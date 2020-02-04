@@ -124,15 +124,17 @@ class MainServlet :public Magic::Http::HttpServlet{
 			if(path == "/"){
 				path = "/index.html";
 			}
-			response->setHeader("Content-type",Magic::Http::HttpContentTypeToString(Magic::Http::FileTypeToHttpContentType(path)));
 			stream.open(res + path,std::ios::in);
-			stream.seekg(0,std::ios_base::end);
-			uint32_t size = stream.tellg();
-			Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
-			stream.seekg(0,std::ios_base::beg);
-			stream.read(buffer.get(),size);
-			std::string log(buffer.get(),size);
-			response->setBody(log);
+			if(stream.is_open()){
+				stream.seekg(0,std::ios_base::end);
+				uint32_t size = stream.tellg();
+				Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
+				stream.seekg(0,std::ios_base::beg);
+				stream.read(buffer.get(),size);
+				std::string staticres(buffer.get(),size);
+				response->setContentType(Magic::Http::FileTypeToHttpContentType(path));
+				response->setBody(staticres);
+			}
 			return;
 		}
 };
@@ -151,7 +153,6 @@ void Server(){
 	}catch(std::exception ec){
 		std::cout << ec.what() << std::endl;
 	}
-
 }
 
 int main() {

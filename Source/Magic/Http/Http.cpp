@@ -345,7 +345,7 @@ namespace Http{
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
             << "\r\n";
         os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
-        //os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
+        os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
         for(auto& v : m_Headers){
             if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type")){
                 continue;
