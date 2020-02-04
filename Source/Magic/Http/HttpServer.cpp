@@ -79,13 +79,14 @@ namespace Http{
 
                             Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
                             m_ServletDispatch->handle(session,request,response);
-                            auto writeBuffer = std::make_shared<asio::streambuf>();
-                            std::ostream responseStream(writeBuffer.get());
+                            auto writeStreamBuffer = std::make_shared<asio::streambuf>();
+                            std::ostream responseStream(writeStreamBuffer.get());
                             responseStream << response;
                             
                             asio::async_write(*session->socket()
-                                ,*writeBuffer
-                                ,[this,session](const asio::error_code &err, std::size_t length){
+                                ,*writeStreamBuffer
+                                , asio::transfer_exactly(writeStreamBuffer->size())
+                                ,[this,session, writeStreamBuffer](const asio::error_code &err, std::size_t length){
                                     if(err){
                                         //TODO: ...
                                         MAGIC_LOG(LogLevel::LogWarn) << err.message();
@@ -99,19 +100,21 @@ namespace Http{
                     auto& request = requestParser->getData();
                     Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
                     m_ServletDispatch->handle(session,requestParser->getData(),response);
-                    auto writeBuffer = std::make_shared<asio::streambuf>();
-                    std::ostream responseStream(writeBuffer.get());
+                    auto writeStreamBuffer = std::make_shared<asio::streambuf>();
+                    std::ostream responseStream(writeStreamBuffer.get());
                     responseStream << response;
                     asio::async_write(*session->socket()
-                        ,*writeBuffer
-                        ,[this,session](const asio::error_code &err, std::size_t length){
+                        ,*writeStreamBuffer
+                        ,asio::transfer_exactly(writeStreamBuffer->size())
+                        ,[this,session, writeStreamBuffer](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
                                 MAGIC_LOG(LogLevel::LogWarn) << err.message();
                                 return;
                             }
                             process(session);
-                    });
+                        }
+                    );
                 }
         });
     }
