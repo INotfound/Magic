@@ -8,6 +8,7 @@ namespace Magic{
 namespace Http{
 
 /* Request Methods */
+    #undef DELETE
     #define HTTP_METHOD_MAP(XX)         \
         XX(0,  DELETE,      DELETE)       \
         XX(1,  GET,         GET)          \
@@ -182,7 +183,7 @@ namespace Http{
         void setkeepAlive(bool keepAlive);
         void setBody(const std::string& body);
         void setQuery(const std::string& query);
-        void setUrlPath(const std::string& urlPath);
+        void setPath(const std::string& urlPath);
         void setFragment(const std::string& fragment);
 
         void setParams(const KeyValue& val);
@@ -194,9 +195,9 @@ namespace Http{
         bool getkeepAlive() const;
         uint8_t getVersion() const;
         HttpMethod getMethod() const;
+        const std::string& getPath() const;
         const std::string& getBody() const;
         const std::string& getQuery() const;
-        const std::string& getUrlPath() const;
 
         KeyValue& getParams();
         KeyValue& getHeaders(); 

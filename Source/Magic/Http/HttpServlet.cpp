@@ -1,6 +1,5 @@
 #include <regex>
 #include "Http/HttpServlet.h"
-
 namespace Magic{
 namespace Http{
 
@@ -28,7 +27,7 @@ namespace Http{
         m_GlobServlets.emplace(name,std::move(servlet));
     }
     void HttpServletDispatch::handle(const Share<HttpSession>& session,Safe<HttpRequest>& request,Safe<HttpResponse>& response){
-        auto& servlet = getMatchedServlet(request->getUrlPath());
+        auto& servlet = getMatchedServlet(request->getPath());
         if(servlet){
             servlet->handle(session,request,response);
         }
@@ -41,7 +40,7 @@ namespace Http{
         }
         std::regex reg;
         auto globIter = m_GlobServlets.begin();
-        auto globEnd = m_GlobServlets.begin();
+        auto globEnd = m_GlobServlets.end();
         for(; globIter != globEnd; globIter++){
             reg.assign(globIter->first);
             if(std::regex_match(name,reg)){

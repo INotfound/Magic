@@ -167,13 +167,14 @@ namespace Http{
     void HttpRequest::setkeepAlive(bool keepAlive){
         m_KeepAlive = keepAlive;
     }
+
     void HttpRequest::setBody(const std::string& body){
         m_Body = body;
     }
     void HttpRequest::setQuery(const std::string& query){
         m_Query = query;
     }
-    void HttpRequest::setUrlPath(const std::string& urlPath){
+    void HttpRequest::setPath(const std::string& urlPath){
         m_UrlPath = urlPath;
     }
     void HttpRequest::setFragment(const std::string& fragment){
@@ -204,14 +205,15 @@ namespace Http{
     HttpMethod HttpRequest::getMethod() const{
         return m_Method;
     }
+
+    const std::string& HttpRequest::getPath() const{
+        return m_UrlPath;
+    }
     const std::string& HttpRequest::getBody() const{
         return m_Body;
-    }        
+    }
     const std::string& HttpRequest::getQuery() const{
         return m_Query;
-    }        
-    const std::string& HttpRequest::getUrlPath() const{
-        return m_UrlPath;
     }
 
     HttpRequest::KeyValue& HttpRequest::getParams() {
@@ -343,7 +345,7 @@ namespace Http{
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
             << "\r\n";
         os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
-        os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
+        //os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
         for(auto& v : m_Headers){
             if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type")){
                 continue;

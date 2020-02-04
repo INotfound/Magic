@@ -7,7 +7,7 @@ namespace Http{
     }
     void OnRequestPath(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setUrlPath(std::string(at,length));
+        parser->getData()->setPath(std::string(at,length));
     }
     void OnRequestQuery(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);

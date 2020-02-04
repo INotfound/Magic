@@ -2,6 +2,7 @@
 #include "asio.hpp"
 #include <iostream>
 #include <fstream>
+#include <exception>
 #include <string>
 #include <vector>
 #include "IoPool.h"
@@ -118,9 +119,13 @@ class MainServlet :public Magic::Http::HttpServlet{
 		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
 			std::fstream stream;
-			response->setHeader("Content-type","text/html");
-
-			stream.open("",std::ios::in);
+			std::string res	= "www";
+			std::string path = request->getPath();
+			if(path == "/"){
+				path = "/index.html";
+			}
+			response->setHeader("Content-type",Magic::Http::HttpContentTypeToString(Magic::Http::FileTypeToHttpContentType(path)));
+			stream.open(res + path,std::ios::in);
 			stream.seekg(0,std::ios_base::end);
 			uint32_t size = stream.tellg();
 			Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
@@ -134,12 +139,19 @@ class MainServlet :public Magic::Http::HttpServlet{
 
 
 void Server(){
-	Magic::Http::HttpServer server("0.0.0.0",80,Magic::GetProcessorsNumber()*2);
-	Safe<Magic::Http::HttpServlet> log(new LogServlet);
-	Safe<Magic::Http::HttpServlet> deafult(new DeafultServlet);
-	server.getHttpServletDispatch()->setDeafultServlet(deafult);
-	server.getHttpServletDispatch()->addServlet("/log",log);
-	server.run();
+	try{
+		Magic::Http::HttpServer server("0.0.0.0",80,Magic::GetProcessorsNumber()*2);
+		Safe<Magic::Http::HttpServlet> log(new LogServlet);
+		Safe<Magic::Http::HttpServlet> deafult(new DeafultServlet);
+		Safe<Magic::Http::HttpServlet> main(new MainServlet);
+		server.getHttpServletDispatch()->setDeafultServlet(deafult);
+		server.getHttpServletDispatch()->addServlet("/log",log);
+		server.getHttpServletDispatch()->addGlobServlet("^/?(.*)$",main);
+		server.run();
+	}catch(std::exception ec){
+		std::cout << ec.what() << std::endl;
+	}
+
 }
 
 int main() {
