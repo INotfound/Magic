@@ -26,10 +26,10 @@ namespace Http{
         RWMutexWriteLock lock(m_Mutex);
         m_GlobServlets.emplace(name,std::move(servlet));
     }
-    void HttpServletDispatch::handle(const Share<HttpSession>& session,Safe<HttpRequest>& request,Safe<HttpResponse>& response){
+    void HttpServletDispatch::handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response){
         auto& servlet = getMatchedServlet(request->getPath());
         if(servlet){
-            servlet->handle(session,request,response);
+            servlet->handle(request,response);
         }
     }
     Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& name){

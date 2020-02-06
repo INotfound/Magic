@@ -34,8 +34,8 @@ namespace Http{
     }
     void HttpServer::process(Share<HttpSession> session){
         uint32_t bufferSize = 1024*4;
-        Share<char> buffer(new char[bufferSize],[](char* ptr){delete[] ptr;});
         auto readStreamBuffer = std::make_shared<asio::streambuf>();
+        Share<char> buffer(new char[bufferSize],[](char* ptr){delete[] ptr;});
         asio::async_read_until(*session->socket()
             ,*readStreamBuffer
             ,"\r\n\r\n"
@@ -45,6 +45,7 @@ namespace Http{
                     MAGIC_LOG(LogLevel::LogWarn) << err.message();
                     return;
                 }
+
                 Share<HttpRequestParser> requestParser = std::make_shared<HttpRequestParser>();
                 readStreamBuffer->sgetn(buffer.get(),length);
                 uint32_t parserLength = requestParser->execute(buffer.get(),length);
@@ -78,7 +79,7 @@ namespace Http{
                             request->setBody(body);
 
                             Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
-                            m_ServletDispatch->handle(session,request,response);
+                            m_ServletDispatch->handle(request,response);
                             auto writeStreamBuffer = std::make_shared<asio::streambuf>();
                             std::ostream responseStream(writeStreamBuffer.get());
                             responseStream << response;
@@ -99,7 +100,7 @@ namespace Http{
                 }else{
                     auto& request = requestParser->getData();
                     Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
-                    m_ServletDispatch->handle(session,requestParser->getData(),response);
+                    m_ServletDispatch->handle(requestParser->getData(),response);
                     auto writeStreamBuffer = std::make_shared<asio::streambuf>();
                     std::ostream responseStream(writeStreamBuffer.get());
                     responseStream << response;

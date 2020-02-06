@@ -8,6 +8,7 @@ include_directories(Include/Magic)
 set(SRC
     Source/Magic.cpp
 	Source/Magic/Log.cpp
+    Source/Magic/Gzip.cpp
 	Source/Magic/Thread.cpp
 	Source/Magic/Config.cpp
 	Source/Magic/Plugin.cpp
@@ -17,6 +18,7 @@ set(SRC
     Source/Magic/Http/Http.cpp
     Source/Magic/Http/HttpServer.cpp
     Source/Magic/Http/HttpParser.cpp
+    Source/Magic/Http/HttpCookie.cpp
     Source/Magic/Http/HttpServlet.cpp
     Source/Magic/Http/HttpSession.cpp
     Source/Magic/Adapter/WinUtil.cpp
@@ -29,11 +31,17 @@ set(SRC
     Source/Magic/Http/Util/httpclient_parser.rl.cpp
 )
 
+#GZip
+add_definitions(-D Z_PREFIX)
+add_subdirectory(ThirdParty/Gzip)
+include_directories(ThirdParty/Gzip)
+
 #RapidJSON
 include_directories(ThirdParty/RapidJSON/include)
 
 #ASIO
 include_directories(ThirdParty/Asio/asio/include)
+
 
 
 if(WIN32 AND NOT MINGW)
@@ -68,10 +76,8 @@ elseif(UNIX AND NOT ANDROID)
         dl
     )
     add_library(Magic ${SRC})
-    target_link_libraries(Magic ${LIBS})
-
 endif()
-
+    target_link_libraries(Magic ${LIBS} zlib)
 
 add_library(TestLib MODULE Test/TestPlugin.cc)
 add_executable(Test Test/Test.cc)

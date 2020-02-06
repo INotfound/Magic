@@ -75,7 +75,7 @@ class DeafultServlet :public Magic::Http::HttpServlet{
 		DeafultServlet()
 			:HttpServlet("DeafultServlet"){
 		}
-		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+		void handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::NOT_FOUND);
 			std::string notfound{R"Template(<html>
 				<head><title>404 Not Found</title></head>
@@ -94,7 +94,7 @@ class LogServlet :public Magic::Http::HttpServlet{
 		LogServlet()
 			:HttpServlet("LogServlet"){
 		}
-		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+		void handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
 			std::fstream stream;
 			response->setHeader("Content-type","text/html");
@@ -116,7 +116,7 @@ class MainServlet :public Magic::Http::HttpServlet{
 		MainServlet()
 			:HttpServlet("MainServlet"){
 		}
-		void handle (const Share<Magic::Http::HttpSession>& session,Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+		void handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
 			std::fstream stream;
 			std::string res	= "www";
@@ -150,7 +150,7 @@ void Server(){
 		server.getHttpServletDispatch()->addServlet("/log",log);
 		server.getHttpServletDispatch()->addGlobServlet("^/?(.*)$",main);
 		server.run();
-	}catch(std::exception ec){
+	}catch(std::system_error ec){
 		std::cout << ec.what() << std::endl;
 	}
 }

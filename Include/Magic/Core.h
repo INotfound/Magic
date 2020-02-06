@@ -1,5 +1,6 @@
 #pragma once
 #include <map>
+#include <ctime>
 #include <memory>
 #include <string>
 #include <sstream>
@@ -195,4 +196,11 @@ namespace Magic{
     std::string BackTraceToString(uint32_t size = 64, uint32_t skip = 2, const std::string& prefix = "    ");
 
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
+
+    inline std::string GetTimeGMTString(std::time_t t){
+        struct tm* GMTime = gmtime(&t);
+        char buff[512]={0};
+        strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);
+        return buff;
+    }
 }

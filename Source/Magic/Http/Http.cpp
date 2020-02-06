@@ -1,3 +1,4 @@
+#include "Gzip.h"
 #include "Http/Http.h"
 #include <cstring>
 
@@ -346,6 +347,7 @@ namespace Http{
             << "\r\n";
         os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
+        os << "Content-Encoding: " << "gzip" << "\r\n";
         for(auto& v : m_Headers){
             if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type")){
                 continue;
@@ -356,9 +358,12 @@ namespace Http{
         for(auto& v : m_Cookies){
             os << "Set-Cookie: " << v << "\r\n";
         }
+
         if(!m_Body.empty()){
-            os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
-                << m_Body;
+            std::string compressData;
+            Gzip::Compress(m_Body,compressData);
+            os  << "Content-Length: " << compressData.size() << "\r\n\r\n"
+                << compressData;
         }else{
             os << "\r\n";
         }
