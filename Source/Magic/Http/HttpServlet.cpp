@@ -18,19 +18,23 @@ namespace Http{
         m_DeafultServlet = std::move(servlet);
     }
 
-    void HttpServletDispatch::addServlet(const std::string& name,Safe<HttpServlet>& servlet){
+    void HttpServletDispatch::addHttpServlet(const std::string& name,Safe<HttpServlet>& servlet){
         RWMutexWriteLock lock(m_Mutex);
         m_Servlets.emplace(name,std::move(servlet));
     }
-    void HttpServletDispatch::addGlobServlet(const std::string& name,Safe<HttpServlet>& servlet){
+    void HttpServletDispatch::addGlobHttpServlet(const std::string& name,Safe<HttpServlet>& servlet){
         RWMutexWriteLock lock(m_Mutex);
         m_GlobServlets.emplace(name,std::move(servlet));
     }
-    void HttpServletDispatch::handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response){
+    bool HttpServletDispatch::handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response){
         auto& servlet = getMatchedServlet(request->getPath());
-        if(servlet){
-            servlet->handle(request,response);
+        if(!servlet && !m_DeafultServlet){
+            return false;
         }
+        if(!servlet->handle(request,response)){
+            m_DeafultServlet->handle(request,response);
+        }
+        return true;
     }
     Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& name){
         RWMutexWriteLock lock(m_Mutex);

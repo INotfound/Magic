@@ -28,54 +28,12 @@ void Plugin(){
 	MAGIC_LOG(Magic::LogLevel::LogInfo) << pp->arg();
 }
 
-
-char testRequestData[] = "GET / HTTP/1.1\r\n"
-						"Host: www.top.com\r\n"
-						"Content-Length: 10\r\n\r\n"
-						"1234567890";
-void HttpRequestParser(){
-	Magic::Http::HttpRequestParser requestParser;
-	std::string tmp(testRequestData,68);
-	uint32_t s = requestParser.execute(testRequestData,tmp.size());
-	MAGIC_LOG(Magic::LogLevel::LogInfo) << "execute rt= " <<  s
-		<<" has_error= " << requestParser.hasError()
-		<<" Finished= " << requestParser.isFinished();
-	std::string val("");
-	MAGIC_LOG(Magic::LogLevel::LogInfo) << requestParser.getData()->hasHeader("Content-Length",val);
-	MAGIC_LOG(Magic::LogLevel::LogInfo) << val.c_str();
-	requestParser.getData()->toStream(std::cout);
-	std::cout << testRequestData << std::endl;
-}
-char testResponseData[] = "HTTP/1.1 200 OK\r\n"
-        "Date: Tue, 04 Jun 2019 15:43:56 GMT\r\n"
-        "Server: Apache\r\n"
-        "Last-Modified: Tue, 12 Jan 2010 13:48:00 GMT\r\n"
-        "ETag: \"51-47cf7e6ee8400\"\r\n"
-        "Accept-Ranges: bytes\r\n"
-        "Content-Length: 81\r\n"
-        "Cache-Control: max-age=86400\r\n"
-        "Expires: Wed, 05 Jun 2019 15:43:56 GMT\r\n"
-        "Connection: Close\r\n"
-        "Content-Type: text/html\r\n\r\n"
-        "<html>\r\n"
-        "<meta http-equiv=\"refresh\" content=\"0;url=http://www.baidu.com/\">\r\n"
-        "</html>\r\n";
-void HttpResponseParser(){
-	Magic::Http::HttpResponseParser responseParser;
-	uint32_t s = responseParser.execute(testResponseData,385);
-	MAGIC_LOG(Magic::LogLevel::LogInfo) << "execute rt= " <<  s
-		<<" has_error= " << responseParser.hasError()
-		<<" Finished= " << responseParser.isFinished()
-		<<" Content-Length= "<< responseParser.getContentLength();
-	responseParser.getData()->toStream(std::cout);
-	std::cout << testResponseData << std::endl;
-}
 class DeafultServlet :public Magic::Http::HttpServlet{
 	public:
 		DeafultServlet()
 			:HttpServlet("DeafultServlet"){
 		}
-		void handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::NOT_FOUND);
 			std::string notfound{R"Template(<html>
 				<head><title>404 Not Found</title></head>
@@ -85,16 +43,17 @@ class DeafultServlet :public Magic::Http::HttpServlet{
 				</body>
 				</html>)Template"};
 			response->setBody(notfound);
-			return;
+			return true;
 		}
 };
+
 
 class LogServlet :public Magic::Http::HttpServlet{
 	public:
 		LogServlet()
 			:HttpServlet("LogServlet"){
 		}
-		void handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
 			std::fstream stream;
 			response->setHeader("Content-type","text/html");
@@ -106,17 +65,27 @@ class LogServlet :public Magic::Http::HttpServlet{
 			stream.read(buffer.get(),size);
 			std::string log(buffer.get(),size);
 			response->setBody(log);
-			return;
+			return true;
 		}
 };
 
+class FileServlet :public Magic::Http::HttpServlet{
+	public:
+		FileServlet()
+			:HttpServlet("LogServlet"){
+		}
+		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+			std::cout << request->getBody() << std::endl;
+			return true;
+		}
+};
 
 class MainServlet :public Magic::Http::HttpServlet{
 	public:
 		MainServlet()
 			:HttpServlet("MainServlet"){
 		}
-		void handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
 			std::fstream stream;
 			std::string res	= "www";
@@ -134,8 +103,9 @@ class MainServlet :public Magic::Http::HttpServlet{
 				std::string staticres(buffer.get(),size);
 				response->setContentType(Magic::Http::FileTypeToHttpContentType(path));
 				response->setBody(staticres);
+				return true;
 			}
-			return;
+			return false;  
 		}
 };
 
@@ -145,10 +115,12 @@ void Server(){
 		Magic::Http::HttpServer server("0.0.0.0",80,Magic::GetProcessorsNumber()*2);
 		Safe<Magic::Http::HttpServlet> log(new LogServlet);
 		Safe<Magic::Http::HttpServlet> deafult(new DeafultServlet);
+		Safe<Magic::Http::HttpServlet> file(new FileServlet);
 		Safe<Magic::Http::HttpServlet> main(new MainServlet);
 		server.getHttpServletDispatch()->setDeafultServlet(deafult);
-		server.getHttpServletDispatch()->addServlet("/log",log);
-		server.getHttpServletDispatch()->addGlobServlet("^/?(.*)$",main);
+		server.getHttpServletDispatch()->addHttpServlet("/log",log);
+		server.getHttpServletDispatch()->addHttpServlet("/file",log);
+		server.getHttpServletDispatch()->addGlobHttpServlet("^/?(.*)$",main);
 		server.run();
 	}catch(std::system_error ec){
 		std::cout << ec.what() << std::endl;

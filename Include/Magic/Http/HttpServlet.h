@@ -11,7 +11,7 @@ namespace Http{
     public:
         explicit HttpServlet(const std::string& name);
         const std::string getName() const;
-        virtual void handle (Safe<HttpRequest>& request,Safe<HttpResponse>& response) =0;
+        virtual bool handle (Safe<HttpRequest>& request,Safe<HttpResponse>& response) =0;
     private:
         std::string m_Name;
     };
@@ -21,9 +21,9 @@ namespace Http{
     public:
         HttpServletDispatch();
         void setDeafultServlet(Safe<HttpServlet>& servlet);
-        void addServlet(const std::string& name,Safe<HttpServlet>& servlet);
-        void addGlobServlet(const std::string& name,Safe<HttpServlet>& servlet);
-        void handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response) override;
+        void addHttpServlet(const std::string& name,Safe<HttpServlet>& servlet);
+        void addGlobHttpServlet(const std::string& name,Safe<HttpServlet>& servlet);
+        bool handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response) override;
     private:
         Safe<HttpServlet>& getMatchedServlet(const std::string& name);
     private:
