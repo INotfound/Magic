@@ -7,7 +7,8 @@ namespace Magic{
     TcpServer::~TcpServer(){
     }
     TcpServer::TcpServer(const std::string& addr,uint16_t port,uint32_t threadCount)
-        :m_IoPool(new IoPool(threadCount))
+        :m_Stop(false)
+        ,m_IoPool(new IoPool(threadCount))
         ,m_Address(addr)
         ,m_NetworkPort(port){
         auto endpoint = asio::ip::tcp::endpoint(asio::ip::address::from_string(addr),port);

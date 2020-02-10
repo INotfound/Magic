@@ -45,7 +45,7 @@ namespace Http{
                     MAGIC_LOG(LogLevel::LogWarn) << err.message();
                     return;
                 }
-
+                length = readStreamBuffer->size();
                 Share<HttpRequestParser> requestParser = std::make_shared<HttpRequestParser>();
                 readStreamBuffer->sgetn(buffer.get(),length);
                 uint32_t parserLength = requestParser->execute(buffer.get(),length);
@@ -62,7 +62,7 @@ namespace Http{
                 if(contentLength > 0){
                     asio::async_read(*session->socket()
                         ,*readStreamBuffer
-                        ,asio::transfer_exactly(contentLength)
+                        ,asio::transfer_exactly(contentLength - lastLength)
                         ,[this,session,requestParser,readStreamBuffer,buffer,lastLength](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...

@@ -54,7 +54,7 @@ namespace Http{
         XX(33, SOURCE,      SOURCE)       \
 
     /* Status Codes */
-    #define HTTP_STATUS_MAP(XX)                                                 \
+    #define HTTP_STATUS_MAP(XX)                                                   \
         XX(100, CONTINUE,                        Continue)                        \
         XX(101, SWITCHING_PROTOCOLS,             Switching Protocols)             \
         XX(102, PROCESSING,                      Processing)                      \
@@ -116,30 +116,29 @@ namespace Http{
         XX(511, NETWORK_AUTHENTICATION_REQUIRED, Network Authentication Required) \
 
     #define HTTP_CONTENT_TYPE(XX) \
-        XX(TEXT_CSS,                     "text/css; charset=utf-8")                  \
-        XX(TEXT_XML,                     "text/xml; charset=utf-8")                  \
-        XX(TEXT_XSL,                     "text/xsl; charset=utf-8")                  \
-        XX(TEXT_PLAIN,                   "text/plain; charset=utf-8")                \
-        XX(TEXT_HTML,                    "text/html; charset=utf-8")                 \
-        XX(IMAGE_PNG,                    "image/png")                                \
-        XX(IMAGE_JPG,                    "image/jpeg")                               \
-        XX(IMAGE_GIF,                    "image/gif")                                \
-        XX(IMAGE_XICON,                  "image/x-icon")                             \
-        XX(IMAGE_BMP,                    "image/bmp")                                \
-        XX(IMAGE_ICNS,                   "image/icns")                               \
-        XX(IMAGE_SVG_XML,                "image/svg+xml")                            \
-        XX(APPLICATION_XML,              "application/xml; charset=utf-8")           \
-        XX(APPLICATION_JSON,             "application/json; charset=utf-8")          \
-        XX(APPLICATION_WASM,             "application/wasm")                         \
-        XX(APPLICATION_X_FORM,           "application/x-www-form-urlencoded")        \
-        XX(APPLICATION_FONT_WOFF,        "application/font-woff")                    \
-        XX(APPLICATION_FONT_WOFF2,       "application/font-woff2")                   \
-        XX(APPLICATION_X_JAVASCRIPT,     "application/x-javascript; charset=utf-8")  \
-        XX(APPLICATION_OCTET_STREAM,     "application/octet-stream")                 \
-        XX(APPLICATION_VND_MS_FONTOBJ,   "application/vnd.ms-fontobject")            \
-        XX(APPLICATION_X_FONT_TRUETYPE,  "application/x-font-truetype")              \
-        XX(APPLICATION_X_FONT_OPENTYPE,  "application/x-font-opentype")
-
+        XX(TEXT_CSS,                    "css",      "text/css; charset=utf-8")                  \
+        XX(TEXT_XML,                    "xml",      "text/xml; charset=utf-8")                  \
+        XX(TEXT_XSL,                    "xsl",      "text/xsl; charset=utf-8")                  \
+        XX(TEXT_PLAIN,                  "txt",      "text/plain; charset=utf-8")                \
+        XX(TEXT_HTML,                   "html",     "text/html; charset=utf-8")                 \
+        XX(IMAGE_PNG,                   "png",      "image/png")                                \
+        XX(IMAGE_JPG,                   "jpeg",     "image/jpeg")                               \
+        XX(IMAGE_GIF,                   "gif",      "image/gif")                                \
+        XX(IMAGE_XICON,                 "ico",      "image/icon")                             \
+        XX(IMAGE_BMP,                   "bmp",      "image/bmp")                                \
+        XX(IMAGE_ICNS,                  "icns",     "image/icns")                               \
+        XX(IMAGE_SVG_XML,               "svg",      "image/svg+xml")                            \
+        XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
+        XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
+        XX(APPLICATION_WASM,            "wasm",     "application/wasm")                         \
+        XX(APPLICATION_X_FORM,          "",         "application/www-form-urlencoded")        \
+        XX(APPLICATION_FONT_WOFF,       "woff",     "application/font-woff")                    \
+        XX(APPLICATION_FONT_WOFF2,      "woff2",    "application/font-woff2")                   \
+        XX(APPLICATION_JAVASCRIPT,    "js",       "application/javascript; charset=utf-8")  \
+        XX(APPLICATION_OCTET_STREAM,    "",         "application/octet-stream")                 \
+        XX(APPLICATION_VND_MS_FONTOBJ,  "eot",      "application/vnd.ms-fontobject")            \
+        XX(APPLICATION_FONT_TRUETYPE, "ttf",      "application/font-truetype")              \
+        XX(APPLICATION_FONT_OPENTYPE, "otf",      "application/font-opentype")              \
 
     enum class HttpMethod{
         #define XX(num,name,string) name = num,
@@ -156,18 +155,21 @@ namespace Http{
     };
 
     enum class HttpContentType{
-        #define XX(name,desc) name,
+        #define XX(name,extName,desc) name,
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
+    bool IsUrlEncode(const std::string& str);
     HttpMethod CharsToHttpMethod(const char* str);
     HttpMethod StringToHttpMethod(const std::string& str);
     const char* HttpMethodToString(const HttpMethod& method);
     const char* HttpStatusToString(const HttpStatus& status);
-    HttpContentType FileTypeToHttpContentType(const std::string& fileName);
+    std::string UrlEncode(const std::string &value) noexcept;
+	std::string UrlDecode(const std::string &value) noexcept;
+    const char* FileTypeToHttpContentType(const std::string& fileName);
     const char* HttpContentTypeToString(const HttpContentType& contentType);
-
+	
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string&, const std::string&) const;
@@ -184,26 +186,24 @@ namespace Http{
         void setBody(const std::string& body);
         void setQuery(const std::string& query);
         void setPath(const std::string& urlPath);
+        void setBoundary(const std::string& bounday);
         void setFragment(const std::string& fragment);
-
-        void setParams(const KeyValue& val);
-        void setHeaders(const KeyValue& val);
 
         void setParam(const std::string& key,const std::string& value);
         void setHeader(const std::string& key,const std::string& value);
-
+        
+        KeyValue& atParams();
+        KeyValue& atHeaders();
         bool getkeepAlive() const;
         uint8_t getVersion() const;
         HttpMethod getMethod() const;
         const std::string& getPath() const;
         const std::string& getBody() const;
         const std::string& getQuery() const;
+        const std::string& getBoundary() const;
+        const std::string& getParam(const std::string& key) const;
+        const std::string& getHeader(const std::string& key) const;
 
-        KeyValue& getParams();
-        KeyValue& getHeaders(); 
-
-        bool hasParam(const std::string& key,std::string& value);
-        bool hasHeader(const std::string& key,std::string& value);
 
         void delParam(const std::string& key);
         void delHeader(const std::string& key);
@@ -219,6 +219,7 @@ namespace Http{
         std::string m_Query;
         std::string m_UrlPath;
         std::string m_Fragment;
+        std::string m_Boundary;
     };
 
     class HttpResponse{
@@ -231,6 +232,7 @@ namespace Http{
         void setkeepAlive(bool keepAlive);
         void setBody(const std::string& body);
         void setReason(const std::string& reason);
+        void setContentType(const std::string& contentType);
         void setContentType(const HttpContentType contentType);
 
         void setHeaders(const KeyValue& val);
@@ -242,18 +244,18 @@ namespace Http{
         HttpStatus getStatus() const;
         const std::string& getBody() const;
         const std::string& getReason() const;
-
-        bool hasHeader(const std::string& key,std::string& value);
+        const std::string& getHeader(const std::string& key);
         void delHeader(const std::string& key);
         std::ostream& toStream(std::ostream& os);
     private:
         bool m_KeepAlive;
         uint8_t m_Version;
-        std::string m_Body;
-        std::string m_Reason;
         KeyValue m_Headers;
         HttpStatus m_Status; 
+        std::string m_Body;
+        std::string m_Reason;
         HttpContentType m_ContentType;
+        std::string m_ContentTypeString;
         std::vector<std::string> m_Cookies;
     };
     std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& request);

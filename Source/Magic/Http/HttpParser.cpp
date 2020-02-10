@@ -3,6 +3,41 @@
 namespace Magic{
 namespace Http{
 
+    template<class Map>
+    inline void Parse(const std::string& str,Map& map,const std::string& flag){
+        uint64_t pos = 0;
+        do {
+            uint64_t key = 0;
+            std::string subString(Split(str, pos, flag));
+            if(IsUrlEncode(subString)){
+                subString = UrlDecode(subString);
+            }
+            pos += static_cast<uint64_t>(subString.size() + 1);
+            key = subString.find("=");
+            if (key == std::string::npos)
+                break;
+            map.emplace(subString.substr(0, key)
+                ,subString.substr(key + 1));
+        } while (pos <= str.size());
+    }
+    template<class Map>
+    inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
+        uint64_t pos = 0;
+        do {
+            uint64_t key = 0;
+            std::string subString(Split(str, pos, flag));
+            if(IsUrlEncode(subString)){
+                subString = UrlDecode(subString);
+            }
+            pos += static_cast<uint64_t>(subString.size() + 1);
+            key = subString.find("=");
+            if (key == std::string::npos)
+                break;
+            map.emplace(Trim(subString.substr(0, key))
+                ,Trim(subString.substr(key + 1)));
+        } while (pos <= str.size());
+    }
+
     void OnRequestUri(void *data,const char*at,size_t length){
     }
     void OnRequestPath(void *data,const char*at,size_t length){
@@ -11,7 +46,9 @@ namespace Http{
     }
     void OnRequestQuery(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setQuery(std::string(at,length));
+        std::string query(at,length);
+        parser->getData()->setQuery(query);
+        Parse<HttpRequest::KeyValue>(query,parser->getData()->atParams(),"&");
     }
     void OnRequestMethod(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
@@ -52,6 +89,7 @@ namespace Http{
             return;
         }
         parser->getData()->setHeader(std::string(field, flen), std::string(value, vlen));
+
     }
 
     HttpRequestParser::HttpRequestParser()
@@ -80,12 +118,16 @@ namespace Http{
     }
     uint64_t HttpRequestParser::getContentLength(){
         std::string length;
-        if(m_Data->hasHeader("Content-Length",length)){
-            return StringAs<uint64_t>(length);
-        }else if(m_Data->hasHeader("content-length",length)){
-            return StringAs<uint64_t>(length);
+        length = m_Data->getHeader("Content-Length");
+        if(length.empty()){
+            length = m_Data->getHeader("content-length");
+            if(!length.empty()){
+                return StringAs<uint64_t>(length);
+            }else{
+                return 0;
+            }
         }
-        return 0;
+        return StringAs<uint64_t>(length);
     }
     Safe<HttpRequest>& HttpRequestParser::getData(){
         return m_Data;
@@ -161,12 +203,16 @@ namespace Http{
     }
     uint32_t HttpResponseParser::getContentLength(){
         std::string length;
-        if(m_Data->hasHeader("Content-Length",length)){
-            return StringAs<uint32_t>(length);
-        }else if(m_Data->hasHeader("content-length",length)){
-            return StringAs<uint32_t>(length);
+        length = m_Data->getHeader("Content-Length");
+        if(length.empty()){
+            length = m_Data->getHeader("content-length");
+            if(!length.empty()){
+                return StringAs<uint64_t>(length);
+            }else{
+                return 0;
+            }
         }
-        return 0;
+        return StringAs<uint64_t>(length);
     }
     Safe<HttpResponse>& HttpResponseParser::getData(){
         return m_Data;
@@ -176,7 +222,6 @@ namespace Http{
         std::memmove(data,data + offset,length - offset);
         return offset;
     }
-
 
 }
 }

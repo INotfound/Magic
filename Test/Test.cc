@@ -2,6 +2,7 @@
 #include "asio.hpp"
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <exception>
 #include <string>
 #include <vector>
@@ -72,9 +73,11 @@ class LogServlet :public Magic::Http::HttpServlet{
 class FileServlet :public Magic::Http::HttpServlet{
 	public:
 		FileServlet()
-			:HttpServlet("LogServlet"){
+			:HttpServlet("FileServlet"){
 		}
 		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
+			std::cout << request->getParam("asd") << std::endl;
+			std::cout << request->getBoundary() << std::endl;
 			std::cout << request->getBody() << std::endl;
 			return true;
 		}
@@ -87,7 +90,7 @@ class MainServlet :public Magic::Http::HttpServlet{
 		}
 		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
 			response->setStatus(Magic::Http::HttpStatus::OK);
-			std::fstream stream;
+			std::ifstream stream;
 			std::string res	= "www";
 			std::string path = request->getPath();
 			if(path == "/"){
@@ -95,14 +98,10 @@ class MainServlet :public Magic::Http::HttpServlet{
 			}
 			stream.open(res + path,std::ios::in);
 			if(stream.is_open()){
-				stream.seekg(0,std::ios_base::end);
-				uint32_t size = stream.tellg();
-				Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
-				stream.seekg(0,std::ios_base::beg);
-				stream.read(buffer.get(),size);
-				std::string staticres(buffer.get(),size);
+				std::ostringstream staticRes;
+				staticRes << stream.rdbuf();
 				response->setContentType(Magic::Http::FileTypeToHttpContentType(path));
-				response->setBody(staticres);
+				response->setBody(staticRes.str());
 				return true;
 			}
 			return false;  
@@ -119,7 +118,7 @@ void Server(){
 		Safe<Magic::Http::HttpServlet> main(new MainServlet);
 		server.getHttpServletDispatch()->setDeafultServlet(deafult);
 		server.getHttpServletDispatch()->addHttpServlet("/log",log);
-		server.getHttpServletDispatch()->addHttpServlet("/file",log);
+		server.getHttpServletDispatch()->addHttpServlet("/file",file);
 		server.getHttpServletDispatch()->addGlobHttpServlet("^/?(.*)$",main);
 		server.run();
 	}catch(std::system_error ec){

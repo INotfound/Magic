@@ -28,7 +28,7 @@ namespace Http{
     }
     bool HttpServletDispatch::handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response){
         auto& servlet = getMatchedServlet(request->getPath());
-        if(!servlet && !m_DeafultServlet){
+        if(!servlet || !m_DeafultServlet){
             return false;
         }
         if(!servlet->handle(request,response)){

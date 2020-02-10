@@ -13,7 +13,9 @@
 #define Safe std::unique_ptr
 #define Share std::shared_ptr
 
-typedef asio::ip::tcp::socket Socket; 
+typedef asio::ip::tcp::socket Socket;
+static const std::string g_NullString;
+
 /**/
 class Noncopyable{
 public:
@@ -203,4 +205,20 @@ namespace Magic{
         strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);
         return buff;
     }
+
+    inline std::string Trim(std::string str,const std::string flag = " ") {
+        if (str.empty())
+            return str;
+        str.erase(0, str.find_first_not_of(" "));
+        str.erase(str.find_last_not_of(" ") + 1);
+        return str;
+    }
+
+    inline std::string Split(const std::string& str, uint64_t& index, const std::string& flag) {
+        uint32_t pos = str.find(flag, index);
+        if (pos == std::string::npos)
+            return str.substr(index, str.size() - index);;
+        return str.substr(index, pos - index);
+    }
+
 }
