@@ -11,6 +11,17 @@
 #include "Adapter/Linux.h"
 
 namespace Magic {
+	
+	uint64_t GetCurrentTimeMS() {
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		return tv.tv_sec * 1000ul  + tv.tv_usec / 1000;
+	}
+	uint64_t GetCurrentTimeUS(){
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		return tv.tv_sec * 1000 * 1000ul  + tv.tv_usec;
+	}
 
 	uint32_t GetProcessorsNumber() {
 		unsigned int count = 1;

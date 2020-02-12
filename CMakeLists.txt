@@ -8,19 +8,20 @@ include_directories(Include/Magic)
 set(SRC
     Source/Magic.cpp
 	Source/Magic/Log.cpp
+    Source/Magic/Md5.cpp
     Source/Magic/Gzip.cpp
 	Source/Magic/Thread.cpp
 	Source/Magic/Config.cpp
 	Source/Magic/Plugin.cpp
     Source/Magic/IoPool.cpp
-    Source/Magic/Session.cpp
     Source/Magic/TcpServer.cpp
     Source/Magic/Http/Http.cpp
+    Source/Magic/Http/Session.cpp
+    Source/Magic/Http/HttpFile.cpp
+    Source/Magic/Http/MultiPart.cpp
     Source/Magic/Http/HttpServer.cpp
     Source/Magic/Http/HttpParser.cpp
-    Source/Magic/Http/HttpCookie.cpp
     Source/Magic/Http/HttpServlet.cpp
-    Source/Magic/Http/HttpSession.cpp
     Source/Magic/Adapter/WinUtil.cpp
     Source/Magic/Adapter/WinMutex.cpp
     Source/Magic/Adapter/WinPlugin.cpp
@@ -77,7 +78,7 @@ elseif(UNIX AND NOT ANDROID)
     )
     add_library(Magic ${SRC})
 endif()
-    target_link_libraries(Magic ${LIBS} zlib)
+target_link_libraries(Magic ${LIBS} zlib)
 
 add_library(TestLib MODULE Test/TestPlugin.cc)
 add_executable(Test Test/Test.cc)

@@ -2,7 +2,6 @@
 
 #include "Core.h"
 #include "IoPool.h"
-#include "Session.h"
 namespace Magic{
     class TcpServer{
     public:
@@ -12,7 +11,7 @@ namespace Magic{
         void stop();
     protected:
         virtual void accept();
-        virtual void handleFunc(Share<Session> session) =0;
+        virtual void handleFunc(Share<Socket> socket) =0;
     protected:
         bool m_Stop;
         Safe<IoPool> m_IoPool;

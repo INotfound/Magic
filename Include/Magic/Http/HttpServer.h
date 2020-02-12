@@ -2,7 +2,6 @@
 #include "Core.h"
 #include "TcpServer.h"
 #include "Http/HttpServlet.h"
-#include "Http/HttpSession.h"
 
 namespace Magic{
 namespace Http{
@@ -12,9 +11,7 @@ namespace Http{
         Safe<HttpServletDispatch>& getHttpServletDispatch();
     protected:
         void accept() override;
-        void handleFunc(Share<Session> session) override;
-    private:
-        void process(Share<HttpSession> session);
+        void handleFunc(Share<Socket> socket) override;
     private:
         Safe<HttpServletDispatch> m_ServletDispatch;
     };

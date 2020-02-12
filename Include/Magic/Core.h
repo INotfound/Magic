@@ -3,8 +3,9 @@
 #include <ctime>
 #include <memory>
 #include <string>
+#include <cstdint>
+#include <cstdlib>
 #include <sstream>
-#include <stdint.h>
 #include <algorithm>
 #include <functional>
 
@@ -14,8 +15,7 @@
 #define Share std::shared_ptr
 
 typedef asio::ip::tcp::socket Socket;
-static const std::string g_NullString;
-
+static const std::string g_EmptyString;
 /**/
 class Noncopyable{
 public:
@@ -191,8 +191,13 @@ inline bool StringAs<bool>(const std::string& value) {
 }
 
 namespace Magic{
-    uint64_t GetThreadId();
 
+    uint64_t GetThreadId();
+    
+    uint64_t GetCurrentTimeMS();
+
+	uint64_t GetCurrentTimeUS();
+    
     uint32_t GetProcessorsNumber();
 
     std::string BackTraceToString(uint32_t size = 64, uint32_t skip = 2, const std::string& prefix = "    ");

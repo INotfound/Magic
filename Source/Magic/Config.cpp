@@ -149,7 +149,7 @@ namespace Magic {
 			normalString.append(1, charValue);
 		}
 	}
-	
+
 	void JsonConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
 		Safe<rapidjson::Document> json(new rapidjson::Document);
 		rapidjson::Document::AllocatorType& allocator = json->GetAllocator();

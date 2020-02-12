@@ -10,15 +10,14 @@ namespace Http{
         ,m_ServletDispatch(new HttpServletDispatch){
     }
     void HttpServer::accept(){
-        Share<Session> session(new HttpSession(m_IoPool->get()));
-        auto& socket = session->socket();
-        m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
+        Share<Socket> socket = std::make_shared<Socket>(m_IoPool->get());
+        m_Acceptor->async_accept(*socket,[this, socket](const asio::error_code& err){
             if(err){
                 //TODO: ...
                 MAGIC_LOG(LogLevel::LogWarn) << err.message();
                 return;
             }
-            this->handleFunc(session);
+            this->handleFunc(socket);
             if(!m_Stop){
                 accept();
             }
@@ -27,19 +26,14 @@ namespace Http{
     Safe<HttpServletDispatch>& HttpServer::getHttpServletDispatch(){
         return m_ServletDispatch;
     }
-    void HttpServer::handleFunc(Share<Session> session){
-        //TODO:: ...
-        Share<HttpSession> httpSession = std::static_pointer_cast<HttpSession>(session);
-        process(httpSession);
-    }
-    void HttpServer::process(Share<HttpSession> session){
+    void HttpServer::handleFunc(Share<Socket> socket){
         uint32_t bufferSize = 1024*4;
         auto readStreamBuffer = std::make_shared<asio::streambuf>();
         Share<char> buffer(new char[bufferSize],[](char* ptr){delete[] ptr;});
-        asio::async_read_until(*session->socket()
+        asio::async_read_until(*socket
             ,*readStreamBuffer
             ,"\r\n\r\n"
-            ,[this,session,readStreamBuffer,buffer](const asio::error_code &err, std::size_t length){
+            ,[this,socket,readStreamBuffer,buffer](const asio::error_code &err, std::size_t length){
                 if(err){
                     //TODO: ...
                     MAGIC_LOG(LogLevel::LogWarn) << err.message();
@@ -60,10 +54,10 @@ namespace Http{
                 }while(true);
                 uint64_t contentLength = requestParser->getContentLength();
                 if(contentLength > 0){
-                    asio::async_read(*session->socket()
+                    asio::async_read(*socket
                         ,*readStreamBuffer
                         ,asio::transfer_exactly(contentLength - lastLength)
-                        ,[this,session,requestParser,readStreamBuffer,buffer,lastLength](const asio::error_code &err, std::size_t length){
+                        ,[this,socket,requestParser,readStreamBuffer,buffer,lastLength](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
                                 MAGIC_LOG(LogLevel::LogWarn) << err.message();
@@ -84,41 +78,42 @@ namespace Http{
                             std::ostream responseStream(writeStreamBuffer.get());
                             responseStream << response;
                             
-                            asio::async_write(*session->socket()
+                            asio::async_write(*socket
                                 ,*writeStreamBuffer
                                 , asio::transfer_exactly(writeStreamBuffer->size())
-                                ,[this,session, writeStreamBuffer](const asio::error_code &err, std::size_t length){
+                                ,[this,socket, writeStreamBuffer](const asio::error_code &err, std::size_t length){
                                     if(err){
                                         //TODO: ...
                                         MAGIC_LOG(LogLevel::LogWarn) << err.message();
                                         return;
                                     }
-                                    process(session);
+                                    handleFunc(socket);
                                 }
                             );
                         });
                 }else{
                     auto& request = requestParser->getData();
                     Safe<HttpResponse> response(new HttpResponse(request->getkeepAlive(),request->getVersion()));
-                    m_ServletDispatch->handle(requestParser->getData(),response);
+                    m_ServletDispatch->handle(request,response);
                     auto writeStreamBuffer = std::make_shared<asio::streambuf>();
                     std::ostream responseStream(writeStreamBuffer.get());
                     responseStream << response;
-                    asio::async_write(*session->socket()
+                    asio::async_write(*socket
                         ,*writeStreamBuffer
                         ,asio::transfer_exactly(writeStreamBuffer->size())
-                        ,[this,session, writeStreamBuffer](const asio::error_code &err, std::size_t length){
+                        ,[this,socket, writeStreamBuffer](const asio::error_code &err, std::size_t length){
                             if(err){
                                 //TODO: ...
                                 MAGIC_LOG(LogLevel::LogWarn) << err.message();
                                 return;
                             }
-                            process(session);
+                            handleFunc(socket);
                         }
                     );
                 }
         });
     }
+
 
 }
 }

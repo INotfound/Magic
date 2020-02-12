@@ -119,6 +119,40 @@ namespace Http{
                 return "<unknown>";
         }
     }
+ template<class Map>
+    inline void Parse(const std::string& str,Map& map,const std::string& flag){
+        uint64_t pos = 0;
+        do {
+            uint64_t key = 0;
+            std::string subString(Split(str, pos, flag));
+            if(IsUrlEncode(subString)){
+                subString = UrlDecode(subString);
+            }
+            pos += static_cast<uint64_t>(subString.size() + 1);
+            key = subString.find("=");
+            if (key == std::string::npos)
+                break;
+            map.emplace(subString.substr(0, key)
+                ,subString.substr(key + 1));
+        } while (pos <= str.size());
+    }
+    template<class Map>
+    inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
+        uint64_t pos = 0;
+        do {
+            uint64_t key = 0;
+            std::string subString(Split(str, pos, flag));
+            if(IsUrlEncode(subString)){
+                subString = UrlDecode(subString);
+            }
+            pos += static_cast<uint64_t>(subString.size() + 1);
+            key = subString.find("=");
+            if (key == std::string::npos)
+                break;
+            map.emplace(Trim(subString.substr(0, key))
+                ,Trim(subString.substr(key + 1)));
+        } while (pos <= str.size());
+    }
 
     bool CaseInsensitiveLess::operator()(const std::string& lhs,const std::string& rhs) const{
         return StringCompareNoCase(lhs,rhs) < 0;
@@ -141,28 +175,32 @@ namespace Http{
     }
 
     void HttpRequest::setBody(const std::string& body){
+        auto contentType = m_Headers.find("Content-Type");
+        if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded") == 0){
+            Parse(body,m_Params,"&");
+        }
         m_Body = body;
     }
     void HttpRequest::setQuery(const std::string& query){
+        Parse(query,m_Params,"&");
         m_Query = query;
     }
     void HttpRequest::setPath(const std::string& urlPath){
         m_UrlPath = urlPath;
     }
-    void HttpRequest::setBoundary(const std::string& bounday){
-        m_Boundary = bounday;
-    }
     void HttpRequest::setFragment(const std::string& fragment){
         m_Fragment = fragment;
     }
-
     void HttpRequest::setParam(const std::string& key,const std::string& value){
-        m_Params.emplace(key,value);
+        m_Params.emplace(key, value);
     }
-
     void HttpRequest::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key, value);
     }
+    void HttpRequest::setCookie(const std::string& key,const std::string& value){
+        m_Cookies.emplace(key, value);
+    }
+
     HttpRequest::KeyValue& HttpRequest::atParams() {
         return m_Params;
     }
@@ -187,20 +225,35 @@ namespace Http{
     const std::string& HttpRequest::getQuery() const{
         return m_Query;
     }
-    const std::string& HttpRequest::getBoundary() const{
-        return m_Boundary;
+    const std::string& HttpRequest::getCookie(const std::string& key) {
+        if(!m_Cookies.empty()){
+            auto value = m_Cookies.find(key);
+            if(value == m_Cookies.end()){
+                return g_EmptyString;
+            }
+            return value->second;
+        }
+        auto iter = m_Headers.find("Cookie");
+        if(iter == m_Headers.end())
+            return g_EmptyString;
+        ParseCookies(iter->second,m_Cookies,";");
+        auto value = m_Cookies.find(key);
+        if(value == m_Cookies.end()){
+            return g_EmptyString;
+        }
+        return iter->second;
     }
     const std::string& HttpRequest::getParam(const std::string& key)const{
         auto iter = m_Params.find(key);
         if(iter == m_Params.end()){
-            return g_NullString;
+            return g_EmptyString;
         }
         return iter->second;
     }
     const std::string& HttpRequest::getHeader(const std::string& key)const{
         auto iter = m_Headers.find(key);
         if(iter == m_Headers.end()){
-            return g_NullString;
+            return g_EmptyString;
         }
         return iter->second;
     }
@@ -271,7 +324,33 @@ namespace Http{
     void HttpResponse::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key,value);
     }
-
+    void HttpResponse::setCookie(const std::string& key, const std::string& val,time_t expired = 0
+            ,const std::string& path = "",const std::string& domain = "",bool httpOnly = true,bool secure = false){
+        std::string result;
+        result.reserve(256);
+        result.append(key);
+        result.append("=");
+        result.append(val);
+        if(!path.empty()){
+            result.append("; Path=");
+            result.append(path);
+        }
+        if(!domain.empty()){
+            result.append("; Domain=");
+            result.append(domain);
+        }
+        if(expired != -1){
+            result.append("; Expires=");
+            result.append(GetTimeGMTString(expired));
+        }
+        if(httpOnly){
+            result.append("; HttpOnly");
+        }
+        if(secure){
+            result.append("; Secure");
+        }
+        m_Cookies.push_back(result);
+    }
     bool HttpResponse::getkeepAlive() const{
         return m_KeepAlive;
     }
@@ -292,7 +371,7 @@ namespace Http{
     const std::string& HttpResponse::getHeader(const std::string& key){
         auto iter = m_Headers.find(key);
         if(iter == m_Headers.end()){
-            return g_NullString;
+            return g_EmptyString;
         }
         return iter->second;
     }

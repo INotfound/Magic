@@ -124,21 +124,21 @@ namespace Http{
         XX(IMAGE_PNG,                   "png",      "image/png")                                \
         XX(IMAGE_JPG,                   "jpeg",     "image/jpeg")                               \
         XX(IMAGE_GIF,                   "gif",      "image/gif")                                \
-        XX(IMAGE_XICON,                 "ico",      "image/icon")                             \
+        XX(IMAGE_XICON,                 "ico",      "image/icon")                               \
         XX(IMAGE_BMP,                   "bmp",      "image/bmp")                                \
         XX(IMAGE_ICNS,                  "icns",     "image/icns")                               \
         XX(IMAGE_SVG_XML,               "svg",      "image/svg+xml")                            \
         XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
         XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
         XX(APPLICATION_WASM,            "wasm",     "application/wasm")                         \
-        XX(APPLICATION_X_FORM,          "",         "application/www-form-urlencoded")        \
+        XX(APPLICATION_FORM,            "",         "application/x-www-form-urlencoded")        \
         XX(APPLICATION_FONT_WOFF,       "woff",     "application/font-woff")                    \
         XX(APPLICATION_FONT_WOFF2,      "woff2",    "application/font-woff2")                   \
-        XX(APPLICATION_JAVASCRIPT,    "js",       "application/javascript; charset=utf-8")  \
+        XX(APPLICATION_JAVASCRIPT,      "js",       "application/javascript; charset=utf-8")    \
         XX(APPLICATION_OCTET_STREAM,    "",         "application/octet-stream")                 \
         XX(APPLICATION_VND_MS_FONTOBJ,  "eot",      "application/vnd.ms-fontobject")            \
-        XX(APPLICATION_FONT_TRUETYPE, "ttf",      "application/font-truetype")              \
-        XX(APPLICATION_FONT_OPENTYPE, "otf",      "application/font-opentype")              \
+        XX(APPLICATION_FONT_TRUETYPE,   "ttf",      "application/x-font-truetype")              \
+        XX(APPLICATION_FONT_OPENTYPE,   "otf",      "application/x-font-opentype")              \
 
     enum class HttpMethod{
         #define XX(num,name,string) name = num,
@@ -186,12 +186,11 @@ namespace Http{
         void setBody(const std::string& body);
         void setQuery(const std::string& query);
         void setPath(const std::string& urlPath);
-        void setBoundary(const std::string& bounday);
         void setFragment(const std::string& fragment);
-
         void setParam(const std::string& key,const std::string& value);
         void setHeader(const std::string& key,const std::string& value);
-        
+        void setCookie(const std::string& key,const std::string& value);
+
         KeyValue& atParams();
         KeyValue& atHeaders();
         bool getkeepAlive() const;
@@ -200,10 +199,9 @@ namespace Http{
         const std::string& getPath() const;
         const std::string& getBody() const;
         const std::string& getQuery() const;
-        const std::string& getBoundary() const;
+        const std::string& getCookie(const std::string& key);
         const std::string& getParam(const std::string& key) const;
         const std::string& getHeader(const std::string& key) const;
-
 
         void delParam(const std::string& key);
         void delHeader(const std::string& key);
@@ -214,6 +212,7 @@ namespace Http{
         uint8_t m_Version;
         KeyValue m_Params;
         KeyValue m_Headers;
+        KeyValue m_Cookies;
         HttpMethod m_Method;
         std::string m_Body;
         std::string m_Query;
@@ -234,9 +233,9 @@ namespace Http{
         void setReason(const std::string& reason);
         void setContentType(const std::string& contentType);
         void setContentType(const HttpContentType contentType);
-
-        void setHeaders(const KeyValue& val);
         void setHeader(const std::string& key,const std::string& value);
+        void setCookie(const std::string& key, const std::string& val,time_t expired
+                ,const std::string& path,const std::string& domain,bool httpOnly,bool secure);
 
         KeyValue& getHeaders(); 
         bool getkeepAlive() const;

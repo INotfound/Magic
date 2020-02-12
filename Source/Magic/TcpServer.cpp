@@ -30,15 +30,14 @@ namespace Magic{
     }
                 
     void TcpServer::accept(){
-        Share<Session> session = std::make_shared<Session>(m_IoPool->get());
-        auto& socket = session->socket();
-        m_Acceptor->async_accept(*socket,[this, session](const asio::error_code& err){
+        Share<Socket> socket = std::make_shared<Socket>(m_IoPool->get());
+        m_Acceptor->async_accept(*socket,[this, socket](const asio::error_code& err){
             if(err){
                 //TODO: ...
                 MAGIC_LOG(LogLevel::LogWarn) << err.message();
                 return;
             }
-            this->handleFunc(session);
+            this->handleFunc(socket);
             if(!m_Stop){
                 accept();
             }

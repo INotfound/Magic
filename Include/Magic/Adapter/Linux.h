@@ -4,6 +4,7 @@
 #include <sys/io.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <sys/time.h>
 #include <execinfo.h>
 #include <ucontext.h>
 #include <semaphore.h>

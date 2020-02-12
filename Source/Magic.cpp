@@ -1,6 +1,7 @@
 #include "Magic.h"
 namespace Magic {
 	void Init(const std::string& Name){
+		std::srand(time(0));
         Magic::Thread::SetName("Main");
 		//Config
 		Safe<Magic::ConfigFile> configFile(

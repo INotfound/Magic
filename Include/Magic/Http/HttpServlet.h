@@ -4,7 +4,6 @@
 #include "Core.h"
 #include "Mutex.h"
 #include "Http/Http.h"
-#include "Http/HttpSession.h"
 namespace Magic{
 namespace Http{
     class HttpServlet{

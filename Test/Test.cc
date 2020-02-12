@@ -12,7 +12,9 @@
 #include "Http/Http.h"
 #include "Http/HttpServlet.h"
 #include "Http/HttpServer.h"
-#include "Http/HttpSession.h"
+#include "Http/Session.h"
+#include "Http/MultiPart.h"
+#include "Http/HttpFile.h"
 class IPluginModule {
 public:
 	virtual int arg() = 0;
@@ -76,9 +78,16 @@ class FileServlet :public Magic::Http::HttpServlet{
 			:HttpServlet("FileServlet"){
 		}
 		bool handle (Safe<Magic::Http::HttpRequest>& request,Safe<Magic::Http::HttpResponse>& response) override{
-			std::cout << request->getParam("asd") << std::endl;
-			std::cout << request->getBoundary() << std::endl;
-			std::cout << request->getBody() << std::endl;
+			Magic::Http::MultiPart multiPart;
+			multiPart.parse(request);
+			std::cout << multiPart.getParams().count("xxxx") << std::endl;
+			auto fileIter = multiPart.getFiles().begin();
+			auto fileEnd = multiPart.getFiles().end();
+			for(;fileIter!=fileEnd; fileIter++){
+				(*fileIter)->save("www/Image/" + (*fileIter)->getName());
+			}
+			response->setStatus(Magic::Http::HttpStatus::OK);
+			response->setBody("OK!!!");
 			return true;
 		}
 };

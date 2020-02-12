@@ -3,40 +3,7 @@
 namespace Magic{
 namespace Http{
 
-    template<class Map>
-    inline void Parse(const std::string& str,Map& map,const std::string& flag){
-        uint64_t pos = 0;
-        do {
-            uint64_t key = 0;
-            std::string subString(Split(str, pos, flag));
-            if(IsUrlEncode(subString)){
-                subString = UrlDecode(subString);
-            }
-            pos += static_cast<uint64_t>(subString.size() + 1);
-            key = subString.find("=");
-            if (key == std::string::npos)
-                break;
-            map.emplace(subString.substr(0, key)
-                ,subString.substr(key + 1));
-        } while (pos <= str.size());
-    }
-    template<class Map>
-    inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
-        uint64_t pos = 0;
-        do {
-            uint64_t key = 0;
-            std::string subString(Split(str, pos, flag));
-            if(IsUrlEncode(subString)){
-                subString = UrlDecode(subString);
-            }
-            pos += static_cast<uint64_t>(subString.size() + 1);
-            key = subString.find("=");
-            if (key == std::string::npos)
-                break;
-            map.emplace(Trim(subString.substr(0, key))
-                ,Trim(subString.substr(key + 1)));
-        } while (pos <= str.size());
-    }
+   
 
     void OnRequestUri(void *data,const char*at,size_t length){
     }
@@ -46,9 +13,7 @@ namespace Http{
     }
     void OnRequestQuery(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
-        std::string query(at,length);
-        parser->getData()->setQuery(query);
-        Parse<HttpRequest::KeyValue>(query,parser->getData()->atParams(),"&");
+        parser->getData()->setQuery(std::string(at,length));
     }
     void OnRequestMethod(void *data,const char*at,size_t length){
         HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
@@ -89,7 +54,6 @@ namespace Http{
             return;
         }
         parser->getData()->setHeader(std::string(field, flen), std::string(value, vlen));
-
     }
 
     HttpRequestParser::HttpRequestParser()
