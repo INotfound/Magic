@@ -56,10 +56,10 @@ namespace Magic {
 		const std::string& getValue() const;
 		const std::string& getComment() const;
 	private:
+		bool m_IsComment;
 		std::string m_Name;
 		std::string m_Value;
 		std::string m_Comment;
-		bool m_IsComment;
 	};
 
 	class IConfigFormatter {
@@ -90,6 +90,7 @@ namespace Magic {
 		if (iter != m_ConfigMap.end()) {
 			return StringAs<T>(iter->second->getValue());
 		}
+		m_IsChange = true;
 		Safe<ConfigValue> value( new ConfigValue(defaultName, AsString<T>(defaultValue), defaultComment));
 		m_ConfigMap[defaultName] = std::move(value);
 		return defaultValue;
@@ -97,7 +98,7 @@ namespace Magic {
 	template<class T>
 	T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
 		MutexLock lock(m_Mutex);
-		//MAGIC_LOG(LogLevel::LogDebug) << "Modify configuration items";
+		m_IsChange = true;
 		Safe<ConfigValue> value( new ConfigValue(defaultName, AsString<T>(defaultValue), defaultComment));
 		m_ConfigMap[defaultName].reset();
 		m_ConfigMap[defaultName] = std::move(value);

@@ -4,7 +4,7 @@
 namespace Magic{
 namespace Http{
     Session::Session(bool autoGen)
-        :m_LastAccessTime(time(0)){
+        :m_LastAccessTime(std::time(0)){
         if(autoGen){
             Md5 md5;
             std::stringstream ss;
@@ -12,15 +12,15 @@ namespace Http{
             m_Id = md5.getString(ss.str().c_str());
         }
     }
-    const std::string& Session::getId() const{
+    const std::string& Session::getId(){
         RWMutex::ReadLock lock(m_Mutex);
-        return g_EmptyString;
+        return m_Id;
     }
     void Session::setId(const std::string& id){
         RWMutex::WriteLock lock(m_Mutex);
         m_Id = id;
     }
-    uint64_t Session::getLastAccessTime() const{
+    uint64_t Session::getLastAccessTime(){
         RWMutex::ReadLock lock(m_Mutex);
         return m_LastAccessTime;
     }
@@ -31,7 +31,7 @@ namespace Http{
 
     void SessionManager::del(const std::string& id){
         RWMutex::WriteLock lock(m_Mutex);
-        auto value = m_Data.find(key);
+        auto value = m_Data.find(id);
         if(value == m_Data.end()){
             return;
         }
@@ -43,7 +43,7 @@ namespace Http{
         m_Data.emplace(id, std::move(session));
     }
     void SessionManager::check(uint64_t time){
-        uint64_t now = time(0) - time;
+        uint64_t now = std::time(0) - time;
         std::vector<std::string> keys;
         {
             RWMutex::ReadLock lock(m_Mutex);
@@ -57,13 +57,14 @@ namespace Http{
             this->del(v);
         }
     }
-    Safe<Session>& SessionManager::get(const std::string& key){ 
+    const Safe<Session>& SessionManager::get(const std::string& key){ 
+        static const Safe<Session> emptySession;
         RWMutex::ReadLock lock(m_Mutex);
         auto value = m_Data.find(key);
         if(value != m_Data.end()){
             return value->second;
         }
-        return m_EmptySession;
+        return emptySession;
     }
 }
 }

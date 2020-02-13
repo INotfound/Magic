@@ -4,27 +4,27 @@
 
 class IPluginModule {
 public:
-	virtual int arg() =0;
-	virtual ~IPluginModule() {}
+    virtual int arg() =0;
+    virtual ~IPluginModule() {}
 };
 
 
 class PluginModule:public IPluginModule {
 public:
-	~PluginModule() {}
-	PluginModule() {}
-	int arg() override{
-		return 6666666;
-	}
+    ~PluginModule() {}
+    PluginModule() {}
+    int arg() override{
+        return 6666666;
+    }
 };
 #if defined(_WIN32) || defined(_WIN64)
 //Win
  extern "C"
  {
- 	_declspec(dllexport) void* create()
- 	{
- 		return new PluginModule;
- 	}
+     _declspec(dllexport) void* create()
+     {
+         return new PluginModule;
+     }
  }
 #endif
 
@@ -32,9 +32,9 @@ public:
 //Linux
 extern "C"
 {
-	void* create()
-	{
-		return new PluginModule;
-	}
+    void* create()
+    {
+        return new PluginModule;
+    }
 }
 #endif

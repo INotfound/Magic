@@ -7,21 +7,21 @@
 #include "Plugin.h"
 #include "Adapter.h"
 
-#define  MAGIC_LOG_LEVEL(logger,level)									\
-                if(level >= logger->getLevel())							\
-                    Magic::LogWrap(										\
-						level,											\
-						logger,											\
-						Safe<Magic::LogEvent>(							\
-							new Magic::LogEvent(						\
-								__LINE__,								\
-								static_cast<uint64_t>(time(nullptr)),	\
-								1,										\
-								Magic::GetThreadId(),					\
-								__FILE__,								\
-								logger->getLogName(),					\
-								Magic::Thread::GetName()				\
-					))).get()
+#define  MAGIC_LOG_LEVEL(logger,level)                                    \
+                if(level >= logger->getLevel())                           \
+                    Magic::LogWrap(                                       \
+                        level,                                            \
+                        logger,                                           \
+                        Safe<Magic::LogEvent>(                            \
+                            new Magic::LogEvent(                          \
+                                __LINE__,                                 \
+                                static_cast<uint64_t>(time(nullptr)),     \
+                                1,                                        \
+                                Magic::GetThreadId(),                     \
+                                __FILE__,                                 \
+                                logger->getLogName(),                     \
+                                Magic::Thread::GetName()                  \
+                    ))).get()
 
 #define MAGIC_LOG_DEBUG(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::LogDebug)
 
@@ -40,13 +40,13 @@
 #define MAGIC_LOG(level)              MAGIC_LOG_LEVEL(MAGIC_LOG_ROOT(),level)
 
 #define MAGIC_ASSERT(exp,msg) \
-	if(!(exp)) { \
-		MAGIC_LOG_ERROR(MAGIC_LOG_ROOT()) << "ASSERTION: " << #exp \
-			<< "\n=>" << msg \
-			<< "\nBackTrace:\n" \
-			<< Magic::BackTraceToString(); \
-		assert(exp); \
-	}
+    if(!(exp)) { \
+        MAGIC_LOG_ERROR(MAGIC_LOG_ROOT()) << "ASSERTION: " << #exp \
+            << "\n=>" << msg \
+            << "\nBackTrace:\n" \
+            << Magic::BackTraceToString(); \
+        assert(exp); \
+    }
 
 #define MAGIC_CONFIG() Singleton<Magic::Config>::GetInstance()
 

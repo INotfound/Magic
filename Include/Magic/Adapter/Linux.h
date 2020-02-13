@@ -10,13 +10,13 @@
 #include <semaphore.h>
 #include <sys/syscall.h>
 
-typedef sem_t				sem_t;
-typedef pthread_mutex_t		mutex_t;
-typedef pthread_spinlock_t	spinlock_t;
-typedef pthread_rwlock_t	rwlock_t;
-typedef void*				plugin_t;
-typedef ucontext_t          fiber_t;
-#define IS_FILE(Path)		access(Path,0)
+typedef sem_t                sem_t;
+typedef pthread_mutex_t      mutex_t;
+typedef pthread_spinlock_t   spinlock_t;
+typedef pthread_rwlock_t     rwlock_t;
+typedef void*                plugin_t;
+typedef ucontext_t           fiber_t;
+#define IS_FILE(Path)        access(Path,0)
 #endif
 
 

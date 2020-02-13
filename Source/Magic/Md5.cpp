@@ -63,7 +63,7 @@ namespace Magic{
 
     /// Load a file from disk and digest it
     // Digests a file and returns the result.
-    const char* Md5::getFile( const char *filename ) {
+    const char* Md5::getFile(const char *filename) {
         if (NULL == filename || strcmp(filename, "") == 0)
         return NULL;
 
@@ -73,16 +73,14 @@ namespace Magic{
 
         unsigned char buffer[1024] ;
 
-        if((file = fopen (filename, "rb")) == NULL) {
+        if((file = fopen(filename, "rb")) == NULL) {
         return NULL;
         }
         int len;
-        while( (len = fread( buffer, 1, 1024, file )) )
-        Update( buffer, len ) ;
+        while((len = fread(buffer, 1, 1024, file)))
+        Update(buffer, len) ;
         Final();
-
-        fclose( file );
-
+        fclose(file);
         return Chars ;
     }
 
@@ -92,7 +90,7 @@ namespace Magic{
         return NULL;
 
         Init() ;
-        Update( (unsigned char*)string, strlen(string) ) ;
+        Update((unsigned char*)string, strlen(string)) ;
         Final() ;
 
         return Chars ;
@@ -101,7 +99,7 @@ namespace Magic{
     //#pragma region static helper functions
     // The core of the Md5 algorithm is here.
     // Md5 basic transformation. Transforms state based on block.
-    void Md5::MD5Transform( uint32_t state[4], unsigned char block[64] ) {
+    void Md5::MD5Transform(uint32_t state[4], unsigned char block[64]) {
         uint32_t a = state[0], b = state[1], c = state[2], d = state[3], x[16];
 
         Decode (x, block, 64);
@@ -189,7 +187,7 @@ namespace Magic{
     
     // Encodes input (uint32_t) into output (unsigned char). Assumes len is
     // a multiple of 4.
-    void Md5::Encode( unsigned char *output, uint32_t *input, unsigned int len ) {
+    void Md5::Encode(unsigned char *output, uint32_t *input, unsigned int len) {
         unsigned int i, j;
 
         for (i = 0, j = 0; j < len; i++, j += 4) {
@@ -202,7 +200,7 @@ namespace Magic{
 
     // Decodes input (unsigned char) into output (uint32_t). Assumes len is
     // a multiple of 4.
-    void Md5::Decode( uint32_t *output, unsigned char *input, unsigned int len ) {
+    void Md5::Decode(uint32_t *output, unsigned char *input, unsigned int len) {
         unsigned int i, j;
 
         for (i = 0, j = 0; j < len; i++, j += 4)

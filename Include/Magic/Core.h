@@ -29,7 +29,7 @@ template <class T>
 class Singleton{
 public:
     static T* GetInstance(){
-		static T v;
+        static T v;
         return &v;
     }
 };
@@ -38,7 +38,7 @@ template <class T>
 class SingletonPtr{
 public:
     static Safe<T> GetInstance(){
-		static Safe<T> v(new T);
+        static Safe<T> v(new T);
         return v;
     }
 };
@@ -47,7 +47,7 @@ template<class T>
 class ScopedLockImpl : public Noncopyable{
 public:
     ScopedLockImpl(T& mutex)
-		:m_Mutex(mutex), m_Locked(false){
+        :m_Mutex(mutex), m_Locked(false){
         lock();
     }
     ~ScopedLockImpl(){
@@ -67,15 +67,15 @@ private:
         }
     }
 private:
-	T& m_Mutex;
-	bool m_Locked;
+    T& m_Mutex;
+    bool m_Locked;
 };
 
 template<class T>
 class ReadScopedLockImpl : public Noncopyable{
 public:
     ReadScopedLockImpl(T& mutex)
-		:m_Mutex(mutex), m_Locked(false){
+        :m_Mutex(mutex), m_Locked(false){
         lock();
     }
     ~ReadScopedLockImpl(){
@@ -95,15 +95,15 @@ private:
         }
     }
 private:
-	T& m_Mutex;
-	bool m_Locked;
+    T& m_Mutex;
+    bool m_Locked;
 };
 
 template<class T>
 class WriteScopedLockImpl : public Noncopyable{
 public:
     WriteScopedLockImpl(T& mutex)
-		:m_Mutex(mutex), m_Locked(false){
+        :m_Mutex(mutex), m_Locked(false){
         lock();
     }
     ~WriteScopedLockImpl(){
@@ -123,71 +123,71 @@ private:
         }
     }
 private:
-	T& m_Mutex;
-	bool m_Locked;
+    T& m_Mutex;
+    bool m_Locked;
 };
 
 template<class T>
 std::string AsString(const T& value) {
-	std::ostringstream formatStream;
-	formatStream << value;
-	return formatStream.str();
+    std::ostringstream formatStream;
+    formatStream << value;
+    return formatStream.str();
 }
 
 template<class T>
 T StringAs(const std::string& value) {
-	std::stringstream formatStream;
-	formatStream.clear();
-	T temp;
-	formatStream << value;
-	formatStream >> temp;
-	return temp;
+    std::stringstream formatStream;
+    formatStream.clear();
+    T temp;
+    formatStream << value;
+    formatStream >> temp;
+    return temp;
 }
 
 template<>
 inline std::string StringAs<std::string>(const std::string& value) {
-	return value;
+    return value;
 }
 
 template<>
 inline int32_t StringAs<int32_t>(const std::string& value) {
-	return std::stoi(value);
+    return std::stoi(value);
 }
 
 template<>
 inline int64_t StringAs<int64_t>(const std::string& value) {
-	return std::stol(value);
+    return std::stol(value);
 }
 template<>
 inline uint32_t StringAs<uint32_t>(const std::string& value) {
-	return static_cast<uint32_t>(std::stoul(value));
+    return static_cast<uint32_t>(std::stoul(value));
 }
 template<>
 inline uint64_t StringAs<uint64_t>(const std::string& value) {
-	return static_cast<uint64_t>(std::stoul(value));
+    return static_cast<uint64_t>(std::stoul(value));
 }
 template<>
 inline float StringAs<float>(const std::string& value) {
-	return std::stof(value);
+    return std::stof(value);
 }
 template<>
 inline double StringAs<double>(const std::string& value) {
-	return std::stod(value);
+    return std::stod(value);
 }
 
 template<>
 inline bool StringAs<bool>(const std::string& value) {
-	bool isOk = true;
-	std::string tValue(value);
-	{
-		auto begin = tValue.begin();
-		auto end = tValue.end();
-		for (; begin != end; begin++)
-			*begin = std::toupper(*begin);
-	}
-	if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
-		isOk = false;
-	return isOk;
+    bool isOk = true;
+    std::string tValue(value);
+    {
+        auto begin = tValue.begin();
+        auto end = tValue.end();
+        for (; begin != end; begin++)
+            *begin = std::toupper(*begin);
+    }
+    if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
+        isOk = false;
+    return isOk;
 }
 
 namespace Magic{
@@ -196,7 +196,7 @@ namespace Magic{
     
     uint64_t GetCurrentTimeMS();
 
-	uint64_t GetCurrentTimeUS();
+    uint64_t GetCurrentTimeUS();
     
     uint32_t GetProcessorsNumber();
 

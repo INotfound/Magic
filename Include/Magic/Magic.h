@@ -8,5 +8,5 @@
 #include "Plugin.h"
 
 namespace Magic {
-	void Init(const std::string& Name);
+    void Init(const std::string& Name);
 }

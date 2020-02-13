@@ -12,20 +12,20 @@ Thread::~Thread() {
 Thread::Thread(const std::string& threadName,const std::function<void()> callback)
     :m_Id(-1)
     ,m_Name(threadName)
-	,m_Thread(&Thread::run,this)
-	,m_CallBack(callback){
-	MAGIC_LOG(LogLevel::LogDebug) << "Start thread: " << threadName;
+    ,m_Thread(&Thread::run,this)
+    ,m_CallBack(callback){
+    MAGIC_LOG(LogLevel::LogDebug) << "Start thread: " << threadName;
     if(threadName.empty()){
         m_Name = "UNKNOW";
     }
     if(!m_CallBack){
-		MAGIC_LOG(LogLevel::LogError) << "Thread-CallBack is null";
+        MAGIC_LOG(LogLevel::LogError) << "Thread-CallBack is null";
     }
     m_Mutex.wait();
 }
 
 void Thread::join() {
-	m_Thread.join();
+    m_Thread.join();
 }
 void Thread::detach(){
     m_Thread.detach();
@@ -44,5 +44,5 @@ void Thread::run(){
     SetName(m_Name);
     m_Id = Magic::GetThreadId();
     m_Mutex.notify();
-	m_CallBack();
+    m_CallBack();
 }
