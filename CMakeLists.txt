@@ -3,8 +3,8 @@ project(Magic)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-include_directories(Include)
-include_directories(Include/Magic)
+
+
 set(SRC
     Source/Magic.cpp
 	Source/Magic/Log.cpp
@@ -35,15 +35,13 @@ set(SRC
 #GZip
 add_definitions(-D Z_PREFIX)
 add_subdirectory(ThirdParty/Gzip)
-include_directories(ThirdParty/Gzip)
-
-#RapidJSON
-include_directories(ThirdParty/RapidJSON/include)
-
-#ASIO
-include_directories(ThirdParty/Asio/asio/include)
 
 
+include_directories(Include)
+include_directories(Include/Magic)
+include_directories(ThirdParty/Gzip)                #Gzip
+include_directories(ThirdParty/RapidJSON/include)   #RapidJSON
+include_directories(ThirdParty/Asio/asio/include)   #ASIO
 
 if(WIN32 AND NOT MINGW)
     message("~~~~~~~~~WIN32 Configuration~~~~~~~~")
@@ -78,6 +76,7 @@ elseif(UNIX AND NOT ANDROID)
     )
     add_library(Magic ${SRC})
 endif()
+
 target_link_libraries(Magic ${LIBS} zlib)
 
 #add_library(TestLib MODULE Test/TestPlugin.cc)
