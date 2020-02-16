@@ -1,3 +1,4 @@
+#pragma once
 #include "Core.h"
 #include "Http/Http.h"
 #include "Http/HttpFile.h"

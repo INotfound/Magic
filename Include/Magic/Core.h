@@ -37,7 +37,7 @@ public:
 template <class T>
 class SingletonPtr{
 public:
-    static Safe<T> GetInstance(){
+    static const Safe<T>& GetInstance(){
         static Safe<T> v(new T);
         return v;
     }

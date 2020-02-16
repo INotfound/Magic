@@ -32,11 +32,6 @@ set(SRC
     Source/Magic/Http/Util/httpclient_parser.rl.cpp
 )
 
-#GZip
-add_definitions(-D Z_PREFIX)
-add_subdirectory(ThirdParty/Gzip)
-
-
 include_directories(Include)
 include_directories(Include/Magic)
 include_directories(ThirdParty/Gzip)                #Gzip
@@ -45,19 +40,26 @@ include_directories(ThirdParty/Asio/asio/include)   #ASIO
 
 if(WIN32 AND NOT MINGW)
     message("~~~~~~~~~WIN32 Configuration~~~~~~~~")
+    
+    #GZip
+    add_definitions(-D Z_PREFIX)
+    add_subdirectory(ThirdParty/Gzip)
     set(LIBS
     )
     add_library(Magic ${SRC})
-
 elseif(WIN32 AND MINGW)
     message("~~~~~~~~~MINGW Configuration~~~~~~~~")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+
+    #GZip
+    add_definitions(-D Z_PREFIX)
+    add_subdirectory(ThirdParty/Gzip)
     set(LIBS
     )
     add_library(Magic ${SRC})
@@ -72,13 +74,15 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
     set(LIBS
+        z
         dl
+        mysqlclient
     )
     add_library(Magic ${SRC})
 endif()
 
-target_link_libraries(Magic ${LIBS} zlib)
+target_link_libraries(Magic ${LIBS})
 
-#add_library(TestLib MODULE Test/TestPlugin.cc)
-#add_executable(Test Test/Test.cc)
-#target_link_libraries(Test Magic)
+add_library(TestLib MODULE Test/TestPlugin.cc)
+add_executable(Test Test/Test.cc)
+target_link_libraries(Test Magic mysqlclient)
