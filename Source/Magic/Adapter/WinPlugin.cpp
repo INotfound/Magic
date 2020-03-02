@@ -3,6 +3,7 @@
 #include "Plugin.h"
 #include "Adapter/Win32.h"
 namespace Magic{
+
     Plugin::~Plugin() {
         FreeLibrary(m_Handle);
     }

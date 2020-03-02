@@ -43,10 +43,8 @@ extern "C"
 
 */
 namespace Magic {
-    class Plugin;
-    class PluginManager;
-    typedef void* (*create_t)();
 
+    typedef void* (*create_t)();
     class Plugin {
     public:
         ~Plugin();
@@ -62,16 +60,17 @@ namespace Magic {
         plugin_t m_Handle;
         bool m_IsInstance;
     };
-
+namespace Instance{
     class PluginManager {
     public:
         PluginManager();
         void addPlugin(Safe<Plugin>&);
         void delPlugin(Safe<Plugin>&);
-        Safe<Plugin>& at(const std::string& name);
+        const Safe<Plugin>& at(const std::string& name);
         std::map<std::string, Safe<Plugin>>& all();
     private:
         std::map<std::string, Safe<Plugin>> m_PluginMap;
     };
-
+}
+    typedef SingletonPtr<Instance::PluginManager> PluginMgr;
 }

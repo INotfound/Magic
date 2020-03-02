@@ -33,7 +33,36 @@ namespace Magic {
     uint64_t GetThreadId() {
         return GetCurrentThreadId();
     }
-
+    bool ReadFileList(const std::string& basePath, std::vector<std::string>& paths){
+        char findFilename[256];
+        memset(findFilename, 0, 256);
+        sprintf_s(findFilename, "%s\\*.*", basePath.c_str());
+        WIN32_FIND_DATAA findFileData;
+        HANDLE hFile = FindFirstFileA(findFilename, &findFileData);
+        if (INVALID_HANDLE_VALUE == hFile){
+            MAGIC_LOG(Magic::LogLevel::LogDebug)  << "Open dir error...";
+            return false;
+        }
+        char temp[256];
+        while (true){
+            if (findFileData.dwFileAttributes == FILE_ATTRIBUTE_DIRECTORY){
+                if (findFileData.cFileName[0] != '.'){
+                    memset(temp, 0, 256);
+                    sprintf_s(temp, "%s\\%s", basePath.c_str(), findFileData.cFileName);
+                    ReadFileList(temp, paths);
+                }
+            }
+            else{
+                memset(temp, 0, 256);
+                sprintf_s(temp, "%s\\%s", basePath.c_str(), findFileData.cFileName);
+                paths.push_back(temp);
+            }
+            if (!FindNextFileA(hFile, &findFileData)){
+                break;
+            }
+        }
+        return true;
+    }
     std::string BackTraceToString(uint32_t, uint32_t, const std::string&) {
         return "Plase use WinDbg!!!";
     }

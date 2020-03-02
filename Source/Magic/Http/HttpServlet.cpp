@@ -26,17 +26,15 @@ namespace Http{
         RWMutexWriteLock lock(m_Mutex);
         m_GlobServlets.emplace(name,std::move(servlet));
     }
-    bool HttpServletDispatch::handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response){
+    bool HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
         auto& servlet = getMatchedServlet(request->getPath());
-        if(!servlet || !m_DeafultServlet){
+        if(!servlet || ! m_DeafultServlet)
             return false;
-        }
-        if(!servlet->handle(request,response)){
+        if(!servlet->handle(request,response))
             m_DeafultServlet->handle(request,response);
-        }
         return true;
     }
-    Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& name){
+    const Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& name){
         RWMutexWriteLock lock(m_Mutex);
         auto exactlyIter = m_Servlets.find(name);
         if(exactlyIter != m_Servlets.end()){

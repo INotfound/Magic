@@ -8,11 +8,12 @@ namespace Http{
     class HttpRequestParser{
     public:
         HttpRequestParser();
+        void clear();
         bool hasError();
         bool isFinished();
         void setError(bool val);
         uint64_t getContentLength();
-        Safe<HttpRequest>& getData();
+        const Safe<HttpRequest>& getData();
         uint32_t execute(char* data,uint32_t length);
 
     private:
@@ -23,11 +24,12 @@ namespace Http{
     class HttpResponseParser{
     public:
         HttpResponseParser();
+        void clear();
         bool hasError();
         bool isFinished();
         void setError(bool val);
         uint32_t getContentLength();
-        Safe<HttpResponse>& getData();
+        const Safe<HttpResponse>& getData();
         uint32_t execute(char* data,uint32_t length);
 
     private:

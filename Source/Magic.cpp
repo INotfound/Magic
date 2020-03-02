@@ -11,16 +11,16 @@ namespace Magic {
                     new Magic::JsonConfigFormatter
         );
         configFile->addFormatter(jsonConfigFormatter);
-        MAGIC_CONFIG()->addConfigFile(configFile);
+        Magic::Config::GetInstance()->addConfigFile(configFile);
 
         //Log
         Safe<ILogAppender> logHtmlAppender(
-            new HtmlLogAppender(MAGIC_CONFIG()->at<std::string>("LogPath", Name + ".html"))
+            new HtmlLogAppender(Magic::Config::GetInstance()->at<std::string>("LogPath", Name + ".html"))
         );
         Safe<ILogAppender> logStdOutAppender(new StdOutLogAppender);
 
         MAGIC_LOG_ROOT()->setFormatter(
-            MAGIC_CONFIG()->at<std::string>("LogFormater", "[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T[%c]%T%f:%l%T%m%n")
+            Magic::Config::GetInstance()->at<std::string>("LogFormater", "[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T[%c]%T%f:%l%T%m%n")
         );
 
         MAGIC_LOG_ROOT()->addILogAppender(logHtmlAppender);

@@ -4,6 +4,7 @@
 #include "Core.h"
 #include "Mutex.h"
 #include "Session.h"
+#include "TimingWheel.h"
 namespace Magic{
 namespace Http{
     class Session{
@@ -24,7 +25,7 @@ namespace Http{
                 return empty;
             }
             //Here may throw exceptions
-            return value->second->AnyCast<T>();
+            return value->second.AnyCast<T>();
         }
         template<class T>
         void setData(const std::string& key,const T& value){
@@ -35,19 +36,31 @@ namespace Http{
         RWMutex m_Mutex;
         std::string m_Id;
         uint64_t m_LastAccessTime;
-        std::unordered_map<std::string,Safe<Any>> m_Data;
+        std::unordered_map<std::string,Any> m_Data;
     };
-
+    
+namespace Instance{
     class SessionManager{
     public:
+        SessionManager();
         void del(const std::string& id);
         void add(Safe<Session>& session);
-        void check(uint64_t time = 3600);
+        void setTimeOut(uint64_t timeOutMs);
         const Safe<Session>& get(const std::string& key);
     private:
+        class SessionTimeOutTask :public ITaskNode{
+        public:
+            SessionTimeOutTask(const std::string& id);
+            void notify() override;
+        private:
+            std::string m_Id;
+        };
+    private:
         RWMutex m_Mutex;
+        uint64_t m_TimeOutMs;
         std::unordered_map<std::string,Safe<Session>> m_Data;
     };
-    typedef Singleton<SessionManager> SessionMgr;
+}
+    typedef SingletonPtr<Instance::SessionManager> SessionMgr;
 }
 }

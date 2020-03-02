@@ -1,7 +1,6 @@
 #include "Gzip.h"
 #include "Http/Http.h"
 #include <cstring>
-
 namespace Magic{
 namespace Http{
 
@@ -10,11 +9,17 @@ namespace Http{
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
-    static const std::map<std::string,std::string,CaseInsensitiveLess> g_HttpContent={
+    static const std::map<std::string,std::string,CaseInsensitiveLess> g_HttpContent ={
         #define XX(name,extName,desc) {extName,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
+    static const std::map<HttpContentType,std::string> g_HttpContentType ={
+        #define XX(name,extName,desc) {HttpContentType::name,desc},
+            HTTP_CONTENT_TYPE(XX)
+        #undef XX
+    };
+
     bool IsUrlEncode(const std::string& str) {
 		return str.find("%") != std::string::npos || str.find("+") != std::string::npos;
 	}
@@ -109,17 +114,9 @@ namespace Http{
     }
 
     const char* HttpContentTypeToString(const HttpContentType& contentType){
-        switch(contentType){
-            #define XX(name,extName,desc) \
-            case HttpContentType::name: \
-                return desc;
-            HTTP_CONTENT_TYPE(XX);
-            #undef XX
-            default:
-                return "<unknown>";
-        }
+        return g_HttpContentType.at(contentType).c_str();
     }
- template<class Map>
+    template<class Map>
     inline void Parse(const std::string& str,Map& map,const std::string& flag){
         uint64_t pos = 0;
         do {
@@ -135,7 +132,7 @@ namespace Http{
             map.emplace(subString.substr(0, key)
                 ,subString.substr(key + 1));
         } while (pos <= str.size());
-    }
+    } 
     template<class Map>
     inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
         uint64_t pos = 0;
@@ -160,13 +157,16 @@ namespace Http{
 
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
+        ,m_WebSocket(false)
         ,m_Version(version)
         ,m_UrlPath("/"){
     }
     void HttpRequest::setVersion(uint8_t ver){
         m_Version = ver;
     }
-
+    void HttpRequest::setWebSocket(bool webSocket){
+        m_WebSocket = webSocket;
+    }
     void HttpRequest::setMethod(HttpMethod method){
         m_Method = method;
     }
@@ -241,7 +241,7 @@ namespace Http{
         if(value == m_Cookies.end()){
             return g_EmptyString;
         }
-        return iter->second;
+        return value->second;
     }
     const std::string& HttpRequest::getParam(const std::string& key)const{
         auto iter = m_Params.find(key);
@@ -276,10 +276,11 @@ namespace Http{
             << '.'
             << static_cast<uint32_t>(m_Version & 0x0F)
             << "\r\n";
-
-        os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
+        if(!m_WebSocket){
+            os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
+        }
         for(auto& v : m_Headers){
-            if(StringCompareNoCase(v.first,"Connection") == 0){
+            if(!m_WebSocket && StringCompareNoCase(v.first,"Connection") == 0){
                 continue;
             }
             os << v.first << ": " << v.second << "\r\n";
@@ -295,16 +296,28 @@ namespace Http{
     }
 
     HttpResponse::HttpResponse(bool keepAlive,uint8_t version)
-        :m_KeepAlive(keepAlive)
+        :m_Gzip(true)
+        ,m_Cache(false)
+        ,m_WebSocket(false)
+        ,m_KeepAlive(keepAlive)
         ,m_Version(version)
         ,m_Status(HttpStatus::OK)
         ,m_ContentType(HttpContentType::TEXT_HTML){
+    }
+    void HttpResponse::setGzip(bool gzip){
+        m_Gzip = gzip;
+    }
+    void HttpResponse::setCache(bool cache){
+        m_Cache = cache;
     }
     void HttpResponse::setVersion(uint8_t ver){
         m_Version = ver;
     }
     void HttpResponse::setStatus(HttpStatus status){
         m_Status = status;
+    }
+    void HttpResponse::setWebSocket(bool webSocket){
+        m_WebSocket = webSocket;
     }
     void HttpResponse::setkeepAlive(bool keepAlive){
         m_KeepAlive = keepAlive;
@@ -319,13 +332,14 @@ namespace Http{
         m_ContentTypeString = contentType;
     }
     void HttpResponse::setContentType(const HttpContentType contentType){
+        m_ContentTypeString.clear();
         m_ContentType = contentType;
     }
     void HttpResponse::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key,value);
     }
-    void HttpResponse::setCookie(const std::string& key, const std::string& val,time_t expired = 0
-            ,const std::string& path = "",const std::string& domain = "",bool httpOnly = true,bool secure = false){
+    void HttpResponse::setCookie(const std::string& key, const std::string& val,time_t expired
+            ,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
         std::string result;
         result.reserve(256);
         result.append(key);
@@ -339,7 +353,7 @@ namespace Http{
             result.append("; Domain=");
             result.append(domain);
         }
-        if(expired != -1){
+        if(expired > 0){
             result.append("; Expires=");
             result.append(GetTimeGMTString(expired));
         }
@@ -390,30 +404,36 @@ namespace Http{
             << ' '
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
             << "\r\n";
-        os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
-        os << "Content-Encoding: " << "gzip" << "\r\n";
+        if(!m_WebSocket){
+            os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
+        }
+        if(m_Gzip){
+            os << "Content-Encoding: " << "gzip" << "\r\n";
+        }
         if(m_ContentTypeString.empty()){
             os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
         }else{
             os << "Content-Type: " << m_ContentTypeString << "\r\n";
         }
-
         for(auto& v : m_Headers){
-            if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type")){
+            if(!m_WebSocket && (StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type") == 0)){
                 continue;
             }
             os << v.first << ": " << v.second << "\r\n";
         }
-        
         for(auto& v : m_Cookies){
             os << "Set-Cookie: " << v << "\r\n";
         }
 
         if(!m_Body.empty()){
-            std::string compressData;
-            Gzip::Compress(m_Body,compressData);
-            os  << "Content-Length: " << compressData.size() << "\r\n\r\n"
-                << compressData;
+            if(m_Gzip && !m_Cache){
+                std::string compressData;
+                Gzip::Compress(m_Body,compressData);
+                os  << "Content-Length: " << compressData.size() << "\r\n\r\n"
+                    << compressData;
+            }
+            os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
+                << m_Body;
         }else{
             os << "\r\n";
         }

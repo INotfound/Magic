@@ -2,11 +2,11 @@
 #if defined(linux) || defined(__linux__)
 #include <dlfcn.h>
 #include <sys/io.h>
+#include <dirent.h>
 #include <unistd.h>
 #include <pthread.h>
 #include <sys/time.h>
 #include <execinfo.h>
-#include <ucontext.h>
 #include <semaphore.h>
 #include <sys/syscall.h>
 

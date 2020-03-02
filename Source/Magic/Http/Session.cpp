@@ -1,15 +1,16 @@
-#include "Md5.h"
+#include "Crypto.h"
 #include "Http/Session.h"
-
 namespace Magic{
 namespace Http{
+
+    Session::~Session(){
+    }
     Session::Session(bool autoGen)
         :m_LastAccessTime(std::time(0)){
         if(autoGen){
-            Md5 md5;
             std::stringstream ss;
             ss << GetCurrentTimeUS() << '|' << std::rand() << '|' << std::rand() << '|' << std::rand() << '|' << std::rand();
-            m_Id = md5.getString(ss.str().c_str());
+            m_Id = MD5HexString(ss.str());
         }
     }
     const std::string& Session::getId(){
@@ -28,7 +29,10 @@ namespace Http{
         RWMutex::WriteLock lock(m_Mutex);
         m_LastAccessTime = value;
     }
-
+namespace Instance{
+    SessionManager::SessionManager()
+        :m_TimeOutMs(1200000){
+    }
     void SessionManager::del(const std::string& id){
         RWMutex::WriteLock lock(m_Mutex);
         auto value = m_Data.find(id);
@@ -39,23 +43,14 @@ namespace Http{
     }
     void SessionManager::add(Safe<Session>& session){
         RWMutex::WriteLock lock(m_Mutex);
-        const std::string id = session->getId();
+        TimingWheel::GetInstance()->run();
+        std::string id = session->getId();
+        Safe<ITaskNode> node(new SessionTimeOutTask(id));
+        TimingWheel::GetInstance()->addTask(m_TimeOutMs,node);
         m_Data.emplace(id, std::move(session));
     }
-    void SessionManager::check(uint64_t time){
-        uint64_t now = std::time(0) - time;
-        std::vector<std::string> keys;
-        {
-            RWMutex::ReadLock lock(m_Mutex);
-            for(auto &v : m_Data){
-                if(v.second->getLastAccessTime() < now){
-                    keys.push_back(v.first);
-                }
-            }
-        }
-        for(auto &v: keys){
-            this->del(v);
-        }
+    void SessionManager::setTimeOut(uint64_t timeOutMs){
+        m_TimeOutMs = timeOutMs;
     }
     const Safe<Session>& SessionManager::get(const std::string& key){ 
         static const Safe<Session> emptySession;
@@ -66,5 +61,13 @@ namespace Http{
         }
         return emptySession;
     }
+    SessionManager::SessionTimeOutTask::SessionTimeOutTask(const std::string& id)
+        :m_Id(id){
+    }
+    void SessionManager::SessionTimeOutTask::notify(){
+        SessionMgr::GetInstance()->del(m_Id);
+    }
+
+}
 }
 }

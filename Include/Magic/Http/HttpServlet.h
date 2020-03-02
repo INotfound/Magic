@@ -10,7 +10,7 @@ namespace Http{
     public:
         explicit HttpServlet(const std::string& name);
         const std::string getName() const;
-        virtual bool handle (Safe<HttpRequest>& request,Safe<HttpResponse>& response) =0;
+        virtual bool handle (const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) =0;
     private:
         std::string m_Name;
     };
@@ -22,9 +22,9 @@ namespace Http{
         void setDeafultServlet(Safe<HttpServlet>& servlet);
         void addHttpServlet(const std::string& name,Safe<HttpServlet>& servlet);
         void addGlobHttpServlet(const std::string& name,Safe<HttpServlet>& servlet);
-        bool handle(Safe<HttpRequest>& request,Safe<HttpResponse>& response) override;
+        bool handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) override;
     private:
-        Safe<HttpServlet>& getMatchedServlet(const std::string& name);
+        const Safe<HttpServlet>& getMatchedServlet(const std::string& name);
     private:
         RWMutex m_Mutex;
         Safe<HttpServlet> m_DeafultServlet;

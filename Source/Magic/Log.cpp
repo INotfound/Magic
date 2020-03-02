@@ -144,7 +144,7 @@ namespace Magic {
     }
 
     void  Logger::addILogAppender(Safe<ILogAppender>& logAppender) {
-        MutexLock lock(m_Mutex);
+        Mutex::Lock lock(m_Mutex);
         if (!logAppender->m_Formatter) {
             logAppender->m_Formatter.reset(new LogFormatter(m_Formatter));
         }
@@ -152,7 +152,7 @@ namespace Magic {
     }
 
     void  Logger::delILogAppender(Safe<ILogAppender>& logAppender) {
-        MutexLock lock(m_Mutex);
+        Mutex::Lock lock(m_Mutex);
         auto vBegin = this->m_ILogAppenders.begin();
         auto vEnd = this->m_ILogAppenders.end();
         for (; vBegin != vEnd; vBegin++) {
@@ -164,12 +164,12 @@ namespace Magic {
     }
 
     void Logger::setFormatter(const std::string& pattern) {
-        MutexLock lock(m_Mutex);
+        Mutex::Lock lock(m_Mutex);
         this->m_Formatter = pattern;
     }
 
     void Logger::setLevel(LogLevel val) {
-        MutexLock lock(m_Mutex);
+        Mutex::Lock lock(m_Mutex);
         this->m_Level = val;
     }
 
@@ -181,9 +181,9 @@ namespace Magic {
         return this->m_LogName;
     }
 
-    void  Logger::log(LogLevel level, Safe<LogEvent>& event) {
+    void  Logger::log(LogLevel level,const Safe<LogEvent>& event) {
         if (level >= m_Level) {
-            MutexLock lock(m_Mutex);
+            Mutex::Lock lock(m_Mutex);
             if (!this->m_ILogAppenders.empty()) {
                 for (auto& v : this->m_ILogAppenders) {
                     v->log(level, event);
@@ -195,10 +195,10 @@ namespace Magic {
         }
     }
 
-    LogWrap::LogWrap(const LogLevel level,Safe<Logger>& logger, Safe<LogEvent>&& event)
-        :m_Level(level),
-        m_Logger(logger),
-        m_Event(std::move(event)) {
+    LogWrap::LogWrap(const LogLevel level, Safe<LogEvent>&& event ,const Safe<Logger>& logger)
+        :m_Level(level)
+        ,m_Event(std::move(event))
+        ,m_Logger(logger){
     }
     std::stringstream& LogWrap::get() {
         return this->m_Event->getStream();
@@ -347,15 +347,7 @@ namespace Magic {
 
     void DateTimeFormatItem::format(std::ostream& os, const LogLevel, const Safe<LogEvent>& event) {
         time_t time_secounds = static_cast<int32_t>(event->getTime());
-        struct tm nowTime;
-#if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime, &time_secounds);
-#else
-        localtime_r(&time_secounds, &nowTime);
-#endif
-        char buf[1024] = {0};
-        strftime(buf, sizeof(buf), this->m_FormatString.c_str(), &nowTime);
-        os << buf;
+        os << Magic::TimeToString(time_secounds,this->m_FormatString).c_str();
     }
 
     void FilePathFormatItem::format(std::ostream& os, const LogLevel, const Safe<LogEvent>& event) {
@@ -495,11 +487,11 @@ namespace Magic {
         m_Root.reset(new Logger);
     }
 
-    Safe<Logger>& LoggerManager::getRoot() {
+    const Safe<Logger>& LoggerManager::getRoot() {
         return m_Root;
     }
 
-    Safe<Logger>& LoggerManager::getLogger(const std::string& name) {
+    const Safe<Logger>& LoggerManager::getLogger(const std::string& name) {
         if (name == m_Root->m_LogName) {
             return m_Root;
         }
@@ -513,17 +505,17 @@ namespace Magic {
 
     FileLogAppender::FileLogAppender(const std::string& path) 
         :m_Path(path) {
-        MutexLock lock(m_Mutex);
+        Mutex::Lock lock(m_Mutex);
         this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
     }
 
-    void FileLogAppender::log(LogLevel level, Safe<LogEvent>& event) {
+    void FileLogAppender::log(LogLevel level,const Safe<LogEvent>& event) {
         this->m_Formatter->format(this->m_FileStream, level, event);
     }
 
     HtmlLogAppender::HtmlLogAppender(const std::string& path)
         :m_Path(path) {
-        MutexLock lock(m_Mutex);
+        Mutex::Lock lock(m_Mutex);
         if (IS_FILE(path.c_str()) != 0) {
             this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
             this->m_FileStream << g_HtmlTemplate.c_str();
@@ -533,14 +525,14 @@ namespace Magic {
         }
     }
 
-    void HtmlLogAppender::log(LogLevel level, Safe<LogEvent>& event){
+    void HtmlLogAppender::log(LogLevel level,const Safe<LogEvent>& event){
         this->m_FileStream << "<div class=\"" << ToString(level) << "\">";
         this->m_Formatter->format(this->m_FileStream, level, event);
         this->m_FileStream << "</div>";
         this->m_FileStream.flush();
     }
 
-    void StdOutLogAppender::log(LogLevel level, Safe<LogEvent>& event) {
+    void StdOutLogAppender::log(LogLevel level,const Safe<LogEvent>& event) {
         if (!this->m_Formatter) {
             std::cout << "<(LogError)> "<< std::endl;
             return;

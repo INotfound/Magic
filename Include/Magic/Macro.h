@@ -11,7 +11,6 @@
                 if(level >= logger->getLevel())                           \
                     Magic::LogWrap(                                       \
                         level,                                            \
-                        logger,                                           \
                         Safe<Magic::LogEvent>(                            \
                             new Magic::LogEvent(                          \
                                 __LINE__,                                 \
@@ -20,8 +19,9 @@
                                 Magic::GetThreadId(),                     \
                                 __FILE__,                                 \
                                 logger->getLogName(),                     \
-                                Magic::Thread::GetName()                  \
-                    ))).get()
+                                Magic::Thread::GetName())),               \
+                        logger                                            \
+                    ).get()
 
 #define MAGIC_LOG_DEBUG(logger)       MAGIC_LOG_LEVEL(logger,Magic::LogLevel::LogDebug)
 
@@ -48,7 +48,3 @@
         assert(exp); \
     }
 
-#define MAGIC_CONFIG() Singleton<Magic::Config>::GetInstance()
-
-#define MAGIC_PLUGINMGR() Singleton<Magic::PluginManager>::GetInstance()
-#define MAGIC_PLUGIN(name) Singleton<Magic::PluginManager>::GetInstance()->at(name)

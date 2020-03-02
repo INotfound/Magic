@@ -13,7 +13,7 @@ Thread::Thread(const std::string& threadName,const std::function<void()> callbac
     :m_Id(-1)
     ,m_Name(threadName)
     ,m_Thread(&Thread::run,this)
-    ,m_CallBack(callback){
+    ,m_CallBack(std::move(callback)){
     MAGIC_LOG(LogLevel::LogDebug) << "Start thread: " << threadName;
     if(threadName.empty()){
         m_Name = "UNKNOW";

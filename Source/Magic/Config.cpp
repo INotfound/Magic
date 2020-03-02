@@ -5,30 +5,6 @@
 #include "rapidjson/stringbuffer.h"
 
 namespace Magic {
-
-    Config::~Config() {
-        this->update();
-    }
-    Config::Config()
-        :m_IsChange(false){
-    }
-    void Config::update(){
-        if (!m_IsChange){
-            return;
-        }
-        MutexLock lock(m_Mutex);
-        m_ConfigFile->close();
-        std::remove(m_ConfigFile->getPath().c_str());
-        m_ConfigFile->open();
-        m_ConfigFile->write(m_ConfigMap);
-        MAGIC_LOG(LogLevel::LogDebug) << "Update configuration items";
-    }
-    void Config::addConfigFile(Safe<ConfigFile>& configFile) {
-        MutexLock lock(m_Mutex);
-        m_ConfigFile = std::move(configFile);
-        m_ConfigFile->read(m_ConfigMap);
-    }
-
     ConfigFile::~ConfigFile() {
         this->close();
     }
@@ -186,5 +162,28 @@ namespace Magic {
             keyValue[keyName] = std::move(value);
         }
     }
-
+namespace Instance{
+    Config::~Config() {
+        this->update();
+    }
+    Config::Config()
+        :m_IsChange(false){
+    }
+    void Config::update(){
+        if (!m_IsChange){
+            return;
+        }
+        RWMutex::WriteLock lock(m_Mutex);
+        m_ConfigFile->close();
+        std::remove(m_ConfigFile->getPath().c_str());
+        m_ConfigFile->open();
+        m_ConfigFile->write(m_ConfigMap);
+        MAGIC_LOG(LogLevel::LogDebug) << "Update configuration items";
+    }
+    void Config::addConfigFile(Safe<ConfigFile>& configFile) {
+        RWMutex::WriteLock lock(m_Mutex);
+        m_ConfigFile = std::move(configFile);
+        m_ConfigFile->read(m_ConfigMap);
+    }
+}
 }

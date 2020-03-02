@@ -19,7 +19,6 @@ namespace Magic{
         }
         else {
             m_IsInstance = false;
-            MAGIC_CONFIG()->update();
             MAGIC_LOG(LogLevel::LogError) << dlerror();
         }
     }

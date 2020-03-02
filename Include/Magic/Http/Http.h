@@ -177,16 +177,17 @@ namespace Http{
 
     class HttpRequest{
     public:
-        typedef std::map<std::string,std::string> KeyValue;
+        typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:
         HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
         void setVersion(uint8_t ver);
+        void setWebSocket(bool webSocket);
         void setMethod(HttpMethod method);
         void setkeepAlive(bool keepAlive);
-        void setBody(const std::string& body);
         void setQuery(const std::string& query);
         void setPath(const std::string& urlPath);
         void setFragment(const std::string& fragment);
+        void setBody(const std::string& body);
         void setParam(const std::string& key,const std::string& value);
         void setHeader(const std::string& key,const std::string& value);
         void setCookie(const std::string& key,const std::string& value);
@@ -209,6 +210,7 @@ namespace Http{
         std::ostream& toStream(std::ostream& os);
     private:
         bool m_KeepAlive;
+        bool m_WebSocket;
         uint8_t m_Version;
         KeyValue m_Params;
         KeyValue m_Headers;
@@ -226,16 +228,19 @@ namespace Http{
         typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:
         HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
+        void setGzip(bool gzip);
+        void setCache(bool cache);
         void setVersion(uint8_t ver);
         void setStatus(HttpStatus status);
+        void setWebSocket(bool webSocket);
         void setkeepAlive(bool keepAlive);
         void setBody(const std::string& body);
         void setReason(const std::string& reason);
         void setContentType(const std::string& contentType);
         void setContentType(const HttpContentType contentType);
         void setHeader(const std::string& key,const std::string& value);
-        void setCookie(const std::string& key, const std::string& val,time_t expired
-                ,const std::string& path,const std::string& domain,bool httpOnly,bool secure);
+        void setCookie(const std::string& key, const std::string& val,time_t expired =0
+            ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
 
         KeyValue& getHeaders(); 
         bool getkeepAlive() const;
@@ -247,6 +252,9 @@ namespace Http{
         void delHeader(const std::string& key);
         std::ostream& toStream(std::ostream& os);
     private:
+        bool m_Gzip;
+        bool m_Cache;
+        bool m_WebSocket;
         bool m_KeepAlive;
         uint8_t m_Version;
         KeyValue m_Headers;

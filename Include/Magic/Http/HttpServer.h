@@ -7,11 +7,11 @@ namespace Magic{
 namespace Http{
     class HttpServer: public TcpServer{
     public:
-        HttpServer(const std::string& addr,uint16_t port,uint32_t threadCount);
-        Safe<HttpServletDispatch>& getHttpServletDispatch();
+        HttpServer(const std::string& addr,uint16_t port,uint32_t threadCount,uint64_t timeOutMs = 60000);
+        const Safe<HttpServletDispatch>& getHttpServletDispatch();
     protected:
         void accept() override;
-        void handleFunc(Share<Socket> socket) override;
+        void handleFunc(const Share<Socket>& socket) override;
     private:
         Safe<HttpServletDispatch> m_ServletDispatch;
     };

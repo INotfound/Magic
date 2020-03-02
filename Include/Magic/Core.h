@@ -7,14 +7,14 @@
 #include <cstdlib>
 #include <sstream>
 #include <algorithm>
+#include <exception>
 #include <functional>
-
 #include "asio.hpp"
 
 #define Safe std::unique_ptr
 #define Share std::shared_ptr
 
-typedef asio::ip::tcp::socket Socket;
+//typedef asio::ip::tcp::socket Socket;
 static const std::string g_EmptyString;
 /**/
 class Noncopyable{
@@ -151,28 +151,52 @@ inline std::string StringAs<std::string>(const std::string& value) {
 
 template<>
 inline int32_t StringAs<int32_t>(const std::string& value) {
-    return std::stoi(value);
+    try{
+        return std::stoi(value);
+    }catch(const std::exception&){
+        return int32_t();
+    }
 }
 
 template<>
 inline int64_t StringAs<int64_t>(const std::string& value) {
-    return std::stol(value);
+    try{
+        return std::stol(value);
+    }catch(const std::exception&){
+        return int64_t();
+    }
 }
 template<>
 inline uint32_t StringAs<uint32_t>(const std::string& value) {
-    return static_cast<uint32_t>(std::stoul(value));
+    try{
+        return static_cast<uint32_t>(std::stoul(value));
+    }catch(const std::exception&){
+        return uint32_t();
+    }
 }
 template<>
 inline uint64_t StringAs<uint64_t>(const std::string& value) {
-    return static_cast<uint64_t>(std::stoul(value));
+    try{
+        return static_cast<uint64_t>(std::stoul(value));
+    }catch(const std::exception&){
+        return uint64_t();
+    }
 }
 template<>
 inline float StringAs<float>(const std::string& value) {
-    return std::stof(value);
+    try{
+        return std::stof(value);
+    }catch(const std::exception&){
+        return float();
+    }
 }
 template<>
 inline double StringAs<double>(const std::string& value) {
-    return std::stod(value);
+    try{
+        return std::stod(value);
+    }catch(const std::exception&){
+        return double();
+    }
 }
 
 template<>
@@ -203,6 +227,20 @@ namespace Magic{
     std::string BackTraceToString(uint32_t size = 64, uint32_t skip = 2, const std::string& prefix = "    ");
 
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
+
+    bool ReadFileList(const std::string& basePath,std::vector<std::string>& paths);
+
+    inline std::string TimeToString(time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
+        struct tm nowTime;
+    #if defined(_WIN32) || defined(_WIN64)
+        localtime_s(&nowTime, &time_secounds);
+    #else
+        localtime_r(&ts, &nowTime);
+    #endif
+        char buf[64] = {0};
+        strftime(buf, sizeof(buf), format.c_str(), &nowTime);
+        return buf;
+    }
 
     inline std::string GetTimeGMTString(std::time_t t){
         struct tm* GMTime = gmtime(&t);

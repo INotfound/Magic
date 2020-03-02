@@ -2,9 +2,6 @@
 #include <cstring>
 namespace Magic{
 namespace Http{
-
-   
-
     void OnRequestUri(void *data,const char*at,size_t length){
     }
     void OnRequestPath(void *data,const char*at,size_t length){
@@ -71,6 +68,10 @@ namespace Http{
         m_Parser.data = this;
 
     }
+    void HttpRequestParser::clear(){
+        m_Error = false;
+        m_Data.reset(new HttpRequest(true));
+    }
     bool HttpRequestParser::hasError(){
         return m_Error || http_parser_has_error(&m_Parser);
     }
@@ -93,7 +94,7 @@ namespace Http{
         }
         return StringAs<uint64_t>(length);
     }
-    Safe<HttpRequest>& HttpRequestParser::getData(){
+    const Safe<HttpRequest>& HttpRequestParser::getData(){
         return m_Data;
     }
     uint32_t HttpRequestParser::execute(char* data,uint32_t length){
@@ -156,6 +157,10 @@ namespace Http{
         m_Parser.http_field     = OnResponseHttpField;
         m_Parser.data = this;
     }
+    void HttpResponseParser::clear(){
+        m_Error = false;
+        m_Data.reset(new HttpResponse(true));
+    }
     bool HttpResponseParser::hasError(){
         return m_Error || httpclient_parser_has_error(&m_Parser);;
     }
@@ -178,7 +183,7 @@ namespace Http{
         }
         return StringAs<uint64_t>(length);
     }
-    Safe<HttpResponse>& HttpResponseParser::getData(){
+    const Safe<HttpResponse>& HttpResponseParser::getData(){
         return m_Data;
     }
     uint32_t HttpResponseParser::execute(char* data,uint32_t length){
