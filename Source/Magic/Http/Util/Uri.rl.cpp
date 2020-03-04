@@ -1,6 +1,6 @@
 
 #line 1 "Uri.rl"
-#include "Uri.h"
+#include "Http/Uri.h"
 #include <sstream>
 
 namespace Magic {

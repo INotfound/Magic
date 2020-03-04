@@ -1,4 +1,4 @@
-#include "Url.h"
+#include "Http/Uri.h"
 #include <sstream>
 
 namespace Magic {

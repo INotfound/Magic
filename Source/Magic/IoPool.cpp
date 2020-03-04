@@ -11,7 +11,6 @@ namespace Magic{
             Safe<asio::io_context> io(new asio::io_context);
             m_IOServiceWork.push_back(Safe<asio::io_context::work>(new asio::io_context::work(*io)));
             m_IOService.push_back(std::move(io));
-            
         }
 
     }

@@ -2,7 +2,6 @@
 //Util
 #include "Magic/Log.h"
 #include "Magic/Any.h"
-#include "Magic/Uri.h"
 #include "Magic/Core.h"
 #include "Magic/Gzip.h"
 #include "Magic/Timer.h"
@@ -20,6 +19,7 @@
 //DataBase
 #include "Magic/DB/MySql.h"
 //Http
+#include "Magic/Http/Uri.h"
 #include "Magic/Http/Http.h"
 #include "Magic/Http/Session.h"
 #include "Magic/Http/HttpFile.h"

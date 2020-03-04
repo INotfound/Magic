@@ -40,7 +40,7 @@ namespace Http{
                 &&content.at(pos2 - 1) == '\n'){
                 pos2 -= 2;
             }
-            if(!parseEntity(content.data() + pos1,content.data() + pos2)){
+            if(!this->parseEntity(content.data() + pos1,content.data() + pos2)){
                 return false;
             }
         }

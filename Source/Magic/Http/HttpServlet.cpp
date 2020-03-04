@@ -27,7 +27,7 @@ namespace Http{
         m_GlobServlets.emplace(name,std::move(servlet));
     }
     bool HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
-        auto& servlet = getMatchedServlet(request->getPath());
+        auto& servlet = this->getMatchedServlet(request->getPath());
         if(!servlet || ! m_DeafultServlet)
             return false;
         if(!servlet->handle(request,response))

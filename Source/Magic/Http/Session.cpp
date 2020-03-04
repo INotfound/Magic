@@ -1,8 +1,8 @@
 #include "Crypto.h"
+#include "TimingWheel.h"
 #include "Http/Session.h"
 namespace Magic{
 namespace Http{
-
     Session::~Session(){
     }
     Session::Session(bool autoGen)
@@ -29,7 +29,22 @@ namespace Http{
         RWMutex::WriteLock lock(m_Mutex);
         m_LastAccessTime = value;
     }
+
+    class SessionTimeOutTask :public ITaskNode{
+        public:
+            SessionTimeOutTask(const std::string& id);
+            void notify() override;
+        private:
+            std::string m_Id;
+    };
+    SessionTimeOutTask::SessionTimeOutTask(const std::string& id)
+        :m_Id(id){
+    }
+    void SessionTimeOutTask::notify(){
+        SessionMgr::GetInstance()->del(m_Id);
+    }
 namespace Instance{
+
     SessionManager::SessionManager()
         :m_TimeOutMs(1200000){
     }
@@ -61,13 +76,6 @@ namespace Instance{
         }
         return emptySession;
     }
-    SessionManager::SessionTimeOutTask::SessionTimeOutTask(const std::string& id)
-        :m_Id(id){
-    }
-    void SessionManager::SessionTimeOutTask::notify(){
-        SessionMgr::GetInstance()->del(m_Id);
-    }
-
 }
 }
 }

@@ -48,13 +48,11 @@ class LogServlet :public Magic::Http::HttpServlet{
             std::fstream stream;
             response->setHeader("Content-type","text/html");
             stream.open("test.html",std::ios::in);
-            stream.seekg(0,std::ios_base::end);
-            uint32_t size = stream.tellg();
-            Share<char> buffer(new char[size],[](char* ptr){delete[] ptr;});
-            stream.seekg(0,std::ios_base::beg);
-            stream.read(buffer.get(),size);
-            std::string log(buffer.get(),size);
-            response->setBody(log);
+            if(stream.is_open()){
+                std::stringstream sstream;
+                sstream << stream.rdbuf();
+                response->setBody(sstream.str());
+            }
             return true;
         }
 };

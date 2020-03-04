@@ -4,7 +4,6 @@
 #include "Core.h"
 #include "Mutex.h"
 #include "Session.h"
-#include "TimingWheel.h"
 namespace Magic{
 namespace Http{
     class Session{
@@ -47,14 +46,6 @@ namespace Instance{
         void add(Safe<Session>& session);
         void setTimeOut(uint64_t timeOutMs);
         const Safe<Session>& get(const std::string& key);
-    private:
-        class SessionTimeOutTask :public ITaskNode{
-        public:
-            SessionTimeOutTask(const std::string& id);
-            void notify() override;
-        private:
-            std::string m_Id;
-        };
     private:
         RWMutex m_Mutex;
         uint64_t m_TimeOutMs;

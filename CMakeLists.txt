@@ -14,8 +14,7 @@ set(SRC
 	Source/Magic/Config.cpp
 	Source/Magic/Plugin.cpp
     Source/Magic/IoPool.cpp
-#   Source/Magic/Socket.cpp
-    Source/Magic/Uri.rl.cpp
+    Source/Magic/Socket.cpp
     Source/Magic/TcpServer.cpp
     Source/Magic/TimingWheel.cpp
 #   DataBase
@@ -26,11 +25,10 @@ set(SRC
     Source/Magic/Http/HttpFile.cpp
     Source/Magic/Http/MultiPart.cpp
     Source/Magic/Http/HttpCache.cpp
+    Source/Magic/Http/HttpSocket.cpp
     Source/Magic/Http/HttpServer.cpp
     Source/Magic/Http/HttpParser.cpp
     Source/Magic/Http/HttpServlet.cpp
-#   WebSocket
-    Source/Magic/WebSocket/WebSocketServer.cpp
 #   Adapter
     Source/Magic/Adapter/WinUtil.cpp
     Source/Magic/Adapter/WinMutex.cpp
@@ -38,6 +36,8 @@ set(SRC
     Source/Magic/Adapter/LinuxUtil.cpp
     Source/Magic/Adapter/LinuxMutex.cpp
 	Source/Magic/Adapter/LinuxPlugin.cpp
+#   Ragel
+    Source/Magic/Http/Util/Uri.rl.cpp
     Source/Magic/Http/Util/http11_parser.rl.cpp
     Source/Magic/Http/Util/httpclient_parser.rl.cpp
 )

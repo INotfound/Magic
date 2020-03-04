@@ -21,7 +21,7 @@ namespace Magic{
         }
         //TODO: ...
         m_IsRun = true;
-        accept();
+        this->accept();
         MAGIC_LOG(LogLevel::LogInfo)  << "Server running";
         m_IoPool->run();
     }
@@ -31,18 +31,18 @@ namespace Magic{
         m_IsRun = false;
     }
     void TcpServer::accept(){
-        // Share<Socket> socket = std::make_shared<Socket>(4*1024,m_TimeOutMs,m_IoPool->get());
-        // m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
-        //     if(err){
-        //         //TODO: ...
-        //         MAGIC_LOG(LogLevel::LogWarn) << err.message();
-        //         return;
-        //     }
-        //     this->handleFunc(socket);
-        //     if(m_IsRun){
-        //         accept();
-        //     }
-        // });
+        Share<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,m_IoPool->get());
+        m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
+            if(err){
+                //TODO: ...
+                MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                return;
+            }
+            this->handleFunc(socket);
+            if(m_IsRun){
+                accept();
+            }
+        });
     }
 
 }

@@ -19,7 +19,6 @@ public:
     const std::string& getQuery() const;
     const std::string& getScheme() const;
     const std::string& getFragment() const;
-
     void setPort(uint32_t val);
     void setHost(const std::string& val);
     void setPath(const std::string& val);
