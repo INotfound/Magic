@@ -7,7 +7,6 @@
 # Magic服务端基础框架
 &emsp;Magic 是一个能Web快速开发,且基于ASIO网络框架,拥有丰富的基础组件(Win And Linux)跨平台框架库。
 ## 快速示例
-***
 &emsp;本库将智能指针名称进行了重定义.
 ```
     /// 文件 Magic/Include/Magic/Core.h 中
@@ -43,7 +42,6 @@
     /// Magic/Examples/Test_Server.cpp
 ```
 ## 如何编译
-***
 ### 编译器的支持
 &emsp;只需支持C++11的编译器.
 ### 需要添加依赖的第三方库
@@ -54,6 +52,5 @@
 ```
 &emsp;加密库 OpenSSL ,数据库 MySql ,压缩库 zlib .
 ## 联系方式
-***
 &emsp;QQ 614199451  
 &emsp;QQ群 451405524
