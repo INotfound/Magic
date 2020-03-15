@@ -1,3 +1,9 @@
+/*
+ * @file: HttpParser.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-12 20:35:38
+ * @LastEditTime: 2020-03-15 17:56:07
+ */
 #include "Http/HttpParser.h"
 #include <cstring>
 namespace Magic{
@@ -71,6 +77,7 @@ namespace Http{
     void HttpRequestParser::clear(){
         m_Error = false;
         m_Data.reset(new HttpRequest(true));
+        http_parser_init(&m_Parser);
     }
     bool HttpRequestParser::hasError(){
         return m_Error || http_parser_has_error(&m_Parser);
@@ -160,6 +167,7 @@ namespace Http{
     void HttpResponseParser::clear(){
         m_Error = false;
         m_Data.reset(new HttpResponse(true));
+        httpclient_parser_init(&m_Parser);
     }
     bool HttpResponseParser::hasError(){
         return m_Error || httpclient_parser_has_error(&m_Parser);;

@@ -1,3 +1,9 @@
+/*
+ * @file: Plugin.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-13 22:34:27
+ * @LastEditTime: 2020-03-13 22:34:28
+ */
 #include "Plugin.h"
 
 namespace Magic {

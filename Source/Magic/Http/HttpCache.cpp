@@ -1,3 +1,9 @@
+/*
+ * @file: HttpCache.cpp
+ * @Author: INotFound
+ * @Date: 2020-02-20 10:17:54
+ * @LastEditTime: 2020-03-15 17:56:00
+ */
 #include <vector>
 #include <fstream>
 #include "Gzip.h"

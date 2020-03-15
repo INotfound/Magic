@@ -1,3 +1,9 @@
+/*
+ * @file: Core.h
+ * @Author: INotFound
+ * @Date: 2020-03-13 23:05:18
+ * @LastEditTime: 2020-03-14 00:07:40
+ */
 #pragma once
 #include <map>
 #include <ctime>
@@ -215,15 +221,30 @@ inline bool StringAs<bool>(const std::string& value) {
 }
 
 namespace Magic{
-
+    /**
+     * @brief: 获取线程Id
+     * @return: 返回线程Id
+     */
     uint64_t GetThreadId();
-    
+    /**
+     * @brief: 获取当前时间
+     * @return: 返回当前时间
+     */
     uint64_t GetCurrentTimeMS();
-
+    /**
+     * @brief: 获取当前时间
+     * @return: 返回当前时间
+     */
     uint64_t GetCurrentTimeUS();
-    
+    /**
+     * @brief: 获取处理器数量
+     * @return: 返回处理器数量
+     */
     uint32_t GetProcessorsNumber();
-
+    /**
+     * @brief: 获取栈信息
+     * @return: 返回栈信息
+     */
     std::string BackTraceToString(uint32_t size = 64, uint32_t skip = 2, const std::string& prefix = "    ");
 
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
@@ -258,7 +279,7 @@ namespace Magic{
     }
 
     inline std::string Split(const std::string& str, uint64_t& index, const std::string& flag) {
-        uint32_t pos = str.find(flag, index);
+        uint64_t pos = str.find(flag, index);
         if (pos == std::string::npos)
             return str.substr(index, str.size() - index);;
         return str.substr(index, pos - index);

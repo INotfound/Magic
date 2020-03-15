@@ -1,92 +1,109 @@
+/*
+ * @file: HttpSocket.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-12 20:41:54
+ * @LastEditTime: 2020-03-15 17:56:41
+ */
 #include "Http/HttpSocket.h"
 
 namespace Magic{
 namespace Http{
     HttpSocket::HttpSocket(uint64_t timeOutMs,asio::io_context& context)
-        :Socket(timeOutMs,context){
+        :Socket(timeOutMs,4096,context){
         m_RequestParser.reset(new HttpRequestParser);
         m_ResponseParser.reset(new HttpResponseParser);
     }
-    void HttpSocket::Go(HttpHandle callBack){
-        m_CallBack = std::move(callBack);
-        this->handle();
+    void HttpSocket::recvRequest(const HttpHandle& callback){
+            m_RecvRequestCallBack = std::move(callback);
+            this->requestParser();
     }
-    void HttpSocket::handle(){
-        this->handleHeader();
+    void HttpSocket::recvResponse(const HttpHandle& callback){
+        m_RecvResponseCallBack = std::move(callback);
+        this->responseParser();
     }
-    void HttpSocket::handleBody(){
-        uint64_t contentLength = m_RequestParser->getContentLength();
-        if(contentLength >0){
-            doRead(contentLength - m_ReadBuffer.size(),[this](const std::error_code& ec){
-                if(ec){
-                    if(ec == asio::error::eof || ec == asio::error::connection_reset || ec == asio::error::operation_aborted){
-                        return;
-                    }
-                    MAGIC_LOG(LogLevel::LogWarn) << ec.message();
-                    return;
-                }
-                std::string body;
-                std::stringstream sstream;
-                auto& request = m_RequestParser->getData();
-                auto& response = m_ResponseParser->getData();
-                body.reserve(m_ReadBuffer.size());
-                body.append(m_ReadBuffer.begin(),m_ReadBuffer.end());
-                request->setBody(body);
-                response->setVersion(request->getVersion());
-                response->setkeepAlive(request->getkeepAlive());
-                m_CallBack(request,response);
-                sstream << response;
-                const auto& buf = sstream.str();
-                m_WriteBuffer.assign(buf.begin(),buf.end());
-                this->handleResponse();
-            });
-        }else{
-                std::stringstream sstream;
-                auto& request = m_RequestParser->getData();
-                auto& response = m_ResponseParser->getData();
-                response->setVersion(request->getVersion());
-                response->setkeepAlive(request->getkeepAlive());
-                m_CallBack(request,response);
-                sstream << response;
-                const auto& buf = sstream.str();
-                m_WriteBuffer.assign(buf.begin(),buf.end());
-                this->handleResponse();
-        }
-    }
-    void HttpSocket::handleHeader(){
-        doRead([this](const std::error_code& ec){
-            if(ec){
-                if(ec == asio::error::eof || ec == asio::error::connection_reset || ec == asio::error::operation_aborted){
-                    return;
-                }
-                MAGIC_LOG(LogLevel::LogWarn) << ec.message();
-                return;
-            }
-
-            size_t nparse = m_RequestParser->execute(m_ReadBuffer.data(),m_ReadBuffer.size());
+    void HttpSocket::requestParser(){
+        this->recv([this](const Share<Socket>& conn,StreamBuffer& data){
+            uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()) {
                 MAGIC_LOG(LogLevel::LogDebug) << "HttpParser hasError";
                 return;
             }
-            uint64_t m_Offset = m_ReadBuffer.size() - nparse;
-            m_ReadBuffer.resize(m_Offset);
+            uint64_t m_Offset = data.size() - nparse;
+            data.resize(m_Offset);
             if(!m_RequestParser->isFinished()) {
-                handleHeader();
+                this->requestParser();
                 return;
             }
-            this->handleBody();
+            uint64_t contentLength = m_RequestParser->getContentLength();
+            if(contentLength >0){
+                this->recv(contentLength - data.size(),[this](const Share<Socket>& conn,StreamBuffer& data){
+                    std::string body;
+                    std::stringstream sstream;
+                    auto& request = m_RequestParser->getData();
+                    auto& response = m_ResponseParser->getData();
+                    body.reserve(data.size());
+                    body.append(data.begin(),data.end());
+                    request->setBody(body);
+                    response->setVersion(request->getVersion());
+                    response->setkeepAlive(request->getkeepAlive());
+                    m_RecvRequestCallBack(request,response);
+                    sstream << response;
+                    conn->send(sstream.str());
+                    data.clear();
+                    m_RequestParser->clear();
+                    this->requestParser();
+                });
+            }else{
+                    std::stringstream sstream;
+                    auto& request = m_RequestParser->getData();
+                    auto& response = m_ResponseParser->getData();
+                    response->setVersion(request->getVersion());
+                    response->setkeepAlive(request->getkeepAlive());
+                    m_RecvRequestCallBack(request,response);
+                    sstream << response;
+                    conn->send(sstream.str());
+                    data.clear();
+                    m_RequestParser->clear();
+                    this->requestParser();
+            }
         });
     }
-    void HttpSocket::handleResponse(){
-        doWrite([this](const std::error_code& ec){
-            if(ec){
-                if(ec == asio::error::eof || ec == asio::error::connection_reset || ec == asio::error::operation_aborted){
-                    return;
-                }
-                MAGIC_LOG(LogLevel::LogWarn) << ec.message();
+    void HttpSocket::responseParser(){
+        this->recv([this](const Share<Socket>& conn,StreamBuffer& data){
+            uint64_t nparse = m_ResponseParser->execute(data.data(),data.size());
+            if(m_ResponseParser->hasError()) {
+                MAGIC_LOG(LogLevel::LogDebug) << "HttpParser hasError";
                 return;
             }
-            this->handleHeader();
+            uint64_t m_Offset = data.size() - nparse;
+            data.resize(m_Offset);
+            if(!m_ResponseParser->isFinished()) {
+                this->responseParser();
+                return;
+            }
+            uint64_t contentLength = m_ResponseParser->getContentLength();
+            if(contentLength >0){
+                this->recv(contentLength - data.size(),[this](const Share<Socket>& conn,StreamBuffer& data){
+                    std::string body;
+                    std::stringstream sstream;
+                    auto& request = m_RequestParser->getData();
+                    auto& response = m_ResponseParser->getData();
+                    body.reserve(data.size());
+                    body.append(data.begin(),data.end());
+                    response->setBody(body);
+                    m_RecvResponseCallBack(request,response);
+                    data.clear();
+                    m_ResponseParser->clear();
+                    this->responseParser();
+                });
+            }else{
+                    auto& request = m_RequestParser->getData();
+                    auto& response = m_ResponseParser->getData();
+                    m_RecvResponseCallBack(request,response);
+                    data.clear();
+                    m_ResponseParser->clear();
+                    this->responseParser();
+            }
         });
     }
 }

@@ -1,92 +1,79 @@
+/*
+ * @file: Socket.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-13 22:22:28
+ * @LastEditTime: 2020-03-15 23:08:34
+ */
+#include "Macro.h"
 #include "Socket.h"
-#include "TimingWheel.h"
-namespace Magic{
-    class SocketTimeOutTask :public ITaskNode{
-    public:
-        SocketTimeOutTask(const Share<Socket>& socket);
-        void notify() override;
-    private:
-        Share<Socket> m_Socket;
-    };
-    SocketTimeOutTask::SocketTimeOutTask(const Share<Socket>& socket){
-        m_Socket = socket;
-    }
-    void SocketTimeOutTask::notify(){
-        m_Socket->runTimeOut();
-    }
-    Socket::~Socket(){
-    }
-    Socket::Socket(uint64_t timeOutMs,asio::io_context& context)
-        :m_BufferSize(4096)
-        ,m_TimeOut(true)
-        ,m_TimeOutMs(timeOutMs)
-        ,m_Socket(new asio::ip::tcp::socket(context)){
-        m_BlockBuffer.reset(new char[m_BufferSize]);
-        m_ReadBuffer.reserve(m_BufferSize);
-        m_WriteBuffer.reserve(m_BufferSize);
-        TimingWheel::GetInstance()->run();
 
+namespace Magic{
+    Socket::~Socket(){}
+    Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context)
+        // :m_TimeOut(true)
+        // ,m_TimeOutMs(timeOutMs)
+        // ,
+        :m_BufferSize(bufferSize)
+        ,m_ByteBlock(new char[m_BufferSize])
+        ,m_Socket(new asio::ip::tcp::socket(context)){
+        m_StreamBuffer.reserve(m_BufferSize);
+        m_ErrorCodeCallBack = [](const asio::error_code & err){
+            MAGIC_LOG(LogLevel::LogDebug) << err.message();
+        };
     }
-    const Safe<asio::ip::tcp::socket>& Socket::getEntity() const{
+    const Safe<asio::ip::tcp::socket>& Socket::getEntity(){
         return m_Socket;
-    }
-    // void read(std::function<void(const std::error_code& ec,const std::vector<char>& data)> callBack);
-    // void read(uint64_t size,std::function<void(const std::error_code& ec,const std::vector<char>& data)> callBack);
-    // void write(const std::string& data,std::function<void(const std::error_code& ec,const std::vector<char>& data)> callBack);
-    // void write(const char* data,uint64_t size,std::function<void(const std::error_code& ec,const std::vector<char>& data)> callBack);
-    void Socket::enableTimeOut(){
-        Safe<ITaskNode> node(new SocketTimeOutTask(this->shared_from_this()));
-        TimingWheel::GetInstance()->addTask(m_TimeOutMs,node);
-    }
-    void Socket::updateTimeOut(){
-        m_TimeOut = false;
-    }
-    void Socket::doRead(std::function<void(const std::error_code& ec)> callBack){
-        auto self = this->shared_from_this();
-        asio::async_read(*m_Socket
-            ,asio::buffer(m_BlockBuffer.get(),m_BufferSize)
-            ,asio::transfer_at_least(1)
-            ,[this,self,callBack](const asio::error_code &err, std::size_t length){
-            if(!err){
-                this->updateTimeOut();
-                m_ReadBuffer.insert(m_ReadBuffer.begin() + m_ReadBuffer.size()
-                    ,m_BlockBuffer.get()
-                    ,m_BlockBuffer.get() + length);
-            }
-            callBack(err);
-        });
-    }
-    void Socket::doWrite(std::function<void(const std::error_code& ec)> callBack){
+    };
+    void Socket::send(const std::string& data){
         auto self = this->shared_from_this();
         asio::async_write(*m_Socket
-            ,asio::const_buffer(m_WriteBuffer.data(),m_WriteBuffer.size())
-            ,[this,self,callBack](const asio::error_code &err, std::size_t length){
-            this->updateTimeOut();
-            callBack(err);
+        ,asio::const_buffer(data.c_str(),data.size())
+        ,[this,self](const asio::error_code &err, std::size_t length){
+            if(err){
+                m_ErrorCodeCallBack(err);
+            }
         });
     }
-    void Socket::doRead(uint64_t size,std::function<void(const std::error_code& ec)> callBack){
+    void Socket::send(const char* data,uint64_t length){
+        auto self = this->shared_from_this();
+        asio::async_write(*m_Socket
+        ,asio::const_buffer(data,length)
+        ,[this,self](const asio::error_code &err, std::size_t length){
+            if(err){
+                m_ErrorCodeCallBack(err);
+            }
+        });
+    }
+    void Socket::recv(const RecvCallBack& callBack){
         auto self = this->shared_from_this();
         asio::async_read(*m_Socket
-            ,asio::buffer(m_BlockBuffer.get(),m_BufferSize)
-            ,asio::transfer_exactly(size)
-            ,[this,self,callBack](const asio::error_code &err, std::size_t length){
-            if(!err){
-                this->updateTimeOut();
-                m_ReadBuffer.insert(m_ReadBuffer.begin() + m_ReadBuffer.size()
-                    ,m_BlockBuffer.get()
-                    ,m_BlockBuffer.get() + length);
-            }
-            callBack(err);
-        });
+            ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
+            ,asio::transfer_at_least(1)
+            //,std::bind(&Socket::doRecv,this,std::placeholders::_1,std::placeholders::_2,std::move(self),std::move(callBack)));
+            ,std::bind([this](const asio::error_code &err, std::size_t length,const Share<Socket> self,const RecvCallBack& callback){
+                if(err){
+                    m_ErrorCodeCallBack(err);
+                }else{
+                    m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+                    callback(self,this->m_StreamBuffer);
+                }
+            },std::placeholders::_1,std::placeholders::_2,std::move(self),std::move(callBack)));
     }
-    void Socket::runTimeOut(){
-        if(m_TimeOut == true){
-            m_Socket->close();
-        }else{
-            m_TimeOut = true;
-            Safe<ITaskNode> node(new SocketTimeOutTask(this->shared_from_this()));
-            TimingWheel::GetInstance()->addTask(m_TimeOutMs,node);
-        }
+    void Socket::recv(uint64_t size,const RecvCallBack& callBack){
+        auto self = this->shared_from_this();
+        asio::async_read(*m_Socket
+            ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
+            ,asio::transfer_exactly(size)
+            ,std::bind([this](const asio::error_code &err, std::size_t length,const Share<Socket> self,const RecvCallBack& callback){
+                if(err){
+                    m_ErrorCodeCallBack(err);
+                }else{
+                    m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+                    callback(self,this->m_StreamBuffer);
+                }
+            },std::placeholders::_1,std::placeholders::_2,std::move(self),std::move(callBack)));
+    }
+    void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
+        m_ErrorCodeCallBack = std::move(errorCallBack);
     }
 }

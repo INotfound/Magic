@@ -1,3 +1,9 @@
+/*
+ * @file: TimingWheel.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-13 21:04:59
+ * @LastEditTime: 2020-03-14 00:11:20
+ */
 #include "TimingWheel.h"
 namespace Magic{
         ITaskNode::~ITaskNode(){
@@ -7,7 +13,7 @@ namespace Instance{
             :m_TickMs(tickMs)
             ,m_Interval(tickMs*wheelSize)
             ,m_WheelSize(wheelSize)
-            ,m_Clockhand(0){
+            ,m_ClockHand(0){
             m_Task.resize(m_WheelSize);
         }
         void Wheel::add(uint64_t ms,Safe<ITaskNode> &node){
@@ -19,23 +25,23 @@ namespace Instance{
                 m_NextWheel->add(ms,node);
                 return;
             }
-            uint64_t expiration = ms + (m_Clockhand * m_TickMs);
+            uint64_t expiration = ms + (m_ClockHand * m_TickMs);
             m_Task[expiration / m_TickMs % m_WheelSize].push_back(std::move(node));
         }
         void Wheel::tick(std::vector<TaskList>& task){
             Mutex::Lock lock(m_Mutex);
-            m_Clockhand++;
-            if(m_Clockhand >= m_WheelSize){
-                m_Clockhand = 0;
+            m_ClockHand++;
+            if(m_ClockHand >= m_WheelSize){
+                m_ClockHand = 0;
                 if(m_NextWheel){
                     m_NextWheel->tick(task);
                 }
             }
-            if(m_Task[m_Clockhand].empty()){
+            if(m_Task[m_ClockHand].empty()){
                 return;
             }
-            task.push_back(std::move(m_Task[m_Clockhand]));
-            m_Task[m_Clockhand].clear();
+            task.push_back(std::move(m_Task[m_ClockHand]));
+            m_Task[m_ClockHand].clear();
         }
 
         TimingWheel::TimingWheel()
@@ -67,17 +73,18 @@ namespace Instance{
             m_Timer->stop();
             m_Timer.reset();
         }
-        void  TimingWheel::addTask(uint64_t timeOutMs,Safe<ITaskNode>& node){
+
+        void  TimingWheel::change(uint64_t tickMs,uint64_t wheelSize){
+            Mutex::Lock lock(m_Mutex);
+            m_TickMs = tickMs;
+            m_WheelSize = wheelSize;
+        }
+        void  TimingWheel::addTask(uint64_t timeOutMs,Safe<ITaskNode>& taskNode){
             Mutex::Lock lock(m_Mutex);
             if(!m_Wheels){
                 return;
             }
-            m_Wheels->add(timeOutMs,node);
-        }
-        void  TimingWheel::changeTime(uint64_t tickMs,uint64_t wheelSize){
-            Mutex::Lock lock(m_Mutex);
-            m_TickMs = tickMs;
-            m_WheelSize = wheelSize;
+            m_Wheels->add(timeOutMs,taskNode);
         }
 }
 }

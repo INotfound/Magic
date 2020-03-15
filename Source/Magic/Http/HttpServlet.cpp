@@ -1,3 +1,9 @@
+/*
+ * @file: HttpServlet.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-15 17:45:01
+ * @LastEditTime: 2020-03-15 17:56:39
+ */
 #include <regex>
 #include "Http/HttpServlet.h"
 namespace Magic{
@@ -18,13 +24,13 @@ namespace Http{
         m_DeafultServlet = std::move(servlet);
     }
 
-    void HttpServletDispatch::addHttpServlet(const std::string& name,Safe<HttpServlet>& servlet){
+    void HttpServletDispatch::addHttpServlet(const std::string& path,Safe<HttpServlet>& servlet){
         RWMutexWriteLock lock(m_Mutex);
-        m_Servlets.emplace(name,std::move(servlet));
+        m_Servlets.emplace(path,std::move(servlet));
     }
-    void HttpServletDispatch::addGlobHttpServlet(const std::string& name,Safe<HttpServlet>& servlet){
+    void HttpServletDispatch::addGlobHttpServlet(const std::string& path,Safe<HttpServlet>& servlet){
         RWMutexWriteLock lock(m_Mutex);
-        m_GlobServlets.emplace(name,std::move(servlet));
+        m_GlobServlets.emplace(path,std::move(servlet));
     }
     bool HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
         auto& servlet = this->getMatchedServlet(request->getPath());
@@ -34,9 +40,9 @@ namespace Http{
             m_DeafultServlet->handle(request,response);
         return true;
     }
-    const Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& name){
+    const Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& path){
         RWMutexWriteLock lock(m_Mutex);
-        auto exactlyIter = m_Servlets.find(name);
+        auto exactlyIter = m_Servlets.find(path);
         if(exactlyIter != m_Servlets.end()){
             return exactlyIter->second;
         }
@@ -45,7 +51,7 @@ namespace Http{
         auto globEnd = m_GlobServlets.end();
         for(; globIter != globEnd; globIter++){
             reg.assign(globIter->first);
-            if(std::regex_match(name,reg)){
+            if(std::regex_match(path,reg)){
                 return globIter->second;
             }
         }

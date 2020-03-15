@@ -29,6 +29,7 @@ set(SRC
     Source/Magic/Http/HttpServer.cpp
     Source/Magic/Http/HttpParser.cpp
     Source/Magic/Http/HttpServlet.cpp
+#   Source/Magic/Http/WebSocketServer.cpp
 #   Adapter
     Source/Magic/Adapter/WinUtil.cpp
     Source/Magic/Adapter/WinMutex.cpp
@@ -99,6 +100,15 @@ endif()
 
 target_link_libraries(Magic ${LIBS})
 
-add_library(TestLib MODULE Test/TestPlugin.cc)
-add_executable(Test Test/Test.cc)
-target_link_libraries(Test Magic)
+#Test
+    add_executable(Test Test/Test.cc)
+    target_link_libraries(Test Magic)
+
+#Examples-Plugin
+    add_library(Test_PluginLib MODULE Examples/Test_PluginLib.cpp)
+    add_executable(Test_Plugin Examples/Test_Plugin.cpp)
+    target_link_libraries(Test_Plugin Magic)
+
+#Examples-Server
+    add_executable(Test_Server Examples/Test_Server.cpp)
+    target_link_libraries(Test_Server Magic)

@@ -1,3 +1,9 @@
+/*
+ * @file: Http.h
+ * @Author: INotFound
+ * @Date: 2020-03-13 23:31:12
+ * @LastEditTime: 2020-03-15 16:53:02
+ */
 #pragma once
 #include <map>
 #include <string>
@@ -140,73 +146,235 @@ namespace Http{
         XX(APPLICATION_FONT_TRUETYPE,   "ttf",      "application/x-font-truetype")              \
         XX(APPLICATION_FONT_OPENTYPE,   "otf",      "application/x-font-opentype")              \
 
+    /**
+     * @brief: HttpMethod
+     */
     enum class HttpMethod{
         #define XX(num,name,string) name = num,
             HTTP_METHOD_MAP(XX)
         #undef XX
         INVALID_METHOD = 255
     };
-
+    /**
+     * @brief: HttpStatus
+     */
     enum class HttpStatus{
         #define XX(code,name,desc) name = code,
             HTTP_STATUS_MAP(XX)
         #undef XX
         INVALID_METHOD = 255
     };
-
+    /**
+     * @brief: HttpContentType
+     */
     enum class HttpContentType{
         #define XX(name,extName,desc) name,
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
-
+    /**
+     * @brief: 是否是Url的编码
+     * @param str 需要检查的字符串
+     * @return: 返回True则是，返回False则是否
+     */
     bool IsUrlEncode(const std::string& str);
+    /**
+     * @brief: 将String转换成HttpMethod
+     * @param str 需要转换的字符串
+     * @return: 返回HttpMethod
+     */
     HttpMethod CharsToHttpMethod(const char* str);
+    /**
+     * @brief: 将String转换成HttpMethod
+     * @param str 需要转换的字符串
+     * @return: 返回HttpMethod
+     */
     HttpMethod StringToHttpMethod(const std::string& str);
+    /**
+     * @brief: 将HttpMethod转换成String
+     * @param method 需要转换的HttpMethod
+     * @return: 返回转换后的String
+     */
     const char* HttpMethodToString(const HttpMethod& method);
+    /**
+     * @brief: 将HttpStatus转换成String
+     * @param status 需要转换的HttpStatus
+     * @return: 返回转换后的String
+     */
     const char* HttpStatusToString(const HttpStatus& status);
+    /**
+     * @brief: 进行Url编码
+     * @param value 需要编码的字符串
+     * @return: 返回编码后的String
+     */
     std::string UrlEncode(const std::string &value) noexcept;
+    /**
+     * @brief: 进行Url解码
+     * @param value 需要解码的字符串
+     * @return: 返回解码的String
+     */
 	std::string UrlDecode(const std::string &value) noexcept;
+    /**
+     * @brief: 将FileType转换成HttpContentType
+     * @param fileName 需要转换的文件名称
+     * @return: 返回String类型的HttpContentType
+     */
     const char* FileTypeToHttpContentType(const std::string& fileName);
+    /**
+     * @brief: 将HttpContent转换成返回HttpContentType
+     * @param contentType 需要转换的HttpContentType
+     * @return: 返回String类型的HttpContentType
+     */
     const char* HttpContentTypeToString(const HttpContentType& contentType);
 	
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string&, const std::string&) const;
     };
-
+    /**
+     * @brief: Http请求类
+     */
     class HttpRequest{
     public:
         typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:
+        /**
+         * @brief: 构造函数
+         * @param keepAlive 是否长连接
+         * @param version Http协议版本
+         */
         HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
+        /**
+         * @brief: 设置版本号函数
+         * @param ver 版本号
+         */
         void setVersion(uint8_t ver);
+        /**
+         * @brief: 设置是否为WebSocket函数
+         * @param webSocket 是否为WebSocket类型
+         */
         void setWebSocket(bool webSocket);
+        /**
+         * @brief: 设置HttpMethod函数
+         * @param method HttpMethod类型
+         */
         void setMethod(HttpMethod method);
+        /**
+         * @brief: 设置是否为长连接函数
+         * @param keepAlive 是否为长连接
+         */
         void setkeepAlive(bool keepAlive);
+        /**
+         * @brief: 设置查询字符串函数
+         * @param query 查询字符串
+         */
         void setQuery(const std::string& query);
+        /**
+         * @brief: 设置Url路径函数
+         * @param urlPath Url路径
+         */
         void setPath(const std::string& urlPath);
+        /**
+         * @brief: 设置片段函数
+         * @param fragment 片段
+         */
         void setFragment(const std::string& fragment);
+        /**
+         * @brief: 设置主体正文函数
+         * @param body 主体正文 
+         */
         void setBody(const std::string& body);
+        /**
+         * @brief: 设置参数函数
+         * @param key 键
+         * @param value 值
+         */
         void setParam(const std::string& key,const std::string& value);
+        /**
+         * @brief: 设置Http头中的参数函数
+         * @param key 键
+         * @param value 值
+         */
         void setHeader(const std::string& key,const std::string& value);
+        /**
+         * @brief: 设置Cookie函数
+         * @param key 键
+         * @param value 值
+         */
         void setCookie(const std::string& key,const std::string& value);
-
+        /**
+         * @brief: 获取所有参数函数
+         * @return: 返回键值对容器
+         */
         KeyValue& atParams();
+        /**
+         * @brief: 获取所有Http头中的参数函数
+         * @return: 返回键值对容器
+         */
         KeyValue& atHeaders();
+        /**
+         * @brief: 获取是否为长连接函数
+         * @return: 返回True则是，返回False则是否
+         */
         bool getkeepAlive() const;
+        /**
+         * @brief: 获取版本号函数
+         * @return: 返回版本号
+         */
         uint8_t getVersion() const;
+        /**
+         * @brief: 获取HttpMethod函数
+         * @return: 返回HttpMethod类型
+         */
         HttpMethod getMethod() const;
+        /**
+         * @brief: 获取路径函数
+         * @return: 返回路径字符串
+         */
         const std::string& getPath() const;
+        /**
+         * @brief: 获取主体正文函数
+         * @return: 返回主体正文字符串
+         */
         const std::string& getBody() const;
+        /**
+         * @brief: 获取查询函数
+         * @return: 返回查询字符串
+         */
         const std::string& getQuery() const;
+        /**
+         * @brief: 获取Cookie函数
+         * @param key 指定的键
+         * @return: 返回根据指定的键对应的值
+         */
         const std::string& getCookie(const std::string& key);
+        /**
+         * @brief: 获取参数函数
+         * @param key 指定的键
+         * @return: 返回根据指定的键对应的值
+         */
         const std::string& getParam(const std::string& key) const;
+        /**
+         * @brief: 获取头参数函数
+         * @param key 指定的键
+         * @return: 返回根据指定的键对应的值
+         */
         const std::string& getHeader(const std::string& key) const;
-
+        /**
+         * @brief: 删除参数函数
+         * @param key 指定的键
+         */
         void delParam(const std::string& key);
+        /**
+         * @brief: 删除头参数函数
+         * @param key 指定的键
+         */
         void delHeader(const std::string& key);
-
+        /**
+         * @brief: 获取输出流函数
+         * @param os 输出流
+         * @return: 返回输出流
+         */
         std::ostream& toStream(std::ostream& os);
     private:
         bool m_KeepAlive;
@@ -222,34 +390,133 @@ namespace Http{
         std::string m_Fragment;
         std::string m_Boundary;
     };
-
+    /**
+     * @brief: Http响应类
+     */
     class HttpResponse{
     public:
         typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:
+        /**
+         * @brief: 构造函数
+         * @param keepAlive 是否长连接
+         * @param version 版本号
+         */
         HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
+        /**
+         * @brief: 设置是否启用Gzip压缩函数
+         * @param gzip 是否启用Gzip压缩
+         */
         void setGzip(bool gzip);
+        /**
+         * @brief: 设置是否缓存函数
+         * @param cache 是否缓存
+         */
         void setCache(bool cache);
+        /**
+         * @brief: 设置版本号函数
+         * @param ver 版本号
+         */
         void setVersion(uint8_t ver);
+        /**
+         * @brief: 设置HttpStatus函数
+         * @param status HttpStatus类型
+         */
         void setStatus(HttpStatus status);
+        /**
+         * @brief: 设置是否为WebSocket函数
+         * @param webSocket 是否为WebSocket类型
+         */
         void setWebSocket(bool webSocket);
+        /**
+         * @brief: 设置是否为长连接函数
+         * @param keepAlive 是否为长连接
+         */
         void setkeepAlive(bool keepAlive);
+        /**
+         * @brief: 设置主体正文函数
+         * @param body 主体正文
+         */
         void setBody(const std::string& body);
+        /**
+         * @brief: 设置响应解释函数
+         * @param reason 解释
+         */
         void setReason(const std::string& reason);
+        /**
+         * @brief: 设置正文类型函数
+         * @param contentType 正文类型
+         */
         void setContentType(const std::string& contentType);
+        /**
+         * @brief: 设置正文类型函数
+         * @param contentType 正文类型
+         */
         void setContentType(const HttpContentType contentType);
+        /**
+         * @brief: 设置Http头键值对函数
+         * @param key 键
+         * @param value 值
+         */
         void setHeader(const std::string& key,const std::string& value);
+        /**
+         * @brief: 设置Cookie函数
+         * @param key 键
+         * @param val 值
+         * @param expired 过期时间
+         * @param path Cookie路径
+         * @param domain Cookie范围
+         * @param httpOnly 是否HttpOnly
+         * @param secure 是否Secure
+         */
         void setCookie(const std::string& key, const std::string& val,time_t expired =0
             ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
-
+        /**
+         * @brief: 获取Http头键值对容器函数
+         * @return: 返回Http头键值对容器
+         */
         KeyValue& getHeaders(); 
+        /**
+         * @brief: 获取是否为长连接函数
+         * @return: 返回是否为长连接
+         */
         bool getkeepAlive() const;
+        /**
+         * @brief: 获取版本号函数
+         * @return: 返回版本号
+         */
         uint8_t getVersion() const;
+        /**
+         * @brief: 获取HttpStatus函数
+         * @return: 返回HttpStatus类型
+         */
         HttpStatus getStatus() const;
+        /**
+         * @brief: 获取主体正文函数
+         * @return: 返回主体正文
+         */
         const std::string& getBody() const;
+        /**
+         * @brief: 获取响应解释函数
+         * @return: 返回响应解释
+         */
         const std::string& getReason() const;
+        /**
+         * @brief: 获取Http头键值对函数
+         * @param key 指定的键
+         * @return: 返回根据指定的键对应的值
+         */
         const std::string& getHeader(const std::string& key);
+        /**
+         * @brief: 删除Http头键值对函数
+         * @param key 指定的键
+         */
         void delHeader(const std::string& key);
+        /**
+         * @brief: 获取输出流函数
+         * @param os 输出流
+         * @return: 返回输出流
+         */
         std::ostream& toStream(std::ostream& os);
     private:
         bool m_Gzip;

@@ -10,7 +10,7 @@ static const int uri_parser_start = 451;
 static const int uri_parser_first_final = 451;
 static const int uri_parser_error = 0;
 
-static const int uri_parser_en_main = 451;
+//static const int uri_parser_en_main = 451;
 
 
 #line 129 "Uri.rl"

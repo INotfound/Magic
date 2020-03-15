@@ -1,9 +1,14 @@
+/*
+ * @file: Gzip.h
+ * @Author: chafey
+ * @Date: 2020-02-13 17:06:49
+ * @LastEditTime: 2020-03-15 17:54:39
+ * @From https://github.com/chafey/GZipCodec
+ */
 #pragma once
 #include <string>
 namespace Magic{
 namespace Gzip{
-    //from https://github.com/chafey/GZipCodec
-
     // GZip Compression
     // @param data - the data to compress (does not have to be string, can be binary data)
     // @param compressedData - the resulting gzip compressed data

@@ -1,9 +1,14 @@
+/*
+ * @file: TcpServer.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-12 01:33:35
+ * @LastEditTime: 2020-03-14 00:15:18
+ */
 #include "Macro.h"
 #include "TcpServer.h"
 
 
 namespace Magic{
-
     TcpServer::~TcpServer(){
     }
     TcpServer::TcpServer(const std::string& addr,uint16_t port,uint32_t threadCount,uint64_t timeOutMs)
@@ -31,7 +36,7 @@ namespace Magic{
         m_IsRun = false;
     }
     void TcpServer::accept(){
-        Share<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,m_IoPool->get());
+        Share<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,m_IoPool->get());
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(err){
                 //TODO: ...

@@ -1,10 +1,16 @@
+/*
+ * @file: Timer.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-13 21:37:59
+ * @LastEditTime: 2020-03-14 00:14:52
+ */
 #include "Timer.h"
 #include <chrono>
 namespace Magic{
-    Timer::Timer(const std::string& name,uint32_t ms,std::function<void()> func)
+    Timer::Timer(const std::string& name,uint32_t tickMs,const std::function<void()>& callBack)
         :m_Name(name)
-        ,m_MilliSeconds(ms)
-        ,m_CallBack(func){
+        ,m_MilliSeconds(tickMs)
+        ,m_CallBack(std::move(callBack)){
         m_Io.reset(new asio::io_context);
         m_Time.reset(new asio::steady_timer(*m_Io));
     }

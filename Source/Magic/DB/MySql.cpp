@@ -53,6 +53,8 @@ namespace DB{
             MAGIC_LOG(Magic::LogLevel::LogError) << "MySql connection failed";
             return false;
         }
+        char value = 1;
+        mysql_options(&m_MySql, MYSQL_OPT_RECONNECT, &value);
         MAGIC_LOG(Magic::LogLevel::LogInfo) << "Database connected successful";
         return true;
     }

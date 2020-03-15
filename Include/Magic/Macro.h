@@ -1,3 +1,9 @@
+/*
+ * @file: Macro.h
+ * @Author: INotFound
+ * @Date: 2020-03-13 22:34:16
+ * @LastEditTime: 2020-03-14 00:09:40
+ */
 #pragma once
 #include <assert.h>
 #include "Log.h"
@@ -47,4 +53,3 @@
             << Magic::BackTraceToString(); \
         assert(exp); \
     }
-

@@ -1,3 +1,9 @@
+/*
+ * @file: Log.cpp
+ * @Author: INotFound
+ * @Date: 2020-02-18 11:38:37
+ * @LastEditTime: 2020-03-15 21:48:28
+ */
 #include "Log.h"
 #include <tuple>
 #include <time.h>
@@ -137,76 +143,6 @@ namespace Magic {
         }
         return "<(LogError)>";
     }
-
-    Logger::Logger(const std::string& name)
-        :m_Level(LogLevel::LogDebug)
-        ,m_LogName(name){
-    }
-
-    void  Logger::addILogAppender(Safe<ILogAppender>& logAppender) {
-        Mutex::Lock lock(m_Mutex);
-        if (!logAppender->m_Formatter) {
-            logAppender->m_Formatter.reset(new LogFormatter(m_Formatter));
-        }
-        this->m_ILogAppenders.push_back(std::move(logAppender));
-    }
-
-    void  Logger::delILogAppender(Safe<ILogAppender>& logAppender) {
-        Mutex::Lock lock(m_Mutex);
-        auto vBegin = this->m_ILogAppenders.begin();
-        auto vEnd = this->m_ILogAppenders.end();
-        for (; vBegin != vEnd; vBegin++) {
-            if (*vBegin == logAppender) {
-                this->m_ILogAppenders.erase(vBegin);
-                return;
-            }
-        }
-    }
-
-    void Logger::setFormatter(const std::string& pattern) {
-        Mutex::Lock lock(m_Mutex);
-        this->m_Formatter = pattern;
-    }
-
-    void Logger::setLevel(LogLevel val) {
-        Mutex::Lock lock(m_Mutex);
-        this->m_Level = val;
-    }
-
-    LogLevel Logger::getLevel() const {
-        return this->m_Level;
-    }
-
-    const std::string& Logger::getLogName() const {
-        return this->m_LogName;
-    }
-
-    void  Logger::log(LogLevel level,const Safe<LogEvent>& event) {
-        if (level >= m_Level) {
-            Mutex::Lock lock(m_Mutex);
-            if (!this->m_ILogAppenders.empty()) {
-                for (auto& v : this->m_ILogAppenders) {
-                    v->log(level, event);
-                }
-            }
-            else if (LoggerMgr::GetInstance()->getRoot()) {
-                LoggerMgr::GetInstance()->getRoot()->log(level, event);
-            }
-        }
-    }
-
-    LogWrap::LogWrap(const LogLevel level, Safe<LogEvent>&& event ,const Safe<Logger>& logger)
-        :m_Level(level)
-        ,m_Event(std::move(event))
-        ,m_Logger(logger){
-    }
-    std::stringstream& LogWrap::get() {
-        return this->m_Event->getStream();
-    }
-    LogWrap::~LogWrap() {
-        this->m_Logger->log(this->m_Level, this->m_Event);
-    }
-
     LogEvent::LogEvent(uint32_t line, uint64_t time, uint64_t elapse,uint64_t threadId, 
         const std::string& file, const std::string& logName, const std::string& threadName)
         :m_Line(line),
@@ -483,6 +419,74 @@ namespace Magic {
         }
     }
 
+    Logger::Logger(const std::string& name)
+        :m_Level(LogLevel::LogDebug)
+        ,m_LogName(name){
+    }
+
+    void  Logger::addILogAppender(Safe<ILogAppender>& logAppender) {
+        Mutex::Lock lock(m_Mutex);
+        if (!logAppender->m_Formatter) {
+            logAppender->m_Formatter.reset(new LogFormatter(m_Formatter));
+        }
+        this->m_ILogAppenders.push_back(std::move(logAppender));
+    }
+
+    void  Logger::delILogAppender(Safe<ILogAppender>& logAppender) {
+        Mutex::Lock lock(m_Mutex);
+        auto vBegin = this->m_ILogAppenders.begin();
+        auto vEnd = this->m_ILogAppenders.end();
+        for (; vBegin != vEnd; vBegin++) {
+            if (*vBegin == logAppender) {
+                this->m_ILogAppenders.erase(vBegin);
+                return;
+            }
+        }
+    }
+
+    void Logger::setFormatter(const std::string& pattern) {
+        Mutex::Lock lock(m_Mutex);
+        this->m_Formatter = pattern;
+    }
+
+    void Logger::setLevel(LogLevel val) {
+        Mutex::Lock lock(m_Mutex);
+        this->m_Level = val;
+    }
+
+    LogLevel Logger::getLevel() const {
+        return this->m_Level;
+    }
+
+    const std::string& Logger::getLogName() const {
+        return this->m_LogName;
+    }
+
+    void  Logger::log(LogLevel level,const Safe<LogEvent>& event) {
+        if (level >= m_Level) {
+            Mutex::Lock lock(m_Mutex);
+            if (!this->m_ILogAppenders.empty()) {
+                for (auto& v : this->m_ILogAppenders) {
+                    v->log(level, event);
+                }
+            }
+            else if (LoggerMgr::GetInstance()->getRoot()) {
+                LoggerMgr::GetInstance()->getRoot()->log(level, event);
+            }
+        }
+    }
+
+    LogWrap::LogWrap(const LogLevel level, Safe<LogEvent>&& event ,const Safe<Logger>& logger)
+        :m_Level(level)
+        ,m_Event(std::move(event))
+        ,m_Logger(logger){
+    }
+    std::stringstream& LogWrap::get() {
+        return this->m_Event->getStream();
+    }
+    LogWrap::~LogWrap() {
+        this->m_Logger->log(this->m_Level, this->m_Event);
+    }
     LoggerManager::LoggerManager() {
         m_Root.reset(new Logger);
     }

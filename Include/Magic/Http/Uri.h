@@ -1,3 +1,9 @@
+/*
+ * @file: Uri.h
+ * @Author: INotFound
+ * @Date: 2020-03-15 17:24:20
+ * @LastEditTime: 2020-03-15 17:27:48
+ */
 #pragma once
 #include "Core.h"
 namespace Magic {
@@ -6,8 +12,12 @@ namespace Magic {
        \_/   \______________/\_________/ \_________/ \__/
         |           |            |            |        |
      scheme     authority       path        query   fragment
+Ragel
 */
 
+/**
+ * @brief: Uri类
+ */
 class Uri {
 public:
     Uri();

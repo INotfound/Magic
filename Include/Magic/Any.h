@@ -1,3 +1,9 @@
+/*
+ * @file: Any.h
+ * @Author: qicosmos
+ * @Date: 2020-02-13 16:47:26
+ * @LastEditTime: 2020-03-15 17:53:53
+ */
 #pragma once
 #if __cplusplus >= 201703L | (defined(_WIN32) || defined(_WIN64))
 #include <any>

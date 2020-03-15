@@ -1,3 +1,9 @@
+/*
+ * @file: Thread.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-12 02:32:11
+ * @LastEditTime: 2020-03-14 00:14:59
+ */
 #include "Core.h"
 #include "Macro.h"
 #include "Thread.h"
@@ -9,7 +15,7 @@ static thread_local std::string g_ThreadName = "UNKNOW";
 
 Thread::~Thread() {
 }
-Thread::Thread(const std::string& threadName,const std::function<void()> callback)
+Thread::Thread(const std::string& threadName,const std::function<void()>& callback)
     :m_Id(-1)
     ,m_Name(threadName)
     ,m_Thread(&Thread::run,this)

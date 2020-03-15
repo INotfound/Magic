@@ -1,3 +1,9 @@
+/*
+ * @file: HttpServer.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-12 21:03:34
+ * @LastEditTime: 2020-03-15 17:56:19
+ */
 #include "Macro.h"
 #include "Http/Http.h"
 #include "Http/HttpSocket.h"
@@ -11,32 +17,36 @@ namespace Http{
         ,m_ServletDispatch(new HttpServletDispatch){
         m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
+    const Safe<HttpServletDispatch>& HttpServer::getHttpServletDispatch(){
+        return m_ServletDispatch;
+    }
     void HttpServer::accept(){
         Share<Socket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get());
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(!err){
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
+                socket->setErrorCodeCallBack([](const asio::error_code & err){
+                    if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
+                        return;
+                    }
+                    MAGIC_LOG(LogLevel::LogWarn) <<  err.message();
+                });
                 this->handleFunc(socket);
             }else{
-                //TODO: ...
-                if(err != asio::error::eof || err != asio::error::connection_reset || err == asio::error::operation_aborted){
-                    MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
+                        return;
                 }
+                MAGIC_LOG(LogLevel::LogWarn) <<  err.message();
             }
             if(m_IsRun){
                 accept();
             }
         });
     }
-    const Safe<HttpServletDispatch>& HttpServer::getHttpServletDispatch(){
-        return m_ServletDispatch;
-    }
     void HttpServer::handleFunc(const Share<Socket>& socket){
         Share<HttpSocket> httpSocket = std::static_pointer_cast<HttpSocket>(socket);
-        httpSocket->enableTimeOut();
-        httpSocket->Go([this](const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
-            this->m_ServletDispatch->handle(request,response);
-        });
+        //httpSocket->enableTimeOut();
+        httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2));
     }
 }
 }

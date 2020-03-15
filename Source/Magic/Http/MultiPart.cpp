@@ -1,4 +1,9 @@
-
+/*
+ * @file: MultiPart.cpp
+ * @Author: INotFound
+ * @Date: 2020-03-11 00:20:52
+ * @LastEditTime: 2020-03-15 17:56:55
+ */
 #include "Http/MultiPart.h"
 
 namespace Magic{
@@ -12,7 +17,7 @@ namespace Http{
         if(contentType.empty()){
             return false;
         }
-        uint32_t pos = contentType.find("boundary=");
+        uint64_t pos = contentType.find("boundary=");
         if(pos == std::string::npos){
             return false;
         }

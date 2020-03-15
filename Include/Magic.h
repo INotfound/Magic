@@ -1,3 +1,9 @@
+/*
+ * @file: Magic.h
+ * @Author: INotFound
+ * @Date: 2020-03-13 20:55:19
+ * @LastEditTime: 2020-03-13 20:57:16
+ */
 #pragma once
 //Util
 #include "Magic/Log.h"
@@ -25,8 +31,9 @@
 #include "Magic/Http/HttpFile.h"
 #include "Magic/Http/HttpCache.h"
 #include "Magic/Http/MultiPart.h"
-#include "Magic/Http/HttpParser.h"
 #include "Magic/Http/HttpServer.h"
+#include "Magic/Http/HttpSocket.h"
+#include "Magic/Http/HttpParser.h"
 #include "Magic/Http/HttpServlet.h"
 
 namespace Magic {
