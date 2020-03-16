@@ -33,13 +33,13 @@
 &emsp;Plugin插件组件的食用方法.
 ```
     /// 详见以下两文件 
-    /// Magic/Examples/Test_Plugin.cpp
-    /// Magic/Examples/Test_PluginLib.cpp
+    /// Examples/Test_Plugin.cpp
+    /// Examples/Test_PluginLib.cpp
 ```
 &emsp;简单的Web服务器的食用方法.
 ```
     /// 详见以下文件 
-    /// Magic/Examples/Test_Server.cpp
+    /// Examples/Test_Server.cpp
 ```
 ## 如何编译
 ### 编译器的支持
