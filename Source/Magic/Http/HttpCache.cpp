@@ -2,7 +2,7 @@
  * @file: HttpCache.cpp
  * @Author: INotFound
  * @Date: 2020-02-20 10:17:54
- * @LastEditTime: 2020-03-15 17:56:00
+ * @LastEditTime: 2020-04-05 23:42:29
  */
 #include <vector>
 #include <fstream>
@@ -14,7 +14,7 @@ namespace Instance{
     HttpCache::HttpCache()
         :m_IsInit(false){
     }
-    void HttpCache::Init(const std::string& resourcePath){
+    void HttpCache::init(const std::string& resourcePath){
         if(m_IsInit)
             return;
         RWMutex::WriteLock lock(m_Mutex);

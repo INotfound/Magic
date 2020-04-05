@@ -1,25 +1,31 @@
+/*
+ * @file: WebSoscketMessage.h
+ * @Author: INotFound
+ * @Date: 2020-03-18 22:50:40
+ * @LastEditTime: 2020-03-18 22:58:43
+ */
 #pragma once
 #include "Core.h"
 namespace Magic{
 namespace Http{
-    enum class OpCode{
-        CONTINUE        =0,
-        TEXT_FREAME     =1,
-        BIN_FRAME       =2,
-        CLOSE           =8,
-        PING            =0x9,
-        PONG            =0xA
+    enum class WebSocketMessageType{
+        CONTINUE    = 0,
+        TEXT        = 1,
+        CLOSE       = 8,
+        PING        = 9,
+        PONG        = 0xA
     };
     class WebSocketMessage{
     public:
-        WebSocketMessage(const OpCode& opCode,const std::string& data ="");
+        WebSocketMessage(const std::string& data,const WebSocketMessageType& type);
+        WebSocketMessage(const char* data,uint64_t size,const WebSocketMessageType& type);
         std::string& getData();
-        const OpCode& getOpCode()const;
         void setData(const std::string& data);
-        void setOpCode(const OpCode& opcode);
+        const WebSocketMessageType& getType()const;
+        void setType(const WebSocketMessageType& type);
     private:
-        OpCode m_Code;
         std::string m_Data;
+        WebSocketMessageType m_Type;
     };
 }
 }

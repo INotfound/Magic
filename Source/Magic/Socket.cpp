@@ -2,7 +2,7 @@
  * @file: Socket.cpp
  * @Author: INotFound
  * @Date: 2020-03-13 22:22:28
- * @LastEditTime: 2020-03-15 23:08:34
+ * @LastEditTime: 2020-03-25 00:29:19
  */
 #include "Macro.h"
 #include "Socket.h"
@@ -12,7 +12,6 @@ namespace Magic{
     Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context)
         // :m_TimeOut(true)
         // ,m_TimeOutMs(timeOutMs)
-        // ,
         :m_BufferSize(bufferSize)
         ,m_ByteBlock(new char[m_BufferSize])
         ,m_Socket(new asio::ip::tcp::socket(context)){
@@ -49,7 +48,6 @@ namespace Magic{
         asio::async_read(*m_Socket
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_at_least(1)
-            //,std::bind(&Socket::doRecv,this,std::placeholders::_1,std::placeholders::_2,std::move(self),std::move(callBack)));
             ,std::bind([this](const asio::error_code &err, std::size_t length,const Share<Socket> self,const RecvCallBack& callback){
                 if(err){
                     m_ErrorCodeCallBack(err);

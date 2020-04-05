@@ -3,7 +3,7 @@ project(Magic)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(SRC
+set(SRCS
 #   Util
     Source/Magic.cpp
 	Source/Magic/Log.cpp
@@ -29,7 +29,9 @@ set(SRC
     Source/Magic/Http/HttpServer.cpp
     Source/Magic/Http/HttpParser.cpp
     Source/Magic/Http/HttpServlet.cpp
-#   Source/Magic/Http/WebSocketServer.cpp
+    Source/Magic/Http/WebSocketMessage.cpp
+    Source/Magic/Http/WebSocket.cpp
+    Source/Magic/Http/WebSocketServer.cpp
 #   Adapter
     Source/Magic/Adapter/WinUtil.cpp
     Source/Magic/Adapter/WinMutex.cpp
@@ -41,6 +43,10 @@ set(SRC
     Source/Magic/Http/Util/Uri.rl.cpp
     Source/Magic/Http/Util/http11_parser.rl.cpp
     Source/Magic/Http/Util/httpclient_parser.rl.cpp
+)
+
+set(SRC
+    Build.cpp
 )
 
 include_directories(Include)

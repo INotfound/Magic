@@ -2,7 +2,7 @@
  * @file: HttpParser.h
  * @Author: INotFound
  * @Date: 2020-03-15 16:56:44
- * @LastEditTime: 2020-03-15 17:04:41
+ * @LastEditTime: 2020-03-18 23:22:56
  */
 #pragma once
 #include "Core.h"
@@ -23,7 +23,7 @@ namespace Http{
         /**
          * @brief: 解析重置函数
          */
-        void clear();
+        void reset();
         /**
          * @brief: 获取错误函数
          * @return: 返回True则发生了错误，返回False则未发生错误
@@ -73,7 +73,7 @@ namespace Http{
         /**
          * @brief: 解析重置函数
          */
-        void clear();
+        void reset();
         /**
          * @brief: 获取错误函数
          * @return: 返回True则发生了错误，返回False则未发生错误

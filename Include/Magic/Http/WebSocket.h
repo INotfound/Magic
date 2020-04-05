@@ -1,3 +1,9 @@
+/*
+ * @file: WebSocket.h
+ * @Author: INotFound
+ * @Date: 2020-03-18 22:45:10
+ * @LastEditTime: 2020-03-20 00:03:59
+ */
 #pragma once
 #include "Macro.h"
 #include "Socket.h"
@@ -8,72 +14,72 @@
 #include "WebSocketServlet.h"
 namespace Magic{
 namespace Http{
-    enum class WebSocketMessageType{
-        CONTINUE = 0,
-        TEXT = 1,
-        CLOSE = 8,
-        PING = 9,
-        PONG = 0xA
-    };
+
     class WebSocket :public Socket{
     public:
-        typedef std::function<void(const Share<WebSocket>,const Safe<WebSocketMessage>&)> WebSocketHandle;
-        WebSocket(uint64_t timeOutMs,Safe<WebSocketServletDispatch>& Servlet,asio::io_context& context);
+        typedef std::function<void(const Share<WebSocket>)> OpenCallBack;
+        typedef std::function<void(const Share<WebSocket>,const Safe<WebSocketMessage>&)> RecvMessageCallBack;
+        WebSocket(uint64_t timeOutMs,asio::io_context& context);
         void accept();
-        void recvMessage();
-        void sendMessage(const Safe<WebSocketMessage>& msg,bool isContinue =false);
-        void recvMessage(const WebSocketHandle& callBack){
+        void onOpen(const OpenCallBack& callBack){
+            m_OpenWebSocketCallBack = std::move(callBack);
+        }
+        void onMessage(const RecvMessageCallBack& callBack){
             m_RecvWebSocketCallBack = std::move(callBack);
+            this->recvMessage();
+        }
+
+        void recvMessage(){
             this->recv(2,[this](const Share<Socket>& conn,StreamBuffer& data){
-                WebSocketMessageType wsMsgType;
+                WebSocketMessageType msgType;
                 const char* frame = data.data();
-                bool fin = (frame[0] >> 7) & 0x01;
+                //bool fin = (frame[0] >> 7) & 0x01;
                 unsigned char opCode = frame[0] & 0x0F;
                 bool isMask = (frame[1] >> 7) & 0x01;
-                uint16_t length = frame[1] & (~0x80);
+                uint16_t length = frame[1] & 0x7F;
                 switch(opCode){
                     case 0:
-                        wsMsgType = WebSocketMessageType::CONTINUE;
+                        msgType = WebSocketMessageType::CONTINUE;
                         break;
                     case 1:
-                        wsMsgType = WebSocketMessageType::TEXT;
+                        msgType = WebSocketMessageType::TEXT;
                         break;
                     case 8:
-                        wsMsgType = WebSocketMessageType::CLOSE;
+                        msgType = WebSocketMessageType::CLOSE;
                         break;
                     case 9:
-                        wsMsgType = WebSocketMessageType::PING;
+                        msgType = WebSocketMessageType::PING;
                         break;
                     case 0xA:
-                        wsMsgType = WebSocketMessageType::PONG;
+                        msgType = WebSocketMessageType::PONG;
                         break;
                     default:
-                        MAGIC_LOG(LogLevel::LogDebug) << "OpCode error";
+                        MAGIC_LOG(LogLevel::LogDebug) << "OpCode error code: " << (uint16_t)opCode;
                         return;
                 }
                 if(!isMask && m_Server){
                      MAGIC_LOG(LogLevel::LogDebug) << "Mask error";
                 }
+                MAGIC_LOG(LogLevel::LogDebug) << length << " xxx: " << data.size();
                 data.clear();
                 if(length == 126){
-                    this->recv(sizeof(uint16_t),[this](const Share<Socket>& conn,StreamBuffer& data){
+                    this->recv(sizeof(uint16_t),[this,msgType](const Share<Socket>& conn,StreamBuffer& data){
                         uint64_t len = *reinterpret_cast<uint16_t*>(data.data());
                         data.clear();
-                        this->recvMessageData(len);
+                        this->recvMessageData(len,msgType);
                     });
                 }else if(length == 127){
-                    this->recv(sizeof(uint64_t),[this](const Share<Socket>& conn,StreamBuffer& data){
+                    this->recv(sizeof(uint64_t),[this,msgType](const Share<Socket>& conn,StreamBuffer& data){
                         uint64_t len = *reinterpret_cast<uint64_t*>(data.data());
                         data.clear();
-                        this->recvMessageData(len);
+                        this->recvMessageData(len,msgType);
                     });
                 }else{
                     uint64_t len = length;
-                    this->recvMessageData(len);
+                    this->recvMessageData(len,msgType);
                 }
             });
         }
-
         void sendMessage(const char* data,uint64_t length,WebSocketMessageType type){
             std::string bytesFormatted;
             uint16_t indexStartPos = 0;
@@ -100,7 +106,6 @@ namespace Http{
                 indexStartPos = 10;
             }
             if(!m_Server){
-                unsigned char mask[4] = {0};
                 uint32_t randValue = std::rand();
                 bytesFormatted.resize(indexStartPos + 4 + length);
                 *(reinterpret_cast<uint32_t*>(&bytesFormatted[indexStartPos])) = randValue;
@@ -114,30 +119,36 @@ namespace Http{
             this->send(bytesFormatted);
         }
     private:
-        void recvMessageData(uint64_t length){
+        void recvMessageData(uint64_t length,WebSocketMessageType type){
             if(m_Server){
-                this->recv(4 + length,[this](const Share<Socket>& conn,StreamBuffer& data){
+                this->recv(4 + length,[this,type](const Share<Socket>& conn,StreamBuffer& data){
                     const char* mask = reinterpret_cast<char*>(data.data());
                     for(uint64_t i = 4; i < data.size(); i++){
                         data[i] ^= mask[i % 4];
                     }
-                    //m_RecvWebSocketCallBack(this->shared_from_this(),)
+                    Safe<WebSocketMessage> msg(new WebSocketMessage(data.data() + 4,data.size() - 4,type));
+                    data.clear();
+                    auto self = std::static_pointer_cast<WebSocket>(conn);
+                    m_RecvWebSocketCallBack(self,msg);
+                    this->recvMessage();
                 });
             }else{
-                this->recv(length,[this](const Share<Socket>& conn,StreamBuffer& data){
-                    //m_RecvWebSocketCallBack(this->shared_from_this(),)
+                this->recv(length,[this,type](const Share<Socket>& conn,StreamBuffer& data){
+                    Safe<WebSocketMessage> msg(new WebSocketMessage(data.data(),data.size(),type));
+                    data.clear();
+                    auto self = std::static_pointer_cast<WebSocket>(conn);
+                    m_RecvWebSocketCallBack(self,msg);
+                    this->recvMessage();
                 });
             }
         }
-        void sendData(std::string& data);
-        void recvData(uint64_t length,bool isContinue);
     private:
         bool m_Server;
         std::string m_Name;
-        WebSocketHandle m_RecvWebSocketCallBack;
+        OpenCallBack m_OpenWebSocketCallBack;
+        RecvMessageCallBack m_RecvWebSocketCallBack;
         Safe<Http::HttpRequestParser> m_RequestParser;
         Safe<Http::HttpResponseParser> m_ResponseParser;
-        Safe<WebSocketServletDispatch>& m_ServletDispatch;
     };
 }
 }

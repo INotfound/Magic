@@ -1,8 +1,8 @@
 /*
  * @file: Gzip.cpp
- * @Author: INotFound
+ * @Author: chafey
  * @Date: 2020-02-13 17:09:39
- * @LastEditTime: 2020-03-14 00:16:08
+ * @LastEditTime: 2020-03-25 00:31:23
  */
 #include "Gzip.h"
 #include <zlib.h>

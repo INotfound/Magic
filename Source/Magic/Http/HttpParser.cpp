@@ -2,7 +2,7 @@
  * @file: HttpParser.cpp
  * @Author: INotFound
  * @Date: 2020-03-12 20:35:38
- * @LastEditTime: 2020-03-15 17:56:07
+ * @LastEditTime: 2020-03-18 23:23:19
  */
 #include "Http/HttpParser.h"
 #include <cstring>
@@ -74,7 +74,7 @@ namespace Http{
         m_Parser.data = this;
 
     }
-    void HttpRequestParser::clear(){
+    void HttpRequestParser::reset(){
         m_Error = false;
         m_Data.reset(new HttpRequest(true));
         http_parser_init(&m_Parser);
@@ -164,7 +164,7 @@ namespace Http{
         m_Parser.http_field     = OnResponseHttpField;
         m_Parser.data = this;
     }
-    void HttpResponseParser::clear(){
+    void HttpResponseParser::reset(){
         m_Error = false;
         m_Data.reset(new HttpResponse(true));
         httpclient_parser_init(&m_Parser);

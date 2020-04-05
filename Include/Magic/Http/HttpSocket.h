@@ -2,7 +2,7 @@
  * @file: HttpSocket.h
  * @Author: INotFound
  * @Date: 2020-03-15 17:48:05
- * @LastEditTime: 2020-03-15 17:51:52
+ * @LastEditTime: 2020-03-18 23:02:54
  */
 #pragma once
 #include "Core.h"
@@ -18,7 +18,7 @@ namespace Http{
     class HttpSocket :public Socket{
     public:
         /// Http处理方法
-        typedef std::function<void(const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpHandle;
+        typedef std::function<void(const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
         /**
          * @brief: 构造函数
          * @param timeOutMs 超时时间 
@@ -29,12 +29,12 @@ namespace Http{
          * @brief: 接收请求头函数
          * @param callback 接收回调函数
          */
-        void recvRequest(const HttpHandle& callback);
+        void recvRequest(const HttpRecvBack& callback);
         /**
          * @brief: 接收响应头函数
          * @param callback 接收回调函数
          */
-        void recvResponse(const HttpHandle& callback);
+        void recvResponse(const HttpRecvBack& callback);
     private:
         /**
          * @brief: 请求头解析函数
@@ -45,8 +45,8 @@ namespace Http{
          */
         void responseParser();
     private:
-        HttpHandle m_RecvRequestCallBack;
-        HttpHandle m_RecvResponseCallBack;
+        HttpRecvBack m_RecvRequestCallBack;
+        HttpRecvBack m_RecvResponseCallBack;
         Safe<HttpRequestParser> m_RequestParser;
         Safe<HttpResponseParser> m_ResponseParser;
     };

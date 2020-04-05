@@ -2,7 +2,7 @@
  * @file: HttpSocket.cpp
  * @Author: INotFound
  * @Date: 2020-03-12 20:41:54
- * @LastEditTime: 2020-03-15 17:56:41
+ * @LastEditTime: 2020-03-19 23:15:39
  */
 #include "Http/HttpSocket.h"
 
@@ -13,11 +13,11 @@ namespace Http{
         m_RequestParser.reset(new HttpRequestParser);
         m_ResponseParser.reset(new HttpResponseParser);
     }
-    void HttpSocket::recvRequest(const HttpHandle& callback){
+    void HttpSocket::recvRequest(const HttpRecvBack& callback){
             m_RecvRequestCallBack = std::move(callback);
             this->requestParser();
     }
-    void HttpSocket::recvResponse(const HttpHandle& callback){
+    void HttpSocket::recvResponse(const HttpRecvBack& callback){
         m_RecvResponseCallBack = std::move(callback);
         this->responseParser();
     }
@@ -50,7 +50,7 @@ namespace Http{
                     sstream << response;
                     conn->send(sstream.str());
                     data.clear();
-                    m_RequestParser->clear();
+                    m_RequestParser->reset();
                     this->requestParser();
                 });
             }else{
@@ -63,7 +63,7 @@ namespace Http{
                     sstream << response;
                     conn->send(sstream.str());
                     data.clear();
-                    m_RequestParser->clear();
+                    m_RequestParser->reset();
                     this->requestParser();
             }
         });
@@ -93,7 +93,7 @@ namespace Http{
                     response->setBody(body);
                     m_RecvResponseCallBack(request,response);
                     data.clear();
-                    m_ResponseParser->clear();
+                    m_ResponseParser->reset();
                     this->responseParser();
                 });
             }else{
@@ -101,7 +101,7 @@ namespace Http{
                     auto& response = m_ResponseParser->getData();
                     m_RecvResponseCallBack(request,response);
                     data.clear();
-                    m_ResponseParser->clear();
+                    m_ResponseParser->reset();
                     this->responseParser();
             }
         });
