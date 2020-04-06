@@ -2,12 +2,13 @@
  * @file: MultiPart.h
  * @Author: INotFound
  * @Date: 2020-03-15 17:10:22
- * @LastEditTime: 2020-03-15 17:52:49
+ * @LastEditTime: 2020-04-06 19:50:55
  */
 #pragma once
-#include "Core.h"
-#include "Http/Http.h"
-#include "Http/HttpFile.h"
+#include "Http.h"
+#include "HttpFile.h"
+
+#include "../Core.h"
 namespace Magic{
 namespace Http{
     /**

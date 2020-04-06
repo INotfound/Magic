@@ -2,16 +2,18 @@
  * @file: WebSocket.h
  * @Author: INotFound
  * @Date: 2020-03-18 22:45:10
- * @LastEditTime: 2020-03-20 00:03:59
+ * @LastEditTime: 2020-04-06 19:52:12
  */
 #pragma once
-#include "Macro.h"
-#include "Socket.h"
-#include "Crypto.h"
-#include "Http/Http.h"
-#include "Http/HttpParser.h"
+#include "Http.h"
+#include "HttpParser.h"
 #include "WebSocketMessage.h"
 #include "WebSocketServlet.h"
+
+#include "../Macro.h"
+#include "../Socket.h"
+#include "../Crypto.h"
+
 namespace Magic{
 namespace Http{
 

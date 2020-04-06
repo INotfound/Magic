@@ -2,10 +2,11 @@
  * @file: Uri.h
  * @Author: INotFound
  * @Date: 2020-03-15 17:24:20
- * @LastEditTime: 2020-03-15 17:27:48
+ * @LastEditTime: 2020-04-06 19:54:14
  */
 #pragma once
-#include "Core.h"
+#include "../Core.h"
+
 namespace Magic {
 /*
      foo://user@sylar.com:8042/over/there?name=ferret#nose

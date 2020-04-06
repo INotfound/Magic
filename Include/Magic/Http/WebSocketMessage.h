@@ -2,10 +2,11 @@
  * @file: WebSoscketMessage.h
  * @Author: INotFound
  * @Date: 2020-03-18 22:50:40
- * @LastEditTime: 2020-03-18 22:58:43
+ * @LastEditTime: 2020-04-06 17:28:49
  */
 #pragma once
-#include "Core.h"
+#include "../Core.h"
+
 namespace Magic{
 namespace Http{
     enum class WebSocketMessageType{

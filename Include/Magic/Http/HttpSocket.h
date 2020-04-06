@@ -2,14 +2,15 @@
  * @file: HttpSocket.h
  * @Author: INotFound
  * @Date: 2020-03-15 17:48:05
- * @LastEditTime: 2020-03-18 23:02:54
+ * @LastEditTime: 2020-04-06 19:51:56
  */
 #pragma once
-#include "Core.h"
-#include "Macro.h"
-#include "Socket.h"
-#include "Http/Http.h"
-#include "Http/HttpParser.h"
+#include "Http.h"
+#include "HttpParser.h"
+
+#include "../Core.h"
+#include "../Macro.h"
+#include "../Socket.h"
 namespace Magic{
 namespace Http{
     /**

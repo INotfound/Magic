@@ -2,12 +2,13 @@
  * @file: HttpServer.h
  * @Author: INotFound
  * @Date: 2020-03-15 17:05:03
- * @LastEditTime: 2020-03-15 17:09:55
+ * @LastEditTime: 2020-04-06 19:53:44
  */
 #pragma once
-#include "Core.h"
-#include "TcpServer.h"
-#include "Http/HttpServlet.h"
+#include "HttpServlet.h"
+
+#include "../Core.h"
+#include "../TcpServer.h"
 
 namespace Magic{
 namespace Http{

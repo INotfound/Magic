@@ -2,13 +2,14 @@
  * @file: Http.h
  * @Author: INotFound
  * @Date: 2020-03-13 23:31:12
- * @LastEditTime: 2020-03-15 16:53:02
+ * @LastEditTime: 2020-04-06 19:54:06
  */
 #pragma once
 #include <map>
 #include <string>
 #include <ostream>
-#include "Core.h"
+
+#include "../Core.h"
 
 namespace Magic{
 namespace Http{

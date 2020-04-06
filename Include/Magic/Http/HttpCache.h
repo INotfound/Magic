@@ -2,14 +2,16 @@
  * @file: HttpCache.h
  * @Author: INotFound
  * @Date: 2020-03-15 16:50:11
- * @LastEditTime: 2020-04-05 23:42:36
+ * @LastEditTime: 2020-04-06 19:53:34
  */
 #pragma once
 #include <unordered_map>
-#include "Core.h"
-#include "Macro.h"
-#include "Mutex.h"
-#include "Http/Http.h"
+#include "Http.h"
+
+#include "../Core.h"
+#include "../Macro.h"
+#include "../Mutex.h"
+
 namespace Magic{
 namespace Http{
 namespace Instance{

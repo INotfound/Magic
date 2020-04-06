@@ -2,12 +2,13 @@
  * @file: MySql.h
  * @Author: INotFound
  * @Date: 2020-02-18 11:35:25
- * @LastEditTime: 2020-03-16 00:02:48
+ * @LastEditTime: 2020-04-06 17:29:16
  */
 #pragma once
 #include <mysql/mysql.h>
-#include "Core.h"
-#include "Mutex.h"
+
+#include "../Core.h"
+#include "../Mutex.h"
 namespace Magic{
 namespace DB{
     class MySql{

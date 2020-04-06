@@ -6,10 +6,10 @@
  */
 #pragma once
 #include <unordered_map>
+#include "Http.h"
 
-#include "Core.h"
-#include "Mutex.h"
-#include "Http/Http.h"
+#include "../Core.h"
+#include "../Mutex.h"
 namespace Magic{
 namespace Http{
     /**
