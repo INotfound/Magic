@@ -2,15 +2,15 @@
  * @file: HttpServlet.cpp
  * @Author: INotFound
  * @Date: 2020-03-15 17:45:01
- * @LastEditTime: 2020-03-15 17:56:39
+ * @LastEditTime: 2020-04-06 20:15:03
  */
 #include <regex>
 #include "Http/HttpServlet.h"
 namespace Magic{
 namespace Http{
 
-    HttpServlet::HttpServlet(const std::string& name)
-        :m_Name(name){
+    HttpServlet::HttpServlet(const std::string& path)
+        :m_Name(path){
     }
     const std::string HttpServlet::getName() const{
         return m_Name;
