@@ -13,7 +13,7 @@
 
 namespace Magic{
 namespace DB{
-    class MySql :public ISql{
+    class MySql{
         friend class MySqlStmt;
     public:
         MySql();
@@ -24,13 +24,18 @@ namespace DB{
         MYSQL m_MySql;
         Mutex m_Mutex;
     };
-    class MySqlStmt :public ISqlStmt{
+    class MySqlStmt{
     public:
         MySqlStmt(const Safe<MySql>& sql);
         ~MySqlStmt();
+        bool next();
+        bool query();
+        bool execute();
         void printError();
         bool prepare(const std::string& sql);
         void bindNull(uint32_t index);
+        void bind(uint32_t index,const float& value);
+        void bind(uint32_t index,const double& value);
         void bind(uint32_t index,const int8_t& value);
         void bind(uint32_t index,const uint8_t& value);
         void bind(uint32_t index,const int16_t& value);
@@ -39,13 +44,10 @@ namespace DB{
         void bind(uint32_t index,const uint32_t& value);
         void bind(uint32_t index,const int64_t& value);
         void bind(uint32_t index,const uint64_t& value);
-        void bind(uint32_t index,const float& value);
-        void bind(uint32_t index,const double& value);
         void bind(uint32_t index,const std::string& value);
         void bindTime(uint32_t index,const time_t& value);
         void bindBlob(uint32_t index,const std::string& value);
         void bindBlob(uint32_t index,const void* value,uint64_t size);
-        bool execute();
 
         bool isNull(uint32_t index);
         int8_t getInt8(uint32_t index);
@@ -61,8 +63,7 @@ namespace DB{
         time_t getTime(uint32_t index);
         std::string getString(uint32_t index);
         std::string getBlob(uint32_t index);
-        bool query();
-        bool next();
+
     private:
         class SqlResult{
         public:

@@ -22,7 +22,6 @@ namespace DB{
         virtual bool execute() =0;
         virtual void printError() =0;
         virtual bool prepare(const std::string& sql) =0;
-
         virtual void bindNull(uint32_t index) =0;
         virtual void bind(uint32_t index,const float& value) =0;
         virtual void bind(uint32_t index,const double& value) =0;
