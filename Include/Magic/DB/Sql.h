@@ -8,19 +8,16 @@
 #include "../Core.h"
 namespace Magic{
 namespace DB{
-    class Sql{
-        friend class SqlStmt;
+    class ISql{
     public:
-        virtual ~Sql(){};
+        virtual ~ISql(){};
         virtual bool execute(const std::string& sql) =0;
-        virtual bool createBataBase(const std::string& dataBase) =0;
         virtual bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port) =0;
     };
-    class SqlStmt{
+    class ISqlStmt{
     public:
-        explicit SqlStmt(const Safe<Sql>& sql);
-        virtual ~SqlStmt(){};
-        virtual bool next();
+        virtual ~ISqlStmt(){};
+        virtual bool next() =0;
         virtual bool query() =0;
         virtual bool execute() =0;
         virtual void printError() =0;

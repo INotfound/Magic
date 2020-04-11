@@ -42,6 +42,13 @@ namespace DB{
     MySql::~MySql(){
         mysql_close(&m_MySql);
     }
+    bool MySql::execute(const std::string& sql){
+        Mutex::Lock lock(m_Mutex);
+        if(mysql_real_query(&m_MySql,sql.c_str(),sql.size()) == 0){
+            return true;
+        }
+        return false;
+    }
     bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port){
         Mutex::Lock lock(m_Mutex);
         if(!mysql_init(&m_MySql)){
@@ -58,13 +65,7 @@ namespace DB{
         MAGIC_LOG(Magic::LogLevel::LogInfo) << "Database connected successful";
         return true;
     }
-    bool MySql::execute(const std::string& sql){
-        Mutex::Lock lock(m_Mutex);
-        if(mysql_real_query(&m_MySql,sql.c_str(),sql.size()) == 0){
-            return true;
-        }
-        return false;
-    }
+
 
     MySqlStmt::MySqlStmt(const Safe<MySql>& sql)
         :m_Stmt(nullptr)

@@ -5,26 +5,26 @@
  * @LastEditTime: 2020-04-06 17:29:16
  */
 #pragma once
+#include <mysql/mysql.h>
 
+#include "Sql.h"
 #include "../Core.h"
 #include "../Mutex.h"
-#include "mysql/mysql.h"
 
 namespace Magic{
 namespace DB{
-    class MySql{
+    class MySql :public ISql{
         friend class MySqlStmt;
     public:
         MySql();
         ~MySql();
-        bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port);
-        bool createBataBase(const std::string& dataBase);
         bool execute(const std::string& sql);
+        bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port);
     private:
         MYSQL m_MySql;
         Mutex m_Mutex;
     };
-    class MySqlStmt{
+    class MySqlStmt :public ISqlStmt{
     public:
         MySqlStmt(const Safe<MySql>& sql);
         ~MySqlStmt();
