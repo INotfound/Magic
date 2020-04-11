@@ -72,8 +72,8 @@ set(MAGIC ../Magic)                         #将MAGIC变量指向本库地址即
 include(${MAGIC}/Library.cmake)
 add_subdirectory(${MAGIC} Magic.out)
 include_directories(
-	${MAGIC}/Include						#Magic
-	${MAGIC}/ThirdParty/Gzip				#Gzip
+	${MAGIC}/Include			#Magic
+	${MAGIC}/ThirdParty/Gzip		#Gzip
 	${MAGIC}/ThirdParty/Asio/asio/include	#ASIO
 	${MAGIC}/ThirdParty/RapidJSON/include	#RapidJSON
 )
