@@ -30,9 +30,12 @@
 
 #ifndef ZLIB_H
 #define ZLIB_H
-
+#if defined(linux) || defined(__linux__)
 #include "zconf.h.in"
-
+#endif
+#if defined(_WIN32) || defined(_WIN64)
+#include "zconf.h"
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
