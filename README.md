@@ -67,7 +67,7 @@
 ```
 * 把以下代码添加进你的项目文件CMakeLists.txt中进行后即可进行构建编译.
 ```
-####################################
+########################################################################################
 set(MAGIC ../Magic)                         #将MAGIC变量指向本库地址即可
 include(${MAGIC}/Library.cmake)
 add_subdirectory(${MAGIC} Magic.out)
@@ -77,7 +77,7 @@ include_directories(
 	${MAGIC}/ThirdParty/Asio/asio/include	#ASIO
 	${MAGIC}/ThirdParty/RapidJSON/include	#RapidJSON
 )
-####################################
+########################################################################################
 ```
 
 ## 联系方式
