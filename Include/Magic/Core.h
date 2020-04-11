@@ -254,7 +254,7 @@ namespace Magic{
     inline std::string TimeToString(time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
         struct tm nowTime;
     #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime, &time_secounds);
+        localtime_s(&nowTime, &ts);
     #else
         localtime_r(&ts, &nowTime);
     #endif

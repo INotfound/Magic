@@ -35,6 +35,12 @@
 #include "Magic/Http/HttpSocket.h"
 #include "Magic/Http/HttpParser.h"
 #include "Magic/Http/HttpServlet.h"
+//WEB
+#include "Magic/Http/WebSocket.h"
+#include "Magic/Http/WebSocketClient.h"
+#include "Magic/Http/WebSocketServer.h"
+#include "Magic/Http/WebSocketMessage.h"
+#include "Magic/Http/WebSocketServlet.h"
 
 namespace Magic {
     void Init(const std::string& Name);

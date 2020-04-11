@@ -6,7 +6,7 @@ namespace DB{
     void MySqlTimeToTime(const MYSQL_TIME& mt,time_t& ts){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime, &time_secounds);
+        localtime_s(&time, &ts);
     #else
         localtime_r(&ts, &time);
     #endif
@@ -25,7 +25,7 @@ namespace DB{
     void TimeToMySqlTime(const time_t& ts,MYSQL_TIME& mt){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime, &time_secounds);
+        localtime_s(&time, &ts);
     #else
         localtime_r(&ts, &time);
     #endif

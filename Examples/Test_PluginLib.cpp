@@ -21,24 +21,20 @@ public:
         return 6666666;
     }
 };
+
+
 #if defined(_WIN32) || defined(_WIN64)
 //Win
- extern "C"
- {
-     _declspec(dllexport) void* create()
-     {
-         return new PluginModule;
-     }
- }
+#   define DLL_API extern "C" __declspec(dllexport)
+    DLL_API void* create(){
+        return new PluginModule;
+    }
 #endif
 
 #if defined(linux) || defined(__linux__)
+#   define DLL_API extern "C"
 //Linux
-extern "C"
-{
-    void* create()
-    {
+    DLL_API void* create(){
         return new PluginModule;
     }
-}
 #endif

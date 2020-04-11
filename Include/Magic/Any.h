@@ -5,10 +5,10 @@
  * @LastEditTime: 2020-03-15 17:53:53
  */
 #pragma once
-#if __cplusplus >= 201703L | (defined(_WIN32) || defined(_WIN64))
+#if __cplusplus >= 201703L
 #include <any>
+namespace Magic{ typedef std::any Any }
 #else
-
 #include "Core.h"
 #include "Macro.h"
 #include <typeindex>

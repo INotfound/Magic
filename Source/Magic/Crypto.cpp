@@ -4,9 +4,11 @@
  * @Date: 2020-03-01 15:53:59
  * @LastEditTime: 2020-03-14 00:16:19
  */
-#include "Crypto.h"
 #include <cstdio>
 #include <cstring>
+#include "Crypto.h"
+#include "openssl/md5.h"
+#include "openssl/sha.h"
 namespace Magic{
     static char MD5Chars[33] = {0};
     static char SHA1Chars[41] = {0};

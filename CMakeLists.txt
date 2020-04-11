@@ -3,6 +3,16 @@ project(Magic)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+set(Library
+    Include
+    Include/Magic
+    ThirdParty/Gzip                 #Gzip
+    ThirdParty/RapidJSON/include    #RapidJSON
+    ThirdParty/Asio/asio/include    #ASIO
+)
+#   Include
+include_directories(${Library})
+
 set(SRCS
 #   Util
     Source/Magic.cpp
@@ -49,41 +59,72 @@ set(SRC
     Build.cpp
 )
 
-include_directories(Include)
-include_directories(Include/Magic)
-include_directories(ThirdParty/Gzip)                #Gzip
-include_directories(ThirdParty/RapidJSON/include)   #RapidJSON
-include_directories(ThirdParty/Asio/asio/include)   #ASIO
+#   Include
+set(OPENSSL_INCLUDE "C:\\Users\\magic\\Desktop\\openssl\\ssl\\include")
+set(MYSQL_INCLUDE "C:\\Program Files (x86)\\MySQL\\MySQL Connector C 6.1\\include")
+#   Library
+set(OPENSSL_LIBRARY "C:\\Users\\magic\\Desktop\\openssl\\ssl\\lib")
+set(MYSQL_LIBRARY "C:\\Program Files (x86)\\MySQL\\MySQL Connector C 6.1\\lib")
 
 if(WIN32 AND NOT MINGW)
     message("~~~~~~~~~WIN32 Configuration~~~~~~~~")
-    
-    #GZip
-    add_definitions(-D Z_PREFIX)
-    add_subdirectory(ThirdParty/Gzip)
-    set(LIBS
-        zlib
-        mysqlclient
+
+    #   Include
+    include_directories(
+        ${MYSQL_INCLUDE}
+        ${OPENSSL_INCLUDE}
     )
-    add_library(Magic ${SRC})
-elseif(WIN32 AND MINGW)
-    message("~~~~~~~~~MINGW Configuration~~~~~~~~")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+    #   Library
+    link_directories(
+        ${MYSQL_LIBRARY}
+        ${OPENSSL_LIBRARY}
+    )
 
     #GZip
-    add_definitions(-D Z_PREFIX)
     add_subdirectory(ThirdParty/Gzip)
+
+    #Library
     set(LIBS
+        ssl
         zlib
-        mysqlclient
+        mysql
+        ws2_32
+        crypto
+        mswsock
     )
-    add_library(Magic ${SRC})
+elseif(WIN32 AND MINGW)
+    message("~~~~~~~~~MINGW Configuration~~~~~~~~")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
+    #   Include
+    include_directories(
+        ${MYSQL_INCLUDE}
+        ${OPENSSL_INCLUDE}
+    )
+    #   Library
+    link_directories(
+        ${MYSQL_LIBRARY}
+        ${OPENSSL_LIBRARY}
+    )
+    #GZip
+    add_subdirectory(ThirdParty/Gzip)
+
+    #Library
+    set(LIBS
+        ssl
+        zlib
+        mysql
+        ws2_32
+        crypto
+        mswsock
+    )
 elseif(UNIX AND NOT ANDROID)
     message("~~~~~~~~~UNIX Configuration~~~~~~~~~")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
@@ -94,6 +135,7 @@ elseif(UNIX AND NOT ANDROID)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g2")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+
     set(LIBS
         z
         dl
@@ -101,9 +143,9 @@ elseif(UNIX AND NOT ANDROID)
         crypto
         mysqlclient
     )
-    add_library(Magic ${SRC})
 endif()
 
+add_library(Magic ${SRC})
 target_link_libraries(Magic ${LIBS})
 
 #Test

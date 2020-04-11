@@ -6,8 +6,6 @@
  */
 #pragma once
 #include <string>
-#include "openssl/md5.h"
-#include "openssl/sha.h"
 namespace Magic {
     /**
      * @brief: MD5

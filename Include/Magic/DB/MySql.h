@@ -5,10 +5,11 @@
  * @LastEditTime: 2020-04-06 17:29:16
  */
 #pragma once
-#include <mysql/mysql.h>
 
 #include "../Core.h"
 #include "../Mutex.h"
+#include "mysql/mysql.h"
+
 namespace Magic{
 namespace DB{
     class MySql{

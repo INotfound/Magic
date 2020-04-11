@@ -4,9 +4,8 @@
  * @Date: 2020-03-12 01:59:04
  * @LastEditTime: 2020-03-19 23:25:06
  */
-#include "Magic.h"
 #include <iostream>
-#include "Magic/Http/WebSocketServer.h"
+#include "Magic.h"
 
 int main() {
     Magic::Init("Build_Test");
