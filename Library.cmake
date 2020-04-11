@@ -1,10 +1,11 @@
+########################################################################################
 #   Include
 set(OPENSSL_INCLUDE "C:\\Users\\magic\\Desktop\\openssl\\ssl\\include")
 set(MYSQL_INCLUDE "C:\\Program Files (x86)\\MySQL\\MySQL Connector C 6.1\\include")
 #   Library
 set(OPENSSL_LIBRARY "C:\\Users\\magic\\Desktop\\openssl\\ssl\\lib")
 set(MYSQL_LIBRARY "C:\\Program Files (x86)\\MySQL\\MySQL Connector C 6.1\\lib")
-
+########################################################################################
 
 if(WIN32 AND NOT MINGW)
     message("~~~~~~~~~WIN32 Configuration~~~~~~~~")
