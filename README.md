@@ -2,7 +2,7 @@
  * @file: 
  * @Author: INotFound
  * @Date: 2020-03-16 00:33:44
- * @LastEditTime: 2020-04-06 01:24:43
+ * @LastEditTime: 2020-04-11 16:50:55
  -->
 # Magic服务端基础框架
 * Magic 是一个能Web快速开发,且基于ASIO网络框架,拥有丰富的基础组件(Win And Linux)跨平台框架库。
@@ -53,20 +53,31 @@
 * 加密库 OpenSSL ,数据库 MySql ,压缩库 zlib .
 ## 引用方法之一
 * 推荐使用CMake进行构建.
-* 配置MySql头文件和库到你的项目中.
-* 将Magic克隆在你的项目目录同级的地方.
+* 配置MySql | OpenSSL (Linux可直接通过包管理器安装,Win需要下载编译安装) .
+```
+    //修改本库中的Library.cmake，将其变量指向你编译后的地址 (Linux无需如此).
+########################################################################################
+    #   Include
+    set(OPENSSL_INCLUDE "C:\\Users\\magic\\Desktop\\openssl\\ssl\\include")
+    set(MYSQL_INCLUDE   "C:\\Program Files (x86)\\MySQL\\MySQL Connector C 6.1\\include")
+    #   Library
+    set(OPENSSL_LIBRARY "C:\\Users\\magic\\Desktop\\openssl\\ssl\\lib")
+    set(MYSQL_LIBRARY   "C:\\Program Files (x86)\\MySQL\\MySQL Connector C 6.1\\lib")
+########################################################################################
+```
 * 把以下代码添加进你的项目文件CMakeLists.txt中进行后即可进行构建编译.
 ```
-    #Magic
-        add_subdirectory(../Magic Magic.out)
-        include_directories(../Magic/Include)
-        include_directories(../Magic/Include/Magic)
-    #Gzip
-        include_directories(../Magic/ThirdParty/Gzip)
-    #ASIO
-        include_directories(../Magic/ThirdParty/Asio/asio/include)
-    #RapidJSON
-        include_directories(../Magic/ThirdParty/RapidJSON/include)
+####################################
+set(MAGIC ../Magic)                         #将MAGIC变量指向本库地址即可
+include(${MAGIC}/Library.cmake)
+add_subdirectory(${MAGIC} Magic.out)
+include_directories(
+	${MAGIC}/Include						#Magic
+	${MAGIC}/ThirdParty/Gzip				#Gzip
+	${MAGIC}/ThirdParty/Asio/asio/include	#ASIO
+	${MAGIC}/ThirdParty/RapidJSON/include	#RapidJSON
+)
+####################################
 ```
 
 ## 联系方式
