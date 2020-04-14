@@ -38,7 +38,7 @@ namespace Magic{
         template<class U>
         U& AnyCast(){
             if (!Is<U>()){
-                MAGIC_LOG(LogLevel::LogError) << "Can not cast " << typeid(U).name() << " to " << m_TypeIndex.name();
+                MAGIC_DEBUG() << "Can not cast " << typeid(U).name() << " to " << m_TypeIndex.name();
                 throw std::bad_cast();
             }
 
