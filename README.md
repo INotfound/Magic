@@ -28,7 +28,7 @@
 ```
     /// 可自定义配置生成Html格式日志文件和普通日志文件.
     /// 可通过Magic::LogLevel枚举类调整日志输出等级.
-    MAGIC_LOG(Magic::LogLevel::LogDebug) << "hello world";
+    MAGIC_DEBUG() << "hello world";
 ```
 * Plugin插件组件的食用方法.
 ```

@@ -17,7 +17,7 @@ namespace Magic{
         ,m_Socket(new asio::ip::tcp::socket(context)){
         m_StreamBuffer.reserve(m_BufferSize);
         m_ErrorCodeCallBack = [](const asio::error_code & err){
-            MAGIC_LOG(LogLevel::LogDebug) << err.message();
+            MAGIC_DEBUG() << err.message();
         };
     }
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){

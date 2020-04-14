@@ -40,7 +40,7 @@ namespace Magic {
         WIN32_FIND_DATAA findFileData;
         HANDLE hFile = FindFirstFileA(findFilename, &findFileData);
         if (INVALID_HANDLE_VALUE == hFile){
-            MAGIC_LOG(Magic::LogLevel::LogDebug)  << "Open dir error...";
+            MAGIC_DEBUG()  << "Open dir error...";
             return false;
         }
         char temp[256];

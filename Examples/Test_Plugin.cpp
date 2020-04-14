@@ -21,7 +21,7 @@ void Plugin(){
     auto& pluginMgr = Magic::PluginMgr::GetInstance();
     pluginMgr->addPlugin(plugin);
     Safe<IPluginModule> pp(pluginMgr->at("TestLib")->getInstance<IPluginModule>());
-    MAGIC_LOG(Magic::LogLevel::LogInfo) << pp->arg();
+    MAGIC_INFO() << pp->arg();
 }
 
 int main(){

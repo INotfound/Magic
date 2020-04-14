@@ -16,7 +16,7 @@ include_directories(${Library})
 #GZip
 add_subdirectory(ThirdParty/Gzip)
 
-set(SRCS
+set(SRC
 #   Util
     Source/Magic.cpp
 	Source/Magic/Log.cpp
@@ -58,7 +58,7 @@ set(SRCS
     Source/Magic/Http/Util/httpclient_parser.rl.cpp
 )
 
-set(SRC
+set(SRCS
     Build.cpp
 )
 

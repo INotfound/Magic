@@ -54,7 +54,7 @@ class FileServlet :public Magic::Http::HttpServlet{
         bool handle (const Safe<Magic::Http::HttpRequest>& request,const Safe<Magic::Http::HttpResponse>& response) override{
             Magic::Http::MultiPart multiPart;
             multiPart.parse(request);
-            MAGIC_LOG(Magic::LogLevel::LogDebug) << multiPart.getParams().count("xxxx");
+            MAGIC_DEBUG() << multiPart.getParams().count("xxxx");
             auto fileIter = multiPart.getFiles().begin();
             auto fileEnd = multiPart.getFiles().end();
             for(;fileIter!=fileEnd; fileIter++){

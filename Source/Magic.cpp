@@ -31,6 +31,6 @@ namespace Magic {
 
         MAGIC_LOG_ROOT()->addILogAppender(logHtmlAppender);
         MAGIC_LOG_ROOT()->addILogAppender(logStdOutAppender);
-        MAGIC_LOG(LogLevel::LogInfo) << "Magic initialized successfully";
+        MAGIC_INFO() << "Magic initialized successfully";
     }
 }

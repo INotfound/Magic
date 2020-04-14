@@ -183,7 +183,7 @@ namespace Instance{
         std::remove(m_ConfigFile->getPath().c_str());
         m_ConfigFile->open();
         m_ConfigFile->write(m_ConfigMap);
-        MAGIC_LOG(LogLevel::LogDebug) << "Update configuration items";
+        MAGIC_DEBUG() << "Update configuration items";
     }
     void Config::addConfigFile(Safe<ConfigFile>& configFile) {
         RWMutex::WriteLock lock(m_Mutex);

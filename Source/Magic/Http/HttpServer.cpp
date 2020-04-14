@@ -29,14 +29,14 @@ namespace Http{
                     if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
                         return;
                     }
-                    MAGIC_LOG(LogLevel::LogWarn) <<  err.message();
+                    MAGIC_WARN() <<  err.message();
                 });
                 this->handleFunc(socket);
             }else{
                 if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
                         return;
                 }
-                MAGIC_LOG(LogLevel::LogWarn) <<  err.message();
+                MAGIC_WARN() <<  err.message();
             }
             if(m_IsRun){
                 accept();

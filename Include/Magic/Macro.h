@@ -43,7 +43,11 @@
 
 #define MAGIC_LOG_NAME(name)          Magic::LoggerMgr::GetInstance()->getLogger(name)
 
-#define MAGIC_LOG(level)              MAGIC_LOG_LEVEL(MAGIC_LOG_ROOT(),level)
+#define MAGIC_INFO()                  MAGIC_LOG_LEVEL(Magic::LoggerMgr::GetInstance()->getRoot(),Magic::LogLevel::LogInfo)
+#define MAGIC_WARN()                  MAGIC_LOG_LEVEL(Magic::LoggerMgr::GetInstance()->getRoot(),Magic::LogLevel::LogWarn)
+#define MAGIC_DEBUG()                 MAGIC_LOG_LEVEL(Magic::LoggerMgr::GetInstance()->getRoot(),Magic::LogLevel::LogDebug)
+#define MAGIC_ERROR()                 MAGIC_LOG_LEVEL(Magic::LoggerMgr::GetInstance()->getRoot(),Magic::LogLevel::LogError)
+#define MAGIC_FATAL()                 MAGIC_LOG_LEVEL(Magic::LoggerMgr::GetInstance()->getRoot(),Magic::LogLevel::LogFatal)
 
 #define MAGIC_ASSERT(exp,msg) \
     if(!(exp)) { \

@@ -11,7 +11,7 @@ namespace Magic{
         :m_Name(name)
         ,m_Create(nullptr) {
         m_Handle = LoadLibrary(path.c_str());
-        MAGIC_LOG(LogLevel::LogDebug) << "Loading Plugin Module: " << path.c_str();
+        MAGIC_DEBUG() << "Loading Plugin Module: " << path.c_str();
         if (m_Handle) {
             m_IsInstance = true;
             m_Create = reinterpret_cast<create_t>(GetProcAddress(m_Handle, "create"));
@@ -19,7 +19,7 @@ namespace Magic{
         }
         else {
             m_IsInstance = false;
-            MAGIC_LOG(LogLevel::LogError) << name.c_str() << ": " << path.c_str();
+            MAGIC_ERROR() << name.c_str() << ": " << path.c_str();
         }
     }
     std::string Plugin::getName() const {

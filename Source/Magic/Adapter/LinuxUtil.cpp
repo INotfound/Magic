@@ -37,7 +37,7 @@ namespace Magic {
         char base[1000];
         struct dirent *direntPtr;
         if ((dir=opendir(basePath.c_str())) == NULL){
-            MAGIC_LOG(Magic::LogLevel::LogDebug)  << "Open dir error...";
+            MAGIC_DEBUG()  << "Open dir error...";
             return false;
         }
         
@@ -74,7 +74,7 @@ namespace Magic {
         int32_t retValue = backtrace(buffer, size);
         char** string = backtrace_symbols(buffer, retValue);
         if (string == nullptr) {
-            MAGIC_LOG(Magic::LogLevel::LogError) << "backtrace_symbols error!";
+            MAGIC_ERROR() << "backtrace_symbols error!";
         }
         uint32_t newValue = static_cast<uint32_t>(retValue);
         for (uint32_t i = skip; i < newValue; i++) {

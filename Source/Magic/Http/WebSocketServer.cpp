@@ -20,11 +20,11 @@ namespace Http{
             m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
                 if(err){
                     //TODO: ...
-                    MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                    MAGIC_WARN() << err.message();
                     return;
                 }
                 this->handleFunc(socket);
-                MAGIC_LOG(LogLevel::LogWarn) << "accept one";
+                MAGIC_WARN() << "accept one";
                 if(m_IsRun){
                     accept();
                 }
@@ -35,7 +35,7 @@ namespace Http{
                 Safe<HttpRequestParser> requestParser(new HttpRequestParser);
                 size_t nparse = requestParser->execute(data.data(),data.size());
                 if(requestParser->hasError()) {
-                    MAGIC_LOG(LogLevel::LogWarn) << "HttpParser hasError";
+                    MAGIC_WARN() << "HttpParser hasError";
                     return;
                 }
                 uint64_t m_Offset = data.size() - nparse;
@@ -75,7 +75,7 @@ namespace Http{
                 data.clear();
                 auto webSocket = std::static_pointer_cast<WebSocket>(conn);
                 webSocket->onMessage([](const Share<WebSocket> conn,const Safe<WebSocketMessage>& msg){
-                    MAGIC_LOG(LogLevel::LogDebug) << msg->getData();
+                    MAGIC_DEBUG() << msg->getData();
                     conn->sendMessage(msg->getData().c_str(),msg->getData().size(),WebSocketMessageType::TEXT);
                 });
             });

@@ -25,7 +25,7 @@ namespace Http{
         this->recv([this](const Share<Socket>& conn,StreamBuffer& data){
             uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()) {
-                MAGIC_LOG(LogLevel::LogDebug) << "HttpParser hasError";
+                MAGIC_DEBUG() << "HttpParser hasError";
                 return;
             }
             uint64_t m_Offset = data.size() - nparse;
@@ -72,7 +72,7 @@ namespace Http{
         this->recv([this](const Share<Socket>& conn,StreamBuffer& data){
             uint64_t nparse = m_ResponseParser->execute(data.data(),data.size());
             if(m_ResponseParser->hasError()) {
-                MAGIC_LOG(LogLevel::LogDebug) << "HttpParser hasError";
+                MAGIC_DEBUG() << "HttpParser hasError";
                 return;
             }
             uint64_t m_Offset = data.size() - nparse;

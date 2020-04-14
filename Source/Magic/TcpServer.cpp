@@ -27,12 +27,12 @@ namespace Magic{
         //TODO: ...
         m_IsRun = true;
         this->accept();
-        MAGIC_LOG(LogLevel::LogInfo)  << "Server running";
+        MAGIC_INFO()  << "Server running";
         m_IoPool->run();
     }
     void TcpServer::stop(){
         //TODO: ...
-        MAGIC_LOG(LogLevel::LogInfo)  << "Server stoping";
+        MAGIC_INFO()  << "Server stoping";
         m_IsRun = false;
     }
     void TcpServer::accept(){
@@ -40,7 +40,7 @@ namespace Magic{
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(err){
                 //TODO: ...
-                MAGIC_LOG(LogLevel::LogWarn) << err.message();
+                MAGIC_WARN() << err.message();
                 return;
             }
             this->handleFunc(socket);

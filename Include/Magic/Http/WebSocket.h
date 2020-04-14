@@ -56,13 +56,13 @@ namespace Http{
                         msgType = WebSocketMessageType::PONG;
                         break;
                     default:
-                        MAGIC_LOG(LogLevel::LogDebug) << "OpCode error code: " << (uint16_t)opCode;
+                        MAGIC_DEBUG() << "OpCode error code: " << (uint16_t)opCode;
                         return;
                 }
                 if(!isMask && m_Server){
-                     MAGIC_LOG(LogLevel::LogDebug) << "Mask error";
+                    MAGIC_DEBUG() << "Mask error";
                 }
-                MAGIC_LOG(LogLevel::LogDebug) << length << " xxx: " << data.size();
+                MAGIC_DEBUG() << length << " xxx: " << data.size();
                 data.clear();
                 if(length == 126){
                     this->recv(sizeof(uint16_t),[this,msgType](const Share<Socket>& conn,StreamBuffer& data){
