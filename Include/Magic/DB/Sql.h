@@ -12,7 +12,6 @@ namespace DB{
     public:
         virtual ~ISql(){};
         virtual bool execute(const std::string& sql) =0;
-        virtual bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port) =0;
     };
     class ISqlStmt{
     public:

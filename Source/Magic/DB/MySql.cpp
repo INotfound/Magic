@@ -37,10 +37,10 @@ namespace DB{
         mt.year = time.tm_year + 1900;
     }
 
-    MySql::MySql(){
-    }
     MySql::~MySql(){
         mysql_close(&m_MySql);
+    }
+    MySql::MySql(){
     }
     bool MySql::execute(const std::string& sql){
         Mutex::Lock lock(m_Mutex);
@@ -66,11 +66,6 @@ namespace DB{
         return true;
     }
 
-
-    MySqlStmt::MySqlStmt(const Safe<MySql>& sql)
-        :m_Stmt(nullptr)
-        ,m_MySql(sql){
-    }
     MySqlStmt::~MySqlStmt(){
         if(m_Stmt){
             mysql_stmt_free_result(m_Stmt);
@@ -81,6 +76,10 @@ namespace DB{
                 }
             }
         }
+    }
+    MySqlStmt::MySqlStmt(const Safe<MySql>& sql)
+        :m_Stmt(nullptr)
+        ,m_MySql(sql){
     }
     bool MySqlStmt::next(){
         RWMutex::WriteLock lock(m_Mutex);

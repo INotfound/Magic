@@ -1,5 +1,5 @@
 /*
- * @file: MySql.h
+ * @file: Sqlite.h
  * @Author: INotFound
  * @Date: 2020-02-18 11:35:25
  * @LastEditTime: 2020-04-06 17:29:16
@@ -11,23 +11,16 @@
 #include "../Core.h"
 #include "../Mutex.h"
 
-namespace Magic{
 namespace DB{
-    class MySql :public ISql{
-        friend class MySqlStmt;
+    class Sqlite :public ISql{
     public:
-        ~MySql();
-        MySql();
         bool execute(const std::string& sql) override;
-        bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port);
     private:
-        MYSQL m_MySql;
-        Mutex m_Mutex;
     };
-    class MySqlStmt :public ISqlStmt{
+    class SqliteStmt :public ISqlStmt{
     public:
-        ~MySqlStmt();
-        MySqlStmt(const Safe<MySql>& sql);
+        ~SqliteStmt();
+        SqliteStmt(const Safe<Sqlite>& sql);
         bool next() override;
         bool query() override;
         bool execute() override;
@@ -63,29 +56,6 @@ namespace DB{
         time_t getTime(uint32_t index) override;
         std::string getString(uint32_t index) override;
         std::string getBlob(uint32_t index) override;
-
     private:
-        class SqlResult{
-        public:
-            SqlResult();
-            ~SqlResult();
-            void alloc(uint32_t size);
-        public:
-            char* m_Data;
-            my_bool m_Error;
-            my_bool m_IsNull;
-            uint32_t m_DataLength;
-            unsigned long m_Length;
-            enum_field_types m_Type;
-        };
-    private:
-        RWMutex m_Mutex;
-        MYSQL_STMT* m_Stmt;
-        const Safe<MySql>& m_MySql;
-        std::vector<SqlResult>  m_MySqlResults;
-        std::vector<MYSQL_BIND> m_MySqlModifyBinds;
-        std::vector<MYSQL_BIND> m_MySqlResultBinds;
     };
-
-}
 }
