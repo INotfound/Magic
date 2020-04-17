@@ -95,8 +95,9 @@ class MainServlet :public Magic::Http::HttpServlet{
 void Server(){
     std::string ip = Magic::Config::GetInstance()->at<std::string>("ServerIp","0.0.0.0");
     uint16_t port  = Magic::Config::GetInstance()->at<uint16_t>("ServerPort",8080);
+    uint16_t processorsNumber = Magic::Config::GetInstance()->at<uint16_t>("ServerProcessorsNumber",Magic::GetProcessorsNumber());
     try{
-        Magic::Http::HttpServer server(ip,port,Magic::GetProcessorsNumber()*2);
+        Magic::Http::HttpServer server(ip,port,processorsNumber);
         Safe<Magic::Http::HttpServlet> log(new LogServlet);
         Safe<Magic::Http::HttpServlet> deafult(new DeafultServlet);
         Safe<Magic::Http::HttpServlet> file(new FileServlet);
