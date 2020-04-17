@@ -77,6 +77,7 @@ elseif(UNIX AND NOT ANDROID)
         dl
         ssl
         crypto
+        sqlite3
         mysqlclient
     )
 endif()
