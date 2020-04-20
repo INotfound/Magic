@@ -1,5 +1,4 @@
 #if defined(linux) || defined(__linux__)
-
 #include "Macro.h"
 #include "Plugin.h"
 #include "Adapter/Linux.h"
