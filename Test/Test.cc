@@ -2,11 +2,31 @@
  * @file: Test.cpp
  * @Author: INotFound
  * @Date: 2020-03-12 01:59:04
- * @LastEditTime: 2020-03-19 23:25:06
+ * @LastEditTime: 2020-04-15 18:01:54
  */
 #include <iostream>
+#include <sqlite3.h>
 #include "Magic.h"
 
+
+
+
+
+int main() {
+    Magic::Init("Build_Test");
+    sqlite3* db =nullptr;
+    auto err = sqlite3_open("user",&db);
+    if(err){
+        MAGIC_DEBUG() << "sqlite error!";
+        sqlite3_close(db);
+    }
+    MAGIC_DEBUG() << "sqlite ok!";
+    getchar();
+    return 0;
+}
+
+
+/* MQTT parse LastLength
 std::vector<int> Byte;
 //1byte: btye1
 //2byte: byte1-128 + byte*128
@@ -57,5 +77,5 @@ int main() {
     getchar();
     return 0;
 }
-
+*/
 
