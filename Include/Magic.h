@@ -1,5 +1,5 @@
 /*
- * @file: Magic.h
+ * @File: Magic.h
  * @Author: INotFound
  * @Date: 2020-03-13 20:55:19
  * @LastEditTime: 2020-03-13 20:57:16
