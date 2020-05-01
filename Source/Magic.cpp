@@ -1,5 +1,5 @@
 /*
- * @file: Magic.cpp
+ * @File: Magic.cpp
  * @Author: INotFound
  * @Date: 2020-02-23 21:36:52
  * @LastEditTime: 2020-03-15 17:57:29
