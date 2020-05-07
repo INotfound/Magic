@@ -3,7 +3,7 @@
 namespace Magic{
 namespace DB{
 
-    void MySqlTimeToTime(const MYSQL_TIME& mt,time_t& ts){
+    void MySqlTimeToTime(const MYSQL_TIME& mt,time_t ts){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
         localtime_s(&time, &ts);
@@ -22,7 +22,7 @@ namespace DB{
         }
     }
 
-    void TimeToMySqlTime(const time_t& ts,MYSQL_TIME& mt){
+    void TimeToMySqlTime(const time_t ts,MYSQL_TIME& mt){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
         localtime_s(&time, &ts);
@@ -185,48 +185,48 @@ namespace DB{
         std::memcpy(m_MySqlModifyBinds[index].buffer,Ptr,length);   \
         m_MySqlModifyBinds[index].buffer_length = length
     
-    void MySqlStmt::bind(uint32_t index,const float& value){
+    void MySqlStmt::bind(uint32_t index,const float value){
         BIND_COPY(MYSQL_TYPE_FLOAT,&value,sizeof(value));
     }
-    void MySqlStmt::bind(uint32_t index,const double& value){
+    void MySqlStmt::bind(uint32_t index,const double value){
         BIND_COPY(MYSQL_TYPE_DOUBLE,&value,sizeof(value));
     }
-    void MySqlStmt::bind(uint32_t index,const int8_t& value){
+    void MySqlStmt::bind(uint32_t index,const int8_t value){
         BIND_COPY(MYSQL_TYPE_TINY,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = false;
     }
-    void MySqlStmt::bind(uint32_t index,const uint8_t& value){
+    void MySqlStmt::bind(uint32_t index,const uint8_t value){
         BIND_COPY(MYSQL_TYPE_TINY,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
-    void MySqlStmt::bind(uint32_t index,const int16_t& value){
+    void MySqlStmt::bind(uint32_t index,const int16_t value){
         BIND_COPY(MYSQL_TYPE_SHORT,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = false;
     }
-    void MySqlStmt::bind(uint32_t index,const uint16_t& value){
+    void MySqlStmt::bind(uint32_t index,const uint16_t value){
         BIND_COPY(MYSQL_TYPE_SHORT,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
-    void MySqlStmt::bind(uint32_t index,const int32_t& value){
+    void MySqlStmt::bind(uint32_t index,const int32_t value){
         BIND_COPY(MYSQL_TYPE_LONG,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = false;
     }
-    void MySqlStmt::bind(uint32_t index,const uint32_t& value){
+    void MySqlStmt::bind(uint32_t index,const uint32_t value){
         BIND_COPY(MYSQL_TYPE_LONG,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
-    void MySqlStmt::bind(uint32_t index,const int64_t& value){
+    void MySqlStmt::bind(uint32_t index,const int64_t value){
         BIND_COPY(MYSQL_TYPE_LONGLONG,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = false;
     }
-    void MySqlStmt::bind(uint32_t index,const uint64_t& value){
+    void MySqlStmt::bind(uint32_t index,const uint64_t value){
         BIND_COPY(MYSQL_TYPE_LONGLONG,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
     void MySqlStmt::bind(uint32_t index,const std::string& value){
         BIND_COPY(MYSQL_TYPE_STRING,value.c_str(),value.size());
     }
-    void MySqlStmt::bindTime(uint32_t index,const time_t& value){
+    void MySqlStmt::bindTime(uint32_t index,const time_t value){
         bind(index,TimeToString(value));
     }
     void MySqlStmt::bindBlob(uint32_t index,const std::string& value){
