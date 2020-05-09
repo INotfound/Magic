@@ -2,15 +2,16 @@
  * @File: HttpServlet.cpp
  * @Author: INotFound
  * @Date: 2020-03-15 17:45:01
- * @LastEditTime: 2020-04-06 20:15:03
+ * @LastEditTime : 2020-05-08 20:17:21
  */
 #include <regex>
+#include "Macro.h"
 #include "Http/HttpServlet.h"
 namespace Magic{
 namespace Http{
 
-    HttpServlet::HttpServlet(const std::string& path)
-        :m_Name(path){
+    HttpServlet::HttpServlet(const std::string& name)
+        :m_Name(name){
     }
     const std::string HttpServlet::getName() const{
         return m_Name;
@@ -34,10 +35,14 @@ namespace Http{
     }
     bool HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
         auto& servlet = this->getMatchedServlet(request->getPath());
-        if(!servlet || ! m_DeafultServlet)
+        if(!m_DeafultServlet){
+            MAGIC_DEBUG() << "DeafultServlet not set";
             return false;
-        if(!servlet->handle(request,response))
-            m_DeafultServlet->handle(request,response);
+        }
+        if(servlet){
+            if(!servlet->handle(request,response))
+                m_DeafultServlet->handle(request,response);
+        }
         return true;
     }
     const Safe<HttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& path){
