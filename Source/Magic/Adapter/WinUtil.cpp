@@ -2,7 +2,7 @@
  * @File: 
  * @Author: INotFound
  * @Date: 2020-05-09 09:39:20
- * @LastEditTime : 2020-05-09 09:41:38
+ * @LastEditTime: 2020-06-23 09:00:35
  */
 #if defined(_WIN32) || defined(_WIN64)
 #include "Core.h"
@@ -70,23 +70,23 @@ namespace Magic {
         return true;
     }
     static void BackTrace(std::vector<std::string>& vec, uint32_t size, uint32_t skip) {
-        uint32_t i;
-        void* stack[size];
-        uint16_t frames;
-        SYMBOL_INFO* symbol;
-        HANDLE process;
-        process = GetCurrentProcess();
-        SymInitialize(process,NULL,TRUE);
-        frames = CaptureStackBackTrace(skip, size,stack, NULL) ;
-        symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
-        symbol->MaxNameLen =255;
-        symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
-        for (i = 0; i < frames; i++){
-            SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
-            vec.push_back(symbol->Name);
-        }
-        SymCleanup(process);
-        free(symbol);
+        //uint32_t i;
+        //void* stack[size];
+        //uint16_t frames;
+        //SYMBOL_INFO* symbol;
+        //HANDLE process;
+        //process = GetCurrentProcess();
+        //SymInitialize(process,NULL,TRUE);
+        //frames = CaptureStackBackTrace(skip, size,stack, NULL) ;
+        //symbol = (SYMBOL_INFO*)calloc(sizeof(SYMBOL_INFO) + 256 * sizeof(char), 1);
+        //symbol->MaxNameLen =255;
+        //symbol->SizeOfStruct = sizeof(SYMBOL_INFO);
+        //for (i = 0; i < frames; i++){
+        //    SymFromAddr(process, (DWORD64)(stack[i]), 0, symbol);
+        //    vec.push_back(symbol->Name);
+        //}
+        //SymCleanup(process);
+        //free(symbol);
     }
     std::string BackTraceToString(uint32_t size, uint32_t skip, const std::string& prefix) {
         std::vector<std::string> vecString;
