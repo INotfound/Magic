@@ -2,7 +2,7 @@
  * @File: IoPool.cpp
  * @Author: INotFound
  * @Date: 2020-03-04 23:43:46
- * @LastEditTime: 2020-03-14 00:15:56
+ * @LastEditTime: 2020-06-23 09:55:56
  */
 #include "IoPool.h"
 #include "Macro.h"
@@ -15,7 +15,12 @@ namespace Magic{
         MAGIC_ASSERT(poolSize >= 0,"threadCount < 0 Or = 0");
         for(uint32_t i = 0; i<m_PoolSize; i++){
             Safe<asio::io_context> io(new asio::io_context);
-            m_IOServiceWork.push_back(Safe<asio::io_context::work>(new asio::io_context::work(*io)));
+            //m_IOServiceWork.push_back(Safe<asio::io_context::work>(new asio::io_context::work(*io)));
+            m_IOServiceWork.push_back(
+                Safe<asio::executor_work_guard<asio::io_context::executor_type>>(
+                        new asio::executor_work_guard<asio::io_context::executor_type>(asio::make_work_guard(*io))
+                    )
+                );
             m_IOService.push_back(std::move(io));
         }
 
