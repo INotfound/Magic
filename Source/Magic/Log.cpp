@@ -2,7 +2,7 @@
  * @File: Log.cpp
  * @Author: INotFound
  * @Date: 2020-02-18 11:38:37
- * @LastEditTime: 2020-03-15 21:48:28
+ * @LastEditTime: 2020-06-24 18:24:45
  */
 #include "Log.h"
 #include <tuple>
@@ -91,14 +91,27 @@ namespace Magic {
         <body>
             <h1> Log File </h1>
             <script type="text/JavaScript">
+                var sel
+                var filter
                 function objHide(obj) {
                     obj.style.display="none"
                 }
                 function objShow(obj) {
-                    obj.style.display="block"
+                    if(filter.value.length <= 0){
+                        obj.style.display="block"
+                        return;
+                    }
+                    if(obj.textContent.indexOf(filter.value) !== -1){
+                        obj.style.display="block"
+                    }else{
+                        obj.style.display="none"
+                    }
+
                 }
                 function selectType() {
-                    var sel = document.getElementById("typeSelect");
+                    sel = document.getElementById("typeSelect");
+                    filter = document.getElementById("filterSelect");
+
                     const hideList = new Set(['LogDebug', 'LogInfo', 'LogWarn', 'LogError', 'LogFatal']);
                     if (sel.value === 'a') {
                         hideList.forEach(element => {
@@ -116,6 +129,7 @@ namespace Magic {
                         showList.forEach(objShow);
                     }
                 }
+
             </script>
             <select id="typeSelect" onchange="selectType()">
                 <option value='a' selected="selected">All</option>
@@ -125,6 +139,8 @@ namespace Magic {
                 <option value='LogError'>Error</option>
                 <option value='LogFatal'>Fatal</option>
             </select>
+            筛选内容: <input id="filterSelect" type="text" value="">
+            <input type="button" value="筛选" onclick="selectType()"/>
         )Template" 
     };
 
