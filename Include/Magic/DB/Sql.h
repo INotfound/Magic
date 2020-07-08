@@ -2,7 +2,7 @@
  * @File: Sql.h
  * @Author: INotFound
  * @Date: 2020-02-18 11:35:25
- * @LastEditTime: 2020-04-06 17:29:16
+ * @LastEditTime : 2020-05-07 15:00:10
  */
 #pragma once
 #include "../Core.h"
@@ -22,18 +22,18 @@ namespace DB{
         virtual void printError() =0;
         virtual bool prepare(const std::string& sql) =0;
         virtual void bindNull(uint32_t index) =0;
-        virtual void bind(uint32_t index,const float& value) =0;
-        virtual void bind(uint32_t index,const double& value) =0;
-        virtual void bind(uint32_t index,const int8_t& value) =0;
-        virtual void bind(uint32_t index,const uint8_t& value) =0;
-        virtual void bind(uint32_t index,const int16_t& value) =0;
-        virtual void bind(uint32_t index,const uint16_t& value) =0;
-        virtual void bind(uint32_t index,const int32_t& value) =0;
-        virtual void bind(uint32_t index,const uint32_t& value) =0;
-        virtual void bind(uint32_t index,const int64_t& value) =0;
-        virtual void bind(uint32_t index,const uint64_t& value) =0;
+        virtual void bind(uint32_t index,const float value) =0;
+        virtual void bind(uint32_t index,const double value) =0;
+        virtual void bind(uint32_t index,const int8_t value) =0;
+        virtual void bind(uint32_t index,const uint8_t value) =0;
+        virtual void bind(uint32_t index,const int16_t value) =0;
+        virtual void bind(uint32_t index,const uint16_t value) =0;
+        virtual void bind(uint32_t index,const int32_t value) =0;
+        virtual void bind(uint32_t index,const uint32_t value) =0;
+        virtual void bind(uint32_t index,const int64_t value) =0;
+        virtual void bind(uint32_t index,const uint64_t value) =0;
         virtual void bind(uint32_t index,const std::string& value) =0;
-        virtual void bindTime(uint32_t index,const time_t& value) =0;
+        virtual void bindTime(uint32_t index,const time_t value) =0;
         virtual void bindBlob(uint32_t index,const std::string& value) =0;
         virtual void bindBlob(uint32_t index,const void* value,uint64_t size) =0;
 

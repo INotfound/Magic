@@ -2,7 +2,7 @@
  * @File: Core.h
  * @Author: INotFound
  * @Date: 2020-03-13 23:05:18
- * @LastEditTime: 2020-03-14 00:07:40
+ * @LastEditTime : 2020-05-07 14:59:18
  */
 #pragma once
 #include <map>
@@ -278,7 +278,7 @@ namespace Magic{
         return str;
     }
 
-    inline std::string Split(const std::string& str, uint64_t& index, const std::string& flag) {
+    inline std::string Split(const std::string& str, uint64_t index, const std::string& flag) {
         uint64_t pos = str.find(flag, index);
         if (pos == std::string::npos)
             return str.substr(index, str.size() - index);;

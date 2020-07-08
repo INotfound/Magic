@@ -2,7 +2,7 @@
  * @File: MySql.h
  * @Author: INotFound
  * @Date: 2020-02-18 11:35:25
- * @LastEditTime: 2020-04-06 17:29:16
+ * @LastEditTime : 2020-05-07 15:00:34
  */
 #pragma once
 #include <mysql/mysql.h>
@@ -34,18 +34,18 @@ namespace DB{
         void printError() override;
         bool prepare(const std::string& sql) override;
         void bindNull(uint32_t index) override;
-        void bind(uint32_t index,const float& value) override;
-        void bind(uint32_t index,const double& value) override;
-        void bind(uint32_t index,const int8_t& value) override;
-        void bind(uint32_t index,const uint8_t& value) override;
-        void bind(uint32_t index,const int16_t& value) override;
-        void bind(uint32_t index,const uint16_t& value) override;
-        void bind(uint32_t index,const int32_t& value) override;
-        void bind(uint32_t index,const uint32_t& value) override;
-        void bind(uint32_t index,const int64_t& value) override;
-        void bind(uint32_t index,const uint64_t& value) override;
+        void bind(uint32_t index,const float value) override;
+        void bind(uint32_t index,const double value) override;
+        void bind(uint32_t index,const int8_t value) override;
+        void bind(uint32_t index,const uint8_t value) override;
+        void bind(uint32_t index,const int16_t value) override;
+        void bind(uint32_t index,const uint16_t value) override;
+        void bind(uint32_t index,const int32_t value) override;
+        void bind(uint32_t index,const uint32_t value) override;
+        void bind(uint32_t index,const int64_t value) override;
+        void bind(uint32_t index,const uint64_t value) override;
         void bind(uint32_t index,const std::string& value) override;
-        void bindTime(uint32_t index,const time_t& value) override;
+        void bindTime(uint32_t index,const time_t value) override;
         void bindBlob(uint32_t index,const std::string& value) override;
         void bindBlob(uint32_t index,const void* value,uint64_t size) override;
 

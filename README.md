@@ -2,10 +2,10 @@
  * @File: README.md
  * @Author: INotFound
  * @Date: 2020-03-16 00:33:44
- * @LastEditTime: 2020-04-11 16:50:55
+ * @LastEditTime : 2020-05-09 12:54:52
  -->
 # Magic服务端基础框架
-* Magic 是一个能Web快速开发,且基于ASIO网络框架,拥有丰富的基础组件(Win And Linux)跨平台框架库。
+* Magic 是一个能进行快速开发,且基于ASIO网络框架,拥有丰富的基础组件(日志\插件\网络\线程\数据库等)跨平台(Win And Linux)框架库。
 ## 快速示例
 * 本库将智能指针名称进行了重定义.
 ```
@@ -55,7 +55,7 @@
 * 推荐使用CMake进行构建.
 * 配置MySql | OpenSSL (Linux可直接通过包管理器安装,Win需要下载编译安装) .
 ```
-    //修改本库中的Library.cmake，将其变量指向你编译后的地址 (Linux无需如此).
+    //修改本库中的Library.cmake，将其变量指向你第三方库编译后的地址 (Linux无需如此).
 ########################################################################################
     #   Include
     set(OPENSSL_INCLUDE "C:\\Users\\magic\\Desktop\\openssl\\ssl\\include")
@@ -79,7 +79,16 @@ include_directories(
 )
 ########################################################################################
 ```
-
+## 其他
+* 注意:  
+    在Mingw-w64编译器下,会无法打印调用栈信息解决办法:  
+    &emsp;1.https://github.com/rainers/cv2pdb 获取cv2pdb.exe工具  
+    &emsp;2.需在 Visual Studio 控制台中运行该工具(必要的条件)  
+    &emsp;3.用法: cv2pdb.exe 项目.exe
+* C++ 个人代码规范:  
+    链接：  
+    &emsp;http://note.youdao.com/noteshare?id=0975fd51d320c1cd7bc0cbaab6d39e59&sub=AC10B1CBC6744F92B2B8A3F26DC47918
+    
 ## 联系方式
 * QQ 614199451  
 * QQ群 451405524

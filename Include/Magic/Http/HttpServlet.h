@@ -2,7 +2,7 @@
  * @File: HttpServlet.h
  * @Author: INotFound
  * @Date: 2020-02-19 16:07:06
- * @LastEditTime: 2020-04-06 20:15:13
+ * @LastEditTime : 2020-05-07 18:01:37
  */
 #pragma once
 #include <unordered_map>
@@ -17,7 +17,7 @@ namespace Http{
      */
     class HttpServlet{
     public:
-        explicit HttpServlet(const std::string& path);
+        explicit HttpServlet(const std::string& name);
         const std::string getName() const;
         virtual bool handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) =0;
     private:

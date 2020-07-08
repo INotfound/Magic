@@ -2,7 +2,7 @@
  * @File: IoPool.h
  * @Author: INotFound
  * @Date: 2020-03-13 22:57:15
- * @LastEditTime: 2020-03-14 01:40:18
+ * @LastEditTime: 2020-06-23 09:42:47
  */
 #pragma once
 #include <atomic>
@@ -42,6 +42,7 @@ namespace Magic{
         uint32_t m_Next;
         uint32_t m_PoolSize;
         std::vector<Safe<asio::io_context>> m_IOService;
-        std::vector<Safe<asio::io_context::work>> m_IOServiceWork;
+        std::vector<Safe<asio::executor_work_guard<asio::io_context::executor_type>>> m_IOServiceWork;
+        //std::vector<Safe<asio::io_context::work>> m_IOServiceWork;
     };
 }
