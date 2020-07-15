@@ -1,3 +1,8 @@
+/*
+ * @Author: YHY
+ * @Date: 2020-04-08 13:50:27
+ * @LastEditTime: 2020-07-09 11:58:01
+ */ 
 #if defined(_WIN32) || defined(_WIN64)
 #include "Macro.h"
 #include "Plugin.h"
@@ -5,7 +10,7 @@
 namespace Magic{
 
     Plugin::~Plugin() {
-        FreeLibrary(m_Handle);
+        FreeLibrary(m_Handle); //判断是否为null 不是才执行此句话
     }
     Plugin::Plugin(const std::string& name, const std::string& path)
         :m_Name(name)
