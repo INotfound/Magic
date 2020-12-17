@@ -1,0 +1,6 @@
+[submodule "ThirdParty/Asio"]
+	path = ThirdParty/Asio
+	url = https://github.com/chriskohlhoff/asio.git
+[submodule "ThirdParty/RapidJSON"]
+	path = ThirdParty/RapidJSON
+	url = https://github.com/Tencent/rapidjson
