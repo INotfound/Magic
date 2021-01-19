@@ -1,7 +1,7 @@
 <!--
  * @Author: INotFound
  * @Date: 2021-01-18 15:17:40
- * @LastEditTime: 2021-01-18 15:40:06
+ * @LastEditTime: 2021-01-19 05:25:56
 -->
 # Magic
 
@@ -32,7 +32,7 @@
 - 高度解耦
 - 代码**移植度**高.
 - **无任何侵入式代码**.
-### [Go to 安装/使用方法](https://github.com/INotfound/Magic/blob/master/Doc/Guide.md)
+### [Go to 安装/使用方法](https://github.com/INotfound/Magic/blob/main/Doc/Guide.md)
 ### 本库特性
 > 组件: ***类Log4j日志***、***线程***、***NetWork网路、Http协议***、***Web服务***、***数据库***、***高性能网络连接池***、***高性能数据库连接池***、***高性能TimingWheel定时轮*** 等等
 

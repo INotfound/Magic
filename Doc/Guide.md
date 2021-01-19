@@ -106,9 +106,9 @@ int main(){
 
 ---
 
-> 目录位置:[Magic/Examples](https://github.com/INotfound/Magic/tree/master/Examples)
+> 目录位置:[Magic/Examples](https://github.com/INotfound/Magic/tree/main/Examples)
 
-#### [***Base***](https://github.com/INotfound/Magic/tree/master/Examples/Base)示例
+#### [***Base***](https://github.com/INotfound/Magic/tree/main/Examples/Base)示例
 
 > CMakeLists.txt 引用Magic模块
 
@@ -126,7 +126,7 @@ int main(){
     return EXIT_SUCCESS;
 }
 ```
-#### [***WebServer***](https://github.com/INotfound/Magic/tree/master/Examples/WebServer)示例
+#### [***WebServer***](https://github.com/INotfound/Magic/tree/main/Examples/WebServer)示例
 > ***Main.cpp***
 ```c++
 #include "Web.h"
