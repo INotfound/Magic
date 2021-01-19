@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-12-17 00:06:57
- * @LastEditTime: 2020-12-22 11:41:16
+ * @LastEditTime: 2021-01-19 16:54:48
  */
 #include <vector>
 #include <string>
@@ -186,17 +186,15 @@ void Generator(std::ofstream& stream){
             stream << val.Class;
 
             for(auto& deps : val.Dependencies){
-                stream << ","
-                    << deps;
+                if(!deps.empty()){
+                    stream << ","
+                           << deps;
+                }
             }
             stream << ">()";
             for(auto& fps : val.FunctionPropertys){
                 stream << ".registerProperty(&";
-                if(val.Interface.empty()){
-                    stream << val.Class << "::";
-                }else{
-                    stream << val.Interface << "::";
-                }
+                stream << val.Class << "::";
                 stream << fps
                        << ")";
             }
