@@ -1,0 +1,35 @@
+{
+    "Configurations":{
+        "NameSpace":"Base",
+        "Registered":[
+            {
+                "Id":"stdlog",
+                "Class":"Magic::StdOutLogAppender",
+                "Interface":"Magic::ILogAppender",
+                "IncludePath":"Core/Logger.h",
+                "Dependencies":[],
+                "FunctionPropertys":[]
+            },
+            {
+                "Id":"testLog",
+                "Class":"Base::TestLog",
+                "IncludePath": "TestLog.h",
+                "Dependencies":[],
+                "FunctionPropertys":[]
+            }
+        ],
+        "Initialize":[
+            {
+                "Id":"testLog",
+                "FunctionPropertys":["printf"],
+                "FunctionArguments":{
+                    "printf" : ["\"你好啊,我是小白君！\""]
+                }
+            }
+        ],
+        "Constructor":{
+            "Name":"Initialize",
+            "WithParameter": false
+        }
+    }
+}

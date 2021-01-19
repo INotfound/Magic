@@ -1,0 +1,20 @@
+{
+    "Configurations":{
+        "NameSpace":"Web",
+        "Registered":[
+            {
+                "Id":"testServlet",
+                "Class":"Web::TestServlet",
+                "Interface":"Magic::NetWork::Http::IHttpServlet",
+                "IncludePath":"TestServlet.h",
+                "Dependencies":[],
+                "FunctionPropertys":[]
+            }
+        ],
+        "Initialize":[],
+        "Constructor":{
+            "Name":"Initialize",
+            "WithParameter": false
+        }
+    }
+}

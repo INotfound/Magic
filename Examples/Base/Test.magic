@@ -1,0 +1,27 @@
+{
+    "Configurations":{
+        "NameSpace":"Base",
+        "Registered":[
+            {
+                "Id":"test",
+                "Class":"Base::Test",
+                "IncludePath": "Test.h",
+                "Dependencies":[],
+                "FunctionPropertys":[]
+            }
+        ],
+        "Initialize":[
+            {
+                "Id":"test",
+                "FunctionPropertys":["printf"],
+                "FunctionArguments":{
+                    "printf" : ["\"你好啊,我是小白君！\""]
+                }
+            }
+        ],
+        "Constructor":{
+            "Name":"Initialize",
+            "WithParameter": false
+        }
+    }
+}

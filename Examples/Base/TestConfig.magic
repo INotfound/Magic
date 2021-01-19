@@ -1,0 +1,20 @@
+{
+    "Configurations":{
+        "NameSpace":"Base",
+        "Registered":[
+            {
+                "Id":"testConfig",
+                "Class":"Base::TestConfig",
+                "IncludePath": "TestConfig.h",
+                "Dependencies":["Magic::Config"],
+                "FunctionPropertys":["call"]
+            }
+        ],
+        "Initialize":[
+        ],
+        "Constructor":{
+            "Name":"Initialize",
+            "WithParameter": false
+        }
+    }
+}

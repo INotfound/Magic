@@ -1,0 +1,55 @@
+{
+    "Configurations":{
+        "NameSpace":"Web",
+        "Registered":[
+            {
+                "Id":"timingWheel",
+                "Class":"Magic::TimingWheel",
+                "IncludePath": "Include/Core/TimingWheel.h",
+                "Dependencies":["Magic::Config"],
+                "FunctionPropertys":[]
+            },
+            {
+                "Id":"ioPool",
+                "Class":"Magic::NetWork::IoPool",
+                "IncludePath": "Include/NetWork/IoPool.h",
+                "Dependencies":["Magic::Config"],
+                "FunctionPropertys":[]
+            },
+            {
+                "Id":"dispatch",
+                "Class":"Magic::NetWork::Http::HttpServletDispatch",
+                "IncludePath": "Include/NetWork/Http/HttpServlet.h",
+                "Dependencies":[],
+                "FunctionPropertys":[]
+            },
+            {
+                "Id":"httpServer",
+                "Class":"Magic::NetWork::Http::HttpServer",
+                "IncludePath": "Include/NetWork/Http/HttpServer.h",
+                "Dependencies":["Magic::NetWork::IoPool","Magic::Config"],
+                "FunctionPropertys":["setServletDispatch"]
+            },
+            {
+                "Id":"httpSession",
+                "Class":"Magic::NetWork::Http::HttpSessionManager",
+                "IncludePath": "Include/NetWork/Http/HttpSession.h",
+                "Dependencies":["Magic::Config"],
+                "FunctionPropertys":["setTimingWheel"]
+            }
+        ],
+        "Initialize":[
+            {
+                "Id":"dispatch",
+                "Loop":true,
+                "Callee":"Magic::NetWork::Http::IHttpServlet",
+                "FunctionPropertys":["addHttpServlet"],
+                "FunctionArguments":{}
+            }
+        ],
+        "Constructor":{
+            "Name":"Initialize",
+            "WithParameter": false
+        }
+    }
+}

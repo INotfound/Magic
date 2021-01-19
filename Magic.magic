@@ -1,0 +1,52 @@
+{
+    "Configurations":{
+        "NameSpace":"Magic",
+        "Registered":[
+            {
+                "Id":"logger",
+                "Class":"Magic::Logger",
+                "IncludePath": "Include/Core/Logger.h",
+                "Dependencies":["Magic::Config"],
+                "FunctionPropertys":[]
+            },
+            {
+                "Id":"config",
+                "Class":"Magic::Config",
+                "IncludePath": "Include/Core/Config.h",
+                "FunctionPropertys":["addConfigFile"]
+            },
+            {
+                "Id":"configFile",
+                "Class":"Magic::ConfigFile",
+                "IncludePath": "Include/Core/Logger.h",
+                "FunctionPropertys":["addFormatter"]
+            },
+            {
+                "Id":"iniConfigFormmater",
+                "Class":"Magic::InIConfigFormatter",
+                "Interface":"Magic::IConfigFormatter",
+                "IncludePath": "Include/Core/Logger.h"
+            }
+        ],
+        "Initialize":[
+            {
+                "Id":"configFile",
+                "FunctionPropertys":["setFilePath"],
+                "FunctionArguments":{
+                    "setFilePath" : ["\"./Magic.conf\""]
+                }
+            },
+            {
+                "Id":"logger",
+                "Loop":true,
+                "Callee":"Magic::ILogAppender",
+                "FunctionPropertys":["addILogAppender"],
+                "FunctionArguments":{}
+            }
+        ],
+        "Constructor":{
+            "Name":"Initialize",
+            "WithParameter": true
+        }
+    }
+}
