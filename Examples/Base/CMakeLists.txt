@@ -19,7 +19,7 @@ link_libraries(Magic)
 include(${MAGIC}/Magic.cmake)
 
 GENEX(${MAGIC} Base MODULE
-    ${MAGIC}/Magic.magic
+    ${MAGIC}/Modules/Magic.magic
     ${PROJECT_SOURCE_DIR}/Test.magic
     ${PROJECT_SOURCE_DIR}/TestLog.magic
     ${PROJECT_SOURCE_DIR}/TestConfig.magic

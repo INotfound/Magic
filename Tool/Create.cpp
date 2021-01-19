@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-12-21 23:33:29
- * @LastEditTime: 2021-01-13 15:18:45
+ * @LastEditTime: 2021-01-19 15:54:04
  */
 #include <fstream>
 #include <iostream>
@@ -148,7 +148,7 @@ void OutPutCMakeFile(const std::string& name){
             << "link_libraries(Magic)" << g_LF 
             << "include(${MAGIC}/Magic.cmake)" << g_LF << g_LF
             << "GENEX(${MAGIC} " << name << " MODULE" << g_LF
-            << "    ${MAGIC}/Magic.magic" << g_LF << ")" << g_LF << g_LF
+            << "    ${MAGIC}/Modules/Magic.magic" << g_LF << ")" << g_LF << g_LF
             << "add_executable(" << name <<" Main.cpp)";
     ostream.flush();
     ostream.close();

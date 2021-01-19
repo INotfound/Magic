@@ -19,8 +19,8 @@ link_libraries(Magic)
 include(${MAGIC}/Magic.cmake)
 
 GENEX(${MAGIC} WebServer MODULE
-    ${MAGIC}/Magic.magic
-    ${MAGIC}/WebServer.magic
+    ${MAGIC}/Modules/Magic.magic
+    ${MAGIC}/Modules/WebServer.magic
     ${PROJECT_SOURCE_DIR}/TestServlet.magic
 )
 
