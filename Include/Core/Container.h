@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-08-07 18:03:10
- * @LastEditTime: 2021-01-18 15:09:11
+ * @LastEditTime: 2021-01-24 13:49:21
  */
 #pragma once
 #include "Core/Core.h"
@@ -103,7 +103,7 @@ namespace Magic{
                     unit = (elapsedTime > 1000) ? "Ms" : "μs";
                     elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
                     elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
-                    std::printf("@Class Elapsed Time: %ld(%s)\n    [%s]\n",elapsedTime,unit.c_str(),typeid(T).name());
+                    std::printf("@Class Elapsed Time: %lld(%s)\n    [%s]\n",elapsedTime,unit.c_str(),typeid(T).name());
                     g_Time = std::chrono::high_resolution_clock::now();
                 #endif
                 }
@@ -147,7 +147,7 @@ namespace Magic{
                             unit = (elapsedTime > 1000) ? "Ms" : "μs";
                             elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
                             elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
-                            std::printf("@Class Elapsed Time: %ld(%s)\n    [%s]\n",elapsedTime,unit.c_str(),typeid(T).name());
+                            std::printf("@Class Elapsed Time: %lld(%s)\n    [%s]\n",elapsedTime,unit.c_str(),typeid(T).name());
                             g_Time = std::chrono::high_resolution_clock::now();
                         #endif
                         }
