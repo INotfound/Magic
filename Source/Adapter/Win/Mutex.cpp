@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-09-12 16:35:10
- * @LastEditTime: 2020-10-01 16:37:45
+ * @LastEditTime: 2021-01-24 15:10:49
  */
 #if defined(_WIN32) || defined(_WIN64)
 
@@ -9,29 +9,39 @@
 
 namespace Magic{
     RWMutex::RWMutex() {
+    #if _WIN32_WINNT >= 0x0600
         InitializeSRWLock(&m_RWLock.lock);
+    #endif
     }
 
     RWMutex::~RWMutex() {
     }
 
     void RWMutex::readLock() {
+    #if _WIN32_WINNT >= 0x0600
         AcquireSRWLockShared(&m_RWLock.lock);
+    #endif
         m_RWLock.flag = WinRWLock::RW::Read;
     }
 
     void RWMutex::writeLock() {
+    #if _WIN32_WINNT >= 0x0600
         AcquireSRWLockExclusive(&m_RWLock.lock);
+    #endif
         m_RWLock.flag = WinRWLock::RW::Wirte;
     }
     
     void RWMutex::unlock() {
         switch (m_RWLock.flag){
             case WinRWLock::RW::Read:
+            #if _WIN32_WINNT >= 0x0600
                 ReleaseSRWLockShared(&m_RWLock.lock);
+            #endif
                 break;
             case WinRWLock::RW::Wirte:
+            #if _WIN32_WINNT >= 0x0600
                 ReleaseSRWLockExclusive(&m_RWLock.lock);
+            #endif
                 break;
         }
     }

@@ -32,8 +32,10 @@ set(SRC
     Source/NetWork/Http/HttpServer.cpp
     Source/NetWork/Http/HttpServlet.cpp
     Source/NetWork/Http/HttpSession.cpp
-
-    #Source/Adapter/Win
+    
+    Source/Adapter/Win//Utils.cpp
+    Source/Adapter/Win//Mutex.cpp
+    
     Source/Adapter/Linux/Utils.cpp
     Source/Adapter/Linux/Mutex.cpp
     
