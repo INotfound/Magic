@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 option(MySql "MYSQL module compilation options" OFF)
-option(OpenSSl "OPENSSl module compilation options" OFF)
+option(OpenSSL "OPENSSL module compilation options" OFF)
 
 include(Magic.cmake)
 include_directories(
@@ -45,7 +45,7 @@ set(SRC
     Source/NetWork/Http/Utils/httpclient_parser.rl.cpp
 )
 
-if(MySql STRGREATER ON)
+if(MySql STREQUAL ON)
     add_definitions(MYSQL)
     set(SRC 
         ${SRC}
@@ -53,8 +53,8 @@ if(MySql STRGREATER ON)
     )
 endif()
 
-if(OpenSSl STRGREATER ON)
-    add_definitions(OPENSSl)
+if(OpenSSL STREQUAL ON)
+    add_definitions(-DOPENSSL)
 endif()
 
 add_library(Magic ${SRC})

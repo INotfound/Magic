@@ -1,4 +1,3 @@
-
 if(CMAKE_BUILD_TYPE STREQUAL Release)
     message("~~~~~~~~~~~~~~Release~~~~~~~~~~~~~~~")
     if(WIN32 AND NOT MINGW)
@@ -71,10 +70,10 @@ if(WIN32 AND NOT MINGW)
         ws2_32
         mswsock
     )
-    if(MySql STRGREATER ON)
+    if(MySql STREQUAL ON)
         set(LIBS ${LIBS} mariadbclient)
     endif()
-    if(OpenSSl STRGREATER ON)
+    if(OpenSSL STREQUAL ON)
         set(LIBS ${LIBS} ssl crypto)
     endif()
 elseif(WIN32 AND MINGW)
@@ -83,10 +82,10 @@ elseif(WIN32 AND MINGW)
         ws2_32
         mswsock
     )
-    if(MySql STRGREATER ON)
+    if(MySql STREQUAL ON)
         set(LIBS ${LIBS} mariadbclient)
     endif()
-    if(OpenSSl STRGREATER ON)
+    if(OpenSSL STREQUAL ON)
         set(LIBS ${LIBS} ssl crypto)
     endif()
 elseif(UNIX AND NOT ANDROID)
@@ -94,10 +93,10 @@ elseif(UNIX AND NOT ANDROID)
     set(LIBS
         dl
     )
-    if(MySql STRGREATER ON)
+    if(MySql STREQUAL ON)
         set(LIBS ${LIBS} mariadbclient)
     endif()
-    if(OpenSSl STRGREATER ON)
+    if(OpenSSL STREQUAL ON)
         set(LIBS ${LIBS} ssl crypto)
     endif()
 endif()
