@@ -17,12 +17,19 @@ link_directories(
 )
 link_libraries(Magic)
 include(${MAGIC}/Magic.cmake)
+include_directories(${CMAKE_BINARY_DIR})
 
-GENEX(${MAGIC} Base MODULE
+set(MODULES
     ${MAGIC}/Modules/Magic.magic
     ${PROJECT_SOURCE_DIR}/Test.magic
     ${PROJECT_SOURCE_DIR}/TestLog.magic
     ${PROJECT_SOURCE_DIR}/TestConfig.magic
+)
+
+add_custom_target(Gen ALL)
+add_custom_command(
+    TARGET Gen
+    COMMAND ${MAGIC}/Bin/Gen ${MODULES} Base
 )
 
 #Test

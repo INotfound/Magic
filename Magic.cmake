@@ -105,31 +105,3 @@ endif()
 link_libraries(
     ${LIBS}
 )
-
-function(GENEX PATH NAME)
-    cmake_parse_arguments(
-        PARSED_ARGS # prefix of output variables
-        "" # list of names of the boolean arguments (only defined ones will be true)
-        "" # list of names of mono-valued arguments
-        "MODULE" # list of names of multi-valued arguments (output variables are lists)
-        ${ARGN} # arguments of the function to parse, here we take the all original ones
-    )
-
-    set(MODULEFILES)
-    
-    foreach(MODULEARG ${PARSED_ARGS_MODULE})
-        set(MODULEFILES ${MODULEFILES} ${MODULEARG})
-    endforeach(MODULEARG)
-
-    execute_process(
-        OUTPUT_VARIABLE MSG
-        RESULT_VARIABLE ERROR
-        COMMAND ${PATH}/Bin/Gen ${MODULEFILES} ${NAME}
-    )
-
-    if(ERROR STREQUAL 1)
-        message(FATAL_ERROR "${MSG}")
-    endif()
-    
-    include_directories(${CMAKE_BINARY_DIR})
-endfunction(GENEX)

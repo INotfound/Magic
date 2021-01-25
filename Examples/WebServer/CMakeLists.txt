@@ -17,11 +17,18 @@ link_directories(
 )
 link_libraries(Magic)
 include(${MAGIC}/Magic.cmake)
+include_directories(${CMAKE_BINARY_DIR})
 
-GENEX(${MAGIC} WebServer MODULE
+set(MODULES
     ${MAGIC}/Modules/Magic.magic
     ${MAGIC}/Modules/WebServer.magic
     ${PROJECT_SOURCE_DIR}/TestServlet.magic
+)
+
+add_custom_target(Gen ALL)
+add_custom_command(
+    TARGET Gen
+    COMMAND ${MAGIC}/Bin/Gen ${MODULES} WebServer
 )
 
 #ExampleWebServer
