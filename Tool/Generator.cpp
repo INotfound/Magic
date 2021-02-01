@@ -136,7 +136,7 @@ void Generator(std::ofstream& stream){
     std::string LF("\n");
     stream << "/*" << LF
            << " * @Author: INotFound" << LF
-           << " * @Link: https://github.com/INotfound" << LF
+           << " * @Link: https://github.com/INotfound/Magic" << LF
            << " */" << LF;
     {
         stream << "#pragma once" << LF
