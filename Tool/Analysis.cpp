@@ -39,8 +39,8 @@ static std::string g_FilePath;
 static std::string g_NameSpace;
 static class Visitor* g_Visitor;
 static std::string g_FunctionName;
-static bool g_WithParameter = false;
 static uint32_t g_IncludeCount = 1;
+static bool g_WithParameter = false;
 static uint32_t g_HeaderFileCount = 0;
 static const char *g_Args[256] = {"-xc++"};
 static const char *g_HeaderFiles[256] = {0};
@@ -113,7 +113,7 @@ void VisitNamespace(CXCursor cursor){
     g_Visitor->m_ConstructingNamespace = NamespaceDecl();
 }
 
-void VisitClass(::CXCursor cursor){
+void VisitClass(CXCursor cursor){
     clang_visitChildren(
         cursor, 
         [](CXCursor cursor,CXCursor parent,CXClientData client_data)->CXChildVisitResult{
@@ -143,7 +143,7 @@ void VisitClass(::CXCursor cursor){
     g_Visitor->m_ConstructingClass = ClassDecl();
 }
 
-void VisitMemberFunction(::CXCursor cursor){
+void VisitMemberFunction(CXCursor cursor){
     clang_visitChildren(
         cursor, 
         [](CXCursor cursor,CXCursor parent,CXClientData client_data)->CXChildVisitResult{

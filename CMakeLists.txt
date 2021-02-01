@@ -60,10 +60,24 @@ endif()
 add_library(Magic ${SRC})
 
 #Tool
-    add_executable(Gen Tool/Generator.cpp)
-    add_executable(Create Tool/Create.cpp)
+set(BINARY
+    Gen
+    Magic
+    Create
+)
 
-install(TARGETS Gen Create Magic
+add_executable(Gen Tool/Generator.cpp)
+add_executable(Create Tool/Create.cpp)
+
+if(DEFINED MAGIC_CLANG_INCLUDE AND DEFINED MAGIC_CLANG_LIBRARY)
+    set(BINARY ${BINARY} Analysis)
+    link_directories(${MAGIC_CLANG_LIBRARY})
+    include_directories(${MAGIC_CLANG_INCLUDE})
+    add_executable(Analysis Tool/Analysis.cpp)
+    target_link_libraries(Analysis libclang)
+endif()
+
+install(TARGETS ${BINARY}
     RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
     ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
 )
