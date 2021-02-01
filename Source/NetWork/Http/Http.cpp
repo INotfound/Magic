@@ -1,13 +1,13 @@
 /*
  * @Author: INotFound
  * @Date: 2020-03-01 15:22:23
- * @LastEditTime: 2020-10-01 16:40:13
+ * @LastEditTime: 2021-02-01 22:24:35
  */
 #include <cstring>
 #include <algorithm>
 
+#include "Utilty/String.h"
 #include "NetWork/Http/Http.h"
-#include "Utilty/StringUtils.h"
 
 namespace Magic{
 namespace NetWork{

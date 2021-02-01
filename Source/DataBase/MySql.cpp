@@ -1,5 +1,5 @@
 #include <cstring>
-#include "Core/Logger.h"
+#include "Utilty/Logger.h"
 #include "DataBase/MySql.h"
 
 namespace Magic{

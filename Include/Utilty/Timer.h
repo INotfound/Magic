@@ -1,14 +1,14 @@
 /*
  * @Author: INotFound
  * @Date: 2020-03-13 21:33:59
- * @LastEditTime: 2020-10-02 22:21:43
+ * @LastEditTime: 2021-02-01 22:30:39
  */
 #pragma once
 #include <functional>
 
 #include "asio.hpp"
 #include "Core/Core.h"
-#include "Core/Thread.h"
+#include "Utilty/Thread.h"
 
 namespace Magic{
     /**
@@ -46,4 +46,9 @@ namespace Magic{
         Safe<asio::io_context> m_IoContext;
         Safe<asio::io_context::work> m_IoWork;
     };
+    /**
+     * @brief: 获取线程Id
+     * @return: 返回线程Id
+     */
+    uint64_t GetThreadId();
 }

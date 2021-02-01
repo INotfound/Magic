@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-01-13 07:44:12
  */
 #pragma once
-#include <Magic.h>
+#include <Base.h>
 #include "TestLog.h"
 // 注入示例
 namespace Base{

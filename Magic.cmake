@@ -91,7 +91,6 @@ elseif(WIN32 AND MINGW)
 elseif(UNIX AND NOT ANDROID)
     #UNIX Library
     set(LIBS
-        dl
     )
     if(MySql STREQUAL ON)
         set(LIBS ${LIBS} mariadbclient)

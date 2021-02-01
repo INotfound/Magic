@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-08-07 18:03:10
- * @LastEditTime: 2021-01-24 13:49:21
+ * @LastEditTime: 2021-02-01 22:59:55
  */
 #pragma once
 #include "Core/Core.h"
@@ -168,4 +168,6 @@ namespace Magic{
     private:
         std::unordered_map<const void*,std::list<RegisteredType>> m_RegisteredType;
     };
+    extern Safe<Container> g_Container;
+    const Safe<Container>& Configure(const std::function<void(const Safe<Container>&)>& configure);
 }

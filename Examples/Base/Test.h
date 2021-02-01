@@ -1,10 +1,10 @@
 /*
  * @Author: INotFound
  * @Date: 2020-12-17 15:31:24
- * @LastEditTime: 2021-01-12 06:00:15
+ * @LastEditTime: 2021-02-01 23:09:40
  */
 #pragma once
-#include <Magic.h>
+#include <Base.h>
 
 // 注入示例
 namespace Base{

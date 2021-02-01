@@ -6,7 +6,7 @@
  */
 #include <chrono>
 
-#include "Core/Timer.h"
+#include "Utilty/Timer.h"
 
 namespace Magic{
     Timer::Timer(const std::string& name,uint32_t tickMs,const std::function<void()>& callBack)

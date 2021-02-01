@@ -1,15 +1,15 @@
 /*
  * @Author: INotFound
  * @Date: 2020-05-09 09:39:20
- * @LastEditTime: 2020-09-30 21:26:56
+ * @LastEditTime: 2021-02-01 22:33:42
  */
 #if defined(_WIN32) || defined(_WIN64)
 
 #include "Core/Core.h"
-#include "Core/Logger.h"
-#include "Utilty/TimeUtils.h"
-#include "Utilty/ThreadUtils.h"
-#include "Utilty/StringUtils.h"
+#include "Utilty/Timer.h"
+#include "Utilty/Thread.h"
+#include "Utilty/String.h"
+#include "Utilty/Logger.h"
 
 namespace Magic {
     uint64_t GetCurrentTimeMS(){

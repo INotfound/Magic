@@ -2,7 +2,7 @@
  * @File: Any.h
  * @Author: qicosmos
  * @Date: 2020-02-13 16:47:26
- * @LastEditTime: 2020-10-21 18:28:58
+ * @LastEditTime: 2021-02-01 21:50:34
  */
 #pragma once
 #if __cplusplus >= 201703L
@@ -12,7 +12,7 @@
 #include <type_traits>
 
 #include "Core/Core.h"
-#include "Core/Logger.h"
+
 /*
     form: qicosmos@purecpp.com
 */
@@ -90,7 +90,7 @@ namespace std{
     template<class T>
     T& any_cast(const any& other){
         if (!other.Is<T>()){
-            MAGIC_WARN() << "Can not cast " << typeid(T).name() << " to " << other.m_TypeIndex.name();
+           std::printf("Can not cast %s to %s",typeid(T).name(),other.m_TypeIndex.name());
             throw std::bad_cast();
         }
         auto type = dynamic_cast<any::Type<T>*> (other.m_Pointer.get());

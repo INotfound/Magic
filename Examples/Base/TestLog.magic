@@ -6,7 +6,7 @@
                 "Id":"stdlog",
                 "Class":"Magic::StdOutLogAppender",
                 "Interface":"Magic::ILogAppender",
-                "IncludePath":"Core/Logger.h",
+                "IncludePath":"Utilty/Logger.h",
                 "Dependencies":[],
                 "FunctionPropertys":[]
             },
@@ -29,7 +29,7 @@
         ],
         "Constructor":{
             "Name":"Initialize",
-            "WithParameter": false
+            "WithParameter": true
         }
     }
 }

@@ -1,15 +1,15 @@
 /*
  * @Author: INotFound
  * @Date: 2020-09-28 14:07:31
- * @LastEditTime: 2020-10-22 14:59:32
+ * @LastEditTime: 2021-02-01 22:19:30
  */
 #pragma once
 #include <sstream>
 #include <fstream>
 
 #include "Core/Core.h"
-#include "Core/Mutex.h"
-#include "Utilty/StringUtils.h"
+#include "Utilty/Mutex.h"
+#include "Utilty/String.h"
 
 namespace Magic {
     /**

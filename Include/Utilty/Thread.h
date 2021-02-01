@@ -1,13 +1,13 @@
 /*
  * @Author: INotFound
  * @Date: 2020-03-13 21:41:35
- * @LastEditTime: 2021-01-12 08:48:05
+ * @LastEditTime: 2021-02-01 22:30:11
  */
 #pragma once
 #include <thread>
 
 #include "Core/Core.h"
-#include "Core/Mutex.h"
+#include "Utilty/Mutex.h"
 
 
 namespace Magic{
@@ -61,4 +61,14 @@ namespace Magic{
         std::thread m_Thread;
         std::function<void()> m_CallBack;
     };
+    /**
+     * @brief: 获取当前时间
+     * @return: 返回当前时间
+     */
+    uint64_t GetCurrentTimeMS();
+    /**
+     * @brief: 获取当前时间
+     * @return: 返回当前时间
+     */
+    uint64_t GetCurrentTimeUS();
 }

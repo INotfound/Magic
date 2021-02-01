@@ -14,7 +14,7 @@
         ],
         "Constructor":{
             "Name":"Initialize",
-            "WithParameter": false
+            "WithParameter": true
         }
     }
 }

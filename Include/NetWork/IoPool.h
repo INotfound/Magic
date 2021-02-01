@@ -1,12 +1,12 @@
 /*
  * @Author: INotFound
  * @Date: 2020-09-29 17:17:06
- * @LastEditTime: 2020-09-30 21:17:29
+ * @LastEditTime: 2021-02-01 22:20:38
  */
 #pragma once
 #include "asio.hpp"
 #include "Core/Core.h"
-#include "Core/Config.h"
+#include "Utilty/Config.h"
 
 namespace Magic{
 namespace NetWork{

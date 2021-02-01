@@ -5,27 +5,27 @@
             {
                 "Id":"logger",
                 "Class":"Magic::Logger",
-                "IncludePath": "Include/Core/Logger.h",
+                "IncludePath": "Utilty/Logger.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"config",
                 "Class":"Magic::Config",
-                "IncludePath": "Include/Core/Config.h",
+                "IncludePath": "Utilty/Config.h",
                 "FunctionPropertys":["addConfigFile"]
             },
             {
                 "Id":"configFile",
                 "Class":"Magic::ConfigFile",
-                "IncludePath": "Include/Core/Logger.h",
+                "IncludePath": "Utilty/Config.h",
                 "FunctionPropertys":["addFormatter"]
             },
             {
                 "Id":"iniConfigFormmater",
                 "Class":"Magic::InIConfigFormatter",
                 "Interface":"Magic::IConfigFormatter",
-                "IncludePath": "Include/Core/Logger.h"
+                "IncludePath": "Utilty/Config.h"
             }
         ],
         "Initialize":[

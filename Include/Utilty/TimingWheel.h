@@ -1,16 +1,16 @@
 /*
  * @Author: INotFound
  * @Date: 2020-03-13 20:57:28
- * @LastEditTime: 2021-01-07 10:11:36
+ * @LastEditTime: 2021-02-01 22:19:16
  */
 #pragma once
 #include <list>
 #include <vector>
 
 #include "Core/Core.h"
-#include "Core/Mutex.h"
-#include "Core/Timer.h"
-#include "Core/Config.h"
+#include "Utilty/Mutex.h"
+#include "Utilty/Timer.h"
+#include "Utilty/Config.h"
 
 namespace Magic{
     /**

@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-09-12 21:40:10
- * @LastEditTime: 2020-09-30 21:26:48
+ * @LastEditTime: 2021-02-01 22:33:09
  */
 #if defined(linux) || defined(__linux__)
 #include <vector>
@@ -11,9 +11,11 @@
 #include <strings.h>
 
 #include "Core/Core.h"
-#include "Core/Logger.h"
-#include "Utilty/TimeUtils.h"
-#include "Utilty/StringUtils.h"
+#include "Core/Adapter.h"
+#include "Utilty/Timer.h"
+#include "Utilty/Logger.h"
+#include "Utilty/String.h"
+#include "Utilty/Thread.h"
 
 namespace Magic {
     uint64_t GetCurrentTimeMS() {

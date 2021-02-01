@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-12-17 00:06:57
- * @LastEditTime: 2021-01-19 16:54:48
+ * @LastEditTime: 2021-02-01 23:30:06
  */
 #include <vector>
 #include <string>
@@ -34,7 +34,7 @@ std::string g_HeaderName;
 std::string g_Constructor;
 bool g_ConstructorWithParameter;
 std::vector<Initialize> g_InitializeMap;
-std::unordered_map<std::string,Registered> g_RegisteredMap;
+std::vector<Registered> g_RegisteredMap;
 
 
 
@@ -75,7 +75,7 @@ void ParseRegistered(const rapidjson::Value::Array& array){
             std::printf("[Err]: Registered Json[Id|Class] Is Empty:%d !!!\n",__LINE__);
             std::exit(1);
         }
-        g_RegisteredMap.emplace(registerObj.Id,registerObj);
+        g_RegisteredMap.emplace_back(registerObj);
     }
 }
 
@@ -140,18 +140,17 @@ void Generator(std::ofstream& stream){
            << " */" << LF;
     {
         stream << "#pragma once" << LF
-               << "#include <Magic.h>" << LF;
-        for(auto& v : g_RegisteredMap){
-            if(!v.second.IncludePath.empty()){
+               << "#include <Core/Container.h>" << LF;
+        for(auto v : g_RegisteredMap){
+            if(!v.IncludePath.empty()){
                 stream << "#include \""
-                    << v.second.IncludePath
+                    << v.IncludePath
                     << "\"" << LF;
             }
         }
         stream << LF;
     }
-    stream << "Safe<Magic::Logger> g_Logger;"
-           << LF;
+
     if(!g_NameSpace.empty()){
         stream << "namespace "
                << g_NameSpace
@@ -169,13 +168,10 @@ void Generator(std::ofstream& stream){
     stream << LF;
 
     {   /// Registereds
-        stream << "        Magic::Thread::SetName(\"Master\");"
-            << LF
-            << "        const auto& iocContainer = Magic::Configure([](const Safe<Magic::Container>& ioc){"
-            << LF;
+        stream << "        const auto& iocContainer = Magic::Configure([](const Safe<Magic::Container>& ioc){"
+               << LF;
  
-        for(auto& v : g_RegisteredMap){
-            auto& val = v.second;
+        for(auto val : g_RegisteredMap){
             if(val.Interface.empty()){
                 stream << "            ioc->registerType<";
             }else{
@@ -212,17 +208,23 @@ void Generator(std::ofstream& stream){
     { /// Initializes
         for(auto& val : g_InitializeMap){
             stream << "        {" << LF;
-            auto CallerIter = g_RegisteredMap.find(val.Id);
-            if(CallerIter == g_RegisteredMap.end()){
+            auto iter = g_RegisteredMap.begin();
+            for(;iter != g_RegisteredMap.end();iter++){
+                if(iter->Id == val.Id){
+                    break;
+                }
+            }
+            if(iter == g_RegisteredMap.end()){
                 std::printf("[Err]: Json[Caller] Is Empty:%d !!!\n",__LINE__);
                 std::exit(1);
             }
+            auto CallerIter = *iter;
             if(val.Loop){
                 stream << "            "
-                       << (CallerIter->second.Class == "Magic::Logger" ? "" : "auto ")
-                       << (CallerIter->second.Class == "Magic::Logger" ? "g_Logger" : val.Id) << " = "
+                       << "auto "
+                       << val.Id << " = "
                        << "iocContainer->resolve<"
-                       << CallerIter->second.Class
+                       << CallerIter.Class
                        << ">();"
                        << LF
                        << "            for(auto& v : "
@@ -231,7 +233,7 @@ void Generator(std::ofstream& stream){
                        << ">()){"
                        << LF
                        << "                "
-                       << (CallerIter->second.Class == "Magic::Logger" ? "g_Logger" : val.Id)
+                       << val.Id
                        << "->"
                        << val.FunctionPropertys.at(0)
                        << "(v);"
@@ -242,7 +244,7 @@ void Generator(std::ofstream& stream){
                 stream << "            auto "
                        << val.Id << " = "
                        << "iocContainer->resolve<"
-                       << CallerIter->second.Class
+                       << CallerIter.Class
                        << ">();"
                        << LF;
                 /// todo: 可以扩展一下

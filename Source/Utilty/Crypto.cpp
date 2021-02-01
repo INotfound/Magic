@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-03-01 15:53:59
- * @LastEditTime: 2020-12-16 11:13:02
+ * @LastEditTime: 2021-02-01 22:25:31
  */
 #include <cstdio>
 #include <cstring>
@@ -9,7 +9,7 @@
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #endif
-#include "Utilty/CryptoUtils.h"
+#include "Utilty/Crypto.h"
 
 namespace Magic{
 #ifndef SHA_DIGEST_LENGTH
