@@ -140,7 +140,7 @@ void Generator(std::ofstream& stream){
            << " */" << LF;
     {
         stream << "#pragma once" << LF
-               << "#include <Core/Container.h>" << LF;
+               << "#include <Magic>" << LF;
         for(auto v : g_RegisteredMap){
             if(!v.IncludePath.empty()){
                 stream << "#include \""
