@@ -161,7 +161,7 @@ void VisitMemberFunction(CXCursor cursor){
     if(!g_FunctionName.empty() && !g_Visitor->m_ConstructingFunction.m_IsConstructor){
         std::string funcName = clang_getCString(clang_getCursorSpelling(cursor));
         if(funcName.find(g_FunctionName) != std::string::npos){
-            g_Visitor->m_ConstructingFunction.m_FunctionName = g_FunctionName;
+            g_Visitor->m_ConstructingFunction.m_FunctionName = funcName;
             g_Visitor->m_ConstructingClass.m_MemberMethods.emplace_back(g_Visitor->m_ConstructingFunction);
         }
         g_Visitor->m_ConstructingFunction = FunctionDecl();
@@ -232,7 +232,7 @@ void Generator(){
             }
         }
         bool isFirst = false;
-        stream << "                \"Id\":\"" << valClass.second.m_Classs.m_ClassName <<"\"," << lF
+        stream  << "                \"Id\":\"" << valClass.second.m_Classs.m_ClassName <<"\"," << lF
                 << "                \"Class\":\"" << g_NameSpace << "::" << valClass.second.m_Classs.m_ClassName << "\"," << lF
                 << "                \"Interface\":\"" << valClass.second.m_Classs.m_InterfaceName << "\"," << lF
                 << "                \"IncludePath\": \"" << valClass.second.m_FilePath << "\"," << lF
@@ -280,12 +280,12 @@ void Generator(){
 int main(int argc, char** argv){
     if(argc < 3){
         std::printf("Parameter Error\n");
-        std::printf("\t-D Enable Debug Mode.\t");
-        std::printf("\t-N Namespace To Be Parsed.\t");
-        std::printf("\t-O Output Module File Name.\t");
-        std::printf("\t-H Header File To Be Parsed.\t");
-        std::printf("\t-F Function Convention Name To Be Parsed.\t");
-        std::printf("\t-I The Header File Of The Dependent Library.\t");
+        std::printf("\t-D Enable Debug Mode.\n");
+        std::printf("\t-N Namespace To Be Parsed.\n");
+        std::printf("\t-O Output Module File Name.\n");
+        std::printf("\t-H Header File To Be Parsed.\n");
+        std::printf("\t-F Function Convention Name To Be Parsed.\n");
+        std::printf("\t-I The Header File Of The Dependent Library.\n");
         return EXIT_FAILURE;
     }
     for(auto i = 1; i< argc;i++){
