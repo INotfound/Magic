@@ -35,3 +35,6 @@
 /Bin
 /Lib
 /build
+
+# File
+compile_commands.json
