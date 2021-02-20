@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.0)
 project(Magic)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static")
 
 option(MySql "MYSQL Module Compilation Options" OFF)
 option(OpenSSL "OPENSSL Module Compilation Options" OFF)
@@ -89,7 +88,7 @@ if(Tool STREQUAL ON)
         link_directories(${MAGIC_CLANG_LIBRARY})
         include_directories(${MAGIC_CLANG_INCLUDE})
         add_executable(Analysis Tool/Analysis.cpp)
-        target_link_libraries(Analysis libclang)
+        target_link_libraries(Analysis clang)
     endif()
 
     install(TARGETS ${BINARY}

@@ -64,40 +64,26 @@ else()
 endif()
 
 
-if(WIN32 AND NOT MINGW)
+if(WIN32)
     #WIN32 Library
     set(LIBS
         ws2_32
         mswsock
     )
-    if(MySql STREQUAL ON)
-        set(LIBS ${LIBS} mariadbclient)
-    endif()
-    if(OpenSSL STREQUAL ON)
-        set(LIBS ${LIBS} ssl crypto)
-    endif()
-elseif(WIN32 AND MINGW)
-    #MINGW Library
-    set(LIBS
-        ws2_32
-        mswsock
-    )
-    if(MySql STREQUAL ON)
-        set(LIBS ${LIBS} mariadbclient)
-    endif()
-    if(OpenSSL STREQUAL ON)
-        set(LIBS ${LIBS} ssl crypto)
-    endif()
-elseif(UNIX AND NOT ANDROID)
+
+elseif(UNIX)
     #UNIX Library
     set(LIBS
     )
-    if(MySql STREQUAL ON)
-        set(LIBS ${LIBS} mariadbclient)
-    endif()
-    if(OpenSSL STREQUAL ON)
-        set(LIBS ${LIBS} ssl crypto)
-    endif()
+
+endif()
+
+if(MySql STREQUAL ON)
+    set(LIBS ${LIBS} mariadbclient)
+endif()
+
+if(OpenSSL STREQUAL ON)
+    set(LIBS ${LIBS} ssl crypto)
 endif()
 
 link_libraries(
