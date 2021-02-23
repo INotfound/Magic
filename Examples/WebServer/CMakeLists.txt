@@ -4,7 +4,7 @@ project(ExampleWebServer)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-set(MAGIC ../../../Magic)
+set(MAGIC ${PROJECT_SOURCE_DIR}/../../../Magic)
 include_directories(
     ${MAGIC}
 	${MAGIC}/Include

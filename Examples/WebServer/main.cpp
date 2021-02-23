@@ -6,6 +6,7 @@
 #include <iostream>
 #include "WebServer.h"
 int main(){
-    Web::Initialize();
+    Web::Initialize([](const Safe<Magic::Container>& ioc){
+    });
     return EXIT_SUCCESS;
 }

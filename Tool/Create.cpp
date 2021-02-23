@@ -19,7 +19,7 @@
 
 std::string g_LF = "\n";
 std::string g_MagicPath;
-std::string g_MainCpp=R"Template(#include <Magic>
+std::string g_MainCpp=R"Template(#include <Magic/Magic>
 
 int main(int argc, char** argv){
     return EXIT_SUCCESS;

@@ -219,7 +219,7 @@ void Generator(){
                     std::string begin = "std::shared_ptr<";
                     std::string end = ">";
                     std::string::size_type beginPos = valParamType.find(begin);
-                    std::string::size_type endPos = valParamType.find(end);
+                    std::string::size_type endPos = valParamType.find_last_of(end);
                     if(beginPos != std::string::npos){
                         beginPos += begin.size();
                         constructorParams.emplace_back(valParamType.substr(beginPos,endPos-beginPos));

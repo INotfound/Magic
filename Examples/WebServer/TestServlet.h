@@ -4,7 +4,7 @@
  * @LastEditTime: 2020-12-21 13:55:26
  */
 #pragma once
-#include <Magic>
+#include <Magic/NetWork/Http/HttpServlet.h>
 
 namespace Web{
     class TestServlet :public Magic::NetWork::Http::IHttpServlet{

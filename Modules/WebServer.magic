@@ -5,35 +5,35 @@
             {
                 "Id":"timingWheel",
                 "Class":"Magic::TimingWheel",
-                "IncludePath": "Utilty/TimingWheel.h",
+                "IncludePath": "Magic/Utilty/TimingWheel.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"ioPool",
                 "Class":"Magic::NetWork::IoPool",
-                "IncludePath": "NetWork/IoPool.h",
+                "IncludePath": "Magic/NetWork/IoPool.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"dispatch",
                 "Class":"Magic::NetWork::Http::HttpServletDispatch",
-                "IncludePath": "NetWork/Http/HttpServlet.h",
+                "IncludePath": "Magic/NetWork/Http/HttpServlet.h",
                 "Dependencies":[],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"httpServer",
                 "Class":"Magic::NetWork::Http::HttpServer",
-                "IncludePath": "NetWork/Http/HttpServer.h",
+                "IncludePath": "Magic/NetWork/Http/HttpServer.h",
                 "Dependencies":["Magic::NetWork::IoPool","Magic::Config"],
                 "FunctionPropertys":["setServletDispatch"]
             },
             {
                 "Id":"httpSession",
                 "Class":"Magic::NetWork::Http::HttpSessionManager",
-                "IncludePath": "NetWork/Http/HttpSession.h",
+                "IncludePath": "Magic/NetWork/Http/HttpSession.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":["setTimingWheel"]
             }

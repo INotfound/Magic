@@ -20,41 +20,41 @@ include_directories(
 )
 
 set(SOURCES
-    Source/Core/Container.cpp
+    Source/Magic/Core/Container.cpp
 )
 
 if(Utilty STREQUAL ON)
     set(SOURCES
         ${SOURCES}
-        Source/Utilty/Timer.cpp
-        Source/Utilty/Crypto.cpp
-        Source/Utilty/Logger.cpp
-        Source/Utilty/Config.cpp
-        Source/Utilty/Thread.cpp
-        Source/Utilty/TimingWheel.cpp
+        Source/Magic/Utilty/Timer.cpp
+        Source/Magic/Utilty/Crypto.cpp
+        Source/Magic/Utilty/Logger.cpp
+        Source/Magic/Utilty/Config.cpp
+        Source/Magic/Utilty/Thread.cpp
+        Source/Magic/Utilty/TimingWheel.cpp
         
-        Source/Adapter/Win//Utils.cpp
-        Source/Adapter/Win//Mutex.cpp
-        Source/Adapter/Linux/Utils.cpp
-        Source/Adapter/Linux/Mutex.cpp
+        Source/Magic/Adapter/Win//Utils.cpp
+        Source/Magic/Adapter/Win//Mutex.cpp
+        Source/Magic/Adapter/Linux/Utils.cpp
+        Source/Magic/Adapter/Linux/Mutex.cpp
     )
 endif()
 
 if(NetWork STREQUAL ON)
     set(SOURCES
         ${SOURCES}
-        Source/NetWork/IoPool.cpp
-        Source/NetWork/Socket.cpp
-        Source/NetWork/TcpServer.cpp
-        Source/NetWork/Http/Http.cpp
-        Source/NetWork/Http/HttpParser.cpp
-        Source/NetWork/Http/HttpSocket.cpp
-        Source/NetWork/Http/HttpServer.cpp
-        Source/NetWork/Http/HttpServlet.cpp
-        Source/NetWork/Http/HttpSession.cpp
-        Source/NetWork/Http/Utils/url_parser.rl.cpp
-        Source/NetWork/Http/Utils/http11_parser.rl.cpp
-        Source/NetWork/Http/Utils/httpclient_parser.rl.cpp
+        Source/Magic/NetWork/IoPool.cpp
+        Source/Magic/NetWork/Socket.cpp
+        Source/Magic/NetWork/TcpServer.cpp
+        Source/Magic/NetWork/Http/Http.cpp
+        Source/Magic/NetWork/Http/HttpParser.cpp
+        Source/Magic/NetWork/Http/HttpSocket.cpp
+        Source/Magic/NetWork/Http/HttpServer.cpp
+        Source/Magic/NetWork/Http/HttpServlet.cpp
+        Source/Magic/NetWork/Http/HttpSession.cpp
+        Source/Magic/NetWork/Http/Utils/url_parser.rl.cpp
+        Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
+        Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
     )
 endif()
 
@@ -62,7 +62,7 @@ if(MySql STREQUAL ON)
     add_definitions(MYSQL)
     set(SOURCES 
         ${SOURCES}
-        Source/DataBase/MySql.cpp
+        Source/Magic/DataBase/MySql.cpp
     )
 endif()
 

@@ -7,7 +7,6 @@
 
 int main(){
     Base::Initialize([](const Safe<Magic::Container>& ioc){
-        Magic::g_Logger = ioc->resolve<Magic::Logger>();
     });
     return EXIT_SUCCESS;
 }

@@ -1,0 +1,2 @@
+#include <Magic/Core/Core.h>
+#include <Magic/Core/Container.h>

@@ -3,14 +3,6 @@
         "NameSpace":"Base",
         "Registered":[
             {
-                "Id":"stdlog",
-                "Class":"Magic::StdOutLogAppender",
-                "Interface":"Magic::ILogAppender",
-                "IncludePath":"Utilty/Logger.h",
-                "Dependencies":[],
-                "FunctionPropertys":[]
-            },
-            {
                 "Id":"testLog",
                 "Class":"Base::TestLog",
                 "IncludePath": "TestLog.h",
