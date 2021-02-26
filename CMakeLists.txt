@@ -72,6 +72,12 @@ endif()
 
 add_library(Magic ${SOURCES})
 
+if(UNIX AND Sanitize STREQUAL Thread)
+    target_compile_options(Magic PUBLIC -fsanitize=thread -pie -g)
+elseif(UNIX AND Sanitize STREQUAL Address)
+    target_compile_options(Magic PUBLIC -fsanitize=address -O1 -fno-omit-frame-pointer)
+endif()
+
 if(Tool STREQUAL ON)
 
     set(BINARY
