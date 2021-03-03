@@ -32,9 +32,12 @@
 *.app
 
 # Directory
+/.vs
+/out
 /Bin
 /Lib
 /build
 
 # File
+CMakeSettings.json
 compile_commands.json
