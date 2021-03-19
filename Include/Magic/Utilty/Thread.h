@@ -14,7 +14,7 @@ namespace Magic{
     /**
      * @brief: 线程类
      */
-    class Thread{
+    class Thread :public Noncopyable{
     public:
         /**
          * @brief: 析构函数
@@ -25,7 +25,7 @@ namespace Magic{
          * @param threadName 线程名称
          * @param callBack 回调函数
          */
-        Thread(const std::string& threadName,const std::function<void()> callBack);
+        Thread(const std::string& threadName,std::function<void()> callBack);
         /**
          * @brief: 等待线程执行函数
          */

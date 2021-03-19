@@ -9,7 +9,7 @@
 #include "Magic/Utilty/Timer.h"
 
 namespace Magic{
-    Timer::Timer(const std::string& name,uint32_t tickMs,const std::function<void()>& callBack)
+    Timer::Timer(const std::string& name,uint32_t tickMs,std::function<void()> callBack)
         :m_Name(name)
         ,m_MilliSeconds(tickMs)
         ,m_CallBack(std::move(callBack))

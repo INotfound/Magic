@@ -127,7 +127,7 @@ namespace Magic {
             if (charValue == '#') {
                 isComment = true;
                 continue;
-            }else if (isComment == true) {
+            }else if (isComment) {
                 if(charValue == ' '){
                     continue;
                 }
@@ -153,7 +153,7 @@ namespace Magic {
                 normalString.clear();
                 valueString.clear();
                 continue;
-            }else if (isValue == true) {
+            }else if (isValue) {
                 if (!(charValue == ' ' && isEmpty)) {
                     isEmpty = false;
                     valueString.append(1, charValue);

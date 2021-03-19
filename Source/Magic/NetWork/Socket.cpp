@@ -14,7 +14,7 @@ namespace NetWork{
     Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context)
         :m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)
-        ,m_ByteBlock(new char[m_BufferSize],[](char *pointer) {delete[] pointer;})
+        ,m_ByteBlock(new char[m_BufferSize],[](const char *pointer) {delete[] pointer;})
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
         m_ErrorCodeCallBack = [](const asio::error_code & err){
@@ -53,14 +53,14 @@ namespace NetWork{
         asio::async_read(*m_Socket
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_at_least(1)
-            ,std::bind([this](const asio::error_code &err, std::size_t length,const Safe<Socket> self,const RecvCallBack& callback){
+            ,std::bind([this](const asio::error_code &err, std::size_t length,const Safe<Socket>& self,const RecvCallBack& callback){
                 if(err){
                     m_ErrorCodeCallBack(err);
                 }else{
                     m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
                     callback(self,this->m_StreamBuffer);
                 }
-            },std::placeholders::_1,std::placeholders::_2,std::move(self),std::move(callBack)));
+            },std::placeholders::_1,std::placeholders::_2,std::move(self),callBack));
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
@@ -68,18 +68,18 @@ namespace NetWork{
         asio::async_read(*m_Socket
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_exactly(size)
-            ,std::bind([this](const asio::error_code &err, std::size_t length,const Safe<Socket> self,const RecvCallBack& callback){
+            ,std::bind([this](const asio::error_code &err, std::size_t length,const Safe<Socket>& self,const RecvCallBack& callback){
                 if(err){
                     m_ErrorCodeCallBack(err);
                 }else{
                     m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
                     callback(self,this->m_StreamBuffer);
                 }
-            },std::placeholders::_1,std::placeholders::_2,std::move(self),std::move(callBack)));
+            },std::placeholders::_1,std::placeholders::_2,std::move(self),callBack));
     }
 
     void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
-        m_ErrorCodeCallBack = std::move(errorCallBack);
+        m_ErrorCodeCallBack = errorCallBack;
     }
 }
 }

@@ -72,18 +72,23 @@ endif()
 
 add_library(Magic ${SOURCES})
 
-if(UNIX AND Sanitize STREQUAL Thread)
-    target_compile_options(Magic PUBLIC -fsanitize=thread -pie -g)
-elseif(UNIX AND Sanitize STREQUAL Address)
-    target_compile_options(Magic PUBLIC -fsanitize=address -O1 -fno-omit-frame-pointer)
+set(BINARY
+    Magic
+)
+
+if(Sanitize STREQUAL Thread)
+    set(Tool OFF)
+elseif(Sanitize STREQUAL Address)
+    set(Tool OFF)
 endif()
+
 
 if(Tool STREQUAL ON)
 
     set(BINARY
         Gen
-        Magic
         Create
+        ${BINARY}
     )
 
     add_executable(Gen Tool/Generator.cpp)
@@ -97,12 +102,11 @@ if(Tool STREQUAL ON)
         target_link_libraries(Analysis clang)
     endif()
 
-    install(TARGETS ${BINARY}
-        RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
-        ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
-    )
-
     add_executable(Test Test/main.cpp)
     target_link_libraries(Test Magic)
-    
 endif()
+
+install(TARGETS ${BINARY}
+    RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
+    ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
+)

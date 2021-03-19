@@ -31,7 +31,7 @@ namespace Http{
     };
 
     bool IsUrlEncode(const std::string& str) {
-		return str.find("%") != std::string::npos || str.find("+") != std::string::npos;
+		return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
 	}
 
     HttpMethod CharsToHttpMethod(const char* str){
@@ -55,7 +55,7 @@ namespace Http{
     }
 
     const char* HttpMethodToString(const HttpMethod & method){
-        uint64_t index = static_cast<uint64_t>(method);
+        auto index = static_cast<uint64_t>(method);
         if(index >= (sizeof(g_MethodString) / sizeof(g_MethodString[0]))){
             return "<unknown>";
         }
@@ -139,7 +139,7 @@ namespace Http{
                 subString = UrlDecode(subString);
             }
             pos += static_cast<uint64_t>(subString.size() + 1);
-            key = subString.find("=");
+            key = subString.find('=');
             if (key == std::string::npos)
                 break;
             map.emplace(subString.substr(0, key)
@@ -157,7 +157,7 @@ namespace Http{
                 subString = UrlDecode(subString);
             }
             pos += static_cast<uint64_t>(subString.size() + 1);
-            key = subString.find("=");
+            key = subString.find('=');
             if (key == std::string::npos)
                 break;
             map.emplace(Trim(subString.substr(0, key))
@@ -183,7 +183,7 @@ namespace Http{
         m_Method = method;
     }
 
-    void HttpRequest::setkeepAlive(bool keepAlive){
+    void HttpRequest::setKeepAlive(bool keepAlive){
         m_KeepAlive = keepAlive;
     }
 
@@ -228,7 +228,7 @@ namespace Http{
         return m_Headers;
     }
 
-    bool HttpRequest::getkeepAlive() const{
+    bool HttpRequest::getKeepAlive() const{
         return m_KeepAlive;
     }
     
@@ -340,7 +340,7 @@ namespace Http{
         m_Status = status;
     }
 
-    void HttpResponse::setkeepAlive(bool keepAlive){
+    void HttpResponse::setKeepAlive(bool keepAlive){
         m_KeepAlive = keepAlive;
     }
 
@@ -393,7 +393,7 @@ namespace Http{
         m_Cookies.push_back(result);
     }
 
-    bool HttpResponse::getkeepAlive() const{
+    bool HttpResponse::getKeepAlive() const{
         return m_KeepAlive;
     }
 

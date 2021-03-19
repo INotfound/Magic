@@ -25,7 +25,7 @@ namespace Http{
     class IHttpServlet{
     public:
         IHttpServlet(const std::string& path,const HttpServletType& type);
-        const std::string getPath() const;
+        const std::string& getPath() const;
         const HttpServletType& getType() const;
         virtual bool handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) =0;
     private:

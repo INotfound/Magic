@@ -258,7 +258,7 @@ namespace Http{
          * @brief: 设置是否为长连接函数
          * @param keepAlive 是否为长连接
          */
-        void setkeepAlive(bool keepAlive);
+        void setKeepAlive(bool keepAlive);
         /**
          * @brief: 设置查询字符串函数
          * @param query 查询字符串
@@ -311,7 +311,7 @@ namespace Http{
          * @brief: 获取是否为长连接函数
          * @return: 返回True则是，返回False则是否
          */
-        bool getkeepAlive() const;
+        bool getKeepAlive() const;
         /**
          * @brief: 获取版本号函数
          * @return: 返回版本号
@@ -411,7 +411,7 @@ namespace Http{
          * @brief: 设置是否为长连接函数
          * @param keepAlive 是否为长连接
          */
-        void setkeepAlive(bool keepAlive);
+        void setKeepAlive(bool keepAlive);
         /**
          * @brief: 设置主体正文函数
          * @param body 主体正文
@@ -459,7 +459,7 @@ namespace Http{
          * @brief: 获取是否为长连接函数
          * @return: 返回是否为长连接
          */
-        bool getkeepAlive() const;
+        bool getKeepAlive() const;
         /**
          * @brief: 获取版本号函数
          * @return: 返回版本号

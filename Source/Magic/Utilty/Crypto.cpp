@@ -20,7 +20,7 @@ namespace Magic{
     static char SHA1Chars[41] = {0};
 
     void HexStringFromData(const void*data,uint32_t len,char* outPut){
-        const unsigned char *buf = (const unsigned char *)data;
+        const auto *buf = (const unsigned char *)data;
         size_t i, j;
         for (i = j = 0; i < len; ++i) {
             char c;
@@ -186,7 +186,7 @@ namespace Magic{
         static const char* base64 =
             "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
         ret.reserve(len * 4 / 3 + 2);
-        const unsigned char* ptr = (const unsigned char*)data;
+        const auto* ptr = (const unsigned char*)data;
         const unsigned char* end = ptr + len;
         while(ptr < end) {
             unsigned int packed = 0;

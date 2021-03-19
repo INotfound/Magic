@@ -7,21 +7,23 @@
 #include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/Thread.h"
 
+#include <utility>
+
 namespace Magic{
     static thread_local Thread* g_Thread = nullptr;
-    static thread_local std::string g_ThreadName = "UNKNOW";
+    static thread_local std::string g_ThreadName = "UNKNOWN";
 
     Thread::~Thread() {
     }
     
-    Thread::Thread(const std::string& threadName,const std::function<void()> callback)
+    Thread::Thread(const std::string& threadName,std::function<void()> callback)
         :m_Id(-1)
         ,m_Name(threadName)
         ,m_Thread(&Thread::run,this)
-        ,m_CallBack(callback){
+        ,m_CallBack(std::move(callback)){
         MAGIC_DEBUG() << "Start thread: " << threadName;
         if(threadName.empty()){
-            m_Name = "UNKNOW";
+            m_Name = "UNKNOWN";
         }
         if(!m_CallBack){
             MAGIC_ERROR() << "Thread-CallBack is null";

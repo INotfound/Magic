@@ -15,11 +15,11 @@ namespace Http{
         m_ResponseParser = std::make_shared<HttpResponseParser>();
     }
     void HttpSocket::recvRequest(const HttpRecvBack& callback){
-        m_RecvRequestCallBack = std::move(callback);
+        m_RecvRequestCallBack = callback;
         this->requestParser();
     }
     void HttpSocket::recvResponse(const HttpRecvBack& callback){
-        m_RecvResponseCallBack = std::move(callback);
+        m_RecvResponseCallBack = callback;
         this->responseParser();
     }
     void HttpSocket::requestParser(){
@@ -45,7 +45,7 @@ namespace Http{
                     body.append(data.begin(),data.end());
                     request->setBody(body);
                     response->setVersion(request->getVersion());
-                    response->setkeepAlive(request->getkeepAlive());
+                    response->setKeepAlive(request->getKeepAlive());
                     m_RecvRequestCallBack(request,response);
                     sstream << response;
                     conn->send(sstream.str());
@@ -58,7 +58,7 @@ namespace Http{
                     auto& request = m_RequestParser->getData();
                     auto& response = m_ResponseParser->getData();
                     response->setVersion(request->getVersion());
-                    response->setkeepAlive(request->getkeepAlive());
+                    response->setKeepAlive(request->getKeepAlive());
                     m_RecvRequestCallBack(request,response);
                     sstream << response;
                     conn->send(sstream.str());

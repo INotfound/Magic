@@ -16,17 +16,17 @@ namespace Http{
     }
 
     void OnRequestPath(void *data,const char*at,size_t length){
-        HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
+        auto* parser = static_cast<HttpRequestParser*>(data);
         parser->getData()->setPath(std::string(at,length));
     }
     
     void OnRequestQuery(void *data,const char*at,size_t length){
-        HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
+        auto* parser = static_cast<HttpRequestParser*>(data);
         parser->getData()->setQuery(std::string(at,length));
     }
 
     void OnRequestMethod(void *data,const char*at,size_t length){
-        HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
+        auto* parser = static_cast<HttpRequestParser*>(data);
         HttpMethod method = CharsToHttpMethod(at);
         if(method == HttpMethod::INVALID_METHOD){
             parser->setError(true);
@@ -36,7 +36,7 @@ namespace Http{
     }
 
     void OnRequestVersion(void *data,const char*at,size_t length){
-        HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
+        auto* parser = static_cast<HttpRequestParser*>(data);
         uint8_t ver = 0;
         if(std::strncmp(at,"HTTP/1.1",length) == 0){
             ver = 0x11;
@@ -51,7 +51,7 @@ namespace Http{
     }
     
     void OnRequestFragment(void *data,const char*at,size_t length){
-        HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
+        auto* parser = static_cast<HttpRequestParser*>(data);
         parser->getData()->setFragment(std::string(at,length));
     }
 
@@ -60,7 +60,7 @@ namespace Http{
     }
 
     void OnRequestHttpField(void *data,const char*field,size_t flen,const char* value,size_t vlen){
-        HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
+        auto* parser = static_cast<HttpRequestParser*>(data);
         if(flen == 0){
             //TODO
             parser->setError(true);
@@ -130,19 +130,19 @@ namespace Http{
         return offset;
     }
 
-    void OnResponseReason(void *data,const char*at,size_t length){
-        HttpResponseParser *parser = static_cast<HttpResponseParser*>(data);
+    void OnResponseReason(void* data,const char* at,size_t length){
+        auto* parser = static_cast<HttpResponseParser*>(data);
         parser->getData()->setReason(std::string(at,length));
     }
     
-    void OnResponseStatus(void *data,const char*at,size_t length){
-        HttpResponseParser *parser = static_cast<HttpResponseParser*>(data);
-        HttpStatus status = static_cast<HttpStatus>(atol(at));
+    void OnResponseStatus(void* data,const char* at,size_t length){
+        auto* parser = static_cast<HttpResponseParser*>(data);
+        auto status = static_cast<HttpStatus>(atol(at));
         parser->getData()->setStatus(status);
     }
 
     void OnResponseVersion(void *data,const char*at,size_t length){
-        HttpResponseParser *parser = static_cast<HttpResponseParser*>(data);
+        auto* parser = static_cast<HttpResponseParser*>(data);
         uint8_t ver = 0;
         if(std::strncmp(at,"HTTP/1.1",length) == 0){
             ver = 0x11;
@@ -168,7 +168,7 @@ namespace Http{
     }
 
     void OnResponseHttpField(void *data,const char*field,size_t flen,const char* value,size_t vlen){
-        HttpResponseParser *parser = static_cast<HttpResponseParser*>(data);
+        auto* parser = static_cast<HttpResponseParser*>(data);
         if(flen == 0){
             //TODO
             parser->setError(true);

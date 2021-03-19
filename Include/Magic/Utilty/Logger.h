@@ -30,7 +30,7 @@ namespace Magic{
     /**
      * @brief: 日志级别枚举转字符串
      */
-    const char* ToString(const LogLevel level);
+    const char* ToString(LogLevel level);
     /**
      * @brief: 日志事件类
      */
@@ -72,7 +72,7 @@ namespace Magic{
          * @brief: 获取日志正文
          * @return: 返回日志正文
          */
-        const std::string  getContent()     const;
+        const std::string getContent()     const;
         /**
          * @brief: 获取文件名称
          * @return: 返回文件名称
@@ -109,7 +109,7 @@ namespace Magic{
     class ILogFormatItem {
     public:
         virtual ~ILogFormatItem();
-        virtual void format(std::ostream& os, const LogLevel  level, const Safe<LogEvent>& event) = 0;
+        virtual void format(std::ostream& os,LogLevel  level,const Safe<LogEvent>& event) = 0;
     };
     /**
      * @brief: 日志格式化类
@@ -127,7 +127,7 @@ namespace Magic{
          * @param level 日志级别
          * @param event 日志事件
          */
-        void format(std::ostream& os, const LogLevel  level, const Safe<LogEvent>& event);
+        void format(std::ostream& os,LogLevel  level,const Safe<LogEvent>& event);
     private:
         std::vector<Safe<ILogFormatItem>> m_Items;
     };
@@ -214,7 +214,7 @@ namespace Magic{
          * @param event 日志事件
          * @param logger 日志器
          */
-        LogWrap(const LogLevel level, Safe<LogEvent>&& event ,const Safe<Logger>& logger);
+        LogWrap(LogLevel level, Safe<LogEvent>&& event ,const Safe<Logger>& logger);
         /**
          * @brief:获取输出流函数 
          * @return 返回输出流

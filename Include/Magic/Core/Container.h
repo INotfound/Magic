@@ -4,6 +4,8 @@
  * @LastEditTime: 2021-02-01 22:59:55
  */
 #pragma once
+#include <utility>
+
 #include "Magic/Core/Core.h"
 
 namespace Magic{
@@ -33,7 +35,7 @@ namespace Magic{
                 :m_Type(type)
                 ,m_IsSingelton(singelton)
                 ,m_Object(nullptr)
-                ,m_CreateFunc(createFunc){
+                ,m_CreateFunc(std::move(createFunc)){
             }
             void resolveMemberFunction(Safe<Container>& con){
                 for(auto& callBack :m_MemberFuncs){
@@ -50,17 +52,17 @@ namespace Magic{
 
     public:
         template<typename T,typename... Args>
-        RegisteredType& registerType(bool isSingelton = true){
-            return this->registerTypeEx<T,T,Args...>(isSingelton);
+        RegisteredType& registerType(bool isSingleton = true){
+            return this->registerTypeEx<T,T,Args...>(isSingleton);
         }
 
         template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
-        RegisteredType& registerTypeEx(bool isSingelton = true){
+        RegisteredType& registerTypeEx(bool isSingleton = true){
             const void* id = CompiletimeIId<T>();
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
             Function<T,Args...> createFunc = &Container::invoke<T,M,Args...>;
-            m_RegisteredType[id].push_back(RegisteredType(id,isSingelton,[this,createFunc](){return (this->*createFunc)();}));
+            m_RegisteredType[id].push_back(RegisteredType(id, isSingleton, [this,createFunc](){return (this->*createFunc)();}));
             return m_RegisteredType[id].back();
         }
 
@@ -94,7 +96,7 @@ namespace Magic{
             auto& registeredType = iter->second.front();
             if(registeredType.m_IsSingelton){
                 if(!registeredType.m_Object){
-                    registeredType.m_Object = std::move(registeredType.m_CreateFunc());
+                    registeredType.m_Object = registeredType.m_CreateFunc();
                     registeredType.resolveMemberFunction(self);
                 #ifdef PERFORMANCE
                     auto time = std::chrono::high_resolution_clock::now();
@@ -121,7 +123,7 @@ namespace Magic{
                 for(auto& registeredType :v.second){
                     if(registeredType.m_IsSingelton){
                         if(!registeredType.m_Object){
-                            registeredType.m_Object = std::move(registeredType.m_CreateFunc());
+                            registeredType.m_Object = registeredType.m_CreateFunc();
                             registeredType.resolveMemberFunction(self);
                         }
                     }

@@ -22,7 +22,7 @@ namespace Magic{
          * @param tickMs 定时器执行时间(毫秒)
          * @param callBack 定时器回调执行函数
          */
-        Timer(const std::string& name,uint32_t tickMs,const std::function<void()>& callBack);
+        Timer(const std::string& name,uint32_t tickMs,std::function<void()> callBack);
         /**
          * @brief: 运行定时器
          */

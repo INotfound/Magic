@@ -16,7 +16,7 @@ namespace Http{
         ,m_ServletType(type){
     }
     
-    const std::string IHttpServlet::getPath() const{
+    const std::string& IHttpServlet::getPath() const{
         return m_Path;
     }
 
