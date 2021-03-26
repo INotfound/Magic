@@ -102,11 +102,12 @@ if(Tool STREQUAL ON)
         target_link_libraries(Analysis clang)
     endif()
 
-    add_executable(Test Test/main.cpp)
-    target_link_libraries(Test Magic)
 endif()
 
 install(TARGETS ${BINARY}
     RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
     ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
 )
+
+add_executable(Test Test/main.cpp)
+target_link_libraries(Test Magic)
