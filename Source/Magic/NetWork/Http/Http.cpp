@@ -174,7 +174,7 @@ namespace Http{
         ,m_Version(version)
         ,m_UrlPath("/"){
     }
-
+    
     void HttpRequest::setVersion(uint8_t ver){
         m_Version = ver;
     }
@@ -204,6 +204,14 @@ namespace Http{
         m_UrlPath = urlPath;
     }
 
+    void HttpRequest::setRange(uint64_t start,uint64_t stop){
+        std::string value("bytes="); 
+        value.append(AsString<uint64_t>(start));
+        value.append("-");
+        value += (stop == 0) ? "" : AsString<uint64_t>(stop);
+        m_Headers.emplace("Range", value);
+    }
+
     void HttpRequest::setFragment(const std::string& fragment){
         m_Fragment = fragment;
     }
@@ -211,7 +219,7 @@ namespace Http{
     void HttpRequest::setParam(const std::string& key,const std::string& value){
         m_Params.emplace(key, value);
     }
-    
+
     void HttpRequest::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key, value);
     }
@@ -228,6 +236,10 @@ namespace Http{
         return m_Headers;
     }
 
+    bool HttpRequest::isRange() const{
+        return m_Headers.find("Range") != m_Headers.end(); 
+    }
+
     bool HttpRequest::getKeepAlive() const{
         return m_KeepAlive;
     }
@@ -238,6 +250,26 @@ namespace Http{
 
     HttpMethod HttpRequest::getMethod() const{
         return m_Method;
+    }
+
+    uint64_t HttpRequest::getRangeStop() const{
+        auto iter = m_Headers.find("Range");
+        if(iter != m_Headers.end()){
+            std::string value = iter->second;
+            auto splitPos = value.find('-');
+            return StringAs<uint64_t>(value.substr(splitPos + 1,value.length() - splitPos));
+        }
+        return 0;
+    }
+
+    uint64_t HttpRequest::getRangeStart() const{
+        auto iter = m_Headers.find("Range");
+        if(iter != m_Headers.end()){
+            std::string value = iter->second;
+            auto splitPos = value.find('-');
+            return StringAs<uint64_t>(value.substr(6,splitPos-6));
+        }
+        return 0;
     }
 
     const std::string& HttpRequest::getPath() const{
@@ -361,6 +393,16 @@ namespace Http{
         m_ContentType = contentType;
     }
 
+    void HttpResponse::setRange(uint64_t start,uint64_t stop,uint64_t totalLength){
+        std::string value("bytes ");
+        value.append(AsString<uint64_t>(start));
+        value.append("-");
+        value.append(AsString<uint64_t>(stop));
+        value.append("/");
+        value.append(AsString<uint64_t>(totalLength));
+        m_Headers.emplace("Content-Range", value); 
+    }
+
     void HttpResponse::setHeader(const std::string& key,const std::string& value){
         m_Headers.emplace(key,value);
     }
@@ -393,6 +435,10 @@ namespace Http{
         m_Cookies.push_back(result);
     }
 
+    bool HttpResponse::isRange() const{
+        return m_Headers.find("Content-Range") != m_Headers.end(); 
+    }
+
     bool HttpResponse::getKeepAlive() const{
         return m_KeepAlive;
     }
@@ -401,14 +447,56 @@ namespace Http{
         return m_Version;
     }
 
+    uint64_t HttpResponse::getRangeStop() const{
+        auto iter = m_Headers.find("Content-Range");
+        if(iter != m_Headers.end()){
+            std::string value = iter->second;
+            auto firstSplitPos = value.find('-');
+            auto secondSplitPos = value.find('/');
+            if(firstSplitPos != std::string::npos 
+                            && secondSplitPos != std::string::npos){
+               return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
+            }
+        }
+        return 0;
+    }
+
     HttpStatus HttpResponse::getStatus() const{
         return m_Status;
+    }
+
+    uint64_t HttpResponse::getRangeStart() const{
+        auto iter = m_Headers.find("Content-Range");
+        if(iter != m_Headers.end()){
+            std::string value = iter->second;
+            auto secondSplitPos = value.find('-');
+            std::string::size_type firstSplitPos = 5;
+            if(firstSplitPos != std::string::npos 
+                            && secondSplitPos != std::string::npos){
+               return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
+            }
+        }
+        return 0;
     }
 
     const std::string& HttpResponse::getBody() const{
         return m_Body;
     }
-    
+
+    uint64_t HttpResponse::getRangeTotalLength() const{
+        auto iter = m_Headers.find("Content-Range");
+        if(iter != m_Headers.end()){
+            std::string value = iter->second;
+            auto firstSplitPos = value.find('/');
+            auto secondSplitPos = value.length();
+            if(firstSplitPos != std::string::npos 
+                            && secondSplitPos != std::string::npos){
+               return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
+            }
+        }
+       return 0;
+    }
+
     const std::string& HttpResponse::getReason() const{
         return m_Reason;
     }

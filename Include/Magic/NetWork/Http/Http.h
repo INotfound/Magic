@@ -270,15 +270,21 @@ namespace Http{
          */
         void setPath(const std::string& urlPath);
         /**
-         * @brief: 设置片段函数
-         * @param fragment 片段
-         */
-        void setFragment(const std::string& fragment);
-        /**
          * @brief: 设置主体正文函数
          * @param body 主体正文 
          */
         void setBody(const std::string& body);
+        /**
+         * @brief: 设置切片范围
+         * @param start 切片开始范围
+         * @param stop 切片结束范围
+         */
+        void setRange(uint64_t start,uint64_t stop);
+        /**
+         * @brief: 设置片段函数
+         * @param fragment 片段
+         */
+        void setFragment(const std::string& fragment);
         /**
          * @brief: 设置参数函数
          * @param key 键
@@ -308,6 +314,11 @@ namespace Http{
          */
         KeyValue& atHeaders();
         /**
+         * @brief: 是否Range切片
+         * @return: 返回True则是，返回False则是否
+         */
+        bool isRange() const;
+        /**
          * @brief: 获取是否为长连接函数
          * @return: 返回True则是，返回False则是否
          */
@@ -322,6 +333,16 @@ namespace Http{
          * @return: 返回HttpMethod类型
          */
         HttpMethod getMethod() const;
+        /**
+         * @brief: 获取切片结束位置函数
+         * @return: 返回切片结束位置
+         */
+        uint64_t getRangeStop() const;
+        /**
+         * @brief: 获取切片开始位置函数
+         * @return: 返回切片开始位置
+         */
+        uint64_t getRangeStart() const;
         /**
          * @brief: 获取路径函数
          * @return: 返回路径字符串
@@ -433,6 +454,13 @@ namespace Http{
          */
         void setContentType(const HttpContentType& contentType);
         /**
+         * @brief: 设置切片范围
+         * @param start 切片开始范围
+         * @param stop 切片结束范围
+         * @param totalLength 切片总长度
+         */
+        void setRange(uint64_t start,uint64_t stop,uint64_t totalLength);
+        /**
          * @brief: 设置Http头键值对函数
          * @param key 键
          * @param value 值
@@ -456,6 +484,11 @@ namespace Http{
          */
         KeyValue& getHeaders(); 
         /**
+         * @brief: 是否Range切片
+         * @return: 返回True则是，返回False则是否
+         */
+        bool isRange() const;
+        /**
          * @brief: 获取是否为长连接函数
          * @return: 返回是否为长连接
          */
@@ -466,15 +499,30 @@ namespace Http{
          */
         uint8_t getVersion() const;
         /**
+         * @brief: 获取切片结束位置函数
+         * @return: 返回切片结束位置
+         */
+        uint64_t getRangeStop() const;
+        /**
          * @brief: 获取HttpStatus函数
          * @return: 返回HttpStatus类型
          */
         HttpStatus getStatus() const;
         /**
+         * @brief: 获取切片开始位置函数
+         * @return: 返回切片开始位置
+         */
+        uint64_t getRangeStart() const;
+        /**
          * @brief: 获取主体正文函数
          * @return: 返回主体正文
          */
         const std::string& getBody() const;
+        /**
+         * @brief: 获取切片总共长度函数
+         * @return: 返回切片总共长度位置
+         */
+        uint64_t getRangeTotalLength() const;
         /**
          * @brief: 获取响应解释函数
          * @return: 返回响应解释
