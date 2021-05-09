@@ -44,7 +44,7 @@
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
 #define PTR_TO(F) (buffer + parser->F)
-#define check(A, M, ...) if(!(A)) { /*log_err(M, ##__VA_ARGS__);*/ errno=0; goto error; }
+#define check(A, M, ...) if(!(A)){ /*log_err(M, ##__VA_ARGS__);*/ errno=0; goto error; }
 
 
 /** machine **/
@@ -70,7 +70,7 @@
     }
 
     action write_value { 
-        if(parser->http_field != NULL) {
+        if(parser->http_field != NULL){
             parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, fpc));
         }
     }
@@ -97,9 +97,9 @@
         parser->content_len = strtol(PTR_TO(mark), NULL, 16);
         parser->chunks_done = parser->content_len <= 0;
 
-        if(parser->chunks_done && parser->last_chunk) {
+        if(parser->chunks_done && parser->last_chunk){
             parser->last_chunk(parser->data, PTR_TO(mark), LEN(mark, fpc));
-        } else if(parser->chunk_size != NULL) {
+        } else if(parser->chunk_size != NULL){
             parser->chunk_size(parser->data, PTR_TO(mark), LEN(mark, fpc));
         } // else skip it
     }
@@ -211,7 +211,7 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
     check(parser->field_len <= len, "field has length longer than whole buffer");
     check(parser->field_start < len, "field starts after buffer end");
 
-    //if(parser->body_start) {
+    //if(parser->body_start){
     //    /* final \r\n combo encountered so stop right here */
     //    parser->nread++;
     //}
@@ -228,20 +228,20 @@ int httpclient_parser_finish(httpclient_parser *parser)
 
     parser->cs = cs;
 
-    if (httpclient_parser_has_error(parser) ) {
+    if (httpclient_parser_has_error(parser) ){
         return -1;
-    } else if (httpclient_parser_is_finished(parser) ) {
+    } else if (httpclient_parser_is_finished(parser) ){
         return 1;
     } else {
         return 0;
     }
 }
 
-int httpclient_parser_has_error(httpclient_parser *parser) {
+int httpclient_parser_has_error(httpclient_parser *parser){
     return parser->cs == httpclient_parser_error;
 }
 
-int httpclient_parser_is_finished(httpclient_parser *parser) {
+int httpclient_parser_is_finished(httpclient_parser *parser){
     return parser->cs == httpclient_parser_first_final;
 }
 

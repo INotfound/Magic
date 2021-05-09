@@ -13,7 +13,8 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     HttpServer::HttpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration)
-        :TcpServer(pool,configuration){
+        :TcpServer(pool,configuration)
+        ,m_TempDirectory(configuration->at<std::string>("NetWork.Server.TempDirectory","./")){
         m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
 
@@ -23,7 +24,8 @@ namespace Http{
     }
 
     void HttpServer::accept(){
-        Safe<Socket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get());
+        Safe<HttpSocket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get());
+        socket->setTempDirectory(m_TempDirectory);
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(!err){
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
@@ -31,12 +33,12 @@ namespace Http{
                     if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
                         return;
                     }
-                    MAGIC_WARN() <<  err.message();
+                    MAGIC_WARN() << err.value() << ":"<< err.message();
                 });
                 this->handleFunc(socket);
             }else{
                 if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
-                        return;
+                    return;
                 }
                 MAGIC_WARN() <<  err.message();
             }

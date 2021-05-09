@@ -38,6 +38,7 @@ namespace Http{
          */
         void handleFunc(const Safe<Socket>& socket) override;
     private:
+        std::string m_TempDirectory;
         Safe<HttpServletDispatch> m_ServletDispatch;
     };
 }

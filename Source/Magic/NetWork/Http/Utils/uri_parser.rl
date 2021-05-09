@@ -28,21 +28,21 @@ namespace Http{
 
         action save_port
         {
-            if (fpc != mark) {
+            if (fpc != mark){
                 this->setPort(atoi(mark));
             }
             mark = NULL;
         }
         action save_userinfo
         {
-            if(mark) {
+            if(mark){
                 this->setUser(std::string(mark, fpc - mark));
             }
             mark = NULL;
         }
         action save_host
         {
-            if (mark != NULL) {
+            if (mark != NULL){
                 this->setHost(std::string(mark, fpc - mark));
             }
         }
@@ -131,7 +131,7 @@ namespace Http{
     }%%
 
     Uri::Uri()
-        :m_Port(0) {
+        :m_Port(0){
     }
 
     bool Uri::execute(const std::string& uri){
@@ -142,22 +142,22 @@ namespace Http{
         const char *pe = p + uri.size();
         const char* eof = pe;
         %% write exec;
-        if(cs == uri_parser_error) {
+        if(cs == uri_parser_error){
             return false; //error
-        } else if(cs >= uri_parser_first_final) {
+        } else if(cs >= uri_parser_first_final){
             return true;//ok
         }
         return false;//error
     }
-    uint32_t Uri::getPort() const {
-        if(m_Port) {
+    uint32_t Uri::getPort() const{
+        if(m_Port){
             return m_Port;
         }
         if(m_Scheme == "http"
-            || m_Scheme == "ws") {
+            || m_Scheme == "ws"){
             return 80;
         } else if(m_Scheme == "https"
-                || m_Scheme == "wss") {
+                || m_Scheme == "wss"){
             return 443;
         }
         return m_Port;
@@ -166,11 +166,11 @@ namespace Http{
     const std::string& Uri::getUser() const{ 
         return m_User;
     }
-    const std::string& Uri::getHost() const {
+    const std::string& Uri::getHost() const{
         return m_Host;
     }
 
-    const std::string& Uri::getPath() const {
+    const std::string& Uri::getPath() const{
         static std::string s_default_path = "/";
         return m_Path.empty() ? s_default_path : m_Path;
     }
@@ -180,7 +180,7 @@ namespace Http{
     const std::string& Uri::getScheme() const{ 
         return m_Scheme;
     }
-    const std::string& Uri::getFragment() const { 
+    const std::string& Uri::getFragment() const{
         return m_Fragment;
     }
 
@@ -199,22 +199,22 @@ namespace Http{
     void Uri::setQuery(const std::string& val){
         m_Query = val;
     }
-    void Uri::setScheme(const std::string& val) {
+    void Uri::setScheme(const std::string& val){
         m_Scheme = val;
     }
-    void Uri::setFragment(const std::string& val) {
+    void Uri::setFragment(const std::string& val){
         m_Fragment = val;
     }
 
-    bool Uri::isDefaultPort() const {
-        if(m_Port == 0) {
+    bool Uri::isDefaultPort() const{
+        if(m_Port == 0){
             return true;
         }
         if(m_Scheme == "http"
-                || m_Scheme == "ws") {
+                || m_Scheme == "ws"){
             return m_Port == 80;
         } else if(m_Scheme == "https"
-                || m_Scheme == "wss") {
+                || m_Scheme == "wss"){
             return m_Port == 443;
         }
         return false;

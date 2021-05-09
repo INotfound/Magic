@@ -64,7 +64,7 @@ static const int http_parser_error = 0;
 
 #line 261 "http11_parser.rl"
 
-int http_parser_init(http_parser *parser) {
+int http_parser_init(http_parser *parser){
   int cs = 0;
   
 #line 71 "http11_parser.rl.cpp"
@@ -115,11 +115,11 @@ size_t http_parser_execute(http_parser *parser, const char *buffer, size_t len, 
 	switch ( cs )
 	{
 case 1:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 60: goto tr2;
 		case 64: goto tr3;
 	}
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto tr0;
 	} else if ( (*p) >= 48 )
@@ -139,7 +139,7 @@ case 2:
 #line 140 "http11_parser.rl.cpp"
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st175;
 	} else if ( (*p) >= 48 )
@@ -158,15 +158,15 @@ st3:
 case 3:
 #line 160 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -178,7 +178,7 @@ case 3:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr6;
 		case 33: goto tr7;
 		case 35: goto tr8;
@@ -194,10 +194,10 @@ case 3:
 		case 635: goto tr7;
 		case 637: goto tr7;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 57 )
 			goto tr7;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto tr12;
 	} else
@@ -337,7 +337,7 @@ st12:
 	if ( ++p == pe )
 		goto _test_eof12;
 case 12:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 10: goto tr21;
 		case 13: goto tr22;
 	}
@@ -354,7 +354,7 @@ tr30:
 	{ MARK(mark, p); }
 #line 63 "http11_parser.rl"
 	{
-    if(parser->http_field != NULL) {
+    if(parser->http_field != NULL){
       parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, p));
     }
   }
@@ -362,7 +362,7 @@ tr30:
 tr33:
 #line 63 "http11_parser.rl"
 	{
-    if(parser->http_field != NULL) {
+    if(parser->http_field != NULL){
       parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, p));
     }
   }
@@ -372,28 +372,28 @@ st13:
 		goto _test_eof13;
 case 13:
 #line 375 "http11_parser.rl.cpp"
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 10: goto tr24;
 		case 13: goto tr25;
 		case 33: goto tr23;
 		case 124: goto tr23;
 		case 126: goto tr23;
 	}
-	if ( (*p) < 42 ) {
-		if ( (*p) < 11 ) {
+	if ( (*p) < 42 ){
+		if ( (*p) < 11 ){
 			if ( 1 <= (*p) && (*p) <= 8 )
 				goto tr23;
-		} else if ( (*p) > 31 ) {
+		} else if ( (*p) > 31 ){
 			if ( 35 <= (*p) && (*p) <= 39 )
 				goto tr23;
 		} else
 			goto tr23;
-	} else if ( (*p) > 43 ) {
-		if ( (*p) < 48 ) {
+	} else if ( (*p) > 43 ){
+		if ( (*p) < 48 ){
 			if ( 45 <= (*p) && (*p) <= 46 )
 				goto tr23;
-		} else if ( (*p) > 57 ) {
-			if ( (*p) > 90 ) {
+		} else if ( (*p) > 57 ){
+			if ( (*p) > 90 ){
 				if ( 94 <= (*p) && (*p) <= 122 )
 					goto tr23;
 			} else if ( (*p) >= 65 )
@@ -412,27 +412,27 @@ st14:
 		goto _test_eof14;
 case 14:
 #line 415 "http11_parser.rl.cpp"
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 33: goto st14;
 		case 58: goto tr27;
 		case 124: goto st14;
 		case 126: goto st14;
 	}
-	if ( (*p) < 42 ) {
-		if ( (*p) < 10 ) {
+	if ( (*p) < 42 ){
+		if ( (*p) < 10 ){
 			if ( 1 <= (*p) && (*p) <= 8 )
 				goto st14;
-		} else if ( (*p) > 31 ) {
+		} else if ( (*p) > 31 ){
 			if ( 35 <= (*p) && (*p) <= 39 )
 				goto st14;
 		} else
 			goto st14;
-	} else if ( (*p) > 43 ) {
-		if ( (*p) < 48 ) {
+	} else if ( (*p) > 43 ){
+		if ( (*p) < 48 ){
 			if ( 45 <= (*p) && (*p) <= 46 )
 				goto st14;
-		} else if ( (*p) > 57 ) {
-			if ( (*p) > 90 ) {
+		} else if ( (*p) > 57 ){
+			if ( (*p) > 90 ){
 				if ( 94 <= (*p) && (*p) <= 122 )
 					goto st14;
 			} else if ( (*p) >= 65 )
@@ -457,7 +457,7 @@ st15:
 		goto _test_eof15;
 case 15:
 #line 460 "http11_parser.rl.cpp"
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 0: goto st0;
 		case 9: goto tr29;
 		case 10: goto tr30;
@@ -475,7 +475,7 @@ st16:
 		goto _test_eof16;
 case 16:
 #line 478 "http11_parser.rl.cpp"
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 0: goto st0;
 		case 10: goto tr33;
 		case 13: goto tr34;
@@ -494,7 +494,7 @@ tr31:
 	{ MARK(mark, p); }
 #line 63 "http11_parser.rl"
 	{
-    if(parser->http_field != NULL) {
+    if(parser->http_field != NULL){
       parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, p));
     }
   }
@@ -502,7 +502,7 @@ tr31:
 tr34:
 #line 63 "http11_parser.rl"
 	{
-    if(parser->http_field != NULL) {
+    if(parser->http_field != NULL){
       parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, p));
     }
   }
@@ -520,14 +520,14 @@ tr24:
 	{ MARK(field_start, p); }
 #line 100 "http11_parser.rl"
 	{
-      if(parser->xml_sent || parser->json_sent) {
+      if(parser->xml_sent || parser->json_sent){
         parser->body_start = PTR_TO(mark) - buffer;
         // +1 includes the \0
         parser->content_len = p - buffer - parser->body_start + 1;
       } else {
         parser->body_start = p - buffer + 1;
 
-        if(parser->header_done != NULL) {
+        if(parser->header_done != NULL){
           parser->header_done(parser->data, p + 1, pe - p - 1);
         }
       }
@@ -537,14 +537,14 @@ tr24:
 tr36:
 #line 100 "http11_parser.rl"
 	{
-      if(parser->xml_sent || parser->json_sent) {
+      if(parser->xml_sent || parser->json_sent){
         parser->body_start = PTR_TO(mark) - buffer;
         // +1 includes the \0
         parser->content_len = p - buffer - parser->body_start + 1;
       } else {
         parser->body_start = p - buffer + 1;
 
-        if(parser->header_done != NULL) {
+        if(parser->header_done != NULL){
           parser->header_done(parser->data, p + 1, pe - p - 1);
         }
       }
@@ -556,27 +556,27 @@ st348:
 		goto _test_eof348;
 case 348:
 #line 559 "http11_parser.rl.cpp"
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 33: goto st14;
 		case 58: goto tr27;
 		case 124: goto st14;
 		case 126: goto st14;
 	}
-	if ( (*p) < 42 ) {
-		if ( (*p) < 10 ) {
+	if ( (*p) < 42 ){
+		if ( (*p) < 10 ){
 			if ( 1 <= (*p) && (*p) <= 8 )
 				goto st14;
-		} else if ( (*p) > 31 ) {
+		} else if ( (*p) > 31 ){
 			if ( 35 <= (*p) && (*p) <= 39 )
 				goto st14;
 		} else
 			goto st14;
-	} else if ( (*p) > 43 ) {
-		if ( (*p) < 48 ) {
+	} else if ( (*p) > 43 ){
+		if ( (*p) < 48 ){
 			if ( 45 <= (*p) && (*p) <= 46 )
 				goto st14;
-		} else if ( (*p) > 57 ) {
-			if ( (*p) > 90 ) {
+		} else if ( (*p) > 57 ){
+			if ( (*p) > 90 ){
 				if ( 94 <= (*p) && (*p) <= 122 )
 					goto st14;
 			} else if ( (*p) >= 65 )
@@ -595,28 +595,28 @@ st18:
 		goto _test_eof18;
 case 18:
 #line 598 "http11_parser.rl.cpp"
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 10: goto tr36;
 		case 33: goto st14;
 		case 58: goto tr27;
 		case 124: goto st14;
 		case 126: goto st14;
 	}
-	if ( (*p) < 42 ) {
-		if ( (*p) < 11 ) {
+	if ( (*p) < 42 ){
+		if ( (*p) < 11 ){
 			if ( 1 <= (*p) && (*p) <= 8 )
 				goto st14;
-		} else if ( (*p) > 31 ) {
+		} else if ( (*p) > 31 ){
 			if ( 35 <= (*p) && (*p) <= 39 )
 				goto st14;
 		} else
 			goto st14;
-	} else if ( (*p) > 43 ) {
-		if ( (*p) < 48 ) {
+	} else if ( (*p) > 43 ){
+		if ( (*p) < 48 ){
 			if ( 45 <= (*p) && (*p) <= 46 )
 				goto st14;
-		} else if ( (*p) > 57 ) {
-			if ( (*p) > 90 ) {
+		} else if ( (*p) > 57 ){
+			if ( (*p) > 90 ){
 				if ( 94 <= (*p) && (*p) <= 122 )
 					goto st14;
 			} else if ( (*p) >= 65 )
@@ -636,15 +636,15 @@ st19:
 case 19:
 #line 638 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -656,7 +656,7 @@ case 19:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st19;
 		case 35: goto tr39;
@@ -671,10 +671,10 @@ case 19:
 		case 635: goto st19;
 		case 637: goto st19;
 	}
-	if ( _widec < 64 ) {
+	if ( _widec < 64 ){
 		if ( 36 <= _widec && _widec <= 57 )
 			goto st19;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st19;
 	} else
@@ -738,15 +738,15 @@ st20:
 case 20:
 #line 740 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -758,7 +758,7 @@ case 20:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr44;
 		case 33: goto tr43;
 		case 37: goto tr45;
@@ -769,11 +769,11 @@ case 20:
 		case 635: goto tr43;
 		case 637: goto tr43;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto tr43;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto tr43;
 		} else if ( _widec >= 63 )
@@ -791,15 +791,15 @@ st21:
 case 21:
 #line 793 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -811,7 +811,7 @@ case 21:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr47;
 		case 33: goto st21;
 		case 37: goto st22;
@@ -822,11 +822,11 @@ case 21:
 		case 635: goto st21;
 		case 637: goto st21;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto st21;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st21;
 		} else if ( _widec >= 63 )
@@ -843,10 +843,10 @@ st22:
 		goto _test_eof22;
 case 22:
 #line 846 "http11_parser.rl.cpp"
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st23;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st23;
 	} else
@@ -856,10 +856,10 @@ st23:
 	if ( ++p == pe )
 		goto _test_eof23;
 case 23:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st21;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st21;
 	} else
@@ -874,10 +874,10 @@ st24:
 		goto _test_eof24;
 case 24:
 #line 877 "http11_parser.rl.cpp"
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st25;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st25;
 	} else
@@ -887,10 +887,10 @@ st25:
 	if ( ++p == pe )
 		goto _test_eof25;
 case 25:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st19;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st19;
 	} else
@@ -906,15 +906,15 @@ st26:
 case 26:
 #line 908 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -926,7 +926,7 @@ case 26:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st26;
 		case 35: goto tr39;
@@ -939,11 +939,11 @@ case 26:
 		case 635: goto st26;
 		case 637: goto st26;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto st26;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st26;
 		} else if ( _widec >= 64 )
@@ -960,10 +960,10 @@ st27:
 		goto _test_eof27;
 case 27:
 #line 963 "http11_parser.rl.cpp"
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st28;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st28;
 	} else
@@ -973,10 +973,10 @@ st28:
 	if ( ++p == pe )
 		goto _test_eof28;
 case 28:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st26;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st26;
 	} else
@@ -1004,15 +1004,15 @@ st29:
 case 29:
 #line 1006 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1024,7 +1024,7 @@ case 29:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr54;
 		case 33: goto tr53;
 		case 35: goto tr55;
@@ -1036,11 +1036,11 @@ case 29:
 		case 635: goto tr53;
 		case 637: goto tr53;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto tr53;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto tr53;
 		} else if ( _widec >= 63 )
@@ -1058,15 +1058,15 @@ st30:
 case 30:
 #line 1060 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1078,7 +1078,7 @@ case 30:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr58;
 		case 33: goto st30;
 		case 35: goto tr59;
@@ -1090,11 +1090,11 @@ case 30:
 		case 635: goto st30;
 		case 637: goto st30;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto st30;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st30;
 		} else if ( _widec >= 63 )
@@ -1111,10 +1111,10 @@ st31:
 		goto _test_eof31;
 case 31:
 #line 1114 "http11_parser.rl.cpp"
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st32;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st32;
 	} else
@@ -1124,10 +1124,10 @@ st32:
 	if ( ++p == pe )
 		goto _test_eof32;
 case 32:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st30;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st30;
 	} else
@@ -1143,15 +1143,15 @@ st33:
 case 33:
 #line 1145 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1163,7 +1163,7 @@ case 33:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st26;
 		case 35: goto tr39;
@@ -1177,11 +1177,11 @@ case 33:
 		case 635: goto st26;
 		case 637: goto st26;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto st26;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st26;
 		} else if ( _widec >= 64 )
@@ -1194,15 +1194,15 @@ st34:
 		goto _test_eof34;
 case 34:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1214,7 +1214,7 @@ case 34:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st35;
 		case 35: goto tr39;
@@ -1231,10 +1231,10 @@ case 34:
 		case 635: goto st35;
 		case 637: goto st35;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st35;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st35;
 	} else
@@ -1245,15 +1245,15 @@ st35:
 		goto _test_eof35;
 case 35:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1265,7 +1265,7 @@ case 35:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st35;
 		case 35: goto tr39;
@@ -1281,10 +1281,10 @@ case 35:
 		case 635: goto st35;
 		case 637: goto st35;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st35;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st35;
 	} else
@@ -1294,10 +1294,10 @@ st36:
 	if ( ++p == pe )
 		goto _test_eof36;
 case 36:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st37;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st37;
 	} else
@@ -1307,10 +1307,10 @@ st37:
 	if ( ++p == pe )
 		goto _test_eof37;
 case 37:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st35;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st35;
 	} else
@@ -1321,15 +1321,15 @@ st38:
 		goto _test_eof38;
 case 38:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1341,7 +1341,7 @@ case 38:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st39;
 		case 35: goto tr39;
@@ -1356,14 +1356,14 @@ case 38:
 		case 635: goto st39;
 		case 637: goto st39;
 	}
-	if ( _widec < 58 ) {
-		if ( _widec > 46 ) {
+	if ( _widec < 58 ){
+		if ( _widec > 46 ){
 			if ( 48 <= _widec && _widec <= 57 )
 				goto st38;
 		} else if ( _widec >= 36 )
 			goto st39;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st39;
 		} else if ( _widec >= 65 )
@@ -1376,15 +1376,15 @@ st39:
 		goto _test_eof39;
 case 39:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1396,7 +1396,7 @@ case 39:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 33: goto st39;
 		case 37: goto st40;
 		case 61: goto st39;
@@ -1407,11 +1407,11 @@ case 39:
 		case 635: goto st39;
 		case 637: goto st39;
 	}
-	if ( _widec < 48 ) {
+	if ( _widec < 48 ){
 		if ( 36 <= _widec && _widec <= 46 )
 			goto st39;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st39;
 		} else if ( _widec >= 65 )
@@ -1423,10 +1423,10 @@ st40:
 	if ( ++p == pe )
 		goto _test_eof40;
 case 40:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st41;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st41;
 	} else
@@ -1436,10 +1436,10 @@ st41:
 	if ( ++p == pe )
 		goto _test_eof41;
 case 41:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st39;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st39;
 	} else
@@ -1450,15 +1450,15 @@ st42:
 		goto _test_eof42;
 case 42:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1470,7 +1470,7 @@ case 42:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st43;
 		case 35: goto tr39;
@@ -1486,10 +1486,10 @@ case 42:
 		case 635: goto st43;
 		case 637: goto st43;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st43;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st43;
 	} else
@@ -1500,15 +1500,15 @@ st43:
 		goto _test_eof43;
 case 43:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -1520,7 +1520,7 @@ case 43:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st43;
 		case 35: goto tr39;
@@ -1535,10 +1535,10 @@ case 43:
 		case 635: goto st43;
 		case 637: goto st43;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st43;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st43;
 	} else
@@ -1548,10 +1548,10 @@ st44:
 	if ( ++p == pe )
 		goto _test_eof44;
 case 44:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st45;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st45;
 	} else
@@ -1561,10 +1561,10 @@ st45:
 	if ( ++p == pe )
 		goto _test_eof45;
 case 45:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st43;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st43;
 	} else
@@ -1574,7 +1574,7 @@ st46:
 	if ( ++p == pe )
 		goto _test_eof46;
 case 46:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 32: goto tr37;
 		case 35: goto tr39;
 		case 47: goto st26;
@@ -1587,15 +1587,15 @@ st47:
 	if ( ++p == pe )
 		goto _test_eof47;
 case 47:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 6: goto st48;
 		case 58: goto st167;
 		case 118: goto st169;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st91;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st91;
 	} else
@@ -1605,10 +1605,10 @@ st48:
 	if ( ++p == pe )
 		goto _test_eof48;
 case 48:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st49;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st49;
 	} else
@@ -1620,10 +1620,10 @@ st49:
 case 49:
 	if ( (*p) == 58 )
 		goto st53;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st50;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st50;
 	} else
@@ -1635,10 +1635,10 @@ st50:
 case 50:
 	if ( (*p) == 58 )
 		goto st53;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st51;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st51;
 	} else
@@ -1650,10 +1650,10 @@ st51:
 case 51:
 	if ( (*p) == 58 )
 		goto st53;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st52;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st52;
 	} else
@@ -1670,14 +1670,14 @@ st53:
 	if ( ++p == pe )
 		goto _test_eof53;
 case 53:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st84;
 		case 50: goto st87;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st54;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st90;
 	} else
@@ -1687,14 +1687,14 @@ st54:
 	if ( ++p == pe )
 		goto _test_eof54;
 case 54:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st77;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st77;
 	} else
@@ -1704,7 +1704,7 @@ st55:
 	if ( ++p == pe )
 		goto _test_eof55;
 case 55:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st72;
 		case 50: goto st74;
 	}
@@ -1722,7 +1722,7 @@ st57:
 	if ( ++p == pe )
 		goto _test_eof57;
 case 57:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st67;
 		case 50: goto st69;
 	}
@@ -1740,7 +1740,7 @@ st59:
 	if ( ++p == pe )
 		goto _test_eof59;
 case 59:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st62;
 		case 50: goto st64;
 	}
@@ -1758,7 +1758,7 @@ st61:
 	if ( ++p == pe )
 		goto _test_eof61;
 case 61:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 32: goto tr37;
 		case 35: goto tr39;
 		case 47: goto st26;
@@ -1788,7 +1788,7 @@ st64:
 	if ( ++p == pe )
 		goto _test_eof64;
 case 64:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st65;
 		case 53: goto st66;
 		case 93: goto st61;
@@ -1830,7 +1830,7 @@ st69:
 	if ( ++p == pe )
 		goto _test_eof69;
 case 69:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st59;
 		case 48: goto st70;
 		case 53: goto st71;
@@ -1872,7 +1872,7 @@ st74:
 	if ( ++p == pe )
 		goto _test_eof74;
 case 74:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st57;
 		case 48: goto st75;
 		case 53: goto st76;
@@ -1898,10 +1898,10 @@ st77:
 case 77:
 	if ( (*p) == 58 )
 		goto st80;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st78;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st78;
 	} else
@@ -1913,10 +1913,10 @@ st78:
 case 78:
 	if ( (*p) == 58 )
 		goto st80;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st79;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st79;
 	} else
@@ -1933,10 +1933,10 @@ st80:
 	if ( ++p == pe )
 		goto _test_eof80;
 case 80:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st81;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st81;
 	} else
@@ -1948,10 +1948,10 @@ st81:
 case 81:
 	if ( (*p) == 93 )
 		goto st61;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st82;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st82;
 	} else
@@ -1963,10 +1963,10 @@ st82:
 case 82:
 	if ( (*p) == 93 )
 		goto st61;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st83;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st83;
 	} else
@@ -1978,10 +1978,10 @@ st83:
 case 83:
 	if ( (*p) == 93 )
 		goto st61;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st60;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st60;
 	} else
@@ -1991,14 +1991,14 @@ st84:
 	if ( ++p == pe )
 		goto _test_eof84;
 case 84:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st85;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st77;
 	} else
@@ -2008,14 +2008,14 @@ st85:
 	if ( ++p == pe )
 		goto _test_eof85;
 case 85:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st86;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st78;
 	} else
@@ -2025,14 +2025,14 @@ st86:
 	if ( ++p == pe )
 		goto _test_eof86;
 case 86:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st79;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st79;
 	} else
@@ -2042,16 +2042,16 @@ st87:
 	if ( ++p == pe )
 		goto _test_eof87;
 case 87:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 48: goto st88;
 		case 53: goto st89;
 		case 58: goto st80;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st77;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st77;
 	} else
@@ -2063,10 +2063,10 @@ st88:
 case 88:
 	if ( (*p) == 58 )
 		goto st80;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st86;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st78;
 	} else
@@ -2076,14 +2076,14 @@ st89:
 	if ( ++p == pe )
 		goto _test_eof89;
 case 89:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st86;
 		case 58: goto st80;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st78;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st78;
 	} else
@@ -2095,10 +2095,10 @@ st90:
 case 90:
 	if ( (*p) == 58 )
 		goto st80;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st77;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st77;
 	} else
@@ -2110,10 +2110,10 @@ st91:
 case 91:
 	if ( (*p) == 58 )
 		goto st95;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st92;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st92;
 	} else
@@ -2125,10 +2125,10 @@ st92:
 case 92:
 	if ( (*p) == 58 )
 		goto st95;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st93;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st93;
 	} else
@@ -2140,10 +2140,10 @@ st93:
 case 93:
 	if ( (*p) == 58 )
 		goto st95;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st94;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st94;
 	} else
@@ -2162,10 +2162,10 @@ st95:
 case 95:
 	if ( (*p) == 58 )
 		goto st166;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st96;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st96;
 	} else
@@ -2177,10 +2177,10 @@ st96:
 case 96:
 	if ( (*p) == 58 )
 		goto st100;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st97;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st97;
 	} else
@@ -2192,10 +2192,10 @@ st97:
 case 97:
 	if ( (*p) == 58 )
 		goto st100;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st98;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st98;
 	} else
@@ -2207,10 +2207,10 @@ st98:
 case 98:
 	if ( (*p) == 58 )
 		goto st100;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st99;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st99;
 	} else
@@ -2229,10 +2229,10 @@ st100:
 case 100:
 	if ( (*p) == 58 )
 		goto st165;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st101;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st101;
 	} else
@@ -2244,10 +2244,10 @@ st101:
 case 101:
 	if ( (*p) == 58 )
 		goto st105;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st102;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st102;
 	} else
@@ -2259,10 +2259,10 @@ st102:
 case 102:
 	if ( (*p) == 58 )
 		goto st105;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st103;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st103;
 	} else
@@ -2274,10 +2274,10 @@ st103:
 case 103:
 	if ( (*p) == 58 )
 		goto st105;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st104;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st104;
 	} else
@@ -2296,10 +2296,10 @@ st105:
 case 105:
 	if ( (*p) == 58 )
 		goto st164;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st106;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st106;
 	} else
@@ -2311,10 +2311,10 @@ st106:
 case 106:
 	if ( (*p) == 58 )
 		goto st110;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st107;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st107;
 	} else
@@ -2326,10 +2326,10 @@ st107:
 case 107:
 	if ( (*p) == 58 )
 		goto st110;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st108;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st108;
 	} else
@@ -2341,10 +2341,10 @@ st108:
 case 108:
 	if ( (*p) == 58 )
 		goto st110;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st109;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st109;
 	} else
@@ -2363,10 +2363,10 @@ st110:
 case 110:
 	if ( (*p) == 58 )
 		goto st163;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st111;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st111;
 	} else
@@ -2378,10 +2378,10 @@ st111:
 case 111:
 	if ( (*p) == 58 )
 		goto st115;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st112;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st112;
 	} else
@@ -2393,10 +2393,10 @@ st112:
 case 112:
 	if ( (*p) == 58 )
 		goto st115;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st113;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st113;
 	} else
@@ -2408,10 +2408,10 @@ st113:
 case 113:
 	if ( (*p) == 58 )
 		goto st115;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st114;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st114;
 	} else
@@ -2430,10 +2430,10 @@ st115:
 case 115:
 	if ( (*p) == 58 )
 		goto st151;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st116;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st116;
 	} else
@@ -2445,10 +2445,10 @@ st116:
 case 116:
 	if ( (*p) == 58 )
 		goto st120;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st117;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st117;
 	} else
@@ -2460,10 +2460,10 @@ st117:
 case 117:
 	if ( (*p) == 58 )
 		goto st120;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st118;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st118;
 	} else
@@ -2475,10 +2475,10 @@ st118:
 case 118:
 	if ( (*p) == 58 )
 		goto st120;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st119;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st119;
 	} else
@@ -2497,10 +2497,10 @@ st120:
 case 120:
 	if ( (*p) == 58 )
 		goto st150;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st121;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st121;
 	} else
@@ -2512,10 +2512,10 @@ st121:
 case 121:
 	if ( (*p) == 58 )
 		goto st125;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st122;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st122;
 	} else
@@ -2527,10 +2527,10 @@ st122:
 case 122:
 	if ( (*p) == 58 )
 		goto st125;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st123;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st123;
 	} else
@@ -2542,10 +2542,10 @@ st123:
 case 123:
 	if ( (*p) == 58 )
 		goto st125;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st124;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st124;
 	} else
@@ -2564,10 +2564,10 @@ st125:
 case 125:
 	if ( (*p) == 58 )
 		goto st126;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st121;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st121;
 	} else
@@ -2577,16 +2577,16 @@ st126:
 	if ( ++p == pe )
 		goto _test_eof126;
 case 126:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st143;
 		case 50: goto st146;
 		case 93: goto st61;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st48;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st149;
 		} else if ( (*p) >= 65 )
@@ -2598,15 +2598,15 @@ st127:
 	if ( ++p == pe )
 		goto _test_eof127;
 case 127:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st128;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st128;
 	} else
@@ -2616,14 +2616,14 @@ st128:
 	if ( ++p == pe )
 		goto _test_eof128;
 case 128:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st129;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st129;
 	} else
@@ -2633,14 +2633,14 @@ st129:
 	if ( ++p == pe )
 		goto _test_eof129;
 case 129:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st130;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st130;
 	} else
@@ -2650,7 +2650,7 @@ st130:
 	if ( ++p == pe )
 		goto _test_eof130;
 case 130:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st131;
 		case 93: goto st61;
 	}
@@ -2659,14 +2659,14 @@ st131:
 	if ( ++p == pe )
 		goto _test_eof131;
 case 131:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st136;
 		case 50: goto st139;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st132;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st142;
 	} else
@@ -2676,15 +2676,15 @@ st132:
 	if ( ++p == pe )
 		goto _test_eof132;
 case 132:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st133;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st133;
 	} else
@@ -2694,14 +2694,14 @@ st133:
 	if ( ++p == pe )
 		goto _test_eof133;
 case 133:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st134;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st134;
 	} else
@@ -2711,14 +2711,14 @@ st134:
 	if ( ++p == pe )
 		goto _test_eof134;
 case 134:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st135;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st135;
 	} else
@@ -2728,7 +2728,7 @@ st135:
 	if ( ++p == pe )
 		goto _test_eof135;
 case 135:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st80;
 		case 93: goto st61;
 	}
@@ -2737,15 +2737,15 @@ st136:
 	if ( ++p == pe )
 		goto _test_eof136;
 case 136:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st137;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st133;
 	} else
@@ -2755,15 +2755,15 @@ st137:
 	if ( ++p == pe )
 		goto _test_eof137;
 case 137:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st138;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st134;
 	} else
@@ -2773,15 +2773,15 @@ st138:
 	if ( ++p == pe )
 		goto _test_eof138;
 case 138:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st135;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st135;
 	} else
@@ -2791,17 +2791,17 @@ st139:
 	if ( ++p == pe )
 		goto _test_eof139;
 case 139:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 48: goto st140;
 		case 53: goto st141;
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st133;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st133;
 	} else
@@ -2811,14 +2811,14 @@ st140:
 	if ( ++p == pe )
 		goto _test_eof140;
 case 140:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st138;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st134;
 	} else
@@ -2828,15 +2828,15 @@ st141:
 	if ( ++p == pe )
 		goto _test_eof141;
 case 141:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st138;
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st134;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st134;
 	} else
@@ -2846,14 +2846,14 @@ st142:
 	if ( ++p == pe )
 		goto _test_eof142;
 case 142:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st80;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st133;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st133;
 	} else
@@ -2863,15 +2863,15 @@ st143:
 	if ( ++p == pe )
 		goto _test_eof143;
 case 143:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st144;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st128;
 	} else
@@ -2881,15 +2881,15 @@ st144:
 	if ( ++p == pe )
 		goto _test_eof144;
 case 144:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st145;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st129;
 	} else
@@ -2899,15 +2899,15 @@ st145:
 	if ( ++p == pe )
 		goto _test_eof145;
 case 145:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st130;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st130;
 	} else
@@ -2917,17 +2917,17 @@ st146:
 	if ( ++p == pe )
 		goto _test_eof146;
 case 146:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 48: goto st147;
 		case 53: goto st148;
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st128;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st128;
 	} else
@@ -2937,14 +2937,14 @@ st147:
 	if ( ++p == pe )
 		goto _test_eof147;
 case 147:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st145;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st129;
 	} else
@@ -2954,15 +2954,15 @@ st148:
 	if ( ++p == pe )
 		goto _test_eof148;
 case 148:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st145;
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st129;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st129;
 	} else
@@ -2972,14 +2972,14 @@ st149:
 	if ( ++p == pe )
 		goto _test_eof149;
 case 149:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st131;
 		case 93: goto st61;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st128;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st128;
 	} else
@@ -2989,15 +2989,15 @@ st150:
 	if ( ++p == pe )
 		goto _test_eof150;
 case 150:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st143;
 		case 50: goto st146;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st48;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st149;
 		} else if ( (*p) >= 65 )
@@ -3009,15 +3009,15 @@ st151:
 	if ( ++p == pe )
 		goto _test_eof151;
 case 151:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st156;
 		case 50: goto st159;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st48;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st162;
 		} else if ( (*p) >= 65 )
@@ -3029,14 +3029,14 @@ st152:
 	if ( ++p == pe )
 		goto _test_eof152;
 case 152:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st153;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st153;
 	} else
@@ -3048,10 +3048,10 @@ st153:
 case 153:
 	if ( (*p) == 58 )
 		goto st131;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st154;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st154;
 	} else
@@ -3063,10 +3063,10 @@ st154:
 case 154:
 	if ( (*p) == 58 )
 		goto st131;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st155;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st155;
 	} else
@@ -3083,14 +3083,14 @@ st156:
 	if ( ++p == pe )
 		goto _test_eof156;
 case 156:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st157;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st153;
 	} else
@@ -3100,14 +3100,14 @@ st157:
 	if ( ++p == pe )
 		goto _test_eof157;
 case 157:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st158;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st154;
 	} else
@@ -3117,14 +3117,14 @@ st158:
 	if ( ++p == pe )
 		goto _test_eof158;
 case 158:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 58: goto st131;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st155;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st155;
 	} else
@@ -3134,16 +3134,16 @@ st159:
 	if ( ++p == pe )
 		goto _test_eof159;
 case 159:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st55;
 		case 48: goto st160;
 		case 53: goto st161;
 		case 58: goto st131;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st153;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st153;
 	} else
@@ -3155,10 +3155,10 @@ st160:
 case 160:
 	if ( (*p) == 58 )
 		goto st131;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st158;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st154;
 	} else
@@ -3168,14 +3168,14 @@ st161:
 	if ( ++p == pe )
 		goto _test_eof161;
 case 161:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st158;
 		case 58: goto st131;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st154;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st154;
 	} else
@@ -3187,10 +3187,10 @@ st162:
 case 162:
 	if ( (*p) == 58 )
 		goto st131;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st153;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st153;
 	} else
@@ -3200,11 +3200,11 @@ st163:
 	if ( ++p == pe )
 		goto _test_eof163;
 case 163:
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st48;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st49;
 		} else if ( (*p) >= 65 )
@@ -3244,16 +3244,16 @@ st168:
 	if ( ++p == pe )
 		goto _test_eof168;
 case 168:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st143;
 		case 50: goto st146;
 		case 93: goto st61;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 5 )
 			goto st48;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st149;
 		} else if ( (*p) >= 65 )
@@ -3265,10 +3265,10 @@ st169:
 	if ( ++p == pe )
 		goto _test_eof169;
 case 169:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st170;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st170;
 	} else
@@ -3280,10 +3280,10 @@ st170:
 case 170:
 	if ( (*p) == 46 )
 		goto st171;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st170;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st170;
 	} else
@@ -3294,15 +3294,15 @@ st171:
 		goto _test_eof171;
 case 171:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -3314,7 +3314,7 @@ case 171:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 33: goto st172;
 		case 36: goto st172;
 		case 61: goto st172;
@@ -3324,11 +3324,11 @@ case 171:
 		case 635: goto st172;
 		case 637: goto st172;
 	}
-	if ( _widec < 48 ) {
+	if ( _widec < 48 ){
 		if ( 38 <= _widec && _widec <= 46 )
 			goto st172;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st172;
 		} else if ( _widec >= 65 )
@@ -3341,15 +3341,15 @@ st172:
 		goto _test_eof172;
 case 172:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -3361,7 +3361,7 @@ case 172:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 33: goto st172;
 		case 36: goto st172;
 		case 61: goto st172;
@@ -3372,11 +3372,11 @@ case 172:
 		case 635: goto st172;
 		case 637: goto st172;
 	}
-	if ( _widec < 48 ) {
+	if ( _widec < 48 ){
 		if ( 38 <= _widec && _widec <= 46 )
 			goto st172;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st172;
 		} else if ( _widec >= 65 )
@@ -3394,15 +3394,15 @@ st173:
 case 173:
 #line 3396 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -3414,7 +3414,7 @@ case 173:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr37;
 		case 33: goto st19;
 		case 35: goto tr39;
@@ -3432,11 +3432,11 @@ case 173:
 		case 635: goto st19;
 		case 637: goto st19;
 	}
-	if ( _widec < 45 ) {
+	if ( _widec < 45 ){
 		if ( 36 <= _widec && _widec <= 44 )
 			goto st19;
-	} else if ( _widec > 57 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 57 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st173;
 		} else if ( _widec >= 65 )
@@ -3449,15 +3449,15 @@ st174:
 		goto _test_eof174;
 case 174:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -3469,7 +3469,7 @@ case 174:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr6;
 		case 33: goto tr203;
 		case 35: goto tr8;
@@ -3483,11 +3483,11 @@ case 174:
 		case 635: goto tr203;
 		case 637: goto tr203;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto tr203;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto tr203;
 		} else if ( _widec >= 64 )
@@ -3501,7 +3501,7 @@ st175:
 case 175:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st176;
 	} else if ( (*p) >= 48 )
@@ -3513,7 +3513,7 @@ st176:
 case 176:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st177;
 	} else if ( (*p) >= 48 )
@@ -3525,7 +3525,7 @@ st177:
 case 177:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st178;
 	} else if ( (*p) >= 48 )
@@ -3537,7 +3537,7 @@ st178:
 case 178:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st179;
 	} else if ( (*p) >= 48 )
@@ -3549,7 +3549,7 @@ st179:
 case 179:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st180;
 	} else if ( (*p) >= 48 )
@@ -3561,7 +3561,7 @@ st180:
 case 180:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st181;
 	} else if ( (*p) >= 48 )
@@ -3573,7 +3573,7 @@ st181:
 case 181:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st182;
 	} else if ( (*p) >= 48 )
@@ -3585,7 +3585,7 @@ st182:
 case 182:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st183;
 	} else if ( (*p) >= 48 )
@@ -3597,7 +3597,7 @@ st183:
 case 183:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st184;
 	} else if ( (*p) >= 48 )
@@ -3609,7 +3609,7 @@ st184:
 case 184:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st185;
 	} else if ( (*p) >= 48 )
@@ -3621,7 +3621,7 @@ st185:
 case 185:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st186;
 	} else if ( (*p) >= 48 )
@@ -3633,7 +3633,7 @@ st186:
 case 186:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st187;
 	} else if ( (*p) >= 48 )
@@ -3645,7 +3645,7 @@ st187:
 case 187:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st188;
 	} else if ( (*p) >= 48 )
@@ -3657,7 +3657,7 @@ st188:
 case 188:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st189;
 	} else if ( (*p) >= 48 )
@@ -3669,7 +3669,7 @@ st189:
 case 189:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st190;
 	} else if ( (*p) >= 48 )
@@ -3681,7 +3681,7 @@ st190:
 case 190:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st191;
 	} else if ( (*p) >= 48 )
@@ -3693,7 +3693,7 @@ st191:
 case 191:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st192;
 	} else if ( (*p) >= 48 )
@@ -3705,7 +3705,7 @@ st192:
 case 192:
 	if ( (*p) == 32 )
 		goto tr4;
-	if ( (*p) > 57 ) {
+	if ( (*p) > 57 ){
 		if ( 65 <= (*p) && (*p) <= 90 )
 			goto st193;
 	} else if ( (*p) >= 48 )
@@ -3727,11 +3727,11 @@ st194:
 		goto _test_eof194;
 case 194:
 #line 3730 "http11_parser.rl.cpp"
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 45 <= (*p) && (*p) <= 46 )
 			goto st195;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 90 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 90 ){
 			if ( 97 <= (*p) && (*p) <= 122 )
 				goto st195;
 		} else if ( (*p) >= 65 )
@@ -3743,16 +3743,16 @@ st195:
 	if ( ++p == pe )
 		goto _test_eof195;
 case 195:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 32: goto tr224;
 		case 47: goto tr224;
 		case 62: goto tr224;
 	}
-	if ( (*p) < 45 ) {
+	if ( (*p) < 45 ){
 		if ( 9 <= (*p) && (*p) <= 13 )
 			goto tr224;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 90 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 90 ){
 			if ( 97 <= (*p) && (*p) <= 122 )
 				goto st195;
 		} else if ( (*p) >= 65 )
@@ -3779,7 +3779,7 @@ st197:
 	if ( ++p == pe )
 		goto _test_eof197;
 case 197:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 0: goto tr227;
 		case 62: goto st197;
 	}
@@ -3791,14 +3791,14 @@ tr227:
   }
 #line 100 "http11_parser.rl"
 	{
-      if(parser->xml_sent || parser->json_sent) {
+      if(parser->xml_sent || parser->json_sent){
         parser->body_start = PTR_TO(mark) - buffer;
         // +1 includes the \0
         parser->content_len = p - buffer - parser->body_start + 1;
       } else {
         parser->body_start = p - buffer + 1;
 
-        if(parser->header_done != NULL) {
+        if(parser->header_done != NULL){
           parser->header_done(parser->data, p + 1, pe - p - 1);
         }
       }
@@ -3812,14 +3812,14 @@ tr235:
   }
 #line 100 "http11_parser.rl"
 	{
-      if(parser->xml_sent || parser->json_sent) {
+      if(parser->xml_sent || parser->json_sent){
         parser->body_start = PTR_TO(mark) - buffer;
         // +1 includes the \0
         parser->content_len = p - buffer - parser->body_start + 1;
       } else {
         parser->body_start = p - buffer + 1;
 
-        if(parser->header_done != NULL) {
+        if(parser->header_done != NULL){
           parser->header_done(parser->data, p + 1, pe - p - 1);
         }
       }
@@ -3842,15 +3842,15 @@ st198:
 case 198:
 #line 3844 "http11_parser.rl.cpp"
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -3862,7 +3862,7 @@ case 198:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st202;
 		case 37: goto st203;
@@ -3875,10 +3875,10 @@ case 198:
 		case 635: goto st202;
 		case 637: goto st202;
 	}
-	if ( _widec < 64 ) {
+	if ( _widec < 64 ){
 		if ( 36 <= _widec && _widec <= 57 )
 			goto st202;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st202;
 	} else
@@ -3915,7 +3915,7 @@ st201:
 	if ( ++p == pe )
 		goto _test_eof201;
 case 201:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 0: goto tr235;
 		case 125: goto st201;
 	}
@@ -3925,15 +3925,15 @@ st202:
 		goto _test_eof202;
 case 202:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -3945,7 +3945,7 @@ case 202:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st202;
 		case 37: goto st203;
@@ -3958,10 +3958,10 @@ case 202:
 		case 635: goto st202;
 		case 637: goto st202;
 	}
-	if ( _widec < 64 ) {
+	if ( _widec < 64 ){
 		if ( 36 <= _widec && _widec <= 57 )
 			goto st202;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st202;
 	} else
@@ -3971,10 +3971,10 @@ st203:
 	if ( ++p == pe )
 		goto _test_eof203;
 case 203:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st204;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st204;
 	} else
@@ -3984,10 +3984,10 @@ st204:
 	if ( ++p == pe )
 		goto _test_eof204;
 case 204:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st202;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st202;
 	} else
@@ -3998,15 +3998,15 @@ st205:
 		goto _test_eof205;
 case 205:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4018,7 +4018,7 @@ case 205:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st205;
 		case 37: goto st206;
@@ -4029,11 +4029,11 @@ case 205:
 		case 635: goto st205;
 		case 637: goto st205;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto st205;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st205;
 		} else if ( _widec >= 64 )
@@ -4045,10 +4045,10 @@ st206:
 	if ( ++p == pe )
 		goto _test_eof206;
 case 206:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st207;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st207;
 	} else
@@ -4058,10 +4058,10 @@ st207:
 	if ( ++p == pe )
 		goto _test_eof207;
 case 207:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st205;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st205;
 	} else
@@ -4072,15 +4072,15 @@ st208:
 		goto _test_eof208;
 case 208:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4092,7 +4092,7 @@ case 208:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st205;
 		case 37: goto st206;
@@ -4104,11 +4104,11 @@ case 208:
 		case 635: goto st205;
 		case 637: goto st205;
 	}
-	if ( _widec < 36 ) {
+	if ( _widec < 36 ){
 		if ( _widec <= -1 )
 			goto st205;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st205;
 		} else if ( _widec >= 64 )
@@ -4121,15 +4121,15 @@ st209:
 		goto _test_eof209;
 case 209:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4141,7 +4141,7 @@ case 209:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st210;
 		case 37: goto st211;
@@ -4156,10 +4156,10 @@ case 209:
 		case 635: goto st210;
 		case 637: goto st210;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st210;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st210;
 	} else
@@ -4170,15 +4170,15 @@ st210:
 		goto _test_eof210;
 case 210:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4190,7 +4190,7 @@ case 210:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st210;
 		case 37: goto st211;
@@ -4204,10 +4204,10 @@ case 210:
 		case 635: goto st210;
 		case 637: goto st210;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st210;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st210;
 	} else
@@ -4217,10 +4217,10 @@ st211:
 	if ( ++p == pe )
 		goto _test_eof211;
 case 211:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st212;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st212;
 	} else
@@ -4230,10 +4230,10 @@ st212:
 	if ( ++p == pe )
 		goto _test_eof212;
 case 212:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st210;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st210;
 	} else
@@ -4244,15 +4244,15 @@ st213:
 		goto _test_eof213;
 case 213:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4264,7 +4264,7 @@ case 213:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st214;
 		case 37: goto st215;
@@ -4277,14 +4277,14 @@ case 213:
 		case 635: goto st214;
 		case 637: goto st214;
 	}
-	if ( _widec < 58 ) {
-		if ( _widec > 46 ) {
+	if ( _widec < 58 ){
+		if ( _widec > 46 ){
 			if ( 48 <= _widec && _widec <= 57 )
 				goto st213;
 		} else if ( _widec >= 36 )
 			goto st214;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st214;
 		} else if ( _widec >= 65 )
@@ -4297,15 +4297,15 @@ st214:
 		goto _test_eof214;
 case 214:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4317,7 +4317,7 @@ case 214:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 33: goto st214;
 		case 37: goto st215;
 		case 61: goto st214;
@@ -4328,11 +4328,11 @@ case 214:
 		case 635: goto st214;
 		case 637: goto st214;
 	}
-	if ( _widec < 48 ) {
+	if ( _widec < 48 ){
 		if ( 36 <= _widec && _widec <= 46 )
 			goto st214;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st214;
 		} else if ( _widec >= 65 )
@@ -4344,10 +4344,10 @@ st215:
 	if ( ++p == pe )
 		goto _test_eof215;
 case 215:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st216;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st216;
 	} else
@@ -4357,10 +4357,10 @@ st216:
 	if ( ++p == pe )
 		goto _test_eof216;
 case 216:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st214;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st214;
 	} else
@@ -4371,15 +4371,15 @@ st217:
 		goto _test_eof217;
 case 217:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4391,7 +4391,7 @@ case 217:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st218;
 		case 37: goto st219;
@@ -4405,10 +4405,10 @@ case 217:
 		case 635: goto st218;
 		case 637: goto st218;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st218;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st218;
 	} else
@@ -4419,15 +4419,15 @@ st218:
 		goto _test_eof218;
 case 218:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -4439,7 +4439,7 @@ case 218:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 32: goto tr228;
 		case 33: goto st218;
 		case 37: goto st219;
@@ -4452,10 +4452,10 @@ case 218:
 		case 635: goto st218;
 		case 637: goto st218;
 	}
-	if ( _widec < 65 ) {
+	if ( _widec < 65 ){
 		if ( 36 <= _widec && _widec <= 59 )
 			goto st218;
-	} else if ( _widec > 90 ) {
+	} else if ( _widec > 90 ){
 		if ( 97 <= _widec && _widec <= 122 )
 			goto st218;
 	} else
@@ -4465,10 +4465,10 @@ st219:
 	if ( ++p == pe )
 		goto _test_eof219;
 case 219:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st220;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st220;
 	} else
@@ -4478,10 +4478,10 @@ st220:
 	if ( ++p == pe )
 		goto _test_eof220;
 case 220:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st218;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st218;
 	} else
@@ -4491,7 +4491,7 @@ st221:
 	if ( ++p == pe )
 		goto _test_eof221;
 case 221:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 32: goto tr228;
 		case 47: goto st205;
 	}
@@ -4502,15 +4502,15 @@ st222:
 	if ( ++p == pe )
 		goto _test_eof222;
 case 222:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 6: goto st223;
 		case 58: goto st342;
 		case 118: goto st344;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st266;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st266;
 	} else
@@ -4520,10 +4520,10 @@ st223:
 	if ( ++p == pe )
 		goto _test_eof223;
 case 223:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st224;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st224;
 	} else
@@ -4535,10 +4535,10 @@ st224:
 case 224:
 	if ( (*p) == 58 )
 		goto st228;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st225;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st225;
 	} else
@@ -4550,10 +4550,10 @@ st225:
 case 225:
 	if ( (*p) == 58 )
 		goto st228;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st226;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st226;
 	} else
@@ -4565,10 +4565,10 @@ st226:
 case 226:
 	if ( (*p) == 58 )
 		goto st228;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st227;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st227;
 	} else
@@ -4585,14 +4585,14 @@ st228:
 	if ( ++p == pe )
 		goto _test_eof228;
 case 228:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st259;
 		case 50: goto st262;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st229;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st265;
 	} else
@@ -4602,14 +4602,14 @@ st229:
 	if ( ++p == pe )
 		goto _test_eof229;
 case 229:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st252;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st252;
 	} else
@@ -4619,7 +4619,7 @@ st230:
 	if ( ++p == pe )
 		goto _test_eof230;
 case 230:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st247;
 		case 50: goto st249;
 	}
@@ -4637,7 +4637,7 @@ st232:
 	if ( ++p == pe )
 		goto _test_eof232;
 case 232:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st242;
 		case 50: goto st244;
 	}
@@ -4655,7 +4655,7 @@ st234:
 	if ( ++p == pe )
 		goto _test_eof234;
 case 234:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st237;
 		case 50: goto st239;
 	}
@@ -4673,7 +4673,7 @@ st236:
 	if ( ++p == pe )
 		goto _test_eof236;
 case 236:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 32: goto tr228;
 		case 47: goto st205;
 		case 58: goto st221;
@@ -4701,7 +4701,7 @@ st239:
 	if ( ++p == pe )
 		goto _test_eof239;
 case 239:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st240;
 		case 53: goto st241;
 		case 93: goto st236;
@@ -4743,7 +4743,7 @@ st244:
 	if ( ++p == pe )
 		goto _test_eof244;
 case 244:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st234;
 		case 48: goto st245;
 		case 53: goto st246;
@@ -4785,7 +4785,7 @@ st249:
 	if ( ++p == pe )
 		goto _test_eof249;
 case 249:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st232;
 		case 48: goto st250;
 		case 53: goto st251;
@@ -4811,10 +4811,10 @@ st252:
 case 252:
 	if ( (*p) == 58 )
 		goto st255;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st253;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st253;
 	} else
@@ -4826,10 +4826,10 @@ st253:
 case 253:
 	if ( (*p) == 58 )
 		goto st255;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st254;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st254;
 	} else
@@ -4846,10 +4846,10 @@ st255:
 	if ( ++p == pe )
 		goto _test_eof255;
 case 255:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st256;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st256;
 	} else
@@ -4861,10 +4861,10 @@ st256:
 case 256:
 	if ( (*p) == 93 )
 		goto st236;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st257;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st257;
 	} else
@@ -4876,10 +4876,10 @@ st257:
 case 257:
 	if ( (*p) == 93 )
 		goto st236;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st258;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st258;
 	} else
@@ -4891,10 +4891,10 @@ st258:
 case 258:
 	if ( (*p) == 93 )
 		goto st236;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st235;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st235;
 	} else
@@ -4904,14 +4904,14 @@ st259:
 	if ( ++p == pe )
 		goto _test_eof259;
 case 259:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st260;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st252;
 	} else
@@ -4921,14 +4921,14 @@ st260:
 	if ( ++p == pe )
 		goto _test_eof260;
 case 260:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st261;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st253;
 	} else
@@ -4938,14 +4938,14 @@ st261:
 	if ( ++p == pe )
 		goto _test_eof261;
 case 261:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st254;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st254;
 	} else
@@ -4955,16 +4955,16 @@ st262:
 	if ( ++p == pe )
 		goto _test_eof262;
 case 262:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 48: goto st263;
 		case 53: goto st264;
 		case 58: goto st255;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st252;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st252;
 	} else
@@ -4976,10 +4976,10 @@ st263:
 case 263:
 	if ( (*p) == 58 )
 		goto st255;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st261;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st253;
 	} else
@@ -4989,14 +4989,14 @@ st264:
 	if ( ++p == pe )
 		goto _test_eof264;
 case 264:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st261;
 		case 58: goto st255;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st253;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st253;
 	} else
@@ -5008,10 +5008,10 @@ st265:
 case 265:
 	if ( (*p) == 58 )
 		goto st255;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st252;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st252;
 	} else
@@ -5023,10 +5023,10 @@ st266:
 case 266:
 	if ( (*p) == 58 )
 		goto st270;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st267;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st267;
 	} else
@@ -5038,10 +5038,10 @@ st267:
 case 267:
 	if ( (*p) == 58 )
 		goto st270;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st268;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st268;
 	} else
@@ -5053,10 +5053,10 @@ st268:
 case 268:
 	if ( (*p) == 58 )
 		goto st270;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st269;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st269;
 	} else
@@ -5075,10 +5075,10 @@ st270:
 case 270:
 	if ( (*p) == 58 )
 		goto st341;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st271;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st271;
 	} else
@@ -5090,10 +5090,10 @@ st271:
 case 271:
 	if ( (*p) == 58 )
 		goto st275;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st272;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st272;
 	} else
@@ -5105,10 +5105,10 @@ st272:
 case 272:
 	if ( (*p) == 58 )
 		goto st275;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st273;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st273;
 	} else
@@ -5120,10 +5120,10 @@ st273:
 case 273:
 	if ( (*p) == 58 )
 		goto st275;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st274;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st274;
 	} else
@@ -5142,10 +5142,10 @@ st275:
 case 275:
 	if ( (*p) == 58 )
 		goto st340;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st276;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st276;
 	} else
@@ -5157,10 +5157,10 @@ st276:
 case 276:
 	if ( (*p) == 58 )
 		goto st280;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st277;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st277;
 	} else
@@ -5172,10 +5172,10 @@ st277:
 case 277:
 	if ( (*p) == 58 )
 		goto st280;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st278;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st278;
 	} else
@@ -5187,10 +5187,10 @@ st278:
 case 278:
 	if ( (*p) == 58 )
 		goto st280;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st279;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st279;
 	} else
@@ -5209,10 +5209,10 @@ st280:
 case 280:
 	if ( (*p) == 58 )
 		goto st339;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st281;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st281;
 	} else
@@ -5224,10 +5224,10 @@ st281:
 case 281:
 	if ( (*p) == 58 )
 		goto st285;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st282;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st282;
 	} else
@@ -5239,10 +5239,10 @@ st282:
 case 282:
 	if ( (*p) == 58 )
 		goto st285;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st283;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st283;
 	} else
@@ -5254,10 +5254,10 @@ st283:
 case 283:
 	if ( (*p) == 58 )
 		goto st285;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st284;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st284;
 	} else
@@ -5276,10 +5276,10 @@ st285:
 case 285:
 	if ( (*p) == 58 )
 		goto st338;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st286;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st286;
 	} else
@@ -5291,10 +5291,10 @@ st286:
 case 286:
 	if ( (*p) == 58 )
 		goto st290;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st287;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st287;
 	} else
@@ -5306,10 +5306,10 @@ st287:
 case 287:
 	if ( (*p) == 58 )
 		goto st290;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st288;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st288;
 	} else
@@ -5321,10 +5321,10 @@ st288:
 case 288:
 	if ( (*p) == 58 )
 		goto st290;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st289;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st289;
 	} else
@@ -5343,10 +5343,10 @@ st290:
 case 290:
 	if ( (*p) == 58 )
 		goto st326;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st291;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st291;
 	} else
@@ -5358,10 +5358,10 @@ st291:
 case 291:
 	if ( (*p) == 58 )
 		goto st295;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st292;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st292;
 	} else
@@ -5373,10 +5373,10 @@ st292:
 case 292:
 	if ( (*p) == 58 )
 		goto st295;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st293;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st293;
 	} else
@@ -5388,10 +5388,10 @@ st293:
 case 293:
 	if ( (*p) == 58 )
 		goto st295;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st294;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st294;
 	} else
@@ -5410,10 +5410,10 @@ st295:
 case 295:
 	if ( (*p) == 58 )
 		goto st325;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st296;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st296;
 	} else
@@ -5425,10 +5425,10 @@ st296:
 case 296:
 	if ( (*p) == 58 )
 		goto st300;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st297;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st297;
 	} else
@@ -5440,10 +5440,10 @@ st297:
 case 297:
 	if ( (*p) == 58 )
 		goto st300;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st298;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st298;
 	} else
@@ -5455,10 +5455,10 @@ st298:
 case 298:
 	if ( (*p) == 58 )
 		goto st300;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st299;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st299;
 	} else
@@ -5477,10 +5477,10 @@ st300:
 case 300:
 	if ( (*p) == 58 )
 		goto st301;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st296;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st296;
 	} else
@@ -5490,16 +5490,16 @@ st301:
 	if ( ++p == pe )
 		goto _test_eof301;
 case 301:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st318;
 		case 50: goto st321;
 		case 93: goto st236;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st223;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st324;
 		} else if ( (*p) >= 65 )
@@ -5511,15 +5511,15 @@ st302:
 	if ( ++p == pe )
 		goto _test_eof302;
 case 302:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st303;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st303;
 	} else
@@ -5529,14 +5529,14 @@ st303:
 	if ( ++p == pe )
 		goto _test_eof303;
 case 303:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st304;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st304;
 	} else
@@ -5546,14 +5546,14 @@ st304:
 	if ( ++p == pe )
 		goto _test_eof304;
 case 304:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st305;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st305;
 	} else
@@ -5563,7 +5563,7 @@ st305:
 	if ( ++p == pe )
 		goto _test_eof305;
 case 305:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st306;
 		case 93: goto st236;
 	}
@@ -5572,14 +5572,14 @@ st306:
 	if ( ++p == pe )
 		goto _test_eof306;
 case 306:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st311;
 		case 50: goto st314;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st307;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st317;
 	} else
@@ -5589,15 +5589,15 @@ st307:
 	if ( ++p == pe )
 		goto _test_eof307;
 case 307:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st308;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st308;
 	} else
@@ -5607,14 +5607,14 @@ st308:
 	if ( ++p == pe )
 		goto _test_eof308;
 case 308:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st309;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st309;
 	} else
@@ -5624,14 +5624,14 @@ st309:
 	if ( ++p == pe )
 		goto _test_eof309;
 case 309:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st310;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st310;
 	} else
@@ -5641,7 +5641,7 @@ st310:
 	if ( ++p == pe )
 		goto _test_eof310;
 case 310:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st255;
 		case 93: goto st236;
 	}
@@ -5650,15 +5650,15 @@ st311:
 	if ( ++p == pe )
 		goto _test_eof311;
 case 311:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st312;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st308;
 	} else
@@ -5668,15 +5668,15 @@ st312:
 	if ( ++p == pe )
 		goto _test_eof312;
 case 312:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st313;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st309;
 	} else
@@ -5686,15 +5686,15 @@ st313:
 	if ( ++p == pe )
 		goto _test_eof313;
 case 313:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st310;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st310;
 	} else
@@ -5704,17 +5704,17 @@ st314:
 	if ( ++p == pe )
 		goto _test_eof314;
 case 314:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 48: goto st315;
 		case 53: goto st316;
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st308;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st308;
 	} else
@@ -5724,14 +5724,14 @@ st315:
 	if ( ++p == pe )
 		goto _test_eof315;
 case 315:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st313;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st309;
 	} else
@@ -5741,15 +5741,15 @@ st316:
 	if ( ++p == pe )
 		goto _test_eof316;
 case 316:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st313;
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st309;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st309;
 	} else
@@ -5759,14 +5759,14 @@ st317:
 	if ( ++p == pe )
 		goto _test_eof317;
 case 317:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st255;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st308;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st308;
 	} else
@@ -5776,15 +5776,15 @@ st318:
 	if ( ++p == pe )
 		goto _test_eof318;
 case 318:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st319;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st303;
 	} else
@@ -5794,15 +5794,15 @@ st319:
 	if ( ++p == pe )
 		goto _test_eof319;
 case 319:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st320;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st304;
 	} else
@@ -5812,15 +5812,15 @@ st320:
 	if ( ++p == pe )
 		goto _test_eof320;
 case 320:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st305;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st305;
 	} else
@@ -5830,17 +5830,17 @@ st321:
 	if ( ++p == pe )
 		goto _test_eof321;
 case 321:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 48: goto st322;
 		case 53: goto st323;
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st303;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st303;
 	} else
@@ -5850,14 +5850,14 @@ st322:
 	if ( ++p == pe )
 		goto _test_eof322;
 case 322:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st320;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st304;
 	} else
@@ -5867,15 +5867,15 @@ st323:
 	if ( ++p == pe )
 		goto _test_eof323;
 case 323:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st320;
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st304;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st304;
 	} else
@@ -5885,14 +5885,14 @@ st324:
 	if ( ++p == pe )
 		goto _test_eof324;
 case 324:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 58: goto st306;
 		case 93: goto st236;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st303;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st303;
 	} else
@@ -5902,15 +5902,15 @@ st325:
 	if ( ++p == pe )
 		goto _test_eof325;
 case 325:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st318;
 		case 50: goto st321;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st223;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st324;
 		} else if ( (*p) >= 65 )
@@ -5922,15 +5922,15 @@ st326:
 	if ( ++p == pe )
 		goto _test_eof326;
 case 326:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st331;
 		case 50: goto st334;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st223;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st337;
 		} else if ( (*p) >= 65 )
@@ -5942,14 +5942,14 @@ st327:
 	if ( ++p == pe )
 		goto _test_eof327;
 case 327:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st328;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st328;
 	} else
@@ -5961,10 +5961,10 @@ st328:
 case 328:
 	if ( (*p) == 58 )
 		goto st306;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st329;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st329;
 	} else
@@ -5976,10 +5976,10 @@ st329:
 case 329:
 	if ( (*p) == 58 )
 		goto st306;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st330;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st330;
 	} else
@@ -5996,14 +5996,14 @@ st331:
 	if ( ++p == pe )
 		goto _test_eof331;
 case 331:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st332;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st328;
 	} else
@@ -6013,14 +6013,14 @@ st332:
 	if ( ++p == pe )
 		goto _test_eof332;
 case 332:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st333;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st329;
 	} else
@@ -6030,14 +6030,14 @@ st333:
 	if ( ++p == pe )
 		goto _test_eof333;
 case 333:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 58: goto st306;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st330;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st330;
 	} else
@@ -6047,16 +6047,16 @@ st334:
 	if ( ++p == pe )
 		goto _test_eof334;
 case 334:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 46: goto st230;
 		case 48: goto st335;
 		case 53: goto st336;
 		case 58: goto st306;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st328;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st328;
 	} else
@@ -6068,10 +6068,10 @@ st335:
 case 335:
 	if ( (*p) == 58 )
 		goto st306;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st333;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st329;
 	} else
@@ -6081,14 +6081,14 @@ st336:
 	if ( ++p == pe )
 		goto _test_eof336;
 case 336:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 48: goto st333;
 		case 58: goto st306;
 	}
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 49 <= (*p) && (*p) <= 57 )
 			goto st329;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st329;
 	} else
@@ -6100,10 +6100,10 @@ st337:
 case 337:
 	if ( (*p) == 58 )
 		goto st306;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st328;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st328;
 	} else
@@ -6113,11 +6113,11 @@ st338:
 	if ( ++p == pe )
 		goto _test_eof338;
 case 338:
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 3 )
 			goto st223;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st224;
 		} else if ( (*p) >= 65 )
@@ -6157,16 +6157,16 @@ st343:
 	if ( ++p == pe )
 		goto _test_eof343;
 case 343:
-	switch( (*p) ) {
+	switch( (*p) ){
 		case 49: goto st318;
 		case 50: goto st321;
 		case 93: goto st236;
 	}
-	if ( (*p) < 48 ) {
+	if ( (*p) < 48 ){
 		if ( 2 <= (*p) && (*p) <= 5 )
 			goto st223;
-	} else if ( (*p) > 57 ) {
-		if ( (*p) > 70 ) {
+	} else if ( (*p) > 57 ){
+		if ( (*p) > 70 ){
 			if ( 97 <= (*p) && (*p) <= 102 )
 				goto st324;
 		} else if ( (*p) >= 65 )
@@ -6178,10 +6178,10 @@ st344:
 	if ( ++p == pe )
 		goto _test_eof344;
 case 344:
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st345;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st345;
 	} else
@@ -6193,10 +6193,10 @@ st345:
 case 345:
 	if ( (*p) == 46 )
 		goto st346;
-	if ( (*p) < 65 ) {
+	if ( (*p) < 65 ){
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st345;
-	} else if ( (*p) > 70 ) {
+	} else if ( (*p) > 70 ){
 		if ( 97 <= (*p) && (*p) <= 102 )
 			goto st345;
 	} else
@@ -6207,15 +6207,15 @@ st346:
 		goto _test_eof346;
 case 346:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -6227,7 +6227,7 @@ case 346:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 33: goto st347;
 		case 36: goto st347;
 		case 61: goto st347;
@@ -6237,11 +6237,11 @@ case 346:
 		case 635: goto st347;
 		case 637: goto st347;
 	}
-	if ( _widec < 48 ) {
+	if ( _widec < 48 ){
 		if ( 38 <= _widec && _widec <= 46 )
 			goto st347;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st347;
 		} else if ( _widec >= 65 )
@@ -6254,15 +6254,15 @@ st347:
 		goto _test_eof347;
 case 347:
 	_widec = (*p);
-	if ( (*p) < 123 ) {
-		if ( 94 <= (*p) && (*p) <= 94 ) {
+	if ( (*p) < 123 ){
+		if ( 94 <= (*p) && (*p) <= 94 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 		}
-	} else if ( (*p) > 123 ) {
-		if ( 125 <= (*p) && (*p) <= 125 ) {
+	} else if ( (*p) > 123 ){
+		if ( 125 <= (*p) && (*p) <= 125 ){
 			_widec = (short)(128 + ((*p) - -128));
 			if ( 
 #line 129 "http11_parser.rl"
@@ -6274,7 +6274,7 @@ case 347:
 #line 129 "http11_parser.rl"
  parser->uri_relaxed  ) _widec += 256;
 	}
-	switch( _widec ) {
+	switch( _widec ){
 		case 33: goto st347;
 		case 36: goto st347;
 		case 61: goto st347;
@@ -6285,11 +6285,11 @@ case 347:
 		case 635: goto st347;
 		case 637: goto st347;
 	}
-	if ( _widec < 48 ) {
+	if ( _widec < 48 ){
 		if ( 38 <= _widec && _widec <= 46 )
 			goto st347;
-	} else if ( _widec > 59 ) {
-		if ( _widec > 90 ) {
+	} else if ( _widec > 59 ){
+		if ( _widec > 90 ){
 			if ( 97 <= _widec && _widec <= 122 )
 				goto st347;
 		} else if ( _widec >= 65 )
@@ -6655,7 +6655,7 @@ case 347:
 
   assert(p <= pe && "Buffer overflow after parsing.");
 
-  if (!http_parser_has_error(parser)) {
+  if (!http_parser_has_error(parser)){
       parser->cs = cs;
   }
 
@@ -6672,19 +6672,19 @@ case 347:
 
 int http_parser_finish(http_parser *parser)
 {
-  if (http_parser_has_error(parser) ) {
+  if (http_parser_has_error(parser) ){
     return -1;
-  } else if (http_parser_is_finished(parser) ) {
+  } else if (http_parser_is_finished(parser) ){
     return 1;
   } else {
     return 0;
   }
 }
 
-int http_parser_has_error(http_parser *parser) {
+int http_parser_has_error(http_parser *parser){
   return parser->cs == http_parser_error;
 }
 
-int http_parser_is_finished(http_parser *parser) {
+int http_parser_is_finished(http_parser *parser){
   return parser->cs >= http_parser_first_final;
 }

@@ -275,6 +275,11 @@ namespace Http{
          */
         void setBody(const std::string& body);
         /**
+         * @brief: 设置主体正文长度函数
+         * @param length 正文长度
+         */
+        void setContentLength(uint64_t length);
+        /**
          * @brief: 设置切片范围
          * @param start 切片开始范围
          * @param stop 切片结束范围
@@ -344,6 +349,11 @@ namespace Http{
          */
         uint64_t getRangeStart() const;
         /**
+         * @brief: 获取正文长度函数
+         * @return: 返回正文长度
+         */
+        uint64_t getContentLength() const;
+        /**
          * @brief: 获取路径函数
          * @return: 返回路径字符串
          */
@@ -404,6 +414,7 @@ namespace Http{
         std::string m_UrlPath;
         std::string m_Fragment;
         std::string m_Boundary;
+        uint64_t m_ContentLength;
     };
     /**
      * @brief: Http响应类
@@ -439,10 +450,20 @@ namespace Http{
          */
         void setBody(const std::string& body);
         /**
+         * @brief: 设置主体正文长度函数
+         * @param length 主体正文长度
+         */
+        void setContentLength(uint64_t length);
+        /**
          * @brief: 设置响应解释函数
          * @param reason 解释
          */
         void setReason(const std::string& reason);
+        /**
+         * @brief: 设置资源函数
+         * @param filePath 资源路径
+         */
+        void setResource(const std::string& filePath);
         /**
          * @brief: 设置正文类型函数
          * @param contentType 正文类型
@@ -479,15 +500,20 @@ namespace Http{
         void setCookie(const std::string& key, const std::string& val,time_t expired =0
             ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
         /**
-         * @brief: 获取Http头键值对容器函数
-         * @return: 返回Http头键值对容器
-         */
-        KeyValue& getHeaders(); 
-        /**
          * @brief: 是否Range切片
          * @return: 返回True则是，返回False则是否
          */
         bool isRange() const;
+        /**
+         * @brief: 是否拥有资源
+         * @return: 返回True则是，返回False则是否
+         */
+        bool hasResource() const;
+        /**
+         * @brief: 获取Http头键值对容器函数
+         * @return: 返回Http头键值对容器
+         */
+        KeyValue& getHeaders();
         /**
          * @brief: 获取是否为长连接函数
          * @return: 返回是否为长连接
@@ -514,6 +540,11 @@ namespace Http{
          */
         uint64_t getRangeStart() const;
         /**
+         * @brief: 获取正文长度函数
+         * @return: 返回正文长度
+         */
+        uint64_t getContentLength() const;
+        /**
          * @brief: 获取主体正文函数
          * @return: 返回主体正文
          */
@@ -528,6 +559,11 @@ namespace Http{
          * @return: 返回响应解释
          */
         const std::string& getReason() const;
+        /**
+         * @brief: 获取资源函数
+         * @return: 返回资源路径
+         */
+        const std::string& getResource() const;
         /**
          * @brief: 获取Http头键值对函数
          * @param key 指定的键
@@ -552,6 +588,8 @@ namespace Http{
         std::string m_Body;
         HttpStatus m_Status; 
         std::string m_Reason;
+        std::string m_Resource;
+        uint64_t m_ContentLength;
         HttpContentType m_ContentType;
         std::string m_ContentTypeString;
         std::vector<std::string> m_Cookies;

@@ -19,18 +19,18 @@ namespace Http{
     };
 
     static const std::map<std::string,std::string,CaseInsensitiveLess> g_HttpContent ={
-        #define XX(name,extName,desc) {extName,desc},
+        #define XX(name,extName,desc){extName,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
     static const std::map<HttpContentType,std::string> g_HttpContentType ={
-        #define XX(name,extName,desc) {HttpContentType::name,desc},
+        #define XX(name,extName,desc){HttpContentType::name,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    bool IsUrlEncode(const std::string& str) {
+    bool IsUrlEncode(const std::string& str){
 		return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
 	}
 
@@ -80,7 +80,7 @@ namespace Http{
 		std::string result;
 		result.reserve(value.size()); // Minimum size of result
 
-		for (auto &chr : value) {
+		for (auto &chr : value){
 			if (!((chr >= '0' && chr <= '9') || (chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z') || chr == '-' || chr == '.' || chr == '_' || chr == '~'))
 				result += std::string("%") + hex_chars[static_cast<unsigned char>(chr) >> 4] + hex_chars[static_cast<unsigned char>(chr) & 15];
 			else
@@ -94,9 +94,9 @@ namespace Http{
 		std::string result;
 		result.reserve(value.size() / 3 + (value.size() % 3)); // Minimum size of result
 
-		for (std::size_t i = 0; i < value.size(); ++i) {
+		for (std::size_t i = 0; i < value.size(); ++i){
 			auto &chr = value[i];
-			if (chr == '%' && i + 2 < value.size()) {
+			if (chr == '%' && i + 2 < value.size()){
 				auto hex = value.substr(i + 1, 2);
 				auto decoded_chr = static_cast<char>(std::strtol(hex.c_str(), nullptr, 16));
 				result += decoded_chr;
@@ -172,7 +172,8 @@ namespace Http{
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
-        ,m_UrlPath("/"){
+        ,m_UrlPath("/")
+        ,m_ContentLength(0){
     }
     
     void HttpRequest::setVersion(uint8_t ver){
@@ -193,6 +194,10 @@ namespace Http{
             Parse(body,m_Params,"&");
         }
         m_Body = body;
+    }
+
+    void HttpRequest::setContentLength(uint64_t length){
+        m_ContentLength = length;
     }
 
     void HttpRequest::setQuery(const std::string& query){
@@ -228,11 +233,11 @@ namespace Http{
         m_Cookies.emplace(key, value);
     }
 
-    HttpRequest::KeyValue& HttpRequest::atParams() {
+    HttpRequest::KeyValue& HttpRequest::atParams(){
         return m_Params;
     }
 
-    HttpRequest::KeyValue& HttpRequest::atHeaders() {
+    HttpRequest::KeyValue& HttpRequest::atHeaders(){
         return m_Headers;
     }
 
@@ -272,6 +277,10 @@ namespace Http{
         return 0;
     }
 
+    uint64_t HttpRequest::getContentLength() const{
+        return m_ContentLength;
+    }
+
     const std::string& HttpRequest::getPath() const{
         return m_UrlPath;
     }
@@ -284,7 +293,7 @@ namespace Http{
         return m_Query;
     }
 
-    const std::string& HttpRequest::getCookie(const std::string& key) {
+    const std::string& HttpRequest::getCookie(const std::string& key){
         if(!m_Cookies.empty()){
             auto value = m_Cookies.find(key);
             if(value == m_Cookies.end()){
@@ -352,6 +361,9 @@ namespace Http{
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
                 << m_Body;
         }else{
+            if(m_ContentLength != 0){
+                os  << "Content-Length: " << m_ContentLength << "\r\n";
+            }
             os  << "\r\n";
         }
         return os;
@@ -361,6 +373,7 @@ namespace Http{
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
         ,m_Status(HttpStatus::OK)
+        ,m_ContentLength(0)
         ,m_ContentType(HttpContentType::TEXT_HTML){
     }
 
@@ -380,8 +393,16 @@ namespace Http{
         m_Body = body;
     }
 
+    void HttpResponse::setContentLength(uint64_t length){
+        m_ContentLength = length;
+    }
+
     void HttpResponse::setReason(const std::string& reason){
         m_Reason = reason;
+    }
+
+    void HttpResponse::setResource(const std::string& filePath){
+        m_Resource = filePath;
     }
 
     void HttpResponse::setContentType(const std::string& contentType){
@@ -439,6 +460,14 @@ namespace Http{
         return m_Headers.find("Content-Range") != m_Headers.end(); 
     }
 
+    bool HttpResponse::hasResource() const{
+        return !m_Resource.empty();
+    }
+
+    HttpResponse::KeyValue& HttpResponse::getHeaders(){
+        return m_Headers;
+    }
+
     bool HttpResponse::getKeepAlive() const{
         return m_KeepAlive;
     }
@@ -479,6 +508,10 @@ namespace Http{
         return 0;
     }
 
+    uint64_t HttpResponse::getContentLength() const{
+        return m_ContentLength;
+    }
+
     const std::string& HttpResponse::getBody() const{
         return m_Body;
     }
@@ -499,6 +532,10 @@ namespace Http{
 
     const std::string& HttpResponse::getReason() const{
         return m_Reason;
+    }
+
+    const std::string& HttpResponse::getResource() const{
+        return m_Resource;
     }
 
     const std::string& HttpResponse::getHeader(const std::string& key){
@@ -530,7 +567,7 @@ namespace Http{
         }else{
             os << "Content-Type: " << m_ContentTypeString << "\r\n";
         }
-
+        /// Headers
         for(auto& v : m_Headers){
             if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type") == 0){
                 continue;
@@ -546,6 +583,9 @@ namespace Http{
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
                 << m_Body;
         }else{
+            if(m_ContentLength != 0){
+                os  << "Content-Length: " << m_ContentLength << "\r\n";
+            }
             os << "\r\n";
         }
         return os;

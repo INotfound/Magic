@@ -26,26 +26,32 @@ namespace NetWork{
         return m_Socket;
     }
 
-    void Socket::send(const std::string& data){
-        auto self = this->shared_from_this();
-        asio::async_write(*m_Socket
-        ,asio::const_buffer(data.c_str(),data.size())
-        ,[this,self](const asio::error_code &err, std::size_t length){
-            if(err){
-                m_ErrorCodeCallBack(err);
-            }
-        });
-    }
-
-    void Socket::send(const char* data,uint64_t length){
+    void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
         auto self = this->shared_from_this();
         asio::async_write(*m_Socket
         ,asio::const_buffer(data,length)
-        ,[this,self](const asio::error_code &err, std::size_t length){
+        ,std::bind([this,self](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
             if(err){
                 m_ErrorCodeCallBack(err);
             }
-        });
+            if(callback){
+                callback();
+            }
+        },std::placeholders::_1,std::placeholders::_2,callback));
+    }
+
+    void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
+        auto self = this->shared_from_this();
+        asio::async_write(*m_Socket
+                ,*stream
+                ,std::bind([this,self,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+                    if(err){
+                        m_ErrorCodeCallBack(err);
+                    }
+                    if(callback){
+                        callback();
+                    }
+                },std::placeholders::_1,std::placeholders::_2,callback));
     }
 
     void Socket::recv(const RecvCallBack& callBack){
@@ -53,14 +59,14 @@ namespace NetWork{
         asio::async_read(*m_Socket
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_at_least(1)
-            ,std::bind([this](const asio::error_code &err, std::size_t length,const Safe<Socket>& self,const RecvCallBack& callback){
+            ,std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
                 if(err){
                     m_ErrorCodeCallBack(err);
                 }else{
                     m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
                     callback(self,this->m_StreamBuffer);
                 }
-            },std::placeholders::_1,std::placeholders::_2,std::move(self),callBack));
+            },std::placeholders::_1,std::placeholders::_2,callBack));
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
@@ -68,14 +74,14 @@ namespace NetWork{
         asio::async_read(*m_Socket
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_exactly(size)
-            ,std::bind([this](const asio::error_code &err, std::size_t length,const Safe<Socket>& self,const RecvCallBack& callback){
+            ,std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
                 if(err){
                     m_ErrorCodeCallBack(err);
                 }else{
                     m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
                     callback(self,this->m_StreamBuffer);
                 }
-            },std::placeholders::_1,std::placeholders::_2,std::move(self),callBack));
+            },std::placeholders::_1,std::placeholders::_2,callBack));
     }
 
     void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){

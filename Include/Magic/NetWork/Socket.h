@@ -18,6 +18,8 @@ namespace NetWork{
         /// 数据流缓存
         typedef std::vector<char> StreamBuffer;
         /// 错误回调方法
+        typedef std::function<void()> SendCallBack;
+        /// 错误回调方法
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
         /// 数据接收方法
         typedef std::function<void(const Safe<Socket>&,StreamBuffer&)> RecvCallBack;
@@ -40,14 +42,16 @@ namespace NetWork{
         /**
          * @brief: 发送数据函数
          * @param data 二进制或文本数据
+         * @param length 长度
+         * @param callback 发送完成后响应函数
          */
-        void send(const std::string& data);
+        void send(const char* data,uint64_t length,const SendCallBack& callback = nullptr);
         /**
          * @brief: 发送数据函数
-         * @param data 二进制或文本数据
-         * @param length 长度
+         * @param stream Asio流式缓存数据
+         * @param callback 发送完成后响应函数
          */
-        void send(const char* data,uint64_t length);
+        void send(const Safe<asio::streambuf>& stream,const SendCallBack& callback = nullptr);
         /**
          * @brief: 接收数据函数
          * @param callBack 接收数据回调函数

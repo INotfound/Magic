@@ -60,7 +60,7 @@ namespace Magic {
 
     void ConfigFile::read(ConfigMap& keyValue){
         std::ostringstream content;
-        if (m_FileStream.is_open()){
+        if (m_FileStream.is_open() && m_Formatter){
             content << m_FileStream.rdbuf();
             m_Formatter->parse(content.str(), keyValue);
         }

@@ -112,12 +112,15 @@ namespace Http{
         if(length.empty()){
             length = m_Data->getHeader("content-length");
             if(!length.empty()){
-                return StringAs<uint64_t>(length);
+                m_Data->setContentLength(StringAs<uint64_t>(length));
+                return m_Data->getContentLength();
             }else{
+                m_Data->setContentLength(0);
                 return 0;
             }
         }
-        return StringAs<uint64_t>(length);
+        m_Data->setContentLength(StringAs<uint64_t>(length));
+        return m_Data->getContentLength();
     }
 
     const Safe<HttpRequest>& HttpRequestParser::getData(){

@@ -37,7 +37,7 @@ if(Utilty STREQUAL ON)
         Source/Magic/Adapter/Win//Mutex.cpp
         Source/Magic/Adapter/Linux/Utils.cpp
         Source/Magic/Adapter/Linux/Mutex.cpp
-    )
+            )
 endif()
 
 if(NetWork STREQUAL ON)
@@ -47,12 +47,15 @@ if(NetWork STREQUAL ON)
         Source/Magic/NetWork/Socket.cpp
         Source/Magic/NetWork/TcpServer.cpp
         Source/Magic/NetWork/Http/Http.cpp
+        Source/Magic/NetWork/Http/MultiPart.cpp
         Source/Magic/NetWork/Http/HttpParser.cpp
         Source/Magic/NetWork/Http/HttpSocket.cpp
         Source/Magic/NetWork/Http/HttpServer.cpp
         Source/Magic/NetWork/Http/HttpServlet.cpp
         Source/Magic/NetWork/Http/HttpSession.cpp
+
         Source/Magic/NetWork/Http/Utils/url_parser.rl.cpp
+        Source/Magic/NetWork/Http/Utils/MultiPartParser.cpp
         Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
         Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
     )

@@ -61,7 +61,7 @@
   action start_value { MARK(mark, fpc); }
 
   action write_value {
-    if(parser->http_field != NULL) {
+    if(parser->http_field != NULL){
       parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, fpc));
     }
   }
@@ -98,14 +98,14 @@
   }
 
   action done {
-      if(parser->xml_sent || parser->json_sent) {
+      if(parser->xml_sent || parser->json_sent){
         parser->body_start = PTR_TO(mark) - buffer;
         // +1 includes the \0
         parser->content_len = fpc - buffer - parser->body_start + 1;
       } else {
         parser->body_start = fpc - buffer + 1;
 
-        if(parser->header_done != NULL) {
+        if(parser->header_done != NULL){
           parser->header_done(parser->data, fpc + 1, pe - fpc - 1);
         }
       }
@@ -259,7 +259,7 @@ main := (Request | SocketRequest) @done;
 /** Data **/
 %% write data;
 
-int http_parser_init(http_parser *parser) {
+int http_parser_init(http_parser *parser){
   int cs = 0;
   %% write init;
   parser->cs = cs;
@@ -299,7 +299,7 @@ size_t http_parser_execute(http_parser *parser, const char *buffer, size_t len, 
 
   assert(p <= pe && "Buffer overflow after parsing.");
 
-  if (!http_parser_has_error(parser)) {
+  if (!http_parser_has_error(parser)){
       parser->cs = cs;
   }
 
@@ -316,19 +316,19 @@ size_t http_parser_execute(http_parser *parser, const char *buffer, size_t len, 
 
 int http_parser_finish(http_parser *parser)
 {
-  if (http_parser_has_error(parser) ) {
+  if (http_parser_has_error(parser) ){
     return -1;
-  } else if (http_parser_is_finished(parser) ) {
+  } else if (http_parser_is_finished(parser) ){
     return 1;
   } else {
     return 0;
   }
 }
 
-int http_parser_has_error(http_parser *parser) {
+int http_parser_has_error(http_parser *parser){
   return parser->cs == http_parser_error;
 }
 
-int http_parser_is_finished(http_parser *parser) {
+int http_parser_is_finished(http_parser *parser){
   return parser->cs >= http_parser_first_final;
 }
