@@ -42,8 +42,7 @@ namespace Http{
 
     void HttpSocket::handleRequest(){
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
-        std::stringstream stream;
-        stream.set_rdbuf(streamBuffer.get());
+        std::ostream stream(streamBuffer.get());
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
         response->setVersion(request->getVersion());
