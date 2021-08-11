@@ -185,10 +185,12 @@ namespace Magic{
     void FilePathFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
         const std::string& filePath = event->getFile();
         std::size_t pathPos = filePath.rfind('/');
-        if(pathPos == std::string::npos)
-            pathPos = 0;
-        else
+        if(pathPos == std::string::npos) {
+            pathPos = filePath.rfind('\\');
+            pathPos = (pathPos == std::string::npos) ? 0 : pathPos + 1;
+        }else {
             pathPos++;
+        }
         os << filePath.substr(pathPos);
     }
 

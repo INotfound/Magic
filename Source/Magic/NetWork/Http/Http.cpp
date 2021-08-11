@@ -500,8 +500,7 @@ namespace Http{
             std::string value = iter->second;
             auto secondSplitPos = value.find('-');
             std::string::size_type firstSplitPos = 5;
-            if(firstSplitPos != std::string::npos 
-                            && secondSplitPos != std::string::npos){
+            if(secondSplitPos != std::string::npos){
                return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
             }
         }

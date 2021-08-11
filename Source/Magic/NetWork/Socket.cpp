@@ -10,7 +10,7 @@ namespace Magic{
 namespace NetWork{
     Socket::~Socket(){
     }
-    
+
     Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context)
         :m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)

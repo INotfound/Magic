@@ -11,7 +11,7 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    IHttpServlet::IHttpServlet(const std::string& path,const HttpServletType& type = HttpServletType::Normal)
+    IHttpServlet::IHttpServlet(const std::string& path,const HttpServletType& type)
         :m_Path(path)
         ,m_ServletType(type){
     }
@@ -22,6 +22,9 @@ namespace Http{
 
     const HttpServletType& IHttpServlet::getType() const{
         return m_ServletType;
+    }
+
+    IHttpServlet::~IHttpServlet() {
     }
 
     HttpServletDispatch::HttpServletDispatch(){
@@ -40,6 +43,7 @@ namespace Http{
                 m_DeafultServlet = servlet;
                 break;
         }
+        MAGIC_DEBUG() << "HttpServlet Path: " << servlet->getPath() << " Successfully Loaded";
     }
 
     void HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){

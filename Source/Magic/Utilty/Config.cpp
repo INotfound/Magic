@@ -32,6 +32,9 @@ namespace Magic {
         return m_Comment;
     }
 
+    IConfigFormatter::~IConfigFormatter() {
+    }
+
     ConfigFile::~ConfigFile(){
         this->close();
     }

@@ -73,7 +73,6 @@ namespace Http{
         std::fstream m_FileStream;
         Safe<char> m_StreamBuffer;
         uint64_t m_StreamBufferSize;
-        std::string m_TempDirectory;
         uint64_t m_TotalTransferLength;
         uint64_t m_CurrentTransferLength;
         HttpRecvBack m_RecvRequestCallBack;

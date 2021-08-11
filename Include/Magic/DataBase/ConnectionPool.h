@@ -37,7 +37,7 @@ namespace DataBase{
         Connection(const Safe<T>& entity,const Safe<ConnectionPool<T>>& pool)
             :m_Entity(entity)
             ,m_Pool(pool){
-            }
+        }
     private:
         Safe<T> m_Entity;
         Safe<ConnectionPool<T>> m_Pool;

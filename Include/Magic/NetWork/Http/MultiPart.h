@@ -29,8 +29,12 @@ namespace Http{
         void setBoundary(const std::string &boundary);
 
         void setTempDirectory(const std::string& dirPath);
+
+        const std::unordered_map<std::string,std::string>& getParamMap() const;
     private:
-        void setParserCallbacks();
+        void setParserCallBacks();
+
+        std::string getName();
 
         std::string getFileName();
 
@@ -52,12 +56,15 @@ namespace Http{
     private:
         bool m_IsFile;
         std::string m_FilePath;
+        std::string m_ParamName;
         std::string m_HeaderName;
         MultiPartParser m_Parser;
+        std::string m_ParamValue;
         std::string m_HeaderValue;
         std::ofstream m_FileStream;
         std::string m_TempDirectory;
         std::vector<std::string> m_FilePaths;
+        std::unordered_map<std::string,std::string> m_ParamMap;
         std::unordered_map<std::string,std::string> m_HeaderMap;
         std::vector<std::unordered_map<std::string,std::string>> m_HeaderMaps;
     };

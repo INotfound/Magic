@@ -56,7 +56,7 @@ namespace Magic {
      */
     class IConfigFormatter {
     public:
-        ~IConfigFormatter() {};
+        virtual ~IConfigFormatter();
         /**
          * @brief: 将配置键值对写入配置文件函数
          * @param os 输出流

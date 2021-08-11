@@ -10,7 +10,6 @@
 #include <utility>
 
 namespace Magic{
-    static thread_local Thread* g_Thread = nullptr;
     static thread_local std::string g_ThreadName = "UNKNOWN";
 
     Thread::~Thread() {
@@ -53,9 +52,8 @@ namespace Magic{
     
     void Thread::run(){
         m_Mutex.wait();
-        g_Thread = this;
         SetName(m_Name);
-        m_Id = Magic::GetThreadId();        
+        m_Id = Magic::GetThreadId();
         m_CallBack();
     }
 }

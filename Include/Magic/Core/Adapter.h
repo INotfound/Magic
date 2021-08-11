@@ -29,7 +29,7 @@
     #define IS_FILE(Path)        _access(Path,0)
 #endif
 
-#if defined(linux) || defined(__linux__)
+#if (defined(linux) || defined(__linux__)) && !defined(ANDROID)
     #include <dirent.h>
     #include <unistd.h>
     #include <pthread.h>

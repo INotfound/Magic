@@ -413,7 +413,6 @@ namespace Http{
         std::string m_Query;
         std::string m_UrlPath;
         std::string m_Fragment;
-        std::string m_Boundary;
         uint64_t m_ContentLength;
     };
     /**

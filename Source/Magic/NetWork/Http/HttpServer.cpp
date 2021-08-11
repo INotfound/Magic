@@ -30,7 +30,10 @@ namespace Http{
             if(!err){
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
                 socket->setErrorCodeCallBack([](const asio::error_code & err){
-                    if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
+                #ifdef WIN32
+                    if(err.value() == WSAECONNABORTED) return;
+                #endif
+                    if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted || err == asio::error::broken_pipe){
                         return;
                     }
                     MAGIC_WARN() << err.value() << ":"<< err.message();

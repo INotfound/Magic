@@ -43,8 +43,12 @@ namespace Http{
     void HttpSocket::handleRequest(){
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
+        auto& params = m_MultiPart.getParamMap();
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
+        for(auto& v :params){
+            request->setParam(v.first,v.second);
+        }
         response->setVersion(request->getVersion());
         response->setKeepAlive(request->getKeepAlive());
         m_RecvRequestCallBack(request,response);
@@ -57,7 +61,7 @@ namespace Http{
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
                 m_TotalTransferLength = m_FileStream.tellg();
-                m_StreamBuffer.reset(new char[m_StreamBufferSize], [](char *pointer) {delete[] pointer;});
+                m_StreamBuffer.reset(new char[m_StreamBufferSize], [](const char *pointer) {delete[] pointer;});
                 if(request->isRange()){
                     auto rangeStop = request->getRangeStop();
                     auto rangeStart = request->getRangeStart();
@@ -181,7 +185,7 @@ namespace Http{
     }
 
     void HttpSocket::setTempDirectory(const std::string& dirPath) {
-        m_TempDirectory = dirPath;
+        m_MultiPart.setTempDirectory(dirPath);
     }
 
     void HttpSocket::multiPartParser() {
