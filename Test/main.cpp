@@ -72,7 +72,6 @@ int main(int argc,char** argv){
 
     Safe<Magic::Config> config = std::make_shared<Magic::Config>();
     Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>();
-    configFile->setFilePath("Magic.conf");
     Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();
     configFile->addFormatter(formatter);
     config->addConfigFile(configFile);

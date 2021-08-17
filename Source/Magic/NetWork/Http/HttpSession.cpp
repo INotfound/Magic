@@ -25,9 +25,9 @@ namespace Http{
     HttpSession::~HttpSession(){
     }
 
-    HttpSession::HttpSession(bool autoGen)
+    HttpSession::HttpSession(bool autoGenId)
         :m_LastAccessTime(std::time(0)){
-        if(autoGen){
+        if(autoGenId){
             std::stringstream ss;
             ss << GetCurrentTimeUS() << '|' << std::rand() << '|' << std::rand() << '|' << std::rand() << '|' << std::rand();
             m_Id = MD5HexString(ss.str());

@@ -26,9 +26,9 @@ namespace Http{
         ~HttpSession();
         /**
          * @brief: 构造函数
-         * @param autoGen 是否自动生成相关信息
+         * @param autoGenId 是否自动生成Id信息
          */
-        HttpSession(bool autoGen =true);
+        HttpSession(bool autoGenId =true);
         /**
          * @brief: 获取会话Id函数
          * @return: 返回会话Id
