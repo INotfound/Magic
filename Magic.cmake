@@ -52,28 +52,3 @@ else()
 endif()
 
 
-if(WIN32)
-    #WIN32 Library
-    set(LIBS
-        ws2_32
-        mswsock
-    )
-
-elseif(UNIX)
-    #UNIX Library
-    set(LIBS
-    )
-
-endif()
-
-if(MySql STREQUAL ON)
-    set(LIBS ${LIBS} mariadbclient)
-endif()
-
-if(OpenSSL STREQUAL ON)
-    set(LIBS ${LIBS} ssl crypto)
-endif()
-
-link_libraries(
-    ${LIBS}
-)
