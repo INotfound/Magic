@@ -38,13 +38,6 @@
         ],
         "Initialize":[
             {
-                "Id":"configFile",
-                "FunctionPropertys":["setFilePath"],
-                "FunctionArguments":{
-                    "setFilePath" : ["\"./Magic.conf\""]
-                }
-            },
-            {
                 "Id":"logger",
                 "Loop":true,
                 "Callee":"Magic::ILogAppender",

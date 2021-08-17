@@ -39,10 +39,14 @@ namespace Magic {
         this->close();
     }
 
-    ConfigFile::ConfigFile(){
+    ConfigFile::ConfigFile()
+        :m_Path("./Magic.conf"){
     }
     
     void ConfigFile::open(){
+        if (m_FileStream.is_open()){
+            m_FileStream.close();
+        }
         m_FileStream.open(m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
     }
 
@@ -57,11 +61,11 @@ namespace Magic {
     }
 
     void ConfigFile::setFilePath(const std::string& path){
-        m_Path = path;    
-        this->open();
+        m_Path = path;
     }
 
     void ConfigFile::read(ConfigMap& keyValue){
+        this->open();
         std::ostringstream content;
         if (m_FileStream.is_open() && m_Formatter){
             content << m_FileStream.rdbuf();
