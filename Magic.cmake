@@ -51,4 +51,17 @@ else()
     endif()
 endif()
 
+# Platform
+if(WIN32)
+    #WIN32 Library
+    set(PLATFORM_LIBRARY
+        ws2_32
+        mswsock
+    )
+elseif(UNIX)
+    #UNIX Library
+    set(PLATFORM_LIBRARY
+    )
+endif()
 
+link_libraries(${PLATFORM_LIBRARY})

@@ -12,8 +12,8 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    HttpServer::HttpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration)
-        :TcpServer(pool,configuration)
+    HttpServer::HttpServer(const Safe<IoPool>& pool,const Safe<TimingWheel>& timingWheel,const Safe<Config>& configuration)
+        :TcpServer(pool,timingWheel,configuration)
         ,m_TempDirectory(configuration->at<std::string>("NetWork.Server.TempDirectory","./")){
         m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
@@ -24,9 +24,10 @@ namespace Http{
     }
 
     void HttpServer::accept(){
-        Safe<HttpSocket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get());
+        Safe<HttpSocket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get(),m_TimingWheel);
         socket->setTempDirectory(m_TempDirectory);
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
+            socket->enableTimeOut();
             if(!err){
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
                 socket->setErrorCodeCallBack([](const asio::error_code & err){

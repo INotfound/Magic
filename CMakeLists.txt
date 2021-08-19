@@ -57,18 +57,6 @@ if(NetWork STREQUAL ON)
         Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
     )
 endif()
-# Platform
-if(WIN32)
-    #WIN32 Library
-    set(LIBS
-        ws2_32
-        mswsock
-    )
-elseif(UNIX)
-    #UNIX Library
-    set(LIBS
-    )
-endif()
 
 # ThirdParty
 find_package(OpenSSL)
@@ -87,9 +75,7 @@ if(MySql STREQUAL ON)
 endif()
 
 set(BINARY Magic)
-
 link_libraries(${LIBS})
-
 add_library(Magic ${SOURCES})
 
 if(Sanitize STREQUAL Thread)

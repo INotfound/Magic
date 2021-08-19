@@ -8,18 +8,37 @@
 
 namespace Magic{
 namespace NetWork{
-    Socket::~Socket(){
-    }
+    Socket::~Socket() =default;
 
-    Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context)
-        :m_TimeOutMs(timeOutMs)
+    Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
+        :m_TimeOut(true)
+        ,m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)
         ,m_ByteBlock(new char[m_BufferSize],[](const char *pointer) {delete[] pointer;})
+        ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
         m_ErrorCodeCallBack = [](const asio::error_code & err){
-            MAGIC_DEBUG() << err.message();
+            MAGIC_WARN() << err.message();
         };
+    }
+
+    void Socket::enableTimeOut(){
+        auto self = this->shared_from_this();
+        Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([this,self](){
+            if(m_TimeOut){
+                if(self){
+                    if(self->getEntity()->is_open()){
+                        self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both);
+                    }
+                    self->getEntity()->close();
+                }
+                return;
+            }
+            m_TimeOut = true;
+            this->enableTimeOut();
+        });
+        m_TimingWheel->addTask(m_TimeOutMs,taskNode);
     }
 
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){
@@ -31,6 +50,7 @@ namespace NetWork{
         asio::async_write(*m_Socket
         ,asio::const_buffer(data,length)
         ,std::bind([this,self](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+            m_TimeOut = false;
             if(err){
                 m_ErrorCodeCallBack(err);
             }
@@ -45,6 +65,7 @@ namespace NetWork{
         asio::async_write(*m_Socket
                 ,*stream
                 ,std::bind([this,self,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+                    m_TimeOut = false;
                     if(err){
                         m_ErrorCodeCallBack(err);
                     }
@@ -60,6 +81,7 @@ namespace NetWork{
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_at_least(1)
             ,std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+                m_TimeOut = false;
                 if(err){
                     m_ErrorCodeCallBack(err);
                 }else{
@@ -75,6 +97,7 @@ namespace NetWork{
             ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
             ,asio::transfer_exactly(size)
             ,std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+                m_TimeOut = false;
                 if(err){
                     m_ErrorCodeCallBack(err);
                 }else{

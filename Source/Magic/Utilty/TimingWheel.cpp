@@ -3,14 +3,15 @@
  * @Date: 2020-03-13 21:04:59
  * @LastEditTime: 2021-02-01 22:26:12
  */
+#include <utility>
+
 #include "Magic/Utilty/TimingWheel.h"
 
 namespace Magic{
-    ITaskNode::~ITaskNode(){
-    }
+    ITaskNode::~ITaskNode() =default;
 
-    FunctionTaskNode::FunctionTaskNode(const std::function<void()>& func)
-        :m_Function(func){
+    FunctionTaskNode::FunctionTaskNode(std::function<void()> func)
+        :m_Function(std::move(func)){
     }
 
     void FunctionTaskNode::notify(){
@@ -23,6 +24,7 @@ namespace Magic{
         ,m_WheelSize(wheelSize)
         ,m_ClockHand(0){
         m_Task.resize(m_WheelSize);
+        m_Task.reserve(m_WheelSize);
     }
 
     void Wheel::add(uint64_t ms,Safe<ITaskNode> &node){
@@ -56,8 +58,8 @@ namespace Magic{
 
     TimingWheel::TimingWheel(const Safe<Config>& configuration)
         :m_IsRun(false)
-        ,m_TickMs(configuration->at<uint64_t>("TimingWheel.TickMs",1000))
-        ,m_WheelSize(configuration->at<uint64_t>("TimingWheel.WheelSize",60)){
+        ,m_TickMs(configuration->at<uint64_t>("TimingWheel.TickMs",100))
+        ,m_WheelSize(configuration->at<uint64_t>("TimingWheel.WheelSize",10)){
     }
 
     void  TimingWheel::run(){
@@ -68,13 +70,13 @@ namespace Magic{
         m_IsRun = true;
         m_Wheels = std::make_shared<Wheel>(m_TickMs,m_WheelSize);
         m_Timer = std::make_shared<Timer>("TimingWheel",m_TickMs,[this](){
-            m_Wheels->tick(m_TaskList);
-            for(auto& i : m_TaskList){
+            std::vector<Wheel::TaskList> taskList;
+            m_Wheels->tick(taskList);
+            for(auto& i : taskList){
                 for(auto& v : i){
                     v->notify();
                 }
             }
-            m_TaskList.clear();
         });
         m_Timer->run(); 
     }

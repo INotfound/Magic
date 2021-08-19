@@ -7,6 +7,7 @@
 #pragma once
 #include "asio.hpp"
 #include "Magic/Core/Core.h"
+#include "Magic/Utilty/TimingWheel.h"
 
 namespace Magic{
 namespace NetWork{
@@ -33,7 +34,11 @@ namespace NetWork{
          * @param bufferSize 缓存大小
          * @param context Asio的处理上下文
          */
-        Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context);
+        Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
+        /**
+         * @brief: 启用Socket超时
+         */
+        void enableTimeOut();
         /**
          * @brief: 获取Socket的实体函数
          * @return: 返回Socket实体
@@ -69,10 +74,12 @@ namespace NetWork{
          */
         void setErrorCodeCallBack(const ErrorCallBack& errorCallBack);
     private:
+        bool m_TimeOut;
         uint64_t m_TimeOutMs;
         uint64_t m_BufferSize;
         Safe<char[]> m_ByteBlock;
         StreamBuffer m_StreamBuffer;
+        Safe<TimingWheel> m_TimingWheel;
         ErrorCallBack m_ErrorCodeCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;
     };

@@ -11,6 +11,7 @@
 
 #include "Magic/NetWork/Http/HttpServer.h"
 #include "Magic/Utilty/Logger.h"
+#include "Magic/Utilty/TimingWheel.h"
 
 ///// http://127.0.0.1/
 
@@ -54,7 +55,6 @@ public:
     }
 };
 
-
 int main(int argc,char** argv){
     Magic::NetWork::Http::Uri uri;
     uri.execute("mysql://admin@0.0.0.0/xxx?password=12345678901a");
@@ -79,10 +79,10 @@ int main(int argc,char** argv){
     Magic::g_Logger = std::make_shared<Magic::Logger>(config);
     Safe<Magic::ILogAppender> logAppender = std::make_shared<Magic::StdOutLogAppender>();
     Magic::g_Logger->addILogAppender(logAppender);
-
+    Safe<Magic::TimingWheel> timingWheel = std::make_shared<Magic::TimingWheel>(config);
     Safe<Magic::NetWork::IoPool> pool = std::make_shared<Magic::NetWork::IoPool>(config);
-
-    Magic::NetWork::Http::HttpServer server(pool,config);
+    timingWheel->run();
+    Magic::NetWork::Http::HttpServer server(pool,timingWheel,config);
 
     Safe<Magic::NetWork::Http::IHttpServlet> servlet = std::make_shared<DeafultServlet>();
     Safe<Magic::NetWork::Http::IHttpServlet> resservlet = std::make_shared<ResourceServlet>();

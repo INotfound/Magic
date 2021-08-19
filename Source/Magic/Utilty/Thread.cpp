@@ -20,12 +20,12 @@ namespace Magic{
         ,m_Name(threadName)
         ,m_Thread(&Thread::run,this)
         ,m_CallBack(std::move(callback)){
-        MAGIC_DEBUG() << "Start thread: " << threadName;
+        MAGIC_INFO() << "Start Thread: " << threadName;
         if(threadName.empty()){
             m_Name = "UNKNOWN";
         }
         if(!m_CallBack){
-            MAGIC_ERROR() << "Thread-CallBack is null";
+            MAGIC_ERROR() << "Thread-CallBack Is Null";
         }
         m_Mutex.notify();
     }

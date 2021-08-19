@@ -9,8 +9,8 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    HttpSocket::HttpSocket(uint64_t timeOutMs,asio::io_context& context)
-        :Socket(timeOutMs,4096,context)
+    HttpSocket::HttpSocket(uint64_t timeOutMs,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
+        :Socket(timeOutMs,4096,context,timingWheel)
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
         ,m_StreamBufferSize(1024*1024*2)
@@ -60,7 +60,7 @@ namespace Http{
             if(m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
-                m_TotalTransferLength = m_FileStream.tellg();
+                uint64_t totalLength = m_FileStream.tellg();
                 m_StreamBuffer.reset(new char[m_StreamBufferSize], [](const char *pointer) {delete[] pointer;});
                 if(request->isRange()){
                     auto rangeStop = request->getRangeStop();
@@ -68,21 +68,20 @@ namespace Http{
                     m_FileStream.seekg(rangeStart,std::ios::beg);
                     response->setStatus(HttpStatus::PARTIAL_CONTENT);
                     if(rangeStop == 0){
-                        uint64_t length = (m_TotalTransferLength - rangeStart);
-                        response->setContentLength(length);
-                        response->setRange(rangeStart,m_TotalTransferLength - 1,m_TotalTransferLength);
-                        m_TotalTransferLength = length;
+                        m_TotalTransferLength = (totalLength - rangeStart);
                     }else{
-                        uint64_t length = (rangeStop - rangeStart) + 1;
-                        response->setContentLength(length);
-                        response->setRange(rangeStart,rangeStop,m_TotalTransferLength);
-                        m_TotalTransferLength = length;
+                        m_TotalTransferLength = (rangeStop - rangeStart) + 1;
                     }
+                    m_TotalTransferLength = m_TotalTransferLength > m_StreamBufferSize ? m_StreamBufferSize : m_TotalTransferLength;
+                    response->setContentLength(m_TotalTransferLength);
+                    response->setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
+                    /// Send Response
                     stream << response;
                     this->send(streamBuffer);
                     this->transferFileStream();
                 }else{
                     m_FileStream.seekg(0,std::ios::beg);
+                    m_TotalTransferLength = totalLength;
                     response->setStatus(HttpStatus::OK);
                     response->setContentLength(m_TotalTransferLength);
                     response->setHeader("Accept-Ranges","bytes");
@@ -207,7 +206,8 @@ namespace Http{
     }
 
     void HttpSocket::transferFileStream(){
-        if(m_FileStream.eof() || m_CurrentTransferLength == m_TotalTransferLength){
+        if(m_FileStream.eof()
+            || m_CurrentTransferLength == m_TotalTransferLength){
             m_FileStream.close();
             m_StreamBuffer.reset();
             m_ResponseParser->reset();
@@ -215,7 +215,8 @@ namespace Http{
             m_CurrentTransferLength = 0;
             return;
         }
-        m_FileStream.read(m_StreamBuffer.get(),m_StreamBufferSize);
+        uint64_t transferLength = m_TotalTransferLength > m_StreamBufferSize ? m_StreamBufferSize : m_TotalTransferLength;
+        m_FileStream.read(m_StreamBuffer.get(),transferLength);
         auto length = m_FileStream.gcount();
         m_CurrentTransferLength += length;
         this->send(m_StreamBuffer.get(),length,[this](){

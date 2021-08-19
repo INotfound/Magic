@@ -25,7 +25,7 @@ namespace Http{
          * @param timeOutMs 超时时间
          * @param context  Asio的处理上下文
          */
-        HttpSocket(uint64_t timeOutMs,asio::io_context& context);
+        HttpSocket(uint64_t timeOutMs,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
         /**
          * @brief: 接收请求头函数
          * @param callback 接收回调函数
@@ -70,8 +70,8 @@ namespace Http{
         MultiPart m_MultiPart;
         uint64_t m_TotalLength;
         uint64_t m_CurrentLength;
-        std::fstream m_FileStream;
         Safe<char> m_StreamBuffer;
+        std::ifstream m_FileStream;
         uint64_t m_StreamBufferSize;
         uint64_t m_TotalTransferLength;
         uint64_t m_CurrentTransferLength;

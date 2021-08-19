@@ -23,7 +23,7 @@ namespace NetWork{
          * @brief: 构造函数
          * @param configuration 配置器
          */
-        IoPool(const Safe<Config>& configuration);
+        explicit IoPool(const Safe<Config>& configuration);
         /**
          * @brief: 网络Io池运行函数
          */

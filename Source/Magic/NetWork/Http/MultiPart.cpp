@@ -47,6 +47,10 @@ namespace Http {
         m_TempDirectory = dirPath;
     }
 
+    const std::unordered_map<std::string, std::string> &MultiPart::getParamMap() const {
+        return m_ParamMap;
+    }
+
     void MultiPart::setParserCallBacks() {
         m_Parser.onPartBegin = PartBegin;
         m_Parser.onHeaderField = HeaderField;
@@ -161,10 +165,6 @@ namespace Http {
         auto *self = reinterpret_cast<MultiPart *>(userData);
         self->m_HeaderMaps.push_back(self->m_HeaderMap);
         self->m_HeaderMap.clear();
-    }
-
-    const std::unordered_map<std::string, std::string> &MultiPart::getParamMap() const {
-        return m_ParamMap;
     }
 }
 }

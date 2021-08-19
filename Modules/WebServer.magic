@@ -27,15 +27,8 @@
                 "Id":"httpServer",
                 "Class":"Magic::NetWork::Http::HttpServer",
                 "IncludePath": "Magic/NetWork/Http/HttpServer.h",
-                "Dependencies":["Magic::NetWork::IoPool","Magic::Config"],
+                "Dependencies":["Magic::NetWork::IoPool","Magic::TimingWheel","Magic::Config"],
                 "FunctionPropertys":["setServletDispatch"]
-            },
-            {
-                "Id":"httpSession",
-                "Class":"Magic::NetWork::Http::HttpSessionManager",
-                "IncludePath": "Magic/NetWork/Http/HttpSession.h",
-                "Dependencies":["Magic::Config"],
-                "FunctionPropertys":["setTimingWheel"]
             }
         ],
         "Initialize":[

@@ -60,17 +60,17 @@ namespace DataBase{
     bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port){
         Mutex::Lock lock(m_Mutex);
         if(!mysql_init(&m_MySql)){
-            MAGIC_ERROR() << "MySql initialization failed";
+            MAGIC_ERROR() << "MySql Initialization Failed";
             return false;
         }
         mysql_options(&m_MySql, MYSQL_SET_CHARSET_NAME, "utf8mb4");
         if(!mysql_real_connect(&m_MySql,ip.c_str(),user.c_str(),password.c_str(),dataBase.c_str(),port,0,0)){
-            MAGIC_ERROR() << "MySql connection failed";
+            MAGIC_ERROR() << "MySql Connection Failed";
             return false;
         }
         char value = 1;
         mysql_options(&m_MySql, MYSQL_OPT_RECONNECT, &value);
-        MAGIC_INFO() << "Database connected successful";
+        MAGIC_INFO() << "Database Connected Successful";
         return true;
     }
 
@@ -101,12 +101,12 @@ namespace DataBase{
         mysql_stmt_bind_param(m_Stmt, m_MySqlModifyBinds.data());
         uint32_t err = mysql_stmt_errno(m_Stmt);
         if(err){
-            MAGIC_DEBUG() << mysql_stmt_error(m_Stmt);
+            MAGIC_WARN() << mysql_stmt_error(m_Stmt);
             return false;
         }
         MYSQL_RES* res = mysql_stmt_result_metadata(m_Stmt);
         if(!res){
-            MAGIC_DEBUG() << "MySql result failed";
+            MAGIC_WARN() << "MySql Result Failed";
             return false;
         }
         uint32_t num = mysql_num_fields(res);
@@ -145,14 +145,14 @@ namespace DataBase{
         }
         mysql_free_result(res);
         if(mysql_stmt_bind_result(m_Stmt,m_MySqlResultBinds.data()) != 0){
-            MAGIC_DEBUG() << "MySql binding failed";
+            MAGIC_WARN() << "MySql Binding Failed";
             return false;
         }
         if(!this->execute()){
             return false;
         }
         if(mysql_stmt_store_result(m_Stmt) !=0){
-            MAGIC_DEBUG() << "MySql Store Result failed";
+            MAGIC_WARN() << "MySql Store Result Failed";
             return false;
         }
         return true;
@@ -164,7 +164,7 @@ namespace DataBase{
     }
 
     void MySqlStmt::printError(){
-        MAGIC_DEBUG() << mysql_stmt_error(m_Stmt);
+        MAGIC_WARN() << mysql_stmt_error(m_Stmt);
     }
 
     bool MySqlStmt::prepare(const std::string& sql){

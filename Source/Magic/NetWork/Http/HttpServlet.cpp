@@ -43,12 +43,12 @@ namespace Http{
                 m_DeafultServlet = servlet;
                 break;
         }
-        MAGIC_DEBUG() << "HttpServlet Path: " << servlet->getPath() << " Successfully Loaded";
+        MAGIC_INFO() << "HttpServlet Path: " << servlet->getPath() << " Successfully Loaded";
     }
 
     void HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
         if(!m_DeafultServlet){
-            MAGIC_DEBUG() << "DeafultServlet not set";
+            MAGIC_WARN() << "DeafultServlet Not Set";
         }
         auto& servlet = this->getMatchedServlet(request->getPath());
         if(servlet){

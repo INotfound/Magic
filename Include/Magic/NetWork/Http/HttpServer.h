@@ -22,7 +22,7 @@ namespace Http{
          * @param pool 网络池
          * @param configuration 配置器
          */
-        HttpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration);
+        HttpServer(const Safe<IoPool>& pool,const Safe<TimingWheel>& timingWheel,const Safe<Config>& configuration);
         /**
          * @brief: 配置分发器后启动服务器
          * @param dispatch Servlet分发器

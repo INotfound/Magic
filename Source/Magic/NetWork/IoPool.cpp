@@ -10,8 +10,7 @@
 
 namespace Magic{
 namespace NetWork{
-    IoPool::~IoPool(){
-    }
+    IoPool::~IoPool() =default;
 
     IoPool::IoPool(const Safe<Config>& configuration)
         :m_Next(0)
@@ -32,8 +31,8 @@ namespace NetWork{
                 }
             ));
         }
-        for(uint32_t i = 0; i<threads.size(); i++){
-            threads.at(i)->join();
+        for(auto & thread : threads){
+            thread->join();
         }
     }
 

@@ -36,7 +36,7 @@ namespace Magic{
          * @brief: 任务构造函数
          * @param func 函数对象
          */
-        explicit FunctionTaskNode(const std::function<void()>& func);
+        explicit FunctionTaskNode(std::function<void()> func);
         /**
          * @brief: 抽象虚函数
          */
@@ -86,7 +86,7 @@ namespace Magic{
         /**
          * @brief: 构造函数
          */
-        TimingWheel(const Safe<Config>& configuration);
+        explicit TimingWheel(const Safe<Config>& configuration);
         /**
          * @brief: 运行定时轮函数
          * @note: 必须先执行定时轮才能添加任务,可多次执行此函数
@@ -117,9 +117,8 @@ namespace Magic{
         bool m_IsRun;
         Mutex m_Mutex;
         uint64_t m_TickMs;
-        uint64_t m_WheelSize;
         Safe<Timer> m_Timer;
         Safe<Wheel> m_Wheels;
-        std::vector<Wheel::TaskList> m_TaskList;
+        uint64_t m_WheelSize;
     };
 }
