@@ -14,7 +14,7 @@ namespace NetWork{
         :m_TimeOut(true)
         ,m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)
-        ,m_ByteBlock(new char[m_BufferSize],[](const char *pointer) {delete[] pointer;})
+        ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
         ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
