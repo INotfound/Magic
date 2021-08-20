@@ -29,6 +29,14 @@
                 "IncludePath": "Magic/NetWork/Http/HttpServer.h",
                 "Dependencies":["Magic::NetWork::IoPool","Magic::TimingWheel","Magic::Config"],
                 "FunctionPropertys":["setServletDispatch"]
+            },
+            {
+                "Id":"notFoundServlet",
+                "Class":"Magic::NetWork::Http::NotFoundServlet",
+                "IncludePath": "Magic/NetWork/Http/HttpServlet.h",
+                "Interface":"Magic::NetWork::Http::IHttpServlet",
+                "Dependencies":[],
+                "FunctionPropertys":[]
             }
         ],
         "Initialize":[

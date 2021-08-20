@@ -11,6 +11,8 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
+    IHttpServlet::~IHttpServlet() =default;
+
     IHttpServlet::IHttpServlet(const std::string& path,const HttpServletType& type)
         :m_Path(path)
         ,m_ServletType(type){
@@ -24,7 +26,15 @@ namespace Http{
         return m_ServletType;
     }
 
-    IHttpServlet::~IHttpServlet() {
+    NotFoundServlet::NotFoundServlet()
+        :Http::IHttpServlet("404",Http::HttpServletType::Deafult)
+        ,m_Html("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>"){
+    }
+
+    bool NotFoundServlet::handle(const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response){
+        response->setBody(m_Html);
+        response->setStatus(Http::HttpStatus::NOT_FOUND);
+        return true;
     }
 
     HttpServletDispatch::HttpServletDispatch(){

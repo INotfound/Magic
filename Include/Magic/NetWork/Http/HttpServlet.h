@@ -34,6 +34,16 @@ namespace Http{
         HttpServletType m_ServletType;
     };
     /**
+     * @brief: 404 NotFound类
+     */
+    class NotFoundServlet :public IHttpServlet{
+    public:
+        NotFoundServlet();
+        bool handle(const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response) override;
+    private:
+        std::string m_Html;
+    };
+    /**
      * @brief: HttpServlet分配器类
      */
     class HttpServletDispatch{

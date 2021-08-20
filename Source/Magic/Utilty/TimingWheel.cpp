@@ -27,7 +27,7 @@ namespace Magic{
         m_Task.reserve(m_WheelSize);
     }
 
-    void Wheel::add(uint64_t ms,Safe<ITaskNode> &node){
+    void Wheel::add(uint64_t ms,Safe<ITaskNode>& node){
         Mutex::Lock lock(m_Mutex);
         if(ms > m_Interval){
             if(!m_NextWheel){
