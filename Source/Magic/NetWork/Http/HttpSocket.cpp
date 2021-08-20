@@ -55,12 +55,12 @@ namespace Http{
 
         if(response->hasResource()){
             std::string filePath = response->getResource();
-            response->setContentType(Http::FileTypeToHttpContentType(filePath));
             m_FileStream.open(filePath,std::ios::in|std::ios::binary);
             if(m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
                 uint64_t totalLength = m_FileStream.tellg();
+                response->setContentType(Http::FileTypeToHttpContentType(filePath));
                 m_StreamBuffer.reset(new char[m_StreamBufferSize], [](const char *pointer) {delete[] pointer;});
                 if(request->isRange()){
                     auto rangeStop = request->getRangeStop();
@@ -101,6 +101,7 @@ namespace Http{
 
         m_MultiPart.reset();
         m_RequestParser->reset();
+        m_ResponseParser->reset();
         this->requestParser();
     }
 
