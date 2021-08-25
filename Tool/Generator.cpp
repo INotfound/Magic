@@ -132,7 +132,7 @@ void ParseInitialize(const rapidjson::Value::Array& array){
     }
 }
 
-void Generator(std::ofstream& stream){
+void Generator(std::ostream& stream){
     std::string LF("\n");
     stream << "/*" << LF
            << " * @Author: INotFound" << LF
@@ -350,13 +350,32 @@ std::ifstream istream;
 void OutPutCppFile(const std::string& path){
     std::string headerFile(path);
     headerFile += ".h";
-    std::ofstream ostream;
-    ostream.open(headerFile,std::ios::out);
-    if(!ostream.is_open()){
+
+
+    std::stringstream bufferStream;
+    Generator(bufferStream);
+    std::string gen = bufferStream.str();
+
+    std::ifstream inStream;
+    inStream.open(headerFile,std::ios::in);
+    if(inStream.is_open()){
+        std::stringstream fileTextStream;
+        fileTextStream << inStream.rdbuf();
+        std::string file = fileTextStream.str();
+        if(gen == file){
+            return;
+        }
+    }
+    inStream.close();
+
+    std::ofstream outStream;
+    outStream.open(headerFile,std::ios::out);
+    if(!outStream.is_open()){
         std::printf("[Err]: File Generation Failed: %s\n",path.c_str());
         std::exit(1);
     }
-    Generator(ostream);
+    outStream << gen;
+    outStream.flush();
 }
 
 int main(int argc, char** argv){

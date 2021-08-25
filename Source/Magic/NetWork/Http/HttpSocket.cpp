@@ -72,7 +72,6 @@ namespace Http{
                     }else{
                         m_TotalTransferLength = (rangeStop - rangeStart) + 1;
                     }
-                    m_TotalTransferLength = m_TotalTransferLength > m_StreamBufferSize ? m_StreamBufferSize : m_TotalTransferLength;
                     response->setContentLength(m_TotalTransferLength);
                     response->setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
                     /// Send Response
