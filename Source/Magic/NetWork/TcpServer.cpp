@@ -27,7 +27,6 @@ namespace NetWork{
         if(m_IsRun){
             return;
         }
-
         m_IsRun = true;
         this->accept();
         MAGIC_INFO() << "Server Running";

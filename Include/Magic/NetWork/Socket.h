@@ -20,6 +20,8 @@ namespace NetWork{
         typedef std::vector<char> StreamBuffer;
         /// 错误回调方法
         typedef std::function<void()> SendCallBack;
+        /// 超时回调方法
+        typedef std::function<void(const Safe<Socket>&)> TimeOutCallBack;
         /// 错误回调方法
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
         /// 数据接收方法
@@ -69,10 +71,15 @@ namespace NetWork{
          */
         void recv(uint64_t size,const RecvCallBack& callBack);
         /**
-         * @brief: 设置回调函数
+         * @brief: 设置错误代码回调函数
          * @param errorCallBack 错误码回调函数
          */
         void setErrorCodeCallBack(const ErrorCallBack& errorCallBack);
+        /**
+         * @brief: 设置超时回调函数
+         * @param timeOutCallBack 超时回调函数
+         */
+        void setTimeOutCallBack(const TimeOutCallBack& timeOutCallBack);
     private:
         bool m_TimeOut;
         uint64_t m_TimeOutMs;
@@ -81,6 +88,7 @@ namespace NetWork{
         StreamBuffer m_StreamBuffer;
         Safe<TimingWheel> m_TimingWheel;
         ErrorCallBack m_ErrorCodeCallBack;
+        TimeOutCallBack m_TimeOutCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;
     };
 }

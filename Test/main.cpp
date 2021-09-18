@@ -55,7 +55,15 @@ public:
     }
 };
 
+
+#include <asio/ssl.hpp>
 int main(int argc,char** argv){
+
+
+    return 1;
+}
+
+int main1(int argc,char** argv){
     Magic::NetWork::Http::Uri uri;
     uri.execute("mysql://admin@0.0.0.0/xxx?password=12345678901a");
     std::printf("%s\n",uri.getUser().c_str());
@@ -64,6 +72,7 @@ int main(int argc,char** argv){
     std::printf("%s\n",uri.getQuery().c_str());
     std::printf("%s\n",uri.getScheme().c_str());
     std::printf("%s\n",uri.getFragment().c_str());
+
     Magic::Thread::SetName("Master");
     Magic::Configure([](const Safe<Magic::Container>& ioc){
         ioc->registerType<Magic::Config>();
@@ -88,8 +97,11 @@ int main(int argc,char** argv){
     Safe<Magic::NetWork::Http::IHttpServlet> resservlet = std::make_shared<ResourceServlet>();
     Safe<Magic::NetWork::Http::HttpServletDispatch> dispatch = std::make_shared<Magic::NetWork::Http::HttpServletDispatch>();
 
+    MAGIC_DEBUG() << __cplusplus;
+
     dispatch->addHttpServlet(servlet);
     dispatch->addHttpServlet(resservlet);
     server.setServletDispatch(dispatch);
+
     return 0;
 }

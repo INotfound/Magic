@@ -61,7 +61,6 @@ namespace DataBase{
 
         Connection<T> getConnection(){
             if(m_IdleEntity.empty()){
-                MAGIC_DEBUG() << "Idle Entity Empty!";
                 Safe<Magic::ITaskNode> taskNode = std::make_shared<Magic::FunctionTaskNode>([this](){
                     MAGIC_WARN() << "Get Idle Entity TimeOut!";
                     this->m_TimeOut = true;
@@ -71,7 +70,6 @@ namespace DataBase{
                 if(m_TimeOut){
                     return Connection<T>();
                 }
-                MAGIC_DEBUG() << "Idle Entity No TimeOut!";
             }
             Safe<T> entity;
             {

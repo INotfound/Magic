@@ -286,7 +286,7 @@ void Generator(std::ostream& stream){
 }
 
 bool CheckConfiguration(const std::string& path){
-std::ifstream istream;
+    std::ifstream istream;
     istream.open(path,std::ios::in);
     if(!istream.is_open()){
         std::printf("[Err]: File Path: %s\n",path.c_str());

@@ -25,9 +25,12 @@ namespace NetWork{
 
     void Socket::enableTimeOut(){
         auto self = this->shared_from_this();
-        Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([this,self](){
-            if(m_TimeOut){
+        Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self](){
+            if(self->m_TimeOut){
                 if(self){
+                    if(self->m_TimeOutCallBack){
+                        self->m_TimeOutCallBack(self);
+                    }
                     if(self->getEntity()->is_open()){
                         self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both);
                     }
@@ -35,8 +38,8 @@ namespace NetWork{
                 }
                 return;
             }
-            m_TimeOut = true;
-            this->enableTimeOut();
+            self->enableTimeOut();
+            self->m_TimeOut = true;
         });
         m_TimingWheel->addTask(m_TimeOutMs,taskNode);
     }
@@ -111,6 +114,10 @@ namespace NetWork{
 
     void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
         m_ErrorCodeCallBack = errorCallBack;
+    }
+
+    void Socket::setTimeOutCallBack(const TimeOutCallBack& timeOutCallBack){
+        m_TimeOutCallBack = timeOutCallBack;
     }
 }
 }
