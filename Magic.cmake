@@ -45,18 +45,24 @@ else()
         endif()
     endif()
 endif()
-
 # Platform
 if(WIN32)
     #WIN32 Library
-    set(PLATFORM_LIBRARY
+    set(PLATFORM
         ws2_32
         mswsock
     )
 elseif(UNIX)
     #UNIX Library
-    set(PLATFORM_LIBRARY
+    set(PLATFORM
     )
 endif()
+# ThirdParty
+find_package(OpenSSL)
 
-link_libraries(${PLATFORM_LIBRARY})
+if(OpenSSL_FOUND)
+    add_definitions(-DOPENSSL)
+    set(THIRDPARTY ${THIRDPARTY} OpenSSL::SSL OpenSSL::Crypto)
+endif()
+
+link_libraries(${PLATFORM} ${THIRDPARTY})

@@ -55,15 +55,7 @@ public:
     }
 };
 
-
-#include <asio/ssl.hpp>
 int main(int argc,char** argv){
-
-
-    return 1;
-}
-
-int main1(int argc,char** argv){
     Magic::NetWork::Http::Uri uri;
     uri.execute("mysql://admin@0.0.0.0/xxx?password=12345678901a");
     std::printf("%s\n",uri.getUser().c_str());

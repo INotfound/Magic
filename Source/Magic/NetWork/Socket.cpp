@@ -47,69 +47,95 @@ namespace NetWork{
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){
         return m_Socket;
     }
+#ifdef OPENSSL
+    const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& Socket::getSslEntity(){
+        return m_SslStream;
+    }
 
+    void Socket::enableSsl(const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& sslStream){
+        m_SslStream = sslStream;
+    }
+#endif
     void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
         auto self = this->shared_from_this();
-        asio::async_write(*m_Socket
-            ,asio::const_buffer(data,length)
-            ,std::bind([this,self](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
-                if(err){
-                    m_ErrorCodeCallBack(err);
-                    return;
-                }
-                m_TimeOut = false;
-                if(callback){
-                    callback();
-                }
-            },std::placeholders::_1,std::placeholders::_2,callback));
+        auto sendCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+            if(err){
+                m_ErrorCodeCallBack(err);
+                return;
+            }
+            m_TimeOut = false;
+            if(callback){
+                callback();
+            }
+        },std::placeholders::_1,std::placeholders::_2,callback);
+    #ifdef OPENSSL
+        if(m_SslStream){
+            asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
+            return;
+        }
+    #endif
+        asio::async_write(*m_Socket,asio::const_buffer(data,length),std::move(sendCallBack));
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
         auto self = this->shared_from_this();
-        asio::async_write(*m_Socket
-            ,*stream
-            ,std::bind([this,self,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
-                if(err){
-                    m_ErrorCodeCallBack(err);
-                    return;
-                }
-                m_TimeOut = false;
-                if(callback){
-                    callback();
-                }
-            },std::placeholders::_1,std::placeholders::_2,callback));
+        auto sendCallBack = std::bind([this,self,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+            if(err){
+                m_ErrorCodeCallBack(err);
+                return;
+            }
+            m_TimeOut = false;
+            if(callback){
+                callback();
+            }
+        },std::placeholders::_1,std::placeholders::_2,callback);
+    #ifdef OPENSSL
+        if(m_SslStream){
+            asio::async_write(*m_SslStream,*stream,std::move(sendCallBack));
+            return;
+        }
+    #endif
+        asio::async_write(*m_Socket,*stream,std::move(sendCallBack));
     }
 
     void Socket::recv(const RecvCallBack& callBack){
         auto self = this->shared_from_this();
-        asio::async_read(*m_Socket
-            ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
-            ,asio::transfer_at_least(1)
-            ,std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
-                if(err){
-                    m_ErrorCodeCallBack(err);
-                    return;
-                }
-                m_TimeOut = false;
-                m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
-                callback(self,this->m_StreamBuffer);
-            },std::placeholders::_1,std::placeholders::_2,callBack));
+        auto readCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+            if(err){
+                m_ErrorCodeCallBack(err);
+                return;
+            }
+            m_TimeOut = false;
+            m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+            callback(self,this->m_StreamBuffer);
+        },std::placeholders::_1,std::placeholders::_2,callBack);
+    #ifdef OPENSSL
+        if(m_SslStream){
+            asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
+            return;
+        }
+    #endif
+        asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
         auto self = this->shared_from_this();
-        asio::async_read(*m_Socket
-            ,asio::buffer(m_ByteBlock.get(),m_BufferSize)
-            ,asio::transfer_exactly(size)
-            ,std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
-                if(err) {
-                    m_ErrorCodeCallBack(err);
-                    return;
-                }
-                m_TimeOut = false;
-                m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
-                callback(self,this->m_StreamBuffer);
-            },std::placeholders::_1,std::placeholders::_2,callBack));
+        auto readCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+            if(err) {
+                m_ErrorCodeCallBack(err);
+                return;
+            }
+            m_TimeOut = false;
+            m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+            callback(self,this->m_StreamBuffer);
+        },std::placeholders::_1,std::placeholders::_2,callBack);
+    #ifdef OPENSSL
+        if(m_SslStream){
+            asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_exactly(size),std::move(readCallBack));
+            return;
+        }
+    #endif
+        asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_exactly(size),std::move(readCallBack));
     }
 
     void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){

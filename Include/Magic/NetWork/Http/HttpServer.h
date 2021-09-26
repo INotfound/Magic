@@ -38,6 +38,9 @@ namespace Http{
          */
         void handleFunc(const Safe<Socket>& socket) override;
     private:
+        bool m_EnableSsl;
+        std::string m_KeyFile;
+        std::string m_CertFile;
         std::string m_TempDirectory;
         Safe<HttpServletDispatch> m_ServletDispatch;
     };

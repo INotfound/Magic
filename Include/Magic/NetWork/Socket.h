@@ -6,6 +6,9 @@
  */
 #pragma once
 #include "asio.hpp"
+#ifdef OPENSSL
+#include "asio/ssl.hpp"
+#endif
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/TimingWheel.h"
 
@@ -46,6 +49,18 @@ namespace NetWork{
          * @return: 返回Socket实体
          */
         const Safe<asio::ip::tcp::socket>& getEntity();
+    #ifdef OPENSSL
+        /**
+         * @brief: 获取SslStream的实体函数
+         * @return: 返回SslStream实体
+         */
+        const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& getSslEntity();
+        /**
+         * @brief: 启用SSL功能
+         * @param sslStream ssl流对象
+         */
+        void enableSsl(const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& sslStream);
+    #endif
         /**
          * @brief: 发送数据函数
          * @param data 二进制或文本数据
@@ -90,6 +105,9 @@ namespace NetWork{
         ErrorCallBack m_ErrorCodeCallBack;
         TimeOutCallBack m_TimeOutCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;
+    #ifdef OPENSSL
+        Safe<asio::ssl::stream<asio::ip::tcp::socket&>> m_SslStream;
+    #endif
     };
 }
 }

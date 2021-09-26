@@ -14,6 +14,9 @@ namespace NetWork{
 namespace Http{
     HttpServer::HttpServer(const Safe<IoPool>& pool,const Safe<TimingWheel>& timingWheel,const Safe<Config>& configuration)
         :TcpServer(pool,timingWheel,configuration)
+        ,m_EnableSsl(configuration->at<bool>("NetWork.Server.EnableSsl",false))
+        ,m_KeyFile(configuration->at<std::string>("NetWork.Server.Ssl.KeyFile",""))
+        ,m_CertFile(configuration->at<std::string>("NetWork.Server.Ssl.CertFile",""))
         ,m_TempDirectory(configuration->at<std::string>("NetWork.Server.TempDirectory","./")){
         m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
@@ -26,20 +29,68 @@ namespace Http{
     void HttpServer::accept(){
         Safe<HttpSocket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get(),m_TimingWheel);
         socket->setTempDirectory(m_TempDirectory);
+    #ifdef OPENSSL
+        if(m_EnableSsl){
+            asio::ssl::context sslContext(asio::ssl::context::sslv23);
+            sslContext.set_options(asio::ssl::context::no_sslv2
+                                   | asio::ssl::context::single_dh_use
+                                   | asio::ssl::context::default_workarounds);
+            sslContext.use_certificate_chain_file(m_CertFile);
+            sslContext.use_private_key_file(m_KeyFile,asio::ssl::context::pem);
+            socket->enableSsl(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*socket->getEntity(),sslContext));
+        }
+    #endif
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             socket->enableTimeOut();
             if(!err){
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
-                socket->setErrorCodeCallBack([](const asio::error_code & err){
+                if(err == asio::error::eof
+                   || err == asio::error::broken_pipe
+                   || err == asio::error::connection_reset
+                #ifdef OPENSSL
+                   || err == asio::error::operation_aborted
+                   || err == asio::ssl::error::stream_truncated){
+                #else
+                   || err == asio::error::operation_aborted){
+                #endif
+                    return;
+                }
+                socket->setErrorCodeCallBack([](const asio::error_code& err){
                 #ifdef WIN32
                     if(err.value() == WSAECONNABORTED) return;
                 #endif
-                    if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted || err == asio::error::broken_pipe){
+                    if(err == asio::error::eof
+                       || err == asio::error::broken_pipe
+                       || err == asio::error::connection_reset
+                   #ifdef OPENSSL
+                       || err == asio::error::operation_aborted
+                       || err == asio::ssl::error::stream_truncated){
+                    #else
+                        || err == asio::error::operation_aborted){
+                    #endif
                         return;
                     }
-                    MAGIC_WARN() << err.value() << ":"<< err.message();
+                    MAGIC_WARN() << err.message();
                 });
-                this->handleFunc(socket);
+            #ifdef OPENSSL
+                auto sslStream = socket->getSslEntity();
+                if(sslStream){
+                    sslStream->async_handshake(asio::ssl::stream_base::server,[this,socket](const asio::error_code& err){
+                        if(err){
+                            if(err == asio::ssl::error::stream_truncated){
+                                return;
+                            }
+                            MAGIC_WARN() <<  err.message();
+                            return;
+                        }
+                        this->handleFunc(socket);
+                    });
+                }else{
+            #else
+                {
+            #endif
+                    this->handleFunc(socket);
+                }
             }else{
                 if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
                     return;

@@ -58,14 +58,6 @@ if(NetWork STREQUAL ON)
     )
 endif()
 
-# ThirdParty
-find_package(OpenSSL)
-
-if(OpenSSL_FOUND)
-    add_definitions(-DOPENSSL)
-    set(LIBS ${LIBS} OpenSSL::SSL OpenSSL::Crypto)
-endif()
-
 if(MySql STREQUAL ON)
     set(LIBS ${LIBS} mariadbclient)
     set(SOURCES
