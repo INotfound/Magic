@@ -128,11 +128,10 @@ namespace Http {
             self->m_IsFile = true;
             self->m_FilePath = self->m_TempDirectory + '/' + fileName;
             self->m_FileStream.open(self->m_FilePath,std::ios::binary);
-        }else{
-            std::string name = self->getName();
-            if(!name.empty()){
-                self->m_ParamName = name;
-            }
+        }
+        std::string name = self->getName();
+        if(!name.empty()){
+            self->m_ParamName = name;
         }
         self->m_HeaderMap.clear();
     }
@@ -148,16 +147,21 @@ namespace Http {
 
     void MultiPart::PartEnd(const char *buffer, size_t start, size_t end, void *userData) {
         auto *self = reinterpret_cast<MultiPart *>(userData);
+        if(!self->m_ParamName.empty()){
+            if(self->m_IsFile){
+                self->m_ParamMap.emplace(self->m_ParamName,self->m_FilePath);
+            }else{
+                self->m_ParamMap.emplace(self->m_ParamName,self->m_ParamValue);
+            }
+            self->m_ParamName.clear();
+            self->m_ParamValue.clear();
+        }
         if(self->m_IsFile && self->m_FileStream.is_open()){
             self->m_FilePaths.push_back(self->m_FilePath);
             self->m_FileStream.flush();
             self->m_FileStream.close();
             self->m_FilePath.clear();
             self->m_IsFile = false;
-        }else if(!self->m_ParamName.empty()){
-            self->m_ParamMap.emplace(self->m_ParamName,self->m_ParamValue);
-            self->m_ParamName.clear();
-            self->m_ParamValue.clear();
         }
     }
 
