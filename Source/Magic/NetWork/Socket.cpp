@@ -32,7 +32,8 @@ namespace NetWork{
                         self->m_TimeOutCallBack(self);
                     }
                     if(self->getEntity()->is_open()){
-                        self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both);
+                        asio::error_code ignored;
+                        self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both,ignored);
                     }
                     self->getEntity()->close();
                 }

@@ -134,7 +134,7 @@ namespace Http{
         uint64_t pos = 0;
         do {
             uint64_t key = 0;
-            std::string subString(Split(str, pos, flag));
+            std::string subString(SubString(str, pos, flag));
             if(IsUrlEncode(subString)){
                 subString = UrlDecode(subString);
             }
@@ -152,7 +152,7 @@ namespace Http{
         uint64_t pos = 0;
         do {
             uint64_t key = 0;
-            std::string subString(Split(str, pos, flag));
+            std::string subString(SubString(str, pos, flag));
             if(IsUrlEncode(subString)){
                 subString = UrlDecode(subString);
             }

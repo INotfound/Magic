@@ -126,11 +126,28 @@ namespace Magic{
         return str;
     }
 
-    inline std::string Split(const std::string& str, uint64_t index, const std::string& flag) {
-        uint64_t pos = str.find(flag, index);
+    inline std::string SubString(const std::string& str, uint64_t index,const std::string& delim) {
+        uint64_t pos = str.find(delim, index);
         if (pos == std::string::npos)
             return str.substr(index, str.size() - index);;
         return str.substr(index, pos - index);
+    }
+
+    inline std::vector<std::string> Split(const std::string& str,const std::string& delim) {
+        std::size_t previous = 0;
+        std::size_t current = str.find(delim);
+        std::vector<std::string> elems;
+        while (current != std::string::npos) {
+            if (current > previous) {
+                elems.push_back(str.substr(previous, current - previous));
+            }
+            previous = current + 1;
+            current = str.find(delim, previous);
+        }
+        if (previous != str.size()) {
+            elems.push_back(str.substr(previous));
+        }
+        return elems;
     }
 
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
