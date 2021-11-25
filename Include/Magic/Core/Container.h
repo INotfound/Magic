@@ -31,9 +31,8 @@ namespace Magic{
                 return (*this);
             }
         private:
-            RegisteredType(const void* type, bool singelton, CreateFunc createFunc)
-                :m_Type(type)
-                ,m_IsSingelton(singelton)
+            RegisteredType(bool singelton, CreateFunc createFunc)
+                :m_IsSingelton(singelton)
                 ,m_Object(nullptr)
                 ,m_CreateFunc(std::move(createFunc)){
             }
@@ -43,7 +42,6 @@ namespace Magic{
                 }
             }
         private:
-            const void* m_Type;
             bool m_IsSingelton;
             Safe<void> m_Object;
             CreateFunc m_CreateFunc;
@@ -62,7 +60,7 @@ namespace Magic{
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
             Function<T,Args...> createFunc = &Container::invoke<T,M,Args...>;
-            m_RegisteredType[id].push_back(RegisteredType(id, isSingleton, [this,createFunc](){return (this->*createFunc)();}));
+            m_RegisteredType[id].push_back(RegisteredType(isSingleton, [this,createFunc](){return (this->*createFunc)();}));
             return m_RegisteredType[id].back();
         }
 
