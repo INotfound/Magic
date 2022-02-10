@@ -69,16 +69,16 @@ namespace Magic{
             const void* id = CompiletimeIId<T>();
             if(m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
-            RegisteredType registerObject(id,true,[](){return Safe<void>();});
+            RegisteredType registerObject(true,[](){return Safe<void>();});
             registerObject.m_Object = std::move(instance);
             m_RegisteredType[id].push_back(registerObject);
             return m_RegisteredType[id].back();
         }
 
-        template<typename T,typename M>
+        template<typename T,typename M,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
         RegisteredType& registerInstance(const Safe<M>& instance){
             const void* id = CompiletimeIId<T>();
-            RegisteredType registerObject(id,true,[](){return Safe<void>();});
+            RegisteredType registerObject(true,[](){return Safe<void>();});
             registerObject.m_Object = std::move(instance);
             m_RegisteredType[id].push_back(registerObject);
             return m_RegisteredType[id].back();

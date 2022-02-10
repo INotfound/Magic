@@ -496,7 +496,7 @@ namespace Http{
          * @param httpOnly 是否HttpOnly
          * @param secure 是否Secure
          */
-        void setCookie(const std::string& key, const std::string& val,time_t expired =0
+        void setCookie(const std::string& key, const std::string& val,std::time_t expired =0
             ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
         /**
          * @brief: 是否Range切片

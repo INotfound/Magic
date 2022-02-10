@@ -21,7 +21,9 @@ namespace DataBase{
         friend class ConnectionPool<T>;
     public:
         ~Connection(){
-            m_Pool->restore(m_Entity);
+            if(m_Entity){
+                m_Pool->restore(m_Entity);
+            }
         }
         Connection(){}
         explicit operator bool() const{
@@ -49,14 +51,9 @@ namespace DataBase{
         friend class FunctionTaskNode;
     public:
         ConnectionPool(const Safe<Magic::Config>& configuration,const Safe<Magic::TimingWheel>& timingWheel)
-            :m_TimeOut(false)
+            :m_InitCount(configuration->at("DataBase.Connection.Count",1))
+            ,m_TimeOut(false)
             ,m_TimingWheel(timingWheel){
-            uint32_t count = configuration->at("DataBase.Connection.Count",1);
-            std::string dataBaseUrl = configuration->at<std::string>("DataBase.Connection.Url","");
-            for (uint32_t i = 0; i < count; i++){
-                Safe<T> conn = std::make_shared<T>(dataBaseUrl);
-                m_IdleEntity.push_back(conn);
-            }
         }
 
         Connection<T> getConnection(){
@@ -81,9 +78,12 @@ namespace DataBase{
             return Connection<T>(entity,this->shared_from_this());;
         }
 
-        void initialize(std::function<void(const Safe<T>& entity)> func){
-            for(auto& val : m_IdleEntity){
-                func(val);
+        void initialize(std::function<const Safe<T>(void)> initFunc){
+            for (uint32_t i = 0; i < m_InitCount; i++){
+                const Safe<T> conn = initFunc();
+                if(conn){
+                    m_IdleEntity.push_back(conn);
+                }
             }
         }
     private:
@@ -93,7 +93,8 @@ namespace DataBase{
             m_IdleEntity.push_back(entity);
         }
     private:
-        Magic::Mutex m_Mutex; 
+        uint32_t m_InitCount;
+        Magic::Mutex m_Mutex;
         std::atomic_bool m_TimeOut;
         std::list<Safe<T>> m_IdleEntity;
         Safe<Magic::TimingWheel> m_TimingWheel;

@@ -428,7 +428,7 @@ namespace Http{
         m_Headers.emplace(key,value);
     }
     
-    void HttpResponse::setCookie(const std::string& key, const std::string& val,time_t expired
+    void HttpResponse::setCookie(const std::string& key, const std::string& val,std::time_t expired
             ,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
         std::string result;
         result.reserve(256);

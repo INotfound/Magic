@@ -36,6 +36,15 @@ public:
     }
 };
 
+template<class T,class M,typename = typename std::enable_if<std::is_base_of<T,M>::value>::type>
+class SingletonPtrEx{
+public:
+    static const Safe<T>& GetInstance(){
+        static Safe<T> v(std::make_shared<M>());
+        return v;
+    }
+};
+
 template<class T>
 const void* CompiletimeIId(){
     return reinterpret_cast<const void*>(&CompiletimeIId<T>);

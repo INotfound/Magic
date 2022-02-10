@@ -7,6 +7,7 @@
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/Mutex.h"
 #include "Magic/NetWork/Http/Http.h"
+#include "Magic/NetWork/Http/HttpSocket.h"
 
 namespace Magic{
 namespace NetWork{
@@ -28,7 +29,7 @@ namespace Http{
         IHttpServlet(const std::string& path,const HttpServletType& type = HttpServletType::Normal);
         const std::string& getPath() const;
         const HttpServletType& getType() const;
-        virtual bool handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) =0;
+        virtual bool handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) =0;
     private:
         std::string m_Path;
         HttpServletType m_ServletType;
@@ -39,7 +40,7 @@ namespace Http{
     class NotFoundServlet :public IHttpServlet{
     public:
         NotFoundServlet();
-        bool handle(const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response) override;
+        bool handle(const Safe<HttpSocket>& httpSocket,const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response) override;
     private:
         std::string m_Html;
     };
@@ -61,7 +62,7 @@ namespace Http{
          * @param response Http响应对象
          * @return: 返回True则成功，返回False则失败
          */
-        void handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response);
+        void handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response);
     private:
         /**
          * @brief: 获取模糊匹配的Servlet对象函数

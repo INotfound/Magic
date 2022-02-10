@@ -4,7 +4,7 @@
 
 namespace Magic{
 namespace DataBase{
-    void MySqlTimeToTime(const MYSQL_TIME& mt,time_t ts){
+    void MySqlTimeToTime(const MYSQL_TIME& mt,std::time_t ts){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
         localtime_s(&time, &ts);
@@ -23,7 +23,7 @@ namespace DataBase{
         }
     }
 
-    void TimeToMySqlTime(const time_t ts,MYSQL_TIME& mt){
+    void TimeToMySqlTime(const std::time_t ts,MYSQL_TIME& mt){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
         localtime_s(&time, &ts);
@@ -51,6 +51,9 @@ namespace DataBase{
 
     bool MySql::execute(const std::string& sql){
         Mutex::Lock lock(m_Mutex);
+        if(mysql_ping(&m_MySql) != 0){
+            this->printError();
+        }
         if(mysql_real_query(&m_MySql,sql.c_str(),sql.size()) == 0){
             return true;
         }
@@ -60,16 +63,16 @@ namespace DataBase{
     bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port){
         Mutex::Lock lock(m_Mutex);
         if(!mysql_init(&m_MySql)){
-            MAGIC_ERROR() << "MySql Initialization Failed";
-            return false;
-        }
-        mysql_options(&m_MySql, MYSQL_SET_CHARSET_NAME, "utf8mb4");
-        if(!mysql_real_connect(&m_MySql,ip.c_str(),user.c_str(),password.c_str(),dataBase.c_str(),port,0,0)){
-            MAGIC_ERROR() << "MySql Connection Failed";
+            this->printError();
             return false;
         }
         char value = 1;
         mysql_options(&m_MySql, MYSQL_OPT_RECONNECT, &value);
+        mysql_options(&m_MySql, MYSQL_SET_CHARSET_NAME, "utf8mb4");
+        if(!mysql_real_connect(&m_MySql,ip.c_str(),user.c_str(),password.c_str(),dataBase.c_str(),port,0,0)){
+            this->printError();
+            return false;
+        }
         MAGIC_INFO() << "Database Connected Successful";
         return true;
     }
@@ -169,6 +172,9 @@ namespace DataBase{
 
     bool MySqlStmt::prepare(const std::string& sql){
         RWMutex::ReadLock lock(m_Mutex);
+        if(mysql_ping(&this->m_MySql->m_MySql) != 0){
+            this->printError();
+        }
         m_Stmt = mysql_stmt_init(&this->m_MySql->m_MySql);
         if(!m_Stmt){
             return false;
@@ -252,7 +258,7 @@ namespace DataBase{
         BIND_COPY(MYSQL_TYPE_STRING,value.c_str(),value.size());
     }
 
-    void MySqlStmt::bindTime(uint32_t index,const time_t value){
+    void MySqlStmt::bindTime(uint32_t index,const std::time_t value){
         bind(index,TimeToString(value));
     }
 
@@ -313,10 +319,10 @@ namespace DataBase{
     }
     #undef CAST
 
-    time_t MySqlStmt::getTime(uint32_t index){
+    std::time_t MySqlStmt::getTime(uint32_t index){
         RWMutex::ReadLock lock(m_Mutex);
         MYSQL_TIME* mt = reinterpret_cast<MYSQL_TIME*>(m_MySqlResults[index].m_Data);
-        time_t ts = 0;
+        std::time_t ts = 0;
         MySqlTimeToTime(*mt,ts);
         return ts;
     }

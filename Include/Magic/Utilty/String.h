@@ -100,7 +100,7 @@ namespace Magic{
     }
 
 
-    inline std::string TimeToString(time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
+    inline std::string TimeToString(std::time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
         struct tm nowTime;
     #if defined(_WIN32) || defined(_WIN64)
         localtime_s(&nowTime, &ts);
@@ -108,14 +108,14 @@ namespace Magic{
         localtime_r(&ts, &nowTime);
     #endif
         char buf[64] = {0};
-        strftime(buf, sizeof(buf), format.c_str(), &nowTime);
+        std::strftime(buf, sizeof(buf), format.c_str(), &nowTime);
         return buf;
     }
 
-    inline std::string GetTimeGMTString(std::time_t t){
-        struct tm* GMTime = gmtime(&t);
+    inline std::string GetTimeGMTString(std::time_t tt){
+        struct tm* GMTime = gmtime(&tt);
         char buff[512]={0};
-        strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);
+        std::strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);
         return buff;
     }
 

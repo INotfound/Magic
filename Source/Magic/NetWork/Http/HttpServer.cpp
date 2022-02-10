@@ -105,7 +105,7 @@ namespace Http{
     
     void HttpServer::handleFunc(const Safe<Socket>& socket){
         Safe<HttpSocket> httpSocket = std::static_pointer_cast<HttpSocket>(socket);
-        httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2));
+        httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
     }
 }
 }

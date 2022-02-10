@@ -31,9 +31,10 @@ namespace Http{
         ,m_Html("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>"){
     }
 
-    bool NotFoundServlet::handle(const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response){
+    bool NotFoundServlet::handle(const Safe<HttpSocket>& httpSocket,const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response){
         response->setBody(m_Html);
         response->setStatus(Http::HttpStatus::NOT_FOUND);
+        httpSocket->sendResponse(response);
         return true;
     }
 
@@ -56,14 +57,14 @@ namespace Http{
         MAGIC_INFO() << "HttpServlet Path: " << servlet->getPath() << " Successfully Loaded";
     }
 
-    void HttpServletDispatch::handle(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
+    void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
         if(!m_DeafultServlet){
             MAGIC_WARN() << "DeafultServlet Not Set";
         }
         auto& servlet = this->getMatchedServlet(request->getPath());
         if(servlet){
-            if(!servlet->handle(request,response))
-                m_DeafultServlet->handle(request,response);
+            if(!servlet->handle(httpSocket,request,response))
+                m_DeafultServlet->handle(httpSocket,request,response);
         }
     }
 

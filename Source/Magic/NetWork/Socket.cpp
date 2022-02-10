@@ -11,10 +11,10 @@ namespace NetWork{
     Socket::~Socket() =default;
 
     Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
-        :m_TimeOut(true)
-        ,m_TimeOutMs(timeOutMs)
+        :m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)
         ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
+        ,m_TimeOut(true)
         ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
@@ -28,11 +28,11 @@ namespace NetWork{
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self](){
             if(self->m_TimeOut){
                 if(self){
-                    if(self->m_TimeOutCallBack){
-                        self->m_TimeOutCallBack(self);
-                    }
                     if(self->getEntity()->is_open()){
                         asio::error_code ignored;
+                        if(self->m_TimeOutCallBack){
+                            self->m_TimeOutCallBack(self);
+                        }
                         self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both,ignored);
                     }
                     self->getEntity()->close();

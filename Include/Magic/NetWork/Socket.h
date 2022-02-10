@@ -9,6 +9,7 @@
 #ifdef OPENSSL
 #include "asio/ssl.hpp"
 #endif
+#include <atomic>
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/TimingWheel.h"
 
@@ -96,10 +97,10 @@ namespace NetWork{
          */
         void setTimeOutCallBack(const TimeOutCallBack& timeOutCallBack);
     private:
-        bool m_TimeOut;
         uint64_t m_TimeOutMs;
         uint64_t m_BufferSize;
         Safe<char[]> m_ByteBlock;
+        std::atomic_bool m_TimeOut;
         StreamBuffer m_StreamBuffer;
         Safe<TimingWheel> m_TimingWheel;
         ErrorCallBack m_ErrorCodeCallBack;

@@ -62,13 +62,8 @@ namespace Magic{
         std::function<void()> m_CallBack;
     };
     /**
-     * @brief: 获取当前时间
-     * @return: 返回当前时间
+     * @brief: 获取线程Id
+     * @return: 返回线程Id
      */
-    uint64_t GetCurrentTimeMS();
-    /**
-     * @brief: 获取当前时间
-     * @return: 返回当前时间
-     */
-    uint64_t GetCurrentTimeUS();
+    uint64_t GetThreadId();
 }

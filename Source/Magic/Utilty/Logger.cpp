@@ -82,133 +82,107 @@ namespace Magic{
 
     class MessageFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << event->getContent().c_str();
+        }
     };
 
     class LevelFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << ToString(level);
+        }
     };
 
     class ElapseFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << event->getElapse();
+        }
     };
 
     class LogNameFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << event->getLogName();
+        }
     };
 
     class ThreadIdFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << event->getThreadId();
+        }
     };
 
     class NewLineFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << std::endl;
+        }
     };
 
     class DateTimeFormatItem :public ILogFormatItem{
     public:
-        explicit DateTimeFormatItem(const std::string& formatString = "%Y:%m:%d %H:%M:%S");
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        explicit DateTimeFormatItem(const std::string& formatString = "%Y:%m:%d %H:%M:%S")
+            :m_FormatString(formatString) {
+            if (this->m_FormatString.empty()) {
+                this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
+            }
+        }
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            std::time_t time_secounds = static_cast<int32_t>(event->getTime());
+            os << Magic::TimeToString(time_secounds,this->m_FormatString).c_str();
+        }
     private:
         std::string m_FormatString;
     };
 
     class FilePathFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
-
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            const std::string& filePath = event->getFile();
+            std::size_t pathPos = filePath.rfind('/');
+            if(pathPos == std::string::npos) {
+                pathPos = filePath.rfind('\\');
+                pathPos = (pathPos == std::string::npos) ? 0 : pathPos + 1;
+            }else {
+                pathPos++;
+            }
+            os << filePath.substr(pathPos);
+        }
     };
 
     class LineFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << event->getLine();
+        }
     };
 
     class TabFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << '\t';
+        }
     };
 
     class ThreadNameFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << event->getThreadName().c_str();
+        }
     };
 
     class StringFormatItem :public ILogFormatItem{
     public:
         explicit StringFormatItem(const std::string& str) :m_String(str){}
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override;
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+            os << this->m_String.c_str();
+        }
     private:
         std::string m_String;
     };
-
-    void MessageFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        os << event->getContent().c_str();
-    }
-
-    void LevelFormatItem::format(std::ostream& os,LogLevel level,const Safe<LogEvent>&){
-        os << ToString(level);
-    }
-
-    void ElapseFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        os << event->getElapse();
-    }
-
-    void LogNameFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        os << event->getLogName();
-    }
-
-    void ThreadIdFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        os << event->getThreadId();
-    }
-
-    void NewLineFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>&){
-        os << std::endl;
-    }
-
-    DateTimeFormatItem::DateTimeFormatItem(const std::string& formatString) :m_FormatString(formatString){
-        if (this->m_FormatString.empty()){
-            this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
-        }
-    }
-
-    void DateTimeFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        time_t time_secounds = static_cast<int32_t>(event->getTime());
-        os << Magic::TimeToString(time_secounds,this->m_FormatString).c_str();
-    }
-
-    void FilePathFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        const std::string& filePath = event->getFile();
-        std::size_t pathPos = filePath.rfind('/');
-        if(pathPos == std::string::npos) {
-            pathPos = filePath.rfind('\\');
-            pathPos = (pathPos == std::string::npos) ? 0 : pathPos + 1;
-        }else {
-            pathPos++;
-        }
-        os << filePath.substr(pathPos);
-    }
-
-    void LineFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        os << event->getLine();
-    }
-
-    void TabFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>&){
-        os << '\t';
-    }
-
-    void ThreadNameFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>& event){
-        os << event->getThreadName().c_str();
-    }
-
-    void StringFormatItem::format(std::ostream& os,LogLevel,const Safe<LogEvent>&){
-        os << this->m_String.c_str();
-    }
     //###############################*END*##################################
 
     LogFormatter::LogFormatter(const std::string& pattern){
@@ -400,5 +374,4 @@ namespace Magic{
         }
         this->m_Formatter->format(std::cout, level, event);
     }
-    
 }

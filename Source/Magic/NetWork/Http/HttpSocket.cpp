@@ -40,19 +40,20 @@ namespace Http{
         this->responseParser();
     }
 
-    void HttpSocket::handleRequest(){
+    void HttpSocket::setTempDirectory(const std::string& dirPath) {
+        m_MultiPart.setTempDirectory(dirPath);
+    }
+
+    void HttpSocket::sendRequest(const Safe<HttpRequest>& request){
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
-        auto& params = m_MultiPart.getParamMap();
-        auto& request = m_RequestParser->getData();
-        auto& response = m_ResponseParser->getData();
-        for(auto& v :params){
-            request->setParam(v.first,v.second);
-        }
-        response->setVersion(request->getVersion());
-        response->setKeepAlive(request->getKeepAlive());
-        m_RecvRequestCallBack(request,response);
+        stream << request;
+        this->send(streamBuffer);
+    }
 
+    void HttpSocket::sendResponse(const Safe<HttpResponse>& response){
+        Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
+        std::ostream stream(streamBuffer.get());
         if(response->hasResource()){
             std::string filePath = response->getResource();
             m_FileStream.open(filePath,std::ios::in|std::ios::binary);
@@ -62,9 +63,9 @@ namespace Http{
                 uint64_t totalLength = m_FileStream.tellg();
                 response->setContentType(Http::FileTypeToHttpContentType(filePath));
                 m_StreamBuffer.reset(new char[m_StreamBufferSize], [](const char *pointer) {delete[] pointer;});
-                if(request->isRange()){
-                    auto rangeStop = request->getRangeStop();
-                    auto rangeStart = request->getRangeStart();
+                if(response->isRange()){
+                    auto rangeStop = response->getRangeStop();
+                    auto rangeStart = response->getRangeStart();
                     m_FileStream.seekg(rangeStart,std::ios::beg);
                     response->setStatus(HttpStatus::PARTIAL_CONTENT);
                     if(rangeStop == 0){
@@ -97,6 +98,21 @@ namespace Http{
             stream << response;
             this->send(streamBuffer);
         }
+    }
+
+    void HttpSocket::handleRequest(){
+        auto& params = m_MultiPart.getParamMap();
+        auto& request = m_RequestParser->getData();
+        auto& response = m_ResponseParser->getData();
+        for(auto& v :params){
+            request->setParam(v.first,v.second);
+        }
+        if(request->isRange()){
+            response->setRange(request->getRangeStart(),request->getRangeStop(),0);
+        }
+        response->setVersion(request->getVersion());
+        response->setKeepAlive(request->getKeepAlive());
+        m_RecvRequestCallBack(std::static_pointer_cast<HttpSocket>(this->shared_from_this()),request,response);
 
         m_MultiPart.reset();
         m_RequestParser->reset();
@@ -107,7 +123,7 @@ namespace Http{
     void HttpSocket::handleResponse(){
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
-        m_RecvResponseCallBack(request,response);
+        m_RecvRequestCallBack(std::static_pointer_cast<HttpSocket>(this->shared_from_this()),request,response);
         m_ResponseParser->reset();
         this->responseParser();
     }
@@ -181,10 +197,6 @@ namespace Http{
                 data.clear();
             }
         });
-    }
-
-    void HttpSocket::setTempDirectory(const std::string& dirPath) {
-        m_MultiPart.setTempDirectory(dirPath);
     }
 
     void HttpSocket::multiPartParser() {

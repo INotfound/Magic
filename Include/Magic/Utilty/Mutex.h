@@ -5,12 +5,16 @@
  */
 #pragma once
 #include "Magic/Core/Core.h"
-#include "Magic/Core/Adapter.h"
 namespace Magic{
+    class MutexImpl;
+    class RWMutexImpl;
+    class SpinLockImpl;
+    class SemaphoreImpl;
+
     template<class T>
-    class ScopedLockImpl : public Noncopyable{
+    class ScopedLockImpl :public Noncopyable{
     public:
-        ScopedLockImpl(T& mutex)
+        explicit ScopedLockImpl(T& mutex)
             :m_Mutex(mutex), m_Locked(false){
             lock();
         }
@@ -36,9 +40,9 @@ namespace Magic{
     };
 
     template<class T>
-    class ReadScopedLockImpl : public Noncopyable{
+    class ReadScopedLockImpl :public Noncopyable{
     public:
-        ReadScopedLockImpl(T& mutex)
+        explicit ReadScopedLockImpl(T& mutex)
             :m_Mutex(mutex), m_Locked(false){
             lock();
         }
@@ -64,9 +68,9 @@ namespace Magic{
     };
 
     template<class T>
-    class WriteScopedLockImpl : public Noncopyable{
+    class WriteScopedLockImpl :public Noncopyable{
     public:
-        WriteScopedLockImpl(T& mutex)
+        explicit WriteScopedLockImpl(T& mutex)
             :m_Mutex(mutex), m_Locked(false){
             lock();
         }
@@ -91,64 +95,57 @@ namespace Magic{
         bool m_Locked;
     };
     /**
+     * @brief: 普通锁
+     */
+    class Mutex :public Noncopyable{
+    public:
+        typedef ScopedLockImpl<Mutex> Lock;
+    public:
+        Mutex();
+        void lock();
+        void unlock();
+    private:
+        Safe<MutexImpl> m_Mutex;
+    };
+    /**
      * @brief: 读写锁
      */
-    class RWMutex : public Noncopyable {
+    class RWMutex :public Noncopyable{
     public:
         typedef ReadScopedLockImpl<RWMutex> ReadLock;
         typedef WriteScopedLockImpl<RWMutex> WriteLock;
+    public:
         RWMutex();
-        ~RWMutex();
+        void unlock();
         void readLock();
         void writeLock();
-        void unlock();
     private:
-        rwlock_t m_RWLock;
+        Safe<RWMutexImpl> m_RWLock;
     };
     /**
      * @brief: 自旋锁
      */
-    class Spinlock : Noncopyable {
+    class SpinLock :public Noncopyable{
     public:
-        typedef ScopedLockImpl<Spinlock> Lock;
-
-        Spinlock();
-
-        ~Spinlock();
-
-        void lock();
-
-        void unlock();
-
-    private:
-        spinlock_t m_Mutex;
-    };
-    /**
-     * @brief: 普通锁
-     */
-    class Mutex : public Noncopyable {
+        typedef ScopedLockImpl<SpinLock> Lock;
     public:
-        typedef ScopedLockImpl<Mutex> Lock;
-        Mutex();
-        ~Mutex();
+        SpinLock();
         void lock();
         void unlock();
     private:
-        mutex_t m_Mutex;
+        Safe<SpinLockImpl> m_SpinLock;
     };
     /**
      * @brief: 信号量
      */
-    class Semaphore : public Noncopyable{
+    class Semaphore :public Noncopyable{
     public:
-        Semaphore(uint32_t count =0);
-
-        ~Semaphore();
+        explicit Semaphore(uint32_t count =0);
 
         void wait();
 
         void notify();
     private:
-        sem_t m_Semaphore;
+        Safe<SemaphoreImpl> m_Semaphore;
     };
 }

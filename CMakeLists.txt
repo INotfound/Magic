@@ -7,6 +7,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(Tool "TOOL Module Compilation Options" ON)
 option(Utilty "UTILTY Module Compilation Options" ON)
 option(NetWork "NETWORK Module Compilation Options" ON)
+option(Performance "Performance Trace Compilation Options" OFF)
 
 include(Magic.cmake)
 
@@ -21,6 +22,7 @@ set(SOURCES
 )
 
 if(Utilty STREQUAL ON)
+    add_definitions(-DUTILTY)
     set(SOURCES
         ${SOURCES}
         Source/Magic/Utilty/Timer.cpp
@@ -38,6 +40,7 @@ if(Utilty STREQUAL ON)
 endif()
 
 if(NetWork STREQUAL ON)
+    add_definitions(-DNETWORK)
     set(SOURCES
         ${SOURCES}
         Source/Magic/NetWork/IoPool.cpp
@@ -66,6 +69,14 @@ if(MySql STREQUAL ON)
     )
 endif()
 
+if(Performance STREQUAL ON)
+    add_definitions(-DPERFORMANCE)
+    set(SOURCES
+        ${SOURCES}
+        Source/Magic/Utilty/Trace.cpp
+    )
+endif()
+
 set(BINARY Magic)
 link_libraries(${LIBS})
 add_library(Magic ${SOURCES})
@@ -75,7 +86,6 @@ if(Sanitize STREQUAL Thread)
 elseif(Sanitize STREQUAL Address)
     set(Tool OFF)
 endif()
-
 
 if(Tool STREQUAL ON)
 

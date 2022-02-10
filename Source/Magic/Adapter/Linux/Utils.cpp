@@ -14,19 +14,17 @@
 #include "Magic/Core/Adapter.h"
 #include "Magic/Utilty/Timer.h"
 #include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/String.h"
-#include "Magic/Utilty/Thread.h"
 
 namespace Magic {
     uint64_t GetCurrentTimeMS() {
         struct timeval tv;
-        gettimeofday(&tv, NULL);
+        gettimeofday(&tv, nullptr);
         return tv.tv_sec * 1000ul  + tv.tv_usec / 1000;
     }
     
     uint64_t GetCurrentTimeUS(){
         struct timeval tv;
-        gettimeofday(&tv, NULL);
+        gettimeofday(&tv, nullptr);
         return tv.tv_sec * 1000 * 1000ul  + tv.tv_usec;
     }
 
@@ -47,9 +45,9 @@ namespace Magic {
         if (string == nullptr) {
             MAGIC_ERROR() << "backtrace_symbols error!";
         }
-        uint32_t newValue = static_cast<uint32_t>(retValue);
+        auto newValue = static_cast<uint32_t>(retValue);
         for (uint32_t i = skip; i < newValue; i++) {
-            vec.push_back(string[i]);
+            vec.emplace_back(string[i]);
         }
         free(buffer);
     }
@@ -58,9 +56,8 @@ namespace Magic {
         std::vector<std::string> vecString;
         BackTrace(vecString, size, skip);
         std::stringstream ss;
-        for (size_t i = 0; i < vecString.size(); i++)
-        {
-            ss << prefix << vecString.at(i) << std::endl;
+        for (auto & i : vecString){
+            ss << prefix << i << std::endl;
         }
         ss << std::endl;
         return ss.str();

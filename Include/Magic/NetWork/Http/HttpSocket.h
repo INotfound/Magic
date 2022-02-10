@@ -19,7 +19,7 @@ namespace Http{
     class HttpSocket :public Socket{
     public:
         /// Http处理方法
-        typedef std::function<void(const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
+        typedef std::function<void(const Safe<HttpSocket>& socket,const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
         /**
          * @brief: 构造函数
          * @param timeOutMs 超时时间
@@ -41,6 +41,16 @@ namespace Http{
          * @param dirPath 目录路径
          */
         void setTempDirectory(const std::string& dirPath);
+        /**
+         * @brief: 接收请求头函数
+         * @param callback 接收回调函数
+         */
+        void sendRequest(const Safe<HttpRequest>& request);
+        /**
+         * @brief: 发送响应函数
+         * @param response 响应
+         */
+        void sendResponse(const Safe<HttpResponse>& response);
     private:
         /**
          * @brief: 处理请求头函数
