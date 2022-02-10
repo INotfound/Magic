@@ -10,6 +10,6 @@ namespace Web{
     class TestServlet :public Magic::NetWork::Http::IHttpServlet{
     public:
         TestServlet();
-        bool handle(const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response) override;
+        bool handle(const Safe<HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response) override;
     };
 }

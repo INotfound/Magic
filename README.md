@@ -1,7 +1,7 @@
 <!--
  * @Author: INotFound
  * @Date: 2021-01-18 15:17:40
- * @LastEditTime: 2021-01-19 05:25:56
+ * @LastEditTime: 2022-02-10 11:25:34
 -->
 # Magic
 
@@ -79,11 +79,10 @@ link_directories(
 link_libraries(Magic)
 include(${MAGIC}/Magic.cmake)
 
-#参数[1]:本库路径
-#参数[2]:导出的头文件名
-#参数[MODULE]: 单模块(Module) or 多模块(Modules)
-GENEX(${MAGIC} Test MODULE
-    ${MAGIC}/Magic.magic
+add_custom_target(Gen ALL)
+add_custom_command(
+    TARGET Gen
+    COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.magic Test
 )
 ```
 3. 打开***Test.magic***配置文件,并添加上自定义的类.
@@ -117,15 +116,15 @@ GENEX(${MAGIC} Test MODULE
     }
 }
 ```
-4.  对***CMake***配置文件在**SRC**后方进行编辑添加**Test**模块(**Test.magic**)
+4.  对***CMake***配置文件进行编辑添加**Test**模块(**Test.magic**)
 ```cmake
-GENEX(${MAGIC} Test MODULE
-    ${MAGIC}/Magic.magic
-    ${PROJECT_SOURCE_DIR}/Test.magic
+add_custom_command(
+        TARGET Gen
+        COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.magic ${PROJECT_SOURCE_DIR}/Test.magic Test
 )
 ```
-5.  跳转build目录中 调用 `cmake ../.` or `cmake ../. -Gxxx`
-  1.  打开***Main.cpp***源文件
+5.  跳转build目录中 调用 `cmake ../.` 或 `cmake ../. -Gxxx` 并且进行Build. 
+6.  打开***Main.cpp***源文件
 ```c++
 #include "Test.h" //添加头文件
 
@@ -135,111 +134,12 @@ int main(){
 }
 ```
 5. ***编译即可***
-### 示例
 
----
-
-> 目录位置:[Magic/Examples](https://github.com/INotfound/Magic/tree/main/Examples)
-
-#### [***Base***](https://github.com/INotfound/Magic/tree/main/Examples/Base)示例
-
-> CMakeLists.txt 引用Magic模块
-
-```cmake
-GENEX(${MAGIC} Base MODULE
-	${MAGIC}/Magic.magic
-)
-```
-```c++
-#include "Base.h"
-
-int main(){
-    Base::Initialize();
-    MAGIC_DEBUG() << "hello world";
-    return EXIT_SUCCESS;
-}
-```
-#### [***WebServer***](https://github.com/INotfound/Magic/tree/main/Examples/WebServer)示例
-> ***Main.cpp***
-```c++
-#include "Web.h"
-
-int main(){
-    Web::Initialize();
-    return EXIT_SUCCESS;
-}
-```
-> ***Servlet.magic***
-```json
-{
-    "Configurations":{
-        "NameSpace":"Web",
-        "Registered":[
-            {
-                "Id":"testSevlet",
-                "Class":"Web::TestServlet",
-                "IncludePath": "TestSevlet.h",
-                "Interface":"Magic::NetWork::Http::IHttpServlet",
-                "Dependencies":[],
-                "FunctionPropertys":[]
-            }
-        ],
-        "Initialize":[],
-        "Constructor":{
-            "Name":"Initialize",
-            "WithParameter": false
-        }
-    }
-}
-```
-> ***TestSevlet.h***
-```c++
-#pragma once
-#include <Magic>
-
-namespace Web{
-    class TestServlet :public Magic::NetWork::Http::IHttpServlet{
-    public:
-        TestServlet();
-        bool handle(const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response) override;
-    };
-}
-```
-> ***TestSevlet.cpp***
-```c++
-#include "TestSevlet.h"
-
-namespace Web{
-    TestServlet::TestServlet()
-        :Magic::NetWork::Http::IHttpServlet("",Magic::NetWork::Http::HttpServletType::Deafult){
-    }
-    bool TestServlet::handle(const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
-        response->setStatus(Magic::NetWork::Http::HttpStatus::NOT_FOUND);
-        std::string notfound{R"Template(<html>
-            <head><title>404 Not Found</title></head>
-            <body>
-            <center><h1>404 Not Found</h1></center>
-            <hr><center>Magic/0.0.2</center>
-            </body>
-            </html>)Template"};
-        response->setBody(notfound);
-        return true;
-    }
-}
-```
-> ***CMakeLists.txt***
-```cmake
-GENEX(${MAGIC} Web MODULE
-    ${MAGIC}/Magic.magic
-    ${MAGIC}/WebServer.magic
-    ${PROJECT_SOURCE_DIR}/Servlet.magic
-)
-```
 ### 本库示例
 
 ---
 
-> 配置文件：[***Magic模块***](https://github.com/INotfound/Magic/blob/master/Magic.magic)(可使用多个配置文件)
+> 配置文件：[***Magic模块***](https://github.com/INotfound/Magic/blob/main/Modules/Magic.magic) (可使用多个配置文件)
 ```jsonc
 {                                                           // 日志以及配置模块示例
     "Configurations":{
