@@ -51,7 +51,8 @@ namespace DataBase{
         friend class FunctionTaskNode;
     public:
         ConnectionPool(const Safe<Magic::Config>& configuration,const Safe<Magic::TimingWheel>& timingWheel)
-            :m_InitCount(configuration->at("DataBase.Connection.Count",1))
+            :m_TimeOutMs(configuration->at("DataBase.Connection.TimeOutMs",1000))
+            ,m_InitCount(configuration->at("DataBase.Connection.Count",1))
             ,m_TimeOut(false)
             ,m_TimingWheel(timingWheel){
         }
@@ -62,7 +63,7 @@ namespace DataBase{
                     MAGIC_WARN() << "Get Idle Entity TimeOut!";
                     this->m_TimeOut = true;
                 });
-                m_TimingWheel->addTask(100,taskNode);
+                m_TimingWheel->addTask(m_TimeOut,taskNode);
                 while(m_IdleEntity.empty() && !m_TimeOut);
                 if(m_TimeOut){
                     return Connection<T>();
@@ -93,6 +94,7 @@ namespace DataBase{
             m_IdleEntity.push_back(entity);
         }
     private:
+        uint32_t m_TimeOutMs;
         uint32_t m_InitCount;
         Magic::Mutex m_Mutex;
         std::atomic_bool m_TimeOut;
