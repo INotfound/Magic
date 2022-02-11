@@ -52,19 +52,19 @@ public:
 };
 
 void func3(){
-    MAGIC_TRACE(__FUNCTION__);
+    MAGIC_TRACE_PERFORMANCE(__FUNCTION__);
     for (int i = 0; i < 100000; ++i) {
         std::printf("XXXXXXXXXXXXXX %d",i);
     }
 }
 
 void func2(){
-    MAGIC_TRACE(__FUNCTION__);
+    MAGIC_TRACE_PERFORMANCE(__FUNCTION__);
     func3();
 }
 
 void func1(){
-    MAGIC_TRACE(__FUNCTION__);
+    MAGIC_TRACE_PERFORMANCE(__FUNCTION__);
     func2();
 }
 
@@ -109,21 +109,7 @@ int main(int argc,char** argv){
 
     Safe<Magic::DataBase::ConnectionPool<Magic::DataBase::MySql>> connectionPool = std::make_shared<Magic::DataBase::ConnectionPool<Magic::DataBase::MySql>>(config,timingWheel);
 
-/*
-CREATE TABLE IF NOT EXISTS `device`(
-   `id` INT UNSIGNED AUTO_INCREMENT,
-   `store_id` INT DEFAULT 0,
-   `sn` VARCHAR(64) DEFAULT '',
-   `mac` VARCHAR(64) DEFAULT '',
-   `created_time` DATETIME NOT NULL,
-   `updated_time` DATETIME NOT NULL,
-   `room_id` VARCHAR(100) DEFAULT '',
-   `room_name` VARCHAR(100) DEFAULT '',
-   `last_version` VARCHAR(256) DEFAULT '',
-   `update_version` VARCHAR(256) DEFAULT '',
-   PRIMARY KEY (`id`)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
- */
+
 
     connectionPool->initialize([](){
         Safe<Magic::DataBase::MySql>  sql = std::make_shared<Magic::DataBase::MySql>();
@@ -135,18 +121,30 @@ CREATE TABLE IF NOT EXISTS `device`(
     auto conn = connectionPool->getConnection();
     if(conn){
         Magic::DataBase::MySqlStmt stmt(*conn);
-        stmt.prepare("INSERT INTO device(sn,mac,store_id,room_id,room_name,created_time,updated_time,last_version,update_version)VALUES(?,?,?,?,?,?,?,?,?)");
+        stmt.prepare("INSERT INTO device(sn,mac,room_id,store_id,room_name,created_time,updated_time,last_version,update_version)VALUES(?,?,?,?,?,?,?,?,?)");
         stmt.bind(0,"a01");
         stmt.bind(1,"FF:FF:FF:FF");
-        stmt.bind(2,"9999");
-        stmt.bind(3,"A9999");
+        stmt.bind(2,"A9999");
+        stmt.bind(3,"9999");
         stmt.bind(4,"B9999");
-        stmt.bindTime(5,time(0));
-        stmt.bindTime(6,time(0));
+        stmt.bind(5,time(0));
+        stmt.bind(6,time(0));
         stmt.bind(7,"version 1");
         stmt.bind(8,"version 2");
         stmt.execute();
         stmt.printError();
+
+//        stmt.prepare("select * from device where store_id = ?");
+//        stmt.bind(0,99999);
+//        bool ret = stmt.query();
+//        if(ret){
+//            MAGIC_DEBUG() << "1";
+//        }else{
+//            MAGIC_DEBUG() << "2";
+//        }
+//        if(stmt.fetch()){
+//            MAGIC_DEBUG() << "id : " << stmt.getUint32(0);
+//        }
     }
 
 
@@ -159,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `device`(
     dispatch->addHttpServlet(servlet);
     dispatch->addHttpServlet(resservlet);
     server.setServletDispatch(dispatch);
-
+    server.run();
     return 0;
 }
 

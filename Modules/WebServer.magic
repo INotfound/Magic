@@ -41,6 +41,11 @@
         ],
         "Initialize":[
             {
+                "Id":"timingWheel",
+                "FunctionPropertys":["run"],
+                "FunctionArguments":{}
+            },
+            {
                 "Id":"dispatch",
                 "Loop":true,
                 "Callee":"Magic::NetWork::Http::IHttpServlet",

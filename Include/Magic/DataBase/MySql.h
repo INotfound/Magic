@@ -27,7 +27,7 @@ namespace DataBase{
     public:
         ~MySqlStmt();
         MySqlStmt(const Safe<MySql>& sql);
-        bool next();
+        bool fetch();
         bool query();
         bool execute();
         void printError();

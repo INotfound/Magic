@@ -23,7 +23,6 @@ namespace Http{
 
     void HttpServer::setServletDispatch(const Safe<HttpServletDispatch>& dispatch){
         m_ServletDispatch = dispatch;
-        this->run();
     }
 
     void HttpServer::accept(){

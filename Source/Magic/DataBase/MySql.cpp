@@ -94,7 +94,7 @@ namespace DataBase{
         ,m_MySql(sql){
     }
 
-    bool MySqlStmt::next(){
+    bool MySqlStmt::fetch(){
         RWMutex::WriteLock lock(m_Mutex);
         return mysql_stmt_fetch(m_Stmt) == 0;
     }
