@@ -177,6 +177,7 @@ namespace DataBase{
         }
         m_Stmt = mysql_stmt_init(&this->m_MySql->m_MySql);
         if(!m_Stmt){
+            this->printError();
             return false;
         }
         if(mysql_stmt_prepare(m_Stmt,sql.c_str(),sql.size()) == 0){
@@ -185,6 +186,7 @@ namespace DataBase{
             std::memset(m_MySqlModifyBinds.data(),0,sizeof(MYSQL_BIND) * count);
             return true;
         }
+        this->printError();
         return false;
     }
 
