@@ -26,8 +26,10 @@ namespace NetWork{
     void Socket::enableTimeOut(){
         auto self = this->shared_from_this();
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self](){
-            if(self->m_TimeOut){
-                if(self){
+            Mutex::Lock lock(self->m_Mutex);
+            if(self && self->m_TimeOut){
+                self->m_TimeOut = false;
+                if(self->getEntity()){
                     if(self->getEntity()->is_open()){
                         asio::error_code ignored;
                         if(self->m_TimeOutCallBack){
@@ -35,7 +37,8 @@ namespace NetWork{
                         }
                         self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both,ignored);
                     }
-                    self->getEntity()->close();
+                    asio::error_code ignored;
+                    self->getEntity()->close(ignored);
                 }
                 return;
             }
@@ -69,6 +72,7 @@ namespace NetWork{
                 callback();
             }
         },std::placeholders::_1,std::placeholders::_2,callback);
+        Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
@@ -90,6 +94,7 @@ namespace NetWork{
                 callback();
             }
         },std::placeholders::_1,std::placeholders::_2,callback);
+        Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_write(*m_SslStream,*stream,std::move(sendCallBack));
@@ -110,6 +115,7 @@ namespace NetWork{
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
             callback(self,this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
+        Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
@@ -130,6 +136,7 @@ namespace NetWork{
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
             callback(self,this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
+        Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_exactly(size),std::move(readCallBack));

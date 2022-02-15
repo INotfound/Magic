@@ -30,6 +30,7 @@ namespace DataBase{
         bool fetch();
         bool query();
         bool execute();
+        uint64_t rows();
         void printError();
         void bindNull(uint32_t index);
         bool prepare(const std::string& sql);

@@ -11,6 +11,7 @@
 #endif
 #include <atomic>
 #include "Magic/Core/Core.h"
+#include "Magic/Utilty/Mutex.h"
 #include "Magic/Utilty/TimingWheel.h"
 
 namespace Magic{
@@ -97,6 +98,7 @@ namespace NetWork{
          */
         void setTimeOutCallBack(const TimeOutCallBack& timeOutCallBack);
     private:
+        Mutex m_Mutex;
         uint64_t m_TimeOutMs;
         uint64_t m_BufferSize;
         Safe<char[]> m_ByteBlock;

@@ -166,6 +166,10 @@ namespace DataBase{
         return mysql_stmt_execute(m_Stmt) == 0;
     }
 
+    uint64_t MySqlStmt::rows(){
+        return mysql_stmt_affected_rows(m_Stmt);
+    }
+
     void MySqlStmt::printError(){
         MAGIC_WARN() << mysql_stmt_error(m_Stmt);
     }
