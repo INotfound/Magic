@@ -101,6 +101,9 @@ namespace DataBase{
 
     bool MySqlStmt::query(){
         RWMutex::WriteLock lock(m_Mutex);
+        if(mysql_ping(&m_MySql->m_MySql) != 0){
+            this->printError();
+        }
         mysql_stmt_bind_param(m_Stmt, m_MySqlModifyBinds.data());
         uint32_t err = mysql_stmt_errno(m_Stmt);
         if(err){
@@ -162,6 +165,9 @@ namespace DataBase{
     }
 
     bool MySqlStmt::execute(){
+        if(mysql_ping(&m_MySql->m_MySql) != 0){
+            this->printError();
+        }
         mysql_stmt_bind_param(m_Stmt,m_MySqlModifyBinds.data());
         return mysql_stmt_execute(m_Stmt) == 0;
     }
