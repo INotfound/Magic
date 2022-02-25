@@ -4,6 +4,18 @@
 
 namespace Magic{
 namespace DataBase{
+    class MySqlLibraryWrapper{
+    public:
+        ~MySqlLibraryWrapper(){
+            mysql_library_end();
+        }
+        MySqlLibraryWrapper(){
+            mysql_library_init(0, NULL, NULL);
+        }
+    };
+
+    static MySqlLibraryWrapper g_MySqlLibraryWrapper;
+
     void MySqlTimeToTime(const MYSQL_TIME& mt,std::time_t ts){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)

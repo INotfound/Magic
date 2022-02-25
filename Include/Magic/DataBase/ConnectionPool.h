@@ -48,58 +48,42 @@ namespace DataBase{
     template<class T>
     class ConnectionPool :public std::enable_shared_from_this<ConnectionPool<T>>{
         friend class Connection<T>;
-        friend class FunctionTaskNode;
     public:
-        ConnectionPool(const Safe<Magic::Config>& configuration,const Safe<Magic::TimingWheel>& timingWheel)
-            :m_TimeOutMs(configuration->at("DataBase.Connection.TimeOutMs",1000))
-            ,m_InitCount(configuration->at("DataBase.Connection.Count",1))
-            ,m_TimeOut(false)
-            ,m_TimingWheel(timingWheel){
+        ConnectionPool(const Safe<Magic::Config>& configuration)
+            :m_Count(configuration->at("DataBase.Connection.Count",1)){
         }
 
         Connection<T> getConnection(){
+            Magic::Mutex::Lock locker(m_Mutex);
             if(m_IdleEntity.empty()){
-                Safe<Magic::ITaskNode> taskNode = std::make_shared<Magic::FunctionTaskNode>([this](){
-                    MAGIC_WARN() << "Get Idle Entity TimeOut!";
-                    this->m_TimeOut = true;
-                });
-                m_TimingWheel->addTask(m_TimeOut,taskNode);
-                while(m_IdleEntity.empty() && !m_TimeOut);
-                if(m_TimeOut){
+                const Safe<T> conn = m_InitFunction();
+                if(conn){
+                    m_IdleEntity.push_back(conn);
+                }else{
                     return Connection<T>();
                 }
             }
-            Safe<T> entity;
-            {
-                Magic::Mutex::Lock locker(m_Mutex);
-                m_TimeOut = false;
-                entity = m_IdleEntity.front();
-                m_IdleEntity.pop_front();
-            }
+            Safe<T> entity = m_IdleEntity.front();
+            m_IdleEntity.pop_front();
             return Connection<T>(entity,this->shared_from_this());;
         }
 
-        void initialize(std::function<const Safe<T>(void)> initFunc){
-            for (uint32_t i = 0; i < m_InitCount; i++){
-                const Safe<T> conn = initFunc();
-                if(conn){
-                    m_IdleEntity.push_back(conn);
-                }
-            }
+        void initialize(const std::function<const Safe<T>(void)>& initFunc){
+            m_InitFunction = std::move(initFunc);
         }
     private:
         void restore(const Safe<T>& entity){
             Magic::Mutex::Lock locker(m_Mutex);
-            m_TimeOut = false;
+            if(m_IdleEntity.size() == m_Count){
+                return;
+            }
             m_IdleEntity.push_back(entity);
         }
     private:
-        uint32_t m_TimeOutMs;
-        uint32_t m_InitCount;
+        uint32_t m_Count;
         Magic::Mutex m_Mutex;
-        std::atomic_bool m_TimeOut;
         std::list<Safe<T>> m_IdleEntity;
-        Safe<Magic::TimingWheel> m_TimingWheel;
+        std::function<const Safe<T>(void)> m_InitFunction;
     };
 }
 }

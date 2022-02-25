@@ -36,8 +36,9 @@ namespace Magic{
             m_NextWheel->add(ms,node);
             return;
         }
+        ms = ms > m_TickMs ? ms : m_TickMs;
         uint64_t expiration = ms + (m_ClockHand * m_TickMs);
-        m_Task[expiration / m_TickMs % m_WheelSize].push_back(std::move(node));
+        m_Task[expiration / m_TickMs % m_WheelSize].emplace_back(std::move(node));
     }
 
     void Wheel::tick(std::vector<TaskList>& task){
@@ -52,8 +53,8 @@ namespace Magic{
         if(m_Task[m_ClockHand].empty()){
             return;
         }
-        task.push_back(std::move(m_Task[m_ClockHand]));
-        m_Task[m_ClockHand].clear();
+        task.emplace_back(std::move(m_Task[m_ClockHand]));
+        m_Task[m_ClockHand].resize(0);
     }
 
     TimingWheel::TimingWheel(const Safe<Config>& configuration)

@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-02-01 22:22:26
  */
 #if defined(_WIN32) || defined(_WIN64)
-
+#include "Magic/Core/Adapter.h"
 #include "Magic/Utilty/Mutex.h"
 
 namespace Magic{

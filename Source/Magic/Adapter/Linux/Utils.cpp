@@ -38,31 +38,6 @@ namespace Magic {
         return syscall(SYS_gettid);
     }
 
-    static void BackTrace(std::vector<std::string>& vec, uint32_t size, uint32_t skip) {
-        void** buffer = static_cast<void**>(std::malloc(sizeof(void*) * size));
-        int32_t retValue = backtrace(buffer, size);
-        char** string = backtrace_symbols(buffer, retValue);
-        if (string == nullptr) {
-            MAGIC_ERROR() << "backtrace_symbols error!";
-        }
-        auto newValue = static_cast<uint32_t>(retValue);
-        for (uint32_t i = skip; i < newValue; i++) {
-            vec.emplace_back(string[i]);
-        }
-        free(buffer);
-    }
-
-    std::string BackTraceToString(uint32_t size, uint32_t skip, const std::string& prefix) {
-        std::vector<std::string> vecString;
-        BackTrace(vecString, size, skip);
-        std::stringstream ss;
-        for (auto & i : vecString){
-            ss << prefix << i << std::endl;
-        }
-        ss << std::endl;
-        return ss.str();
-    }
-
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src){
         return strcasecmp(dest.c_str(), src.c_str());
     }

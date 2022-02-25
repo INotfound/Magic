@@ -16,6 +16,7 @@ namespace Magic{
      */
     class Timer{
     public:
+        ~Timer();
         /**
          * @brief: 构造函数
          * @param name 定时器名称

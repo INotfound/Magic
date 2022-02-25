@@ -12,10 +12,11 @@
 #include "Magic/NetWork/Http/HttpServer.h"
 #include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/TimingWheel.h"
-#include "Magic/DataBase/MySql.h"
 #include "Magic/DataBase/ConnectionPool.h"
 #include "Magic/Core/Adapter.h"
 #include "Magic/Utilty/Trace.h"
+
+
 ///// http://127.0.0.1/
 
 
@@ -43,40 +44,26 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
             return true;
         }
 };
+/*
+int64_t newNum = 0;
 
-class AA{
-public:
-    void printf(){
-        std::printf("hello world");
-    }
-};
-
-void func3(){
-    MAGIC_TRACE_PERFORMANCE(__FUNCTION__);
-    for (int i = 0; i < 100000; ++i) {
-        std::printf("XXXXXXXXXXXXXX %d",i);
-    }
+void* operator new(std::size_t size)
+{
+    newNum++;
+    std::cout << "New " << newNum << std::endl;
+    return std::malloc(size);
 }
 
-void func2(){
-    MAGIC_TRACE_PERFORMANCE(__FUNCTION__);
-    func3();
+void operator delete(void* ptr)
+{
+    newNum--;
+    std::cout << "delete " << newNum << std::endl;
+    std::free(ptr);
 }
-
-void func1(){
-    MAGIC_TRACE_PERFORMANCE(__FUNCTION__);
-    func2();
-}
-
-
+*/
 
 int main(int argc,char** argv){
 //    Magic::g_TraceAppender = std::make_shared<>
-#ifdef PERFORMANCE
-    Magic::g_TraceAppender = std::make_shared<Magic::ChromiumTraceAppender>("Profile.json");
-#endif
-    func1();
-    Magic::g_TraceAppender->complete();
 
     Magic::NetWork::Http::Uri uri;
     uri.execute("mysql://admin@0.0.0.0/xxx?password=12345678901a");
@@ -106,46 +93,6 @@ int main(int argc,char** argv){
     Safe<Magic::NetWork::IoPool> pool = std::make_shared<Magic::NetWork::IoPool>(config);
     timingWheel->run();
     Magic::NetWork::Http::HttpServer server(pool,timingWheel,config);
-
-    Safe<Magic::DataBase::ConnectionPool<Magic::DataBase::MySql>> connectionPool = std::make_shared<Magic::DataBase::ConnectionPool<Magic::DataBase::MySql>>(config,timingWheel);
-
-
-
-    connectionPool->initialize([](){
-        Safe<Magic::DataBase::MySql>  sql = std::make_shared<Magic::DataBase::MySql>();
-        if(sql->connnetDB("Test","1.15.39.123","root","1234567890a",3306)){
-            return sql;
-        }
-        return Safe<Magic::DataBase::MySql>();
-    });
-    auto conn = connectionPool->getConnection();
-    if(conn){
-        Magic::DataBase::MySqlStmt stmt(*conn);
-        stmt.prepare("INSERT INTO device(sn,mac,room_id,store_id,room_name,created_time,updated_time,last_version,update_version)VALUES(?,?,?,?,?,?,?,?,?)");
-        stmt.bind(0,"a01");
-        stmt.bind(1,"FF:FF:FF:FF");
-        stmt.bind(2,"A9999");
-        stmt.bind(3,"9999");
-        stmt.bind(4,"B9999");
-        stmt.bind(5,time(0));
-        stmt.bind(6,time(0));
-        stmt.bind(7,"version 1");
-        stmt.bind(8,"version 2");
-        stmt.execute();
-        stmt.printError();
-
-//        stmt.prepare("select * from device where store_id = ?");
-//        stmt.bind(0,99999);
-//        bool ret = stmt.query();
-//        if(ret){
-//            MAGIC_DEBUG() << "1";
-//        }else{
-//            MAGIC_DEBUG() << "2";
-//        }
-//        if(stmt.fetch()){
-//            MAGIC_DEBUG() << "id : " << stmt.getUint32(0);
-//        }
-    }
 
 
     Safe<Magic::NetWork::Http::IHttpServlet> servlet = std::make_shared<Magic::NetWork::Http::NotFoundServlet>();

@@ -1,10 +1,10 @@
+# Android Compile Native API 24 Support Is Required.
 cmake_minimum_required(VERSION 3.0)
 
 project(Magic)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(Tool "TOOL Module Compilation Options" ON)
 option(Utilty "UTILTY Module Compilation Options" ON)
 option(NetWork "NETWORK Module Compilation Options" ON)
 option(Performance "Performance Trace Compilation Options" OFF)
@@ -36,7 +36,7 @@ if(Utilty STREQUAL ON)
         Source/Magic/Adapter/Win//Mutex.cpp
         Source/Magic/Adapter/Linux/Utils.cpp
         Source/Magic/Adapter/Linux/Mutex.cpp
-            )
+    )
 endif()
 
 if(NetWork STREQUAL ON)
@@ -82,22 +82,21 @@ link_libraries(${LIBS})
 add_library(Magic ${SOURCES})
 
 if(Sanitize STREQUAL Thread)
-    set(Tool OFF)
+    set(Analysis OFF)
 elseif(Sanitize STREQUAL Address)
-    set(Tool OFF)
+    set(Analysis OFF)
 endif()
 
-if(Tool STREQUAL ON)
+set(BINARY
+    Gen
+    Create
+    ${BINARY}
+)
 
-    set(BINARY
-        Gen
-        Create
-        ${BINARY}
-    )
+add_executable(Gen Tool/Generator.cpp)
+add_executable(Create Tool/Create.cpp)
 
-    add_executable(Gen Tool/Generator.cpp)
-    add_executable(Create Tool/Create.cpp)
-
+if(Analysis STREQUAL ON)
     if(DEFINED MAGIC_CLANG_INCLUDE AND DEFINED MAGIC_CLANG_LIBRARY)
         set(BINARY ${BINARY} Analysis)
         link_directories(${MAGIC_CLANG_LIBRARY})
@@ -105,7 +104,6 @@ if(Tool STREQUAL ON)
         add_executable(Analysis Tool/Analysis.cpp)
         target_link_libraries(Analysis clang)
     endif()
-
 endif()
 
 install(TARGETS ${BINARY}

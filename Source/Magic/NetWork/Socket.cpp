@@ -13,7 +13,7 @@ namespace NetWork{
     Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
         :m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)
-        ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
+        ,m_ByteBlock(new char[m_BufferSize],[](const char *pointer) {delete[] pointer;})
         ,m_TimeOut(true)
         ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
@@ -27,17 +27,15 @@ namespace NetWork{
         auto self = this->shared_from_this();
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self](){
             Mutex::Lock lock(self->m_Mutex);
-            if(self && self->m_TimeOut){
-                self->m_TimeOut = false;
+            if(self->m_TimeOut){
                 if(self->getEntity()){
+                    asio::error_code ignored;
                     if(self->getEntity()->is_open()){
-                        asio::error_code ignored;
                         if(self->m_TimeOutCallBack){
                             self->m_TimeOutCallBack(self);
                         }
                         self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both,ignored);
                     }
-                    asio::error_code ignored;
                     self->getEntity()->close(ignored);
                 }
                 return;
@@ -64,6 +62,7 @@ namespace NetWork{
         auto self = this->shared_from_this();
         auto sendCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
             if(err){
+                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
@@ -86,6 +85,7 @@ namespace NetWork{
         auto self = this->shared_from_this();
         auto sendCallBack = std::bind([this,self,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
             if(err){
+                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
@@ -108,6 +108,7 @@ namespace NetWork{
         auto self = this->shared_from_this();
         auto readCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err){
+                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
@@ -129,6 +130,7 @@ namespace NetWork{
         auto self = this->shared_from_this();
         auto readCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err) {
+                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }

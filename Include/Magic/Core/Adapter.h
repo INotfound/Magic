@@ -24,24 +24,21 @@
     typedef HANDLE               sem_t;
     typedef HANDLE               mutex_t;
     typedef WinRWLock            rwlock_t;
-    typedef HINSTANCE            plugin_t;
     typedef CRITICAL_SECTION     spinlock_t;
     #define IS_FILE(Path)        _access(Path,0)
 #endif
 
-#if (defined(linux) || defined(__linux__)) && !defined(ANDROID)
+#if (defined(linux) || defined(__linux__))
     #include <dirent.h>
     #include <unistd.h>
     #include <pthread.h>
     #include <sys/time.h>
-    #include <execinfo.h>
     #include <semaphore.h>
     #include <sys/syscall.h>
 
     typedef sem_t                sem_t;
     typedef pthread_mutex_t      mutex_t;
-    typedef pthread_spinlock_t   spinlock_t;
     typedef pthread_rwlock_t     rwlock_t;
-    typedef void*                plugin_t;
+    typedef pthread_spinlock_t   spinlock_t;
     #define IS_FILE(Path)        access(Path,0)
 #endif

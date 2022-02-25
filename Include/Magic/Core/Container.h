@@ -9,9 +9,6 @@
 #include "Magic/Core/Core.h"
 
 namespace Magic{
-    #ifdef PERFORMANCE
-        static std::chrono::high_resolution_clock::time_point g_Time; 
-    #endif
     class Container :public std::enable_shared_from_this<Container>{
         template<typename Return,typename... Args>
         using Function = Safe<Return>(Container::*)();
@@ -96,16 +93,6 @@ namespace Magic{
                 if(!registeredType.m_Object){
                     registeredType.m_Object = registeredType.m_CreateFunc();
                     registeredType.resolveMemberFunction(self);
-                #ifdef PERFORMANCE
-                    auto time = std::chrono::high_resolution_clock::now();
-                    auto elapsedTime = std::chrono::duration_cast<std::chrono::microseconds>(time - g_Time).count();
-                    std::string unit = (elapsedTime > 10000000) ? "S" : "Ms";
-                    unit = (elapsedTime > 1000) ? "Ms" : "μs";
-                    elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
-                    elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
-                    std::cout << "@Class Elapsed Time:  " << elapsedTime << "(" << unit.c_str() << ")\n    " << "[" << typeid(T).name() << "]" << std::endl;
-                    g_Time = std::chrono::high_resolution_clock::now();
-                #endif
                 }
                 return std::static_pointer_cast<T>(registeredType.m_Object);
             }
@@ -140,16 +127,6 @@ namespace Magic{
                         if(!registeredType.m_Object){
                             registeredType.m_Object = std::move(registeredType.m_CreateFunc());
                             registeredType.resolveMemberFunction(self);
-                        #ifdef PERFORMANCE
-                            auto time = std::chrono::high_resolution_clock::now();
-                            auto elapsedTime = std::chrono::duration_cast<std::chrono::microseconds>(time - g_Time).count();
-                            std::string unit = (elapsedTime > 10000000) ? "S" : "Ms";
-                            unit = (elapsedTime > 1000) ? "Ms" : "μs";
-                            elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
-                            elapsedTime = (elapsedTime > 1000) ? elapsedTime/1000 : elapsedTime;
-                            std::cout << "@Class Elapsed Time:  " << elapsedTime << "(" << unit.c_str() << ")\n    " << "[" << typeid(T).name() << "]" << std::endl;
-                            g_Time = std::chrono::high_resolution_clock::now();
-                        #endif
                         }
                     }
                     objectList.push_back(std::static_pointer_cast<T>(registeredType.m_Object));
@@ -160,9 +137,6 @@ namespace Magic{
     private:
         template<typename T, typename M, typename... Args>
         Safe<T> invoke(){
-        #ifdef PERFORMANCE
-            g_Time = std::chrono::high_resolution_clock::now();
-        #endif
             return std::make_shared<M>(this->resolve<Args>()...); 
         }
     private:
