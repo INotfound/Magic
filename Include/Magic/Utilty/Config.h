@@ -81,25 +81,14 @@ namespace Magic {
         ~ConfigFile();
         /**
          * @brief: 构造函数
+         * @param configFormatter 配置文件格式化器
          */
-        ConfigFile();
-        /**
-         * @brief: 关闭配置文件函数
-         */
-        void close();
-        /**
-         * @brief: 打开配置文件函数
-         */
-        void open();
+        ConfigFile(const Safe<IConfigFormatter>& configFormatter);
         /**
          * @brief: 获取配置文件路径函数
          * @return: 返回配置文件路径
          */
         const std::string& getPath() const;
-        /**
-         * @brief: 设置配置文件路径函数
-         */
-        void setFilePath(const std::string& path);
         /**
          * @brief: 读取配置文件项函数
          * @param keyValue 配置文件键值对 
@@ -110,14 +99,8 @@ namespace Magic {
          * @param config 配置文件 
          */
         void write(ConfigMap& config);
-        /**
-         * @brief: 添加配置文件格式化器函数
-         * @param configFormatter 配置文件格式化器
-         */
-        void addFormatter(const Safe<IConfigFormatter>& configFormatter);
     private:
         std::string m_Path;
-        std::fstream m_FileStream;
         Safe<IConfigFormatter> m_Formatter;
     };
     /**
@@ -131,13 +114,9 @@ namespace Magic {
         ~Config();
         /**
          * @brief: 构造函数
-         */
-        Config();
-        /**
-         * @brief: 添加配置文件函数
          * @param configFile 配置文件
          */
-        void addConfigFile(const Safe<ConfigFile>& configFile);
+        Config(const Safe<ConfigFile>& configFile);
         /**
          * @brief: 获取配置项值函数
          * @param defaultName 配置键
@@ -203,4 +182,8 @@ namespace Magic {
         this->update();
         return defaultValue;
     }
+    /*
+     * g_ConfigPath 配置文件默认路径
+     */
+    extern std::string g_ConfigPath;
 }

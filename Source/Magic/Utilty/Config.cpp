@@ -10,6 +10,8 @@
 // #include "rapidjson/stringbuffer.h"
 
 namespace Magic {
+    std::string g_ConfigPath = "./Magic.conf";
+
     ConfigValue::ConfigValue(const std::string& name, const std::string& value, const std::string& comment)
         :m_IsComment(false),m_Name(name), m_Value(value), m_Comment(comment){
         if (!m_Comment.empty())
@@ -36,63 +38,42 @@ namespace Magic {
     }
 
     ConfigFile::~ConfigFile(){
-        this->close();
     }
 
-    ConfigFile::ConfigFile()
-        :m_Path("./Magic.conf"){
-    }
-    
-    void ConfigFile::open(){
-        if (m_FileStream.is_open()){
-            m_FileStream.close();
-        }
-        m_FileStream.open(m_Path, std::ios_base::in | std::ios_base::out | std::ios_base::app);
-    }
-
-    void ConfigFile::close(){
-        if (m_FileStream.is_open()){
-            m_FileStream.close();
-        }
+    ConfigFile::ConfigFile(const Safe<IConfigFormatter>& configFormatter)
+        :m_Path(g_ConfigPath)
+        ,m_Formatter(configFormatter){
     }
 
     const std::string& ConfigFile::getPath() const{
         return m_Path;
     }
 
-    void ConfigFile::setFilePath(const std::string& path){
-        m_Path = path;
-    }
-
     void ConfigFile::read(ConfigMap& keyValue){
-        this->open();
         std::ostringstream content;
-        if (m_FileStream.is_open() && m_Formatter){
-            content << m_FileStream.rdbuf();
+
+        std::ifstream readFileStream;
+        readFileStream.open(m_Path,std::ios_base::in);
+        if (readFileStream.is_open() && m_Formatter){
+            content << readFileStream.rdbuf();
             m_Formatter->parse(content.str(), keyValue);
         }
     }
 
     void ConfigFile::write(ConfigMap& config){
-        m_Formatter->write(m_FileStream,config);
-        m_FileStream.flush();
-    }
-    
-    void ConfigFile::addFormatter(const Safe<IConfigFormatter>& configFormatter){
-        m_Formatter = configFormatter;
+        std::ofstream writeFileStream;
+        writeFileStream.open(m_Path,std::ios_base::out);
+        m_Formatter->write(writeFileStream,config);
+        writeFileStream.flush();
     }
 
     Config::~Config() {
         this->update();
     }
 
-    Config::Config()
-        :m_IsChange(false){
-    }
-    
-    void Config::addConfigFile(const Safe<ConfigFile>& configFile){
-        RWMutex::WriteLock lock(m_Mutex);
-        m_ConfigFile = configFile;
+    Config::Config(const Safe<ConfigFile>& configFile)
+        :m_IsChange(false)
+        ,m_ConfigFile(configFile){
         m_ConfigFile->read(m_ConfigMap);
     }
 
@@ -101,9 +82,7 @@ namespace Magic {
             return;
         }
         m_IsChange = false;
-        m_ConfigFile->close();
         std::remove(m_ConfigFile->getPath().c_str());
-        m_ConfigFile->open();
         m_ConfigFile->write(m_ConfigMap);
     }
 

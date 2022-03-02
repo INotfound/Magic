@@ -44,23 +44,23 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
             return true;
         }
 };
-/*
-int64_t newNum = 0;
 
-void* operator new(std::size_t size)
-{
-    newNum++;
-    std::cout << "New " << newNum << std::endl;
-    return std::malloc(size);
-}
+//std::atomic_int newNum(0);
+//
+//void* operator new(std::size_t size)
+//{
+//    newNum++;
+//    std::cout << "New " << newNum << std::endl;
+//    return std::malloc(size);
+//}
+//
+//void operator delete(void* ptr)
+//{
+//    newNum--;
+//    std::cout << "delete " << newNum << std::endl;
+//    std::free(ptr);
+//}
 
-void operator delete(void* ptr)
-{
-    newNum--;
-    std::cout << "delete " << newNum << std::endl;
-    std::free(ptr);
-}
-*/
 
 int main(int argc,char** argv){
 //    Magic::g_TraceAppender = std::make_shared<>
@@ -76,15 +76,13 @@ int main(int argc,char** argv){
 
     Magic::Thread::SetName("Master");
     Magic::Configure([](const Safe<Magic::Container>& ioc){
-        ioc->registerType<Magic::Config>();
         ioc->registerType<Magic::Logger,Magic::Config>();
     });
 
-    Safe<Magic::Config> config = std::make_shared<Magic::Config>();
-    Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>();
     Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();
-    configFile->addFormatter(formatter);
-    config->addConfigFile(configFile);
+    Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>(formatter);
+    Safe<Magic::Config> config = std::make_shared<Magic::Config>(configFile);
+
 
     Magic::g_Logger = std::make_shared<Magic::Logger>(config);
     Safe<Magic::ILogAppender> logAppender = std::make_shared<Magic::StdOutLogAppender>();

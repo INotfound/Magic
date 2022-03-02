@@ -21,13 +21,15 @@
                 "Id":"config",
                 "Class":"Magic::Config",
                 "IncludePath": "Magic/Utilty/Config.h",
-                "FunctionPropertys":["addConfigFile"]
+                "Dependencies":["Magic::ConfigFile"],
+                "FunctionPropertys":[]
             },
             {
                 "Id":"configFile",
                 "Class":"Magic::ConfigFile",
                 "IncludePath": "Magic/Utilty/Config.h",
-                "FunctionPropertys":["addFormatter"]
+                "Dependencies":["Magic::IConfigFormatter"],
+                "FunctionPropertys":[]
             },
             {
                 "Id":"iniConfigFormmater",

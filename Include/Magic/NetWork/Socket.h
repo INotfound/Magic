@@ -101,7 +101,7 @@ namespace NetWork{
         Mutex m_Mutex;
         uint64_t m_TimeOutMs;
         uint64_t m_BufferSize;
-        Safe<char[]> m_ByteBlock;
+        Safe<char> m_ByteBlock;
         std::atomic_bool m_TimeOut;
         StreamBuffer m_StreamBuffer;
         Safe<TimingWheel> m_TimingWheel;

@@ -40,6 +40,7 @@
 /build
 
 # File
-CMakeSettings.json
-compile_commands.json
 .ycm_extra_conf.py
+CMakeSettings.json
+CMakeLists.txt.user
+compile_commands.json

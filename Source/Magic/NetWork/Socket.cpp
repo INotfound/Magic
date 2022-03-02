@@ -13,7 +13,7 @@ namespace NetWork{
     Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
         :m_TimeOutMs(timeOutMs)
         ,m_BufferSize(bufferSize)
-        ,m_ByteBlock(new char[m_BufferSize],[](const char *pointer) {delete[] pointer;})
+        ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
         ,m_TimeOut(true)
         ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){

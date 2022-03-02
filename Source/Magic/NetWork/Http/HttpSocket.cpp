@@ -62,7 +62,7 @@ namespace Http{
                 m_FileStream.seekg(0,std::ios::end);
                 uint64_t totalLength = m_FileStream.tellg();
                 response->setContentType(Http::FileTypeToHttpContentType(filePath));
-                m_StreamBuffer.reset(new char[m_StreamBufferSize],[](const char *pointer) {delete[] pointer;});
+                m_StreamBuffer.reset(new char[m_StreamBufferSize],std::default_delete<char[]>());
                 if(response->isRange()){
                     auto rangeStop = response->getRangeStop();
                     auto rangeStart = response->getRangeStart();
