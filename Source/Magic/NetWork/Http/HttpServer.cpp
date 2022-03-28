@@ -6,7 +6,6 @@
 #include "Magic/Utilty/Logger.h"
 #include "Magic/NetWork/Http/Http.h"
 #include "Magic/NetWork/Http/HttpSocket.h"
-#include "Magic/NetWork/Http/HttpParser.h"
 #include "Magic/NetWork/Http/HttpServer.h"
 
 namespace Magic{
@@ -26,8 +25,7 @@ namespace Http{
     }
 
     void HttpServer::accept(){
-        Safe<HttpSocket> socket = std::make_shared<HttpSocket>(m_TimeOutMs,m_IoPool->get(),m_TimingWheel);
-        socket->setTempDirectory(m_TempDirectory);
+        Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,m_IoPool->get(),m_TimingWheel);
     #ifdef OPENSSL
         if(m_EnableSsl){
             asio::ssl::context sslContext(asio::ssl::context::sslv23);
@@ -40,37 +38,18 @@ namespace Http{
         }
     #endif
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
-            socket->enableTimeOut();
             if(!err){
+                socket->enableTimeOut();
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
                 if(err == asio::error::eof
-                   || err == asio::error::broken_pipe
-                   || err == asio::error::connection_reset
+                    || err == asio::error::broken_pipe || err == asio::error::connection_reset
                 #ifdef OPENSSL
-                   || err == asio::error::operation_aborted
-                   || err == asio::ssl::error::stream_truncated){
+                    || err == asio::error::operation_aborted || err == asio::ssl::error::stream_truncated){
                 #else
-                   || err == asio::error::operation_aborted){
+                    || err == asio::error::operation_aborted){
                 #endif
                     return;
                 }
-                socket->setErrorCodeCallBack([](const asio::error_code& err){
-                #ifdef WIN32
-                    if(err.value() == WSAECONNABORTED) return;
-                #endif
-                    if(err == asio::error::eof
-                       || err == asio::error::broken_pipe
-                       || err == asio::error::connection_reset
-                   #ifdef OPENSSL
-                       || err == asio::error::operation_aborted
-                       || err == asio::ssl::error::stream_truncated){
-                    #else
-                        || err == asio::error::operation_aborted){
-                    #endif
-                        return;
-                    }
-                    MAGIC_WARN() << err.message();
-                });
             #ifdef OPENSSL
                 auto sslStream = socket->getSslEntity();
                 if(sslStream){
@@ -103,7 +82,8 @@ namespace Http{
     }
     
     void HttpServer::handleFunc(const Safe<Socket>& socket){
-        Safe<HttpSocket> httpSocket = std::static_pointer_cast<HttpSocket>(socket);
+        Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(socket);
+        httpSocket->setTempDirectory(m_TempDirectory);
         httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
     }
 }

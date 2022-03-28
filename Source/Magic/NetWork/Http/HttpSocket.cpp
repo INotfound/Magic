@@ -9,8 +9,10 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    HttpSocket::HttpSocket(uint64_t timeOutMs,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
-        :Socket(timeOutMs,4096,context,timingWheel)
+    HttpSocket::~HttpSocket() =default;
+
+    HttpSocket::HttpSocket(const Safe<Socket>& socket)
+        :m_Socket(socket)
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
         ,m_StreamBufferSize(1024*1024*2)
@@ -18,7 +20,7 @@ namespace Http{
         ,m_CurrentTransferLength(0){
         m_RequestParser = std::make_shared<HttpRequestParser>();
         m_ResponseParser = std::make_shared<HttpResponseParser>();
-        this->setErrorCodeCallBack([this](const asio::error_code & err){
+        m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
             m_MultiPart.reset();
             m_FileStream.close();
             m_StreamBuffer.reset();
@@ -26,6 +28,18 @@ namespace Http{
             m_ResponseParser->reset();
             m_TotalTransferLength = 0;
             m_CurrentTransferLength = 0;
+        #ifdef WIN32
+            if(err.value() == WSAECONNABORTED) return;
+        #endif
+            if(err == asio::error::eof
+               || err == asio::error::broken_pipe || err == asio::error::connection_reset
+               #ifdef OPENSSL
+               || err == asio::error::operation_aborted || err == asio::ssl::error::stream_truncated){
+               #else
+               || err == asio::error::operation_aborted){
+        #endif
+                return;
+            }
             MAGIC_WARN() << err.message();
         });
     }
@@ -48,7 +62,7 @@ namespace Http{
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
         stream << request;
-        this->send(streamBuffer);
+        m_Socket->send(streamBuffer);
     }
 
     void HttpSocket::sendResponse(const Safe<HttpResponse>& response){
@@ -77,7 +91,7 @@ namespace Http{
                     response->setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
                     /// Send Response
                     stream << response;
-                    this->send(streamBuffer);
+                    m_Socket->send(streamBuffer);
                     this->transferFileStream();
                 }else{
                     m_FileStream.seekg(0,std::ios::beg);
@@ -86,17 +100,17 @@ namespace Http{
                     response->setContentLength(m_TotalTransferLength);
                     response->setHeader("Accept-Ranges","bytes");
                     stream << response;
-                    this->send(streamBuffer);
+                    m_Socket->send(streamBuffer);
                     this->transferFileStream();
                 }
             }else{
                 response->setStatus(HttpStatus::NOT_FOUND);
                 stream << response;
-                this->send(streamBuffer);
+                m_Socket->send(streamBuffer);
             }
         }else{
             stream << response;
-            this->send(streamBuffer);
+            m_Socket->send(streamBuffer);
         }
     }
 
@@ -112,7 +126,7 @@ namespace Http{
         }
         response->setVersion(request->getVersion());
         response->setKeepAlive(request->getKeepAlive());
-        m_RecvRequestCallBack(std::static_pointer_cast<HttpSocket>(this->shared_from_this()),request,response);
+        m_RecvRequestCallBack(this->shared_from_this(),request,response);
 
         m_MultiPart.reset();
         m_RequestParser->reset();
@@ -123,13 +137,14 @@ namespace Http{
     void HttpSocket::handleResponse(){
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
-        m_RecvRequestCallBack(std::static_pointer_cast<HttpSocket>(this->shared_from_this()),request,response);
+        m_RecvRequestCallBack(this->shared_from_this(),request,response);
         m_ResponseParser->reset();
         this->responseParser();
     }
 
     void HttpSocket::requestParser(){
-        this->recv([this](const Safe<Socket>& conn,StreamBuffer& data){
+        auto self = this->shared_from_this();
+        m_Socket->recv([this,self](Socket::StreamBuffer& data){
             uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()){
                 return;
@@ -152,7 +167,7 @@ namespace Http{
                 this->multiPartParser();
             }else{
                 if(m_TotalLength > 0 && m_TotalLength < 1024*1024*5){
-                    this->recv(m_TotalLength - data.size(),[this](const Safe<Socket>& conn,StreamBuffer& data){
+                    m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
                         std::string body;
                         auto& request = m_RequestParser->getData();
                         body.reserve(data.size());
@@ -170,7 +185,8 @@ namespace Http{
     }
 
     void HttpSocket::responseParser(){
-        this->recv([this](const Safe<Socket>& conn,StreamBuffer& data){
+        auto self = this->shared_from_this();
+        m_Socket->recv([this,self](Socket::StreamBuffer& data){
             uint64_t nparse = m_ResponseParser->execute(data.data(),data.size());
             if(m_ResponseParser->hasError()){
                 return;
@@ -183,7 +199,7 @@ namespace Http{
             }
             uint64_t contentLength = m_ResponseParser->getContentLength();
             if(contentLength > 0){
-                this->recv(contentLength - data.size(),[this](const Safe<Socket>& conn,StreamBuffer& data){
+                m_Socket->recv(contentLength - data.size(),[this,self](Socket::StreamBuffer& data){
                     std::string body;
                     auto& response = m_ResponseParser->getData();
                     body.reserve(data.size());
@@ -200,7 +216,8 @@ namespace Http{
     }
 
     void HttpSocket::multiPartParser() {
-        this->recv([this](const Safe<Socket>& conn,StreamBuffer& data){
+        auto self = this->shared_from_this();
+        m_Socket->recv([this,self](Socket::StreamBuffer& data){
             size_t fed = 0;
             do {
                 size_t ret = m_MultiPart.feed(data.data() + fed,data.size() - fed);
@@ -231,7 +248,8 @@ namespace Http{
         m_FileStream.read(m_StreamBuffer.get(),transferLength);
         auto length = m_FileStream.gcount();
         m_CurrentTransferLength += length;
-        this->send(m_StreamBuffer.get(),length,[this](){
+        auto self = this->shared_from_this();
+        m_Socket->send(m_StreamBuffer.get(),length,[this,self](){
             this->transferFileStream();
         });
     }

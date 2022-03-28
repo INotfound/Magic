@@ -19,13 +19,12 @@
 
 ///// http://127.0.0.1/
 
-
 class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
     public:
-        ResourceServlet():Magic::NetWork::Http::IHttpServlet("^/?(.*)$",Magic::NetWork::Http::HttpServletType::Global){
-
+        ResourceServlet(){
         }
-        bool handle(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response) override{
+
+        void handle(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
             std::string res = "./www";
             std::string path = request->getPath();
             if(path == "/"){
@@ -33,37 +32,53 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
             }
             res += path;
             if(IS_FILE(res.c_str()) != 0){
-                return false;
+                return;
             }
-
             std::async(std::launch::async,[httpSocket,res,response](){
                 response->setResource(res);
                 httpSocket->sendResponse(response);
             });
+            return;
+        }
 
-            return true;
+        void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
+            std::string res = "./www";
+            std::string path = request->getPath();
+            if(path == "/"){
+                path = "/index.html";
+            }
+            res += path;
+            if(IS_FILE(res.c_str()) != 0){
+                return;
+            }
+            std::async(std::launch::async,[httpSocket,res,response](){
+                response->setResource(res);
+                httpSocket->sendResponse(response);
+            });
+            return;
         }
 };
 
-//std::atomic_int newNum(0);
-//
-//void* operator new(std::size_t size)
-//{
-//    newNum++;
-//    std::cout << "New " << newNum << std::endl;
-//    return std::malloc(size);
-//}
-//
-//void operator delete(void* ptr)
-//{
-//    newNum--;
-//    std::cout << "delete " << newNum << std::endl;
-//    std::free(ptr);
-//}
+std::atomic_int newNum(0);
+
+void* operator new(std::size_t size)
+{
+    newNum++;
+    std::cout << "New " << newNum << std::endl;
+    return std::malloc(size);
+}
+
+void operator delete(void* ptr)
+{
+    newNum--;
+    std::cout << "delete " << newNum << std::endl;
+    std::free(ptr);
+}
 
 
 int main(int argc,char** argv){
 //    Magic::g_TraceAppender = std::make_shared<>
+
 
     Magic::NetWork::Http::Uri uri;
     uri.execute("mysql://admin@0.0.0.0/xxx?password=12345678901a");
@@ -93,14 +108,17 @@ int main(int argc,char** argv){
     Magic::NetWork::Http::HttpServer server(pool,timingWheel,config);
 
 
-    Safe<Magic::NetWork::Http::IHttpServlet> servlet = std::make_shared<Magic::NetWork::Http::NotFoundServlet>();
     Safe<Magic::NetWork::Http::IHttpServlet> resservlet = std::make_shared<ResourceServlet>();
     Safe<Magic::NetWork::Http::HttpServletDispatch> dispatch = std::make_shared<Magic::NetWork::Http::HttpServletDispatch>();
 
     MAGIC_DEBUG() << __cplusplus;
 
-    dispatch->addHttpServlet(servlet);
-    dispatch->addHttpServlet(resservlet);
+    dispatch->setHttpServlet(resservlet);
+//    dispatch->addHttpServlet(resservlet);
+
+    resservlet->addRoute("^/?(.*)$",&ResourceServlet::handle,Magic::NetWork::Http::HttpRouteType::Match);
+    resservlet->addRoute("/get",&ResourceServlet::handle1);
+
     server.setServletDispatch(dispatch);
     server.run();
     return 0;

@@ -15,67 +15,71 @@ namespace Http{
     /**
      * @brief: Servlet类型枚举类
      */
-    enum class HttpServletType{
-        Normal,
-        Global,
-        Deafult,
+    enum class HttpRouteType{
+        Match,
+        Normal
     };
+    class HttpServletDispatch;
+    using RouteHandle = std::function<void(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&)>;
     /**
      * @brief: IHttpServlet类
      */
     class IHttpServlet{
+        friend class HttpServletDispatch;
+    public:
+        template<typename T,typename... Args>
+        using ClassMemberFunction = void(T::*)(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&);
     public:
         virtual ~IHttpServlet();
-        IHttpServlet(const std::string& path,const HttpServletType& type = HttpServletType::Normal);
-        const std::string& getPath() const;
-        const HttpServletType& getType() const;
-        virtual bool handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response) =0;
+        template<class T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
+        void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc,HttpRouteType type =HttpRouteType::Normal);
     private:
-        std::string m_Path;
-        HttpServletType m_ServletType;
-    };
-    /**
-     * @brief: 404 NotFound类
-     */
-    class NotFoundServlet :public IHttpServlet{
-    public:
-        NotFoundServlet();
-        bool handle(const Safe<HttpSocket>& httpSocket,const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response) override;
-    private:
-        std::string m_Html;
+        Safe<HttpServletDispatch> m_ServletDispatch;
     };
     /**
      * @brief: HttpServlet分配器类
      */
-    class HttpServletDispatch{
+    class HttpServletDispatch :public std::enable_shared_from_this<HttpServletDispatch>{
     public:
-        HttpServletDispatch();
         /**
          * @brief: 添加Servlet对象函数
          * @param path Servlet的路径
          * @param servlet Servlet对象
          */
-        void addHttpServlet(const Safe<IHttpServlet>& servlet);
+        void setHttpServlet(const Safe<IHttpServlet>& servlet);
+        /**
+         * @param path Url 子路径
+         * @param type 路由类型
+         * @param handle 处理函数
+         */
+        void addRoute(const std::string& path,HttpRouteType type,RouteHandle handle);
         /**
          * @brief: 处理函数
          * @param request Http请求对象
          * @param response Http响应对象
          * @return: 返回True则成功，返回False则失败
          */
-        void handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response);
+        void handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& httpRequest,const Safe<HttpResponse>& httpResponse);
     private:
         /**
-         * @brief: 获取模糊匹配的Servlet对象函数
-         * @param path Servlet的路径
-         * @return: 返回Servlet对象
+         * @brief: 获取匹配的Routed对应的处理函数
+         * @param path Route的路径
+         * @return: 返回Route对应的处理函数
          */
-        const Safe<IHttpServlet>& getMatchedServlet(const std::string& path);
+        const RouteHandle& getMatchedServlet(const std::string& path);
     private:
         RWMutex m_Mutex;
-        Safe<IHttpServlet> m_DeafultServlet;
-        std::unordered_map<std::string,Safe<IHttpServlet>> m_Servlets;
-        std::unordered_map<std::string,Safe<IHttpServlet>> m_GlobServlets;
+        RouteHandle m_EmptyRouteHandle;
+        std::unordered_map<std::string,RouteHandle> m_MatchRoutes;
+        std::unordered_map<std::string,RouteHandle> m_NormalRoutes;
     };
+
+    template<class T, typename>
+    void IHttpServlet::addRoute(const std::string &path, IHttpServlet::ClassMemberFunction<T> memberFunc,HttpRouteType type) {
+        if(m_ServletDispatch){
+            m_ServletDispatch->addRoute(path,type,std::bind(memberFunc,reinterpret_cast<T*>(this),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
+        }
+    }
 
 }
 }

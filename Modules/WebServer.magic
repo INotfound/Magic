@@ -29,28 +29,20 @@
                 "IncludePath": "Magic/NetWork/Http/HttpServer.h",
                 "Dependencies":["Magic::NetWork::IoPool","Magic::TimingWheel","Magic::Config"],
                 "FunctionPropertys":["setServletDispatch"]
-            },
-            {
-                "Id":"notFoundServlet",
-                "Class":"Magic::NetWork::Http::NotFoundServlet",
-                "IncludePath": "Magic/NetWork/Http/HttpServlet.h",
-                "Interface":"Magic::NetWork::Http::IHttpServlet",
-                "Dependencies":[],
-                "FunctionPropertys":[]
             }
         ],
         "Initialize":[
             {
                 "Id":"timingWheel",
-                "FunctionPropertys":["run"],
-                "FunctionArguments":{}
+                "InvokeFunctions":{
+                    "run":[]
+                }
             },
             {
                 "Id":"dispatch",
                 "Loop":true,
-                "Callee":"Magic::NetWork::Http::IHttpServlet",
-                "FunctionPropertys":["addHttpServlet"],
-                "FunctionArguments":{}
+                "CalleeFunctions":["setHttpServlet"],
+                "Callee":"Magic::NetWork::Http::IHttpServlet"
             }
         ],
         "Constructor":{

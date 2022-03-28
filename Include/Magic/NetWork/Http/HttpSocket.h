@@ -16,16 +16,17 @@ namespace Http{
     /**
      * @brief: HttpSocket类 
      */
-    class HttpSocket :public Socket{
+    class HttpSocket :public std::enable_shared_from_this<HttpSocket>{
     public:
         /// Http处理方法
         typedef std::function<void(const Safe<HttpSocket>& socket,const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
+        ~HttpSocket();
         /**
          * @brief: 构造函数
          * @param timeOutMs 超时时间
          * @param context  Asio的处理上下文
          */
-        HttpSocket(uint64_t timeOutMs,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
+        HttpSocket(const Safe<Socket>& socket);
         /**
          * @brief: 接收请求头函数
          * @param callback 接收回调函数
@@ -78,6 +79,7 @@ namespace Http{
         void transferFileStream();
     private:
         MultiPart m_MultiPart;
+        Safe<Socket> m_Socket;
         uint64_t m_TotalLength;
         uint64_t m_CurrentLength;
         Safe<char> m_StreamBuffer;

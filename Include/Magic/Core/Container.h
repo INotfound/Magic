@@ -54,11 +54,12 @@ namespace Magic{
         template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
         RegisteredType& registerTypeEx(bool isSingleton = true){
             const void* id = CompiletimeIId<T>();
+            const void* raw = CompiletimeIId<M>();
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
             Function<T,Args...> createFunc = &Container::invoke<T,M,Args...>;
-            m_RegisteredType[id].push_back(RegisteredType(isSingleton, [this,createFunc](){return (this->*createFunc)();}));
-            return m_RegisteredType[id].back();
+            m_RegisteredType[id].emplace(raw,RegisteredType(isSingleton, [this,createFunc](){return (this->*createFunc)();}));
+            return m_RegisteredType[id].at(raw);
         }
 
         template<typename T>
@@ -68,17 +69,18 @@ namespace Magic{
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
             RegisteredType registerObject(true,[](){return Safe<void>();});
             registerObject.m_Object = std::move(instance);
-            m_RegisteredType[id].push_back(registerObject);
-            return m_RegisteredType[id].back();
+            m_RegisteredType[id].emplace(id,registerObject);
+            return m_RegisteredType[id].at(id);
         }
 
         template<typename T,typename M,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
         RegisteredType& registerInstance(const Safe<M>& instance){
             const void* id = CompiletimeIId<T>();
+            const void* raw = CompiletimeIId<M>();
             RegisteredType registerObject(true,[](){return Safe<void>();});
             registerObject.m_Object = std::move(instance);
-            m_RegisteredType[id].push_back(registerObject);
-            return m_RegisteredType[id].back();
+            m_RegisteredType[id].emplace(raw,registerObject);
+            return m_RegisteredType[id].at(raw);
         }
 
         template<typename T>
@@ -88,7 +90,34 @@ namespace Magic{
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
-            auto& registeredType = iter->second.front();
+            auto rawIter = iter->second.begin();
+            if(rawIter == iter->second.end())
+                throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
+            auto& registeredType = rawIter->second;
+            if(registeredType.m_IsSingelton){
+                if(!registeredType.m_Object){
+                    registeredType.m_Object = registeredType.m_CreateFunc();
+                    registeredType.resolveMemberFunction(self);
+                }
+                return std::static_pointer_cast<T>(registeredType.m_Object);
+            }
+            auto object = registeredType.m_CreateFunc();
+            registeredType.resolveMemberFunction(self);
+            return std::static_pointer_cast<T>(object);
+        }
+
+        template<typename T,typename M,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
+        Safe<T> resolve() {
+            const void* id = CompiletimeIId<T>();
+            const void* raw = CompiletimeIId<M>();
+            auto self = this->shared_from_this();
+            auto iter = m_RegisteredType.find(id);
+            if(iter == m_RegisteredType.end())
+                throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
+            auto rawIter = iter->second.find(raw);
+            if(rawIter == iter->second.end())
+                throw std::logic_error(std::string(typeid(M).name()) + " Is Not Registered!!!");
+            auto& registeredType = iter->second.at(raw);
             if(registeredType.m_IsSingelton){
                 if(!registeredType.m_Object){
                     registeredType.m_Object = registeredType.m_CreateFunc();
@@ -106,10 +135,10 @@ namespace Magic{
             auto self = this->shared_from_this();
             for(auto& v :m_RegisteredType){
                 for(auto& registeredType :v.second){
-                    if(registeredType.m_IsSingelton){
-                        if(!registeredType.m_Object){
-                            registeredType.m_Object = registeredType.m_CreateFunc();
-                            registeredType.resolveMemberFunction(self);
+                    if(registeredType.second.m_IsSingelton){
+                        if(!registeredType.second.m_Object){
+                            registeredType.second.m_Object = registeredType.second.m_CreateFunc();
+                            registeredType.second.resolveMemberFunction(self);
                         }
                     }
                 }
@@ -123,13 +152,13 @@ namespace Magic{
             auto iter = m_RegisteredType.find(CompiletimeIId<T>());
             if(iter != m_RegisteredType.end()){
                 for(auto& registeredType :iter->second){
-                    if(registeredType.m_IsSingelton){
-                        if(!registeredType.m_Object){
-                            registeredType.m_Object = std::move(registeredType.m_CreateFunc());
-                            registeredType.resolveMemberFunction(self);
+                    if(registeredType.second.m_IsSingelton){
+                        if(!registeredType.second.m_Object){
+                            registeredType.second.m_Object = std::move(registeredType.second.m_CreateFunc());
+                            registeredType.second.resolveMemberFunction(self);
                         }
                     }
-                    objectList.push_back(std::static_pointer_cast<T>(registeredType.m_Object));
+                    objectList.push_back(std::static_pointer_cast<T>(registeredType.second.m_Object));
                 }
             }
             return objectList;
@@ -140,7 +169,7 @@ namespace Magic{
             return std::make_shared<M>(this->resolve<Args>()...); 
         }
     private:
-        std::unordered_map<const void*,std::list<RegisteredType>> m_RegisteredType;
+        std::unordered_map<const void*,std::unordered_map<const void*,RegisteredType>> m_RegisteredType;
     };
     extern Safe<Container> g_Container;
     const Safe<Container>& Configure(const std::function<void(const Safe<Container>&)>& configure);

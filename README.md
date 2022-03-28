@@ -104,9 +104,9 @@ add_custom_command(
             {
                 "Id":"",                    // 类Id标识应与上方Registered中一致.
                 "Loop":false,               // Loop 循环初始化
-                "Callee":"",                // 接口类类型 若Loop == true则该属性必须具有值.
-                "FunctionPropertys":[],     // 需要初始化的函数.
-                "FunctionArguments":{}      // 函数中对应的 RAW Arguments. “XX”:["XXX"]写法.
+                "Callee":"",                // 被调用的接口类类型 若Loop == true则该属性必须具有值.
+                "CalleeFunctions":[],       // 被调用的函数.
+                "InvokeFunctions":{}        // 函数中对应的 RAW Arguments. “XX”:["XXX"]写法.
             }
         ],
         "Constructor":{                     // 构造函数定义
@@ -162,18 +162,10 @@ int main(){
         ],
         "Initialize":[                                      // 初始化(非强制)
             {
-                "Id":"configFile",                          // 类Id标识应与上方Registered中一致.
-                "FunctionPropertys":["setFilePath"],        // 需要初始化的函数.
-                "FunctionArguments":{
-                    "setFilePath" : ["\"./config.conf\""]   // 函数中对应的 RAW Arguments. “XX”:["XXX"]写法.
-                }
-            },
-            {
                 "Id":"logger",
                 "Loop":true,                                // Loop 循环加入接口类对象
                 "Callee":"Magic::ILogAppender",             // 接口类类型 若Loop == true则该属性必须具有值.
-                "FunctionPropertys":["addILogAppender"],    // 接口类对象添加函数.	
-                "FunctionArguments":{}
+                "CalleeFunctions":["addILogAppender"],      // 接口类对象添加函数.
             }
         ],
         "Constructor":{                                     // 构造函数定义

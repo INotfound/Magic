@@ -13,78 +13,53 @@ namespace NetWork{
 namespace Http{
     IHttpServlet::~IHttpServlet() =default;
 
-    IHttpServlet::IHttpServlet(const std::string& path,const HttpServletType& type)
-        :m_Path(path)
-        ,m_ServletType(type){
-    }
-    
-    const std::string& IHttpServlet::getPath() const{
-        return m_Path;
-    }
-
-    const HttpServletType& IHttpServlet::getType() const{
-        return m_ServletType;
-    }
-
-    NotFoundServlet::NotFoundServlet()
-        :Http::IHttpServlet("404",Http::HttpServletType::Deafult)
-        ,m_Html("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>"){
-    }
-
-    bool NotFoundServlet::handle(const Safe<HttpSocket>& httpSocket,const Safe<Http::HttpRequest>& request,const Safe<Http::HttpResponse>& response){
-        response->setBody(m_Html);
-        response->setStatus(Http::HttpStatus::NOT_FOUND);
-        httpSocket->sendResponse(response);
-        return true;
-    }
-
-    HttpServletDispatch::HttpServletDispatch(){
-    }
-
-    void HttpServletDispatch::addHttpServlet(const Safe<IHttpServlet>& servlet){
+    void HttpServletDispatch::setHttpServlet(const Safe<IHttpServlet>& servlet){
         RWMutex::WriteLock lock(m_Mutex);
-        switch (servlet->getType()){
-            case HttpServletType::Normal:
-                m_Servlets.emplace(servlet->getPath(),servlet);
-                break;
-            case HttpServletType::Global:
-                m_GlobServlets.emplace(servlet->getPath(),servlet);
-                break;
-            default:
-                m_DeafultServlet = servlet;
-                break;
-        }
-        MAGIC_INFO() << "HttpServlet Path: " << servlet->getPath() << " Successfully Loaded";
+        servlet->m_ServletDispatch = this->shared_from_this();
     }
 
-    void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
-        if(!m_DeafultServlet){
-            MAGIC_WARN() << "DeafultServlet Not Set";
+    void HttpServletDispatch::addRoute(const std::string& path,HttpRouteType type,RouteHandle handle){
+        switch(type){
+            case HttpRouteType::Match:
+                m_MatchRoutes.emplace(path,handle);
+                break;
+            case HttpRouteType::Normal:
+                m_NormalRoutes.emplace(path,handle);
+                break;
         }
-        auto& servlet = this->getMatchedServlet(request->getPath());
-        if(servlet){
-            if(!servlet->handle(httpSocket,request,response))
-                m_DeafultServlet->handle(httpSocket,request,response);
-        }
+        MAGIC_INFO() << "HttpServlet Path: " << path << " Successfully Loaded";
     }
 
-    const Safe<IHttpServlet>& HttpServletDispatch::getMatchedServlet(const std::string& path){
+    void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& httpRequest,const Safe<HttpResponse>& httpResponse){
+        const auto& handle = this->getMatchedServlet(httpRequest->getPath());
+        if(handle){
+            handle(httpSocket,httpRequest,httpResponse);
+        }else{
+            httpResponse->setStatus(HttpStatus::NOT_FOUND);
+            httpResponse->setBody("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>");
+            httpSocket->sendResponse(httpResponse);
+        };
+    }
+
+    const RouteHandle& HttpServletDispatch::getMatchedServlet(const std::string& path){
         RWMutex::ReadLock lock(m_Mutex);
-        auto exactlyIter = m_Servlets.find(path);
-        if(exactlyIter != m_Servlets.end()){
+        auto exactlyIter = m_NormalRoutes.find(path);
+        auto exactlyEnd = m_NormalRoutes.end();
+        if(exactlyIter != exactlyEnd){
             return exactlyIter->second;
         }
         std::regex reg;
-        auto globIter = m_GlobServlets.begin();
-        auto globEnd = m_GlobServlets.end();
-        for(; globIter != globEnd; globIter++){
-            reg.assign(globIter->first);
+        auto matchIter = m_MatchRoutes.begin();
+        auto matchEnd = m_MatchRoutes.end();
+        for(; matchIter != matchEnd; matchIter++){
+            reg.assign(matchIter->first);
             if(std::regex_match(path,reg)){
-                return globIter->second;
+                return matchIter->second;
             }
         }
-        return m_DeafultServlet;
+        return m_EmptyRouteHandle;
     }
 }
+
 }
 }

@@ -43,8 +43,7 @@
                 "Id":"logger",
                 "Loop":true,
                 "Callee":"Magic::ILogAppender",
-                "FunctionPropertys":["addILogAppender"],
-                "FunctionArguments":{}
+                "CalleeFunctions":["addILogAppender"]
             }
         ],
         "Constructor":{

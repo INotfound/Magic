@@ -25,12 +25,13 @@ namespace NetWork{
         typedef std::vector<char> StreamBuffer;
         /// 错误回调方法
         typedef std::function<void()> SendCallBack;
+        /// 数据接收方法
+        typedef std::function<void(StreamBuffer&)> RecvCallBack;
         /// 超时回调方法
         typedef std::function<void(const Safe<Socket>&)> TimeOutCallBack;
         /// 错误回调方法
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
-        /// 数据接收方法
-        typedef std::function<void(const Safe<Socket>&,StreamBuffer&)> RecvCallBack;
+
         /**
          * @brief: 析构函数
          */

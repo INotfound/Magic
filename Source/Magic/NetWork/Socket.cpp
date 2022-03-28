@@ -59,8 +59,7 @@ namespace NetWork{
     }
 #endif
     void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
-        auto self = this->shared_from_this();
-        auto sendCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+        auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
             if(err){
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
@@ -82,8 +81,7 @@ namespace NetWork{
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
-        auto self = this->shared_from_this();
-        auto sendCallBack = std::bind([this,self,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+        auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
             if(err){
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
@@ -105,8 +103,7 @@ namespace NetWork{
     }
 
     void Socket::recv(const RecvCallBack& callBack){
-        auto self = this->shared_from_this();
-        auto readCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+        auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err){
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
@@ -114,7 +111,7 @@ namespace NetWork{
             }
             m_TimeOut = false;
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
-            callback(self,this->m_StreamBuffer);
+            callback(this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
         Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
@@ -127,8 +124,7 @@ namespace NetWork{
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
-        auto self = this->shared_from_this();
-        auto readCallBack = std::bind([this,self](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+        auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err) {
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
@@ -136,7 +132,7 @@ namespace NetWork{
             }
             m_TimeOut = false;
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
-            callback(self,this->m_StreamBuffer);
+            callback(this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
         Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL

@@ -25,12 +25,11 @@ typedef struct{
     bool Loop;
     std::string Id;
     std::string Callee;
-    std::vector<std::string> FunctionPropertys;
-    std::unordered_map<std::string,std::vector<std::string>> FunctionArguments;
+    std::vector<std::string> CalleeFunctions;
+    std::vector<std::pair<std::string,std::vector<std::string>>> InvokeFunctions;
 }Initialize;
 
 std::string g_NameSpace;
-std::string g_HeaderName;
 std::string g_Constructor;
 bool g_ConstructorWithParameter;
 std::vector<Initialize> g_InitializeMap;
@@ -83,16 +82,16 @@ void ParseInitialize(const rapidjson::Value::Array& array){
     for(auto& v : array){
         Initialize initializeObj;
         initializeObj.Loop = false;
-        if(!v.HasMember("Id") || !v.HasMember("FunctionPropertys")){
-            std::printf("[Err]: Initialize Json[Id|FunctionPropertys] Missing Fields:%d !!!\n",__LINE__);
+        if(!v.HasMember("Id")){
+            std::printf("[Err]: Initialize Json[Id] Missing Fields:%d !!!\n",__LINE__);
             std::exit(1);
         }
         initializeObj.Id = v["Id"].GetString();
-        if(v.HasMember("FunctionPropertys") && v["FunctionPropertys"].IsArray()){
-            auto functionPropertys = v["FunctionPropertys"].GetArray();
+        if(v.HasMember("CalleeFunctions") && v["CalleeFunctions"].IsArray()){
+            auto functionPropertys = v["CalleeFunctions"].GetArray();
             for(auto& fps : functionPropertys){
                 std::string fpsString = fps.GetString();
-                initializeObj.FunctionPropertys.push_back(fpsString);
+                initializeObj.CalleeFunctions.push_back(fpsString);
             }
         }
 
@@ -107,11 +106,11 @@ void ParseInitialize(const rapidjson::Value::Array& array){
             }
         }
 
-        if(v.HasMember("FunctionArguments") && v["FunctionArguments"].IsObject()){
-            auto functionArguments = v["FunctionArguments"].GetObject();
-            for(auto& fas : functionArguments){
+        if(v.HasMember("InvokeFunctions") && v["InvokeFunctions"].IsObject()){
+            auto InvokeFunctions = v["InvokeFunctions"].GetObject();
+            for(auto& fas : InvokeFunctions){
                 if(!fas.value.IsArray()){
-                    std::printf("[Err]: Initialize Json[FunctionArguments] Missing Fields:%d !!!\n",__LINE__);
+                    std::printf("[Err]: Initialize Json[InvokeFunctions] Missing Fields:%d !!!\n",__LINE__);
                     std::exit(1);
                 }
                 std::vector<std::string> arguments;
@@ -120,12 +119,12 @@ void ParseInitialize(const rapidjson::Value::Array& array){
                     std::string argString = arg.GetString();
                     arguments.push_back(argString);
                 }
-                initializeObj.FunctionArguments.emplace(fas.name.GetString(),arguments);
+                initializeObj.InvokeFunctions.emplace_back(fas.name.GetString(),arguments);
             }
 
         }
-        if(initializeObj.Id.empty() || initializeObj.FunctionPropertys.empty()){
-            std::printf("[Err]: Initialize Json[Id|FunctionPropertys] Is Empty:%d !!!\n",__LINE__);
+        if(initializeObj.Id.empty() && (initializeObj.InvokeFunctions.empty() || initializeObj.CalleeFunctions.empty())){
+            std::printf("[Err]: Initialize Json[Id && (InvokeFunctions || CalleeFunctions)] Is Empty:%d !!!\n",__LINE__);
             std::exit(1);
         }
         g_InitializeMap.push_back(initializeObj);
@@ -223,9 +222,13 @@ void Generator(std::ostream& stream){
                 stream << "            "
                        << "auto "
                        << val.Id << " = "
-                       << "iocContainer->resolve<"
-                       << CallerIter.Class
-                       << ">();"
+                       << "iocContainer->resolve<";
+                if(CallerIter.Interface.empty()){
+                    stream << CallerIter.Class;
+                }else{
+                    stream << CallerIter.Interface << ','  << CallerIter.Class;
+                }
+                stream << ">();"
                        << LF
                        << "            for(auto& v : "
                        << "iocContainer->resolveAll<"
@@ -235,7 +238,7 @@ void Generator(std::ostream& stream){
                        << "                "
                        << val.Id
                        << "->"
-                       << val.FunctionPropertys.at(0)
+                       << val.CalleeFunctions.at(0)
                        << "(v);"
                        << LF
                        << "            }"
@@ -243,20 +246,24 @@ void Generator(std::ostream& stream){
             }else{
                 stream << "            auto "
                        << val.Id << " = "
-                       << "iocContainer->resolve<"
-                       << CallerIter.Class
-                       << ">();"
+                       << "iocContainer->resolve<";
+                if(CallerIter.Interface.empty()){
+                    stream << CallerIter.Class;
+                }else{
+                    stream << CallerIter.Interface << ','  << CallerIter.Class;
+                }
+                stream << ">();"
                        << LF;
                 /// todo: 可以扩展一下
-                for(auto& fps : val.FunctionPropertys){
+                for(auto& ifs : val.InvokeFunctions){
                     stream << "            "
                         << val.Id
                         << "->"
-                        << fps
+                        << ifs.first
                         << "(";
 
                     uint32_t i = 0;
-                    for(auto& fas : val.FunctionArguments[fps]){
+                    for(auto& fas : ifs.second){
                         if(i == 0){
                             i++;
                             stream << fas;
