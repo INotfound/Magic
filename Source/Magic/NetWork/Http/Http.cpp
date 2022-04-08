@@ -445,7 +445,7 @@ namespace Http{
         }
         if(expired > 0){
             result.append("; Expires=");
-            result.append(GetTimeGMTString(expired));
+            result.append(TimeToGMTString(expired));
         }
         if(httpOnly){
             result.append("; HttpOnly");

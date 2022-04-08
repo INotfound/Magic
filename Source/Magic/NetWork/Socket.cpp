@@ -124,7 +124,7 @@ namespace NetWork{
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
-        auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+        auto readCallBack = std::bind([this,size](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err) {
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
@@ -132,6 +132,10 @@ namespace NetWork{
             }
             m_TimeOut = false;
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+            if(size > length){
+                this->recv(size - length,callback);
+                return;
+            }
             callback(this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
         Mutex::Lock lock(m_Mutex);

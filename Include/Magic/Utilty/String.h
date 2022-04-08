@@ -112,7 +112,7 @@ namespace Magic{
         return buf;
     }
 
-    inline std::string GetTimeGMTString(std::time_t tt){
+    inline std::string TimeToGMTString(std::time_t tt){
         struct tm* GMTime = gmtime(&tt);
         char buff[512]={0};
         std::strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);

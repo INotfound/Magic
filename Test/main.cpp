@@ -59,21 +59,21 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
         }
 };
 
-std::atomic_int newNum(0);
-
-void* operator new(std::size_t size)
-{
-    newNum++;
-    std::cout << "New " << newNum << std::endl;
-    return std::malloc(size);
-}
-
-void operator delete(void* ptr)
-{
-    newNum--;
-    std::cout << "delete " << newNum << std::endl;
-    std::free(ptr);
-}
+//std::atomic_int newNum(0);
+//
+//void* operator new(std::size_t size)
+//{
+//    newNum++;
+//    std::cout << "New " << newNum << std::endl;
+//    return std::malloc(size);
+//}
+//
+//void operator delete(void* ptr)
+//{
+//    newNum--;
+//    std::cout << "delete " << newNum << std::endl;
+//    std::free(ptr);
+//}
 
 
 int main(int argc,char** argv){
