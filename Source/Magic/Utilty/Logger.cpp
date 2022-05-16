@@ -82,42 +82,42 @@ namespace Magic{
 
     class MessageFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getContent().c_str();
         }
     };
 
     class LevelFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& /*event*/) override{
             os << ToString(level);
         }
     };
 
     class ElapseFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getElapse();
         }
     };
 
     class LogNameFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getLogName();
         }
     };
 
     class ThreadIdFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getThreadId();
         }
     };
 
     class NewLineFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& /*event*/) override{
             os << std::endl;
         }
     };
@@ -130,7 +130,7 @@ namespace Magic{
                 this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
             }
         }
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             std::time_t time_secounds = static_cast<int32_t>(event->getTime());
             os << Magic::TimeToString(time_secounds,this->m_FormatString).c_str();
         }
@@ -140,7 +140,7 @@ namespace Magic{
 
     class FilePathFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             const std::string& filePath = event->getFile();
             std::size_t pathPos = filePath.rfind('/');
             if(pathPos == std::string::npos) {
@@ -155,21 +155,21 @@ namespace Magic{
 
     class LineFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getLine();
         }
     };
 
     class TabFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& /*event*/) override{
             os << '\t';
         }
     };
 
     class ThreadNameFormatItem :public ILogFormatItem{
     public:
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getThreadName().c_str();
         }
     };
@@ -177,7 +177,7 @@ namespace Magic{
     class StringFormatItem :public ILogFormatItem{
     public:
         explicit StringFormatItem(const std::string& str) :m_String(str){}
-        void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& event) override{
+        void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& /*event*/) override{
             os << this->m_String.c_str();
         }
     private:

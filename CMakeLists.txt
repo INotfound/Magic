@@ -53,9 +53,9 @@ if(NetWork STREQUAL ON)
         Source/Magic/NetWork/Http/HttpServer.cpp
         Source/Magic/NetWork/Http/HttpServlet.cpp
         Source/Magic/NetWork/Http/HttpSession.cpp
-
-        Source/Magic/NetWork/Http/Utils/url_parser.rl.cpp
         Source/Magic/NetWork/Http/Utils/MultiPartParser.cpp
+# Ragel
+        Source/Magic/NetWork/Http/Utils/uri_parser.rl.cpp
         Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
         Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
     )

@@ -76,7 +76,7 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
 //}
 
 
-int main(int argc,char** argv){
+int main(int /*argc*/,char** /*argv*/){
 //    Magic::g_TraceAppender = std::make_shared<>
 
 

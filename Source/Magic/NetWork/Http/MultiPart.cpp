@@ -93,7 +93,7 @@ namespace Http {
         return std::string();
     }
 
-    void MultiPart::PartBegin(const char *buffer, size_t start, size_t end, void *userData) {
+    void MultiPart::PartBegin(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
         auto *self = reinterpret_cast<MultiPart *>(userData);
         self->m_IsFile = false;
         self->m_HeaderName.clear();
@@ -110,14 +110,14 @@ namespace Http {
         self->m_HeaderValue.append(buffer + start, end - start);
     }
 
-    void MultiPart::HeaderEnd(const char *buffer, size_t start, size_t end, void *userData) {
+    void MultiPart::HeaderEnd(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
         auto *self = reinterpret_cast<MultiPart *>(userData);
         self->m_HeaderMap.insert(std::make_pair(self->m_HeaderName, self->m_HeaderValue));
         self->m_HeaderName.clear();
         self->m_HeaderValue.clear();
     }
 
-    void MultiPart::HeadersEnd(const char *buffer, size_t start, size_t end, void *userData) {
+    void MultiPart::HeadersEnd(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
         auto *self = reinterpret_cast<MultiPart *>(userData);
         self->m_HeaderName.clear();
         self->m_HeaderValue.clear();
@@ -145,7 +145,7 @@ namespace Http {
         }
     }
 
-    void MultiPart::PartEnd(const char *buffer, size_t start, size_t end, void *userData) {
+    void MultiPart::PartEnd(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
         auto *self = reinterpret_cast<MultiPart *>(userData);
         if(!self->m_ParamName.empty()){
             if(self->m_IsFile){
@@ -165,7 +165,7 @@ namespace Http {
         }
     }
 
-    void MultiPart::End(const char *buffer, size_t start, size_t end, void *userData) {
+    void MultiPart::End(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
         auto *self = reinterpret_cast<MultiPart *>(userData);
         self->m_HeaderMaps.push_back(self->m_HeaderMap);
         self->m_HeaderMap.clear();

@@ -343,7 +343,7 @@ void MultiPartParser::processPartData(size_t &prevIndex, size_t &index, const ch
             setError("Parser bug: index overflows lookbehind buffer. "
                      "Please send bug report with input file attached.");
             throw std::out_of_range("index overflows lookbehind buffer");
-        } else if (index - 1 < 0){
+        } else if (static_cast<int64_t>(index) - 1 < 0){
             setError("Parser bug: index underflows lookbehind buffer. "
                      "Please send bug report with input file attached.");
             throw std::out_of_range("index underflows lookbehind buffer");

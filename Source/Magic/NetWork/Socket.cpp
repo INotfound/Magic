@@ -59,7 +59,7 @@ namespace NetWork{
     }
 #endif
     void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
-        auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+        auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t /*length*/,const SendCallBack& callback){
             if(err){
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
@@ -81,7 +81,7 @@ namespace NetWork{
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
-        auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t length,const SendCallBack& callback){
+        auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t /*length*/,const SendCallBack& callback){
             if(err){
                 m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
