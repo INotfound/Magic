@@ -39,25 +39,13 @@ namespace Http{
     #endif
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(!err){
-                socket->enableTimeOut();
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
-                if(err == asio::error::eof
-                    || err == asio::error::broken_pipe || err == asio::error::connection_reset
-                #ifdef OPENSSL
-                    || err == asio::error::operation_aborted || err == asio::ssl::error::stream_truncated){
-                #else
-                    || err == asio::error::operation_aborted){
-                #endif
-                    return;
-                }
             #ifdef OPENSSL
                 auto sslStream = socket->getSslEntity();
                 if(sslStream){
                     sslStream->async_handshake(asio::ssl::stream_base::server,[this,socket](const asio::error_code& err){
                         if(err){
-                            if(err == asio::ssl::error::stream_truncated){
-                                return;
-                            }
+                            socket->close();
                             MAGIC_WARN() <<  err.message();
                             return;
                         }
@@ -70,19 +58,19 @@ namespace Http{
                     this->handleFunc(socket);
                 }
             }else{
-                if(err == asio::error::eof || err == asio::error::connection_reset || err == asio::error::operation_aborted){
+                socket->close();
+                if(err == asio::error::operation_aborted)
                     return;
-                }
                 MAGIC_WARN() <<  err.message();
             }
-            if(m_IsRun){
+            if(m_IsRun)
                 this->accept();
-            }
         });
     }
     
     void HttpServer::handleFunc(const Safe<Socket>& socket){
         Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(socket);
+        socket->runHeartBeat(httpSocket);
         httpSocket->setTempDirectory(m_TempDirectory);
         httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
     }

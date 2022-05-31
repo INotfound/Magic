@@ -19,7 +19,7 @@ namespace Http{
     class HttpSocket :public std::enable_shared_from_this<HttpSocket>{
     public:
         /// Http处理方法
-        typedef std::function<void(const Safe<HttpSocket>& socket,const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
+        typedef std::function<void(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
         ~HttpSocket();
         /**
          * @brief: 构造函数
@@ -82,7 +82,9 @@ namespace Http{
         Safe<Socket> m_Socket;
         uint64_t m_TotalLength;
         uint64_t m_CurrentLength;
+        std::atomic_bool m_Death;
         Safe<char> m_StreamBuffer;
+        std::atomic_bool m_Upgrade;
         std::ifstream m_FileStream;
         uint64_t m_StreamBufferSize;
         uint64_t m_TotalTransferLength;

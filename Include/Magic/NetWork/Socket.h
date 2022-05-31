@@ -27,26 +27,29 @@ namespace NetWork{
         typedef std::function<void()> SendCallBack;
         /// 数据接收方法
         typedef std::function<void(StreamBuffer&)> RecvCallBack;
-        /// 超时回调方法
-        typedef std::function<void(const Safe<Socket>&)> TimeOutCallBack;
         /// 错误回调方法
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
-
+        /// 超时回调方法
+        typedef std::function<void(const Safe<Socket>&)> HeartBeatCallBack;
         /**
-         * @brief: 析构函数
+         * @brief: 析构函数S
          */
         virtual ~Socket();
         /**
          * @brief: 构造函数
-         * @param timeOutMs Socket超时时间(毫秒)A
+         * @param heartBeatMs Socket心跳检测时间(毫秒)
          * @param bufferSize 缓存大小
          * @param context Asio的处理上下文
          */
-        Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
+        Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
         /**
-         * @brief: 启用Socket超时
+         * @brief: 关闭Socket
          */
-        void enableTimeOut();
+        void close();
+        /**
+         * @brief: 运行Socket心跳
+         */
+        void runHeartBeat(const Safe<void>& life);
         /**
          * @brief: 获取Socket的实体函数
          * @return: 返回Socket实体
@@ -95,20 +98,19 @@ namespace NetWork{
         void setErrorCodeCallBack(const ErrorCallBack& errorCallBack);
         /**
          * @brief: 设置超时回调函数
-         * @param timeOutCallBack 超时回调函数
+         * @param heartBeatCallBack 超时回调函数
          */
-        void setTimeOutCallBack(const TimeOutCallBack& timeOutCallBack);
+        void setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack);
     private:
         Mutex m_Mutex;
-        uint64_t m_TimeOutMs;
         uint64_t m_BufferSize;
+        uint64_t m_HeartBeatMs;
         Safe<char> m_ByteBlock;
-        std::atomic_bool m_TimeOut;
         StreamBuffer m_StreamBuffer;
         Safe<TimingWheel> m_TimingWheel;
         ErrorCallBack m_ErrorCodeCallBack;
-        TimeOutCallBack m_TimeOutCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;
+        HeartBeatCallBack m_HeartBeatCallBack;
     #ifdef OPENSSL
         Safe<asio::ssl::stream<asio::ip::tcp::socket&>> m_SslStream;
     #endif

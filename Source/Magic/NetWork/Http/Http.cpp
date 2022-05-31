@@ -175,63 +175,6 @@ namespace Http{
         ,m_UrlPath("/")
         ,m_ContentLength(0){
     }
-    
-    void HttpRequest::setVersion(uint8_t ver){
-        m_Version = ver;
-    }
-    
-    void HttpRequest::setMethod(HttpMethod method){
-        m_Method = method;
-    }
-
-    void HttpRequest::setKeepAlive(bool keepAlive){
-        m_KeepAlive = keepAlive;
-    }
-
-    void HttpRequest::setBody(const std::string& body){
-        auto contentType = m_Headers.find("Content-Type");
-        if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded") == 0){
-            Parse(body,m_Params,"&");
-        }
-        m_Body = body;
-    }
-
-    void HttpRequest::setContentLength(uint64_t length){
-        m_ContentLength = length;
-    }
-
-    void HttpRequest::setQuery(const std::string& query){
-        Parse(query,m_Params,"&");
-        m_Query = query;
-    }
-    
-    void HttpRequest::setPath(const std::string& urlPath){
-        m_UrlPath = urlPath;
-    }
-
-    void HttpRequest::setRange(uint64_t start,uint64_t stop){
-        std::string value("bytes="); 
-        value.append(AsString<uint64_t>(start));
-        value.append("-");
-        value += (stop == 0) ? "" : AsString<uint64_t>(stop);
-        m_Headers.emplace("Range", value);
-    }
-
-    void HttpRequest::setFragment(const std::string& fragment){
-        m_Fragment = fragment;
-    }
-
-    void HttpRequest::setParam(const std::string& key,const std::string& value){
-        m_Params.emplace(key, value);
-    }
-
-    void HttpRequest::setHeader(const std::string& key,const std::string& value){
-        m_Headers.emplace(key, value);
-    }
-
-    void HttpRequest::setCookie(const std::string& key,const std::string& value){
-        m_Cookies.emplace(key, value);
-    }
 
     HttpRequest::KeyValue& HttpRequest::atParams(){
         return m_Params;
@@ -369,91 +312,81 @@ namespace Http{
         return os;
     }
 
+    ObjectWrapper<HttpRequest> HttpRequest::setVersion(uint8_t ver){
+        m_Version = ver;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setMethod(HttpMethod method){
+        m_Method = method;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setKeepAlive(bool keepAlive){
+        m_KeepAlive = keepAlive;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setBody(const std::string& body){
+        auto contentType = m_Headers.find("Content-Type");
+        if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded") == 0){
+            Parse(body,m_Params,"&");
+        }
+        m_Body = body;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setContentLength(uint64_t length){
+        m_ContentLength = length;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const std::string& query){
+        Parse(query,m_Params,"&");
+        m_Query = query;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setPath(const std::string& urlPath){
+        m_UrlPath = urlPath;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setRange(uint64_t start,uint64_t stop){
+        std::string value("bytes=");
+        value.append(AsString<uint64_t>(start));
+        value.append("-");
+        value += (stop == 0) ? "" : AsString<uint64_t>(stop);
+        m_Headers.emplace("Range", value);
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const std::string& fragment){
+        m_Fragment = fragment;
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setParam(const std::string& key,const std::string& value){
+        m_Params.emplace(key, value);
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const std::string& key,const std::string& value){
+        m_Headers.emplace(key, value);
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const std::string& key,const std::string& value){
+        m_Cookies.emplace(key, value);
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
     HttpResponse::HttpResponse(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
         ,m_Status(HttpStatus::OK)
         ,m_ContentLength(0)
         ,m_ContentType(HttpContentType::TEXT_HTML){
-    }
-
-    void HttpResponse::setVersion(uint8_t ver){
-        m_Version = ver;
-    }
-
-    void HttpResponse::setStatus(HttpStatus status){
-        m_Status = status;
-    }
-
-    void HttpResponse::setKeepAlive(bool keepAlive){
-        m_KeepAlive = keepAlive;
-    }
-
-    void HttpResponse::setBody(const std::string& body){
-        m_Body = body;
-    }
-
-    void HttpResponse::setContentLength(uint64_t length){
-        m_ContentLength = length;
-    }
-
-    void HttpResponse::setReason(const std::string& reason){
-        m_Reason = reason;
-    }
-
-    void HttpResponse::setResource(const std::string& filePath){
-        m_Resource = filePath;
-    }
-
-    void HttpResponse::setContentType(const std::string& contentType){
-        m_ContentTypeString = contentType;
-    }
-
-    void HttpResponse::setContentType(const HttpContentType& contentType){
-        m_ContentTypeString.clear();
-        m_ContentType = contentType;
-    }
-
-    void HttpResponse::setRange(uint64_t start,uint64_t stop,uint64_t totalLength){
-        std::string value("bytes ");
-        value.append(AsString<uint64_t>(start));
-        value.append("-");
-        value.append(AsString<uint64_t>(stop));
-        value.append("/");
-        value.append(AsString<uint64_t>(totalLength));
-        m_Headers.emplace("Content-Range", value); 
-    }
-
-    void HttpResponse::setHeader(const std::string& key,const std::string& value){
-        m_Headers.emplace(key,value);
-    }
-    
-    void HttpResponse::setCookie(const std::string& key, const std::string& val,std::time_t expired
-            ,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
-        std::string result;
-        result.reserve(256);
-        result.append(key);
-        result.append("=");
-        result.append(val);
-        if(!path.empty()){
-            result.append("; Path=");
-            result.append(path);
-        }
-        if(!domain.empty()){
-            result.append("; Domain=");
-            result.append(domain);
-        }
-        if(expired > 0){
-            result.append("; Expires=");
-            result.append(TimeToGMTString(expired));
-        }
-        if(httpOnly){
-            result.append("; HttpOnly");
-        }
-        if(secure){
-            result.append("; Secure");
-        }
-        m_Cookies.push_back(result);
     }
 
     bool HttpResponse::isRange() const{
@@ -589,7 +522,98 @@ namespace Http{
         }
         return os;
     }
-    
+
+    ObjectWrapper<HttpResponse> HttpResponse::setVersion(uint8_t ver){
+        m_Version = ver;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setStatus(HttpStatus status){
+        m_Status = status;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setKeepAlive(bool keepAlive){
+        m_KeepAlive = keepAlive;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setBody(const std::string& body){
+        m_Body = body;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setContentLength(uint64_t length){
+        m_ContentLength = length;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setReason(const std::string& reason){
+        m_Reason = reason;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setResource(const std::string& filePath){
+        m_Resource = filePath;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const std::string& contentType){
+        m_ContentTypeString = contentType;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const HttpContentType& contentType){
+        m_ContentTypeString.clear();
+        m_ContentType = contentType;
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setRange(uint64_t start,uint64_t stop,uint64_t totalLength){
+        std::string value("bytes ");
+        value.append(AsString<uint64_t>(start));
+        value.append("-");
+        value.append(AsString<uint64_t>(stop));
+        value.append("/");
+        value.append(AsString<uint64_t>(totalLength));
+        m_Headers.emplace("Content-Range", value);
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const std::string& key,const std::string& value){
+        m_Headers.emplace(key,value);
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string& key, const std::string& val,std::time_t expired
+            ,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
+        std::string result;
+        result.reserve(256);
+        result.append(key);
+        result.append("=");
+        result.append(val);
+        if(!path.empty()){
+            result.append("; Path=");
+            result.append(path);
+        }
+        if(!domain.empty()){
+            result.append("; Domain=");
+            result.append(domain);
+        }
+        if(expired > 0){
+            result.append("; Expires=");
+            result.append(TimeToGMTString(expired));
+        }
+        if(httpOnly){
+            result.append("; HttpOnly");
+        }
+        if(secure){
+            result.append("; Secure");
+        }
+        m_Cookies.push_back(result);
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
     std::ostream& operator<<(std::ostream& os, const Safe<HttpRequest>& request){
         return request->toStream(os);
     }

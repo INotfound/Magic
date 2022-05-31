@@ -24,9 +24,8 @@ namespace NetWork{
     }
 
     void TcpServer::run(){
-        if(m_IsRun){
+        if(m_IsRun)
             return;
-        }
         m_IsRun = true;
         this->accept();
         MAGIC_INFO() << "Server Running";
@@ -46,16 +45,14 @@ namespace NetWork{
             throw std::logic_error("IoPool Is Nullptr!!!");
         Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,m_IoPool->get(),m_TimingWheel);
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
-            socket->enableTimeOut();
             if(err){
                 //TODO: ...
                 MAGIC_WARN() << err.message();
                 return;
             }
             this->handleFunc(socket);
-            if(m_IsRun){
-                accept();
-            }
+            if(m_IsRun)
+                this->accept();
         });
     }
 }

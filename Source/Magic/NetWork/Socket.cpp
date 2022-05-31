@@ -10,11 +10,10 @@ namespace Magic{
 namespace NetWork{
     Socket::~Socket() =default;
 
-    Socket::Socket(uint64_t timeOutMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
-        :m_TimeOutMs(timeOutMs)
-        ,m_BufferSize(bufferSize)
+    Socket::Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
+        :m_BufferSize(bufferSize)
+        ,m_HeartBeatMs(heartBeatMs)
         ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
-        ,m_TimeOut(true)
         ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
@@ -23,27 +22,23 @@ namespace NetWork{
         };
     }
 
-    void Socket::enableTimeOut(){
+    void Socket::close() {
+        asio::error_code ignored;
+        if(m_Socket->is_open()) {
+            m_Socket->cancel(ignored);
+            m_Socket->shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
+        }
+        m_Socket->close(ignored);
+    }
+
+    void Socket::runHeartBeat(const Safe<void>& life){
         auto self = this->shared_from_this();
-        Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self](){
+        Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self,life](){
             Mutex::Lock lock(self->m_Mutex);
-            if(self->m_TimeOut){
-                if(self->getEntity()){
-                    asio::error_code ignored;
-                    if(self->getEntity()->is_open()){
-                        if(self->m_TimeOutCallBack){
-                            self->m_TimeOutCallBack(self);
-                        }
-                        self->getEntity()->shutdown(asio::ip::tcp::socket::shutdown_both,ignored);
-                    }
-                    self->getEntity()->close(ignored);
-                }
-                return;
-            }
-            self->enableTimeOut();
-            self->m_TimeOut = true;
+            if(self->getEntity() && self->m_HeartBeatCallBack)
+                self->m_HeartBeatCallBack(self);
         });
-        m_TimingWheel->addTask(m_TimeOutMs,taskNode);
+        m_TimingWheel->addTask(m_HeartBeatMs, taskNode);
     }
 
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){
@@ -61,14 +56,11 @@ namespace NetWork{
     void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
         auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t /*length*/,const SendCallBack& callback){
             if(err){
-                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_TimeOut = false;
-            if(callback){
+            if(callback)
                 callback();
-            }
         },std::placeholders::_1,std::placeholders::_2,callback);
         Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
@@ -83,14 +75,11 @@ namespace NetWork{
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
         auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t /*length*/,const SendCallBack& callback){
             if(err){
-                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_TimeOut = false;
-            if(callback){
+            if(callback)
                 callback();
-            }
         },std::placeholders::_1,std::placeholders::_2,callback);
         Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
@@ -105,11 +94,9 @@ namespace NetWork{
     void Socket::recv(const RecvCallBack& callBack){
         auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err){
-                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_TimeOut = false;
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
             callback(this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
@@ -126,11 +113,9 @@ namespace NetWork{
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
         auto readCallBack = std::bind([this,size](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
             if(err) {
-                m_TimeOut = true;
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_TimeOut = false;
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
             if(size > length){
                 this->recv(size - length,callback);
@@ -152,8 +137,8 @@ namespace NetWork{
         m_ErrorCodeCallBack = errorCallBack;
     }
 
-    void Socket::setTimeOutCallBack(const TimeOutCallBack& timeOutCallBack){
-        m_TimeOutCallBack = timeOutCallBack;
+    void Socket::setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack){
+        m_HeartBeatCallBack = heartBeatCallBack;
     }
 }
 }

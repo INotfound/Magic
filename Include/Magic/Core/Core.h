@@ -27,8 +27,25 @@ public:
     Noncopyable& operator=(const Noncopyable&) = delete;
 };
 
+template<typename T>
+class ObjectWrapper{
+public:
+    explicit ObjectWrapper(T* self)
+            :m_Inner(self){}
+
+    T& operator*() const{
+        return *m_Inner;
+    }
+
+    T* operator->() const{
+        return m_Inner;
+    }
+private:
+    T* m_Inner;
+};
+
 template<class T>
-class SingletonPtr{
+class SingletonPtr :public Noncopyable{
 public:
     static const Safe<T>& GetInstance(){
         static Safe<T> v(std::make_shared<T>());
@@ -37,7 +54,7 @@ public:
 };
 
 template<class T,class M,typename = typename std::enable_if<std::is_base_of<T,M>::value>::type>
-class SingletonPtrEx{
+class SingletonPtrEx :public Noncopyable{
 public:
     static const Safe<T>& GetInstance(){
         static Safe<T> v(std::make_shared<M>());

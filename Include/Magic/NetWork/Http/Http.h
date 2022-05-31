@@ -245,70 +245,6 @@ namespace Http{
          */
         HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
         /**
-         * @brief: 设置版本号函数
-         * @param ver 版本号
-         */
-        void setVersion(uint8_t ver);
-        /**
-         * @brief: 设置HttpMethod函数
-         * @param method HttpMethod类型
-         */
-        void setMethod(HttpMethod method);
-        /**
-         * @brief: 设置是否为长连接函数
-         * @param keepAlive 是否为长连接
-         */
-        void setKeepAlive(bool keepAlive);
-        /**
-         * @brief: 设置查询字符串函数
-         * @param query 查询字符串
-         */
-        void setQuery(const std::string& query);
-        /**
-         * @brief: 设置Url路径函数
-         * @param urlPath Url路径
-         */
-        void setPath(const std::string& urlPath);
-        /**
-         * @brief: 设置主体正文函数
-         * @param body 主体正文 
-         */
-        void setBody(const std::string& body);
-        /**
-         * @brief: 设置主体正文长度函数
-         * @param length 正文长度
-         */
-        void setContentLength(uint64_t length);
-        /**
-         * @brief: 设置切片范围
-         * @param start 切片开始范围
-         * @param stop 切片结束范围
-         */
-        void setRange(uint64_t start,uint64_t stop);
-        /**
-         * @brief: 设置片段函数
-         * @param fragment 片段
-         */
-        void setFragment(const std::string& fragment);
-        /**
-         * @brief: 设置参数函数
-         * @param key 键
-         * @param value 值
-         */
-        void setParam(const std::string& key,const std::string& value);
-        /**
-         * @brief: 设置Http头中的参数函数
-         * @param key 键
-         * @param value 值
-         */
-        void setHeader(const std::string& key,const std::string& value);
-        /**
-         * @brief: 设置Cookie函数
-         * @param key 键
-         * @param value 值
-         */
-        void setCookie(const std::string& key,const std::string& value);
-        /**
          * @brief: 获取所有参数函数
          * @return: 返回键值对容器
          */
@@ -402,6 +338,70 @@ namespace Http{
          * @return: 返回输出流
          */
         std::ostream& toStream(std::ostream& os);
+        /**
+         * @brief: 设置版本号函数
+         * @param ver 版本号
+         */
+        ObjectWrapper<HttpRequest> setVersion(uint8_t ver);
+        /**
+         * @brief: 设置HttpMethod函数
+         * @param method HttpMethod类型
+         */
+        ObjectWrapper<HttpRequest> setMethod(HttpMethod method);
+        /**
+         * @brief: 设置是否为长连接函数
+         * @param keepAlive 是否为长连接
+         */
+        ObjectWrapper<HttpRequest> setKeepAlive(bool keepAlive);
+        /**
+         * @brief: 设置查询字符串函数
+         * @param query 查询字符串
+         */
+        ObjectWrapper<HttpRequest> setQuery(const std::string& query);
+        /**
+         * @brief: 设置Url路径函数
+         * @param urlPath Url路径
+         */
+        ObjectWrapper<HttpRequest> setPath(const std::string& urlPath);
+        /**
+         * @brief: 设置主体正文函数
+         * @param body 主体正文
+         */
+        ObjectWrapper<HttpRequest> setBody(const std::string& body);
+        /**
+         * @brief: 设置主体正文长度函数
+         * @param length 正文长度
+         */
+        ObjectWrapper<HttpRequest> setContentLength(uint64_t length);
+        /**
+         * @brief: 设置切片范围
+         * @param start 切片开始范围
+         * @param stop 切片结束范围
+         */
+        ObjectWrapper<HttpRequest> setRange(uint64_t start,uint64_t stop);
+        /**
+         * @brief: 设置片段函数
+         * @param fragment 片段
+         */
+        ObjectWrapper<HttpRequest> setFragment(const std::string& fragment);
+        /**
+         * @brief: 设置参数函数
+         * @param key 键
+         * @param value 值
+         */
+        ObjectWrapper<HttpRequest> setParam(const std::string& key,const std::string& value);
+        /**
+         * @brief: 设置Http头中的参数函数
+         * @param key 键
+         * @param value 值
+         */
+        ObjectWrapper<HttpRequest> setHeader(const std::string& key,const std::string& value);
+        /**
+         * @brief: 设置Cookie函数
+         * @param key 键
+         * @param value 值
+         */
+        ObjectWrapper<HttpRequest> setCookie(const std::string& key,const std::string& value);
     private:
         bool m_KeepAlive;
         uint8_t m_Version;
@@ -428,76 +428,6 @@ namespace Http{
          * @param version 版本号
          */
         HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
-        /**
-         * @brief: 设置版本号函数
-         * @param ver 版本号
-         */
-        void setVersion(uint8_t ver);
-        /**
-         * @brief: 设置HttpStatus函数
-         * @param status HttpStatus类型
-         */
-        void setStatus(HttpStatus status);
-        /**
-         * @brief: 设置是否为长连接函数
-         * @param keepAlive 是否为长连接
-         */
-        void setKeepAlive(bool keepAlive);
-        /**
-         * @brief: 设置主体正文函数
-         * @param body 主体正文
-         */
-        void setBody(const std::string& body);
-        /**
-         * @brief: 设置主体正文长度函数
-         * @param length 主体正文长度
-         */
-        void setContentLength(uint64_t length);
-        /**
-         * @brief: 设置响应解释函数
-         * @param reason 解释
-         */
-        void setReason(const std::string& reason);
-        /**
-         * @brief: 设置资源函数
-         * @param filePath 资源路径
-         */
-        void setResource(const std::string& filePath);
-        /**
-         * @brief: 设置正文类型函数
-         * @param contentType 正文类型
-         */
-        void setContentType(const std::string& contentType);
-        /**
-         * @brief: 设置正文类型函数
-         * @param contentType 正文类型
-         */
-        void setContentType(const HttpContentType& contentType);
-        /**
-         * @brief: 设置切片范围
-         * @param start 切片开始范围
-         * @param stop 切片结束范围
-         * @param totalLength 切片总长度
-         */
-        void setRange(uint64_t start,uint64_t stop,uint64_t totalLength);
-        /**
-         * @brief: 设置Http头键值对函数
-         * @param key 键
-         * @param value 值
-         */
-        void setHeader(const std::string& key,const std::string& value);
-        /**
-         * @brief: 设置Cookie函数
-         * @param key 键
-         * @param val 值
-         * @param expired 过期时间
-         * @param path Cookie路径
-         * @param domain Cookie范围
-         * @param httpOnly 是否HttpOnly
-         * @param secure 是否Secure
-         */
-        void setCookie(const std::string& key, const std::string& val,std::time_t expired =0
-            ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
         /**
          * @brief: 是否Range切片
          * @return: 返回True则是，返回False则是否
@@ -580,6 +510,76 @@ namespace Http{
          * @return: 返回输出流
          */
         std::ostream& toStream(std::ostream& os);
+        /**
+         * @brief: 设置版本号函数
+         * @param ver 版本号
+         */
+        ObjectWrapper<HttpResponse> setVersion(uint8_t ver);
+        /**
+         * @brief: 设置HttpStatus函数
+         * @param status HttpStatus类型
+         */
+        ObjectWrapper<HttpResponse> setStatus(HttpStatus status);
+        /**
+         * @brief: 设置是否为长连接函数
+         * @param keepAlive 是否为长连接
+         */
+        ObjectWrapper<HttpResponse> setKeepAlive(bool keepAlive);
+        /**
+         * @brief: 设置主体正文函数
+         * @param body 主体正文
+         */
+        ObjectWrapper<HttpResponse> setBody(const std::string& body);
+        /**
+         * @brief: 设置主体正文长度函数
+         * @param length 主体正文长度
+         */
+        ObjectWrapper<HttpResponse> setContentLength(uint64_t length);
+        /**
+         * @brief: 设置响应解释函数
+         * @param reason 解释
+         */
+        ObjectWrapper<HttpResponse> setReason(const std::string& reason);
+        /**
+         * @brief: 设置资源函数
+         * @param filePath 资源路径
+         */
+        ObjectWrapper<HttpResponse> setResource(const std::string& filePath);
+        /**
+         * @brief: 设置正文类型函数
+         * @param contentType 正文类型
+         */
+        ObjectWrapper<HttpResponse> setContentType(const std::string& contentType);
+        /**
+         * @brief: 设置正文类型函数
+         * @param contentType 正文类型
+         */
+        ObjectWrapper<HttpResponse> setContentType(const HttpContentType& contentType);
+        /**
+         * @brief: 设置切片范围
+         * @param start 切片开始范围
+         * @param stop 切片结束范围
+         * @param totalLength 切片总长度
+         */
+        ObjectWrapper<HttpResponse> setRange(uint64_t start,uint64_t stop,uint64_t totalLength);
+        /**
+         * @brief: 设置Http头键值对函数
+         * @param key 键
+         * @param value 值
+         */
+        ObjectWrapper<HttpResponse> setHeader(const std::string& key,const std::string& value);
+        /**
+         * @brief: 设置Cookie函数
+         * @param key 键
+         * @param val 值
+         * @param expired 过期时间
+         * @param path Cookie路径
+         * @param domain Cookie范围
+         * @param httpOnly 是否HttpOnly
+         * @param secure 是否Secure
+         */
+        ObjectWrapper<HttpResponse> setCookie(const std::string& key, const std::string& val,std::time_t expired =0
+                ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
     private:
         bool m_KeepAlive;
         uint8_t m_Version;

@@ -15,12 +15,27 @@ namespace Http{
         :m_Socket(socket)
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
-        ,m_StreamBufferSize(1024*1024*2)
+        ,m_Death(false)
+        ,m_Upgrade(false)
+        ,m_StreamBufferSize(1024*1024)
         ,m_TotalTransferLength(0)
         ,m_CurrentTransferLength(0){
         m_RequestParser = std::make_shared<HttpRequestParser>();
         m_ResponseParser = std::make_shared<HttpResponseParser>();
+
+        m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
+            if(m_Upgrade) /// WebSocket
+                return;
+            if(m_Death){
+                socket->close();
+                return;
+            }
+            m_Death = true;
+            socket->runHeartBeat(this->shared_from_this());
+        });
+
         m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
+            m_Death = true;
             m_MultiPart.reset();
             m_FileStream.close();
             m_StreamBuffer.reset();
@@ -31,15 +46,8 @@ namespace Http{
         #ifdef WIN32
             if(err.value() == WSAECONNABORTED) return;
         #endif
-            if(err == asio::error::eof
-               || err == asio::error::broken_pipe || err == asio::error::connection_reset
-               #ifdef OPENSSL
-               || err == asio::error::operation_aborted || err == asio::ssl::error::stream_truncated){
-               #else
-               || err == asio::error::operation_aborted){
-        #endif
+            if(err == asio::error::eof || err == asio::error::operation_aborted)
                 return;
-            }
             MAGIC_WARN() << err.message();
         });
     }
@@ -59,6 +67,8 @@ namespace Http{
     }
 
     void HttpSocket::sendRequest(const Safe<HttpRequest>& request){
+        if(!m_Socket)
+            return;
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
         stream << request;
@@ -66,6 +76,8 @@ namespace Http{
     }
 
     void HttpSocket::sendResponse(const Safe<HttpResponse>& response){
+        if(!m_Socket)
+            return;
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
         if(response->hasResource()){
@@ -138,13 +150,18 @@ namespace Http{
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
         m_RecvRequestCallBack(this->shared_from_this(),request,response);
+
+        m_RequestParser->reset();
         m_ResponseParser->reset();
         this->responseParser();
     }
 
     void HttpSocket::requestParser(){
+        if(!m_Socket)
+            return;
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
+            m_Death = false;
             uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()){
                 return;
@@ -185,8 +202,11 @@ namespace Http{
     }
 
     void HttpSocket::responseParser(){
+        if(!m_Socket)
+            return;
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
+            m_Death = false;
             uint64_t nparse = m_ResponseParser->execute(data.data(),data.size());
             if(m_ResponseParser->hasError()){
                 return;
@@ -216,6 +236,8 @@ namespace Http{
     }
 
     void HttpSocket::multiPartParser() {
+        if(!m_Socket)
+            return;
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
             size_t fed = 0;
@@ -235,7 +257,8 @@ namespace Http{
     }
 
     void HttpSocket::transferFileStream(){
-        if(m_FileStream.eof()
+        if(!m_Socket
+            || m_FileStream.eof()
             || m_CurrentTransferLength == m_TotalTransferLength){
             m_FileStream.close();
             m_StreamBuffer.reset();
