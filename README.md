@@ -25,7 +25,7 @@
 ### 模块配置
 
 - 功能模块可高度**重用**，方便**扩展**以及**维护**.
-- 使用**Json**格式配置文件`(*.magic)`对功能进行模块划分.
+- 使用**Json**格式配置文件`(*.json)`对功能进行模块划分.
 
 ### 非侵入式
 
@@ -45,7 +45,7 @@
 - Win
   - VS 20XX
     - `cmake -G "Visual Studio 15 2017"` // or ***Visual Studio xx 20xx***
-> `*.magic` 模块每次被修改完成时,请调用一次 `cmake ../. `
+> `*.json` 模块每次被修改完成时,请调用一次 `cmake ../. `
 
 ### 使用方法
 
@@ -54,7 +54,7 @@
 1. 使用本库工具 Magic/Bin/***Create***
   1. 创建项目文件目录名,跳转项目文件目录中
   2. 使用 `Create Test /root/Magic` 创建项目模板, ***(Test 项目名)*** ***("/root/Magic" Magic库路径)***
-  3. 当前目录会生成 ***CMakeLists.txt Main.cpp Test.magic***三个文件
+  3. 当前目录会生成 ***CMakeLists.txt Main.cpp Test.json***三个文件
 
 2. 查看***Test***项目文件夹中***CMakeLists.txt***文件.
 ```cmake
@@ -66,8 +66,8 @@ if(NOT DEFINED MAGIC)
 endif()
 
 include_directories(
-    ${MAGIC}
-	${MAGIC}/Include
+    ${MAGIC} 
+    ${MAGIC}/Include
     ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/Include
     ${MAGIC}/ThirdParty/Asio/Include
@@ -82,10 +82,10 @@ include(${MAGIC}/Magic.cmake)
 add_custom_target(Gen ALL)
 add_custom_command(
     TARGET Gen
-    COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.magic Test
+    COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json Test
 )
 ```
-3. 打开***Test.magic***配置文件,并添加上自定义的类.
+3. 打开***Test.json***配置文件,并添加上自定义的类.
 ```jsonc
 {
     "Configurations":{
@@ -116,11 +116,11 @@ add_custom_command(
     }
 }
 ```
-4.  对***CMake***配置文件进行编辑添加**Test**模块(**Test.magic**)
+4.  对***CMake***配置文件进行编辑添加**Test**模块(**Test.json**)
 ```cmake
 add_custom_command(
         TARGET Gen
-        COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.magic ${PROJECT_SOURCE_DIR}/Test.magic Test
+        COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json ${PROJECT_SOURCE_DIR}/Test.json Test
 )
 ```
 5.  跳转build目录中 调用 `cmake ../.` 或 `cmake ../. -Gxxx` 并且进行Build. 
@@ -139,7 +139,7 @@ int main(){
 
 ---
 
-> 配置文件：[***Magic模块***](https://github.com/INotfound/Magic/blob/main/Modules/Magic.magic) (可使用多个配置文件)
+> 配置文件：[***Magic模块***](https://github.com/INotfound/Magic/blob/main/Modules/Magic.json) (可使用多个配置文件)
 ```jsonc
 {                                                           // 日志以及配置模块示例
     "Configurations":{

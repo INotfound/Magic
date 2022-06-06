@@ -4,6 +4,7 @@
  * @LastEditTime: 2021-02-01 22:29:25
  */
 #include "Magic/Utilty/Logger.h"
+#include "Magic/Utilty/Crypto.h"
 #include "Magic/NetWork/Http/HttpSocket.h"
 
 namespace Magic{
@@ -16,7 +17,6 @@ namespace Http{
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
         ,m_Death(false)
-        ,m_Upgrade(false)
         ,m_StreamBufferSize(1024*1024)
         ,m_TotalTransferLength(0)
         ,m_CurrentTransferLength(0){
@@ -24,9 +24,10 @@ namespace Http{
         m_ResponseParser = std::make_shared<HttpResponseParser>();
 
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
-            if(m_Upgrade) /// WebSocket
+            if(m_WebSocket){ /// WebSocket
+                socket->runHeartBeat(m_WebSocket);
                 return;
-            if(m_Death){
+            }else if(m_Death){
                 socket->close();
                 return;
             }
@@ -126,6 +127,32 @@ namespace Http{
         }
     }
 
+    const Safe<WebSocket>& HttpSocket::upgradeWebSocket(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response,bool mask){
+        if(mask){
+            request->setHeader("Upgrade","websocket")
+                   ->setHeader("Connection","Upgrade")
+                   ->setHeader("Sec-WebSocket-Version","13")
+                   ->setHeader("Sec-WebSocket-Key","SU5vdEZvdW5kCg==");
+            this->sendRequest(request);
+        }else{
+            std::string wsKey = request->getHeader("Sec-WebSocket-Key");
+            if(wsKey.empty()){
+                MAGIC_WARN() << "Upgrade WebSocket Failed: Missing Parameters.";
+                return m_WebSocket;
+            }
+            wsKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+            response->setHeader("Upgrade","websocket")
+                    ->setHeader("Connection","Upgrade")
+                    ->setStatus(HttpStatus::SWITCHING_PROTOCOLS)
+                    ->setHeader("Sec-WebSocket-Accept", Base64Encode(SHA1(wsKey)));
+            this->sendResponse(response);
+        }
+        auto socket = std::move(m_Socket);
+        m_WebSocket = std::make_shared<WebSocket>(mask,socket);
+        m_WebSocket->runAnalyse();
+        return m_WebSocket;
+    }
+
     void HttpSocket::handleRequest(){
         auto& params = m_MultiPart.getParamMap();
         auto& request = m_RequestParser->getData();
@@ -162,7 +189,7 @@ namespace Http{
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
             m_Death = false;
-            uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
+            uint32_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()){
                 return;
             }
@@ -190,12 +217,12 @@ namespace Http{
                         body.reserve(data.size());
                         body.append(data.begin(),data.end());
                         request->setBody(body);
-                        this->handleRequest();
                         data.clear();
+                        this->handleRequest();
                     });
                 }else{
-                    this->handleRequest();
                     data.clear();
+                    this->handleRequest();
                 }
             }
         });
@@ -225,12 +252,12 @@ namespace Http{
                     body.reserve(data.size());
                     body.append(data.begin(),data.end());
                     response->setBody(body);
-                    this->handleResponse();
                     data.clear();
+                    this->handleResponse();
                 });
             }else{
-                this->handleResponse();
                 data.clear();
+                this->handleResponse();
             }
         });
     }
@@ -248,8 +275,8 @@ namespace Http{
             m_CurrentLength += data.size();
             data.resize(0);
             if(m_CurrentLength == m_TotalLength){
-                this->handleRequest();
                 data.clear();
+                this->handleRequest();
             }else{
                 this->multiPartParser();
             }

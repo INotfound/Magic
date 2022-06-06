@@ -8,8 +8,8 @@
 #include <iostream>
 
 #include "Magic/Core/Core.h"
+#include "Magic/Core/Adapter.h"
 #include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/String.h"
 
 namespace Magic{
     Safe<Magic::Logger> g_Logger;
@@ -366,12 +366,63 @@ namespace Magic{
     void FileLogAppender::log(LogLevel level,const Safe<LogEvent>& event){
         this->m_Formatter->format(this->m_FileStream, level, event);
     }
-
+#if defined(_WIN32) || defined(_WIN64)
     void StdOutLogAppender::log(LogLevel level,const Safe<LogEvent>& event){
         if (!this->m_Formatter){
             std::cout << "<(Error)> "<< std::endl;
             return;
         }
+        HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_SCREEN_BUFFER_INFO ConsoleScreenBufferInfo;
+        GetConsoleScreenBufferInfo(handle,&ConsoleScreenBufferInfo);
+        switch (level) {
+        case LogLevel::Info:
+            SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY | ConsoleScreenBufferInfo.wAttributes);
+            break;
+        case LogLevel::Warn:
+            SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY | FOREGROUND_BLUE);
+            break;
+        case LogLevel::Error:
+            SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY | FOREGROUND_RED);
+            break;
+        case LogLevel::Fatal:
+            SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY | FOREGROUND_RED);
+            break;
+        case LogLevel::Debug:
+            SetConsoleTextAttribute(handle,FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN);
+            break;
+        }
         this->m_Formatter->format(std::cout, level, event);
+        SetConsoleTextAttribute(handle,ConsoleScreenBufferInfo.wAttributes);
     }
+#endif
+
+#if (defined(linux) || defined(__linux__))
+    void StdOutLogAppender::log(LogLevel level,const Safe<LogEvent>& event){
+        if (!this->m_Formatter){
+            std::cout << "<(Error)> "<< std::endl;
+            return;
+        }
+        switch (level) {
+        case LogLevel::Info:
+            std::cout << "\033[0m";
+            break;
+        case LogLevel::Warn:
+            std::cout << "\033[34;1m";
+            break;
+        case LogLevel::Error:
+            std::cout << "\033[31;1m";
+            break;
+        case LogLevel::Fatal:
+            std::cout << "\033[31;1m";
+            break;
+        case LogLevel::Debug:
+            std::cout << "\033[33;1m";
+            break;
+        }
+        this->m_Formatter->format(std::cout, level, event);
+        std::cout << "\033[0m";
+    }
+#endif
+
 }

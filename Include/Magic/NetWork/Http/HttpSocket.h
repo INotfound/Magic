@@ -8,7 +8,9 @@
 #include "Magic/NetWork/Socket.h"
 #include "Magic/NetWork/Http/Http.h"
 #include "Magic/NetWork/Http/MultiPart.h"
+#include "Magic/NetWork/Http/WebSocket.h"
 #include "Magic/NetWork/Http/HttpParser.h"
+
 
 namespace Magic{
 namespace NetWork{
@@ -52,6 +54,13 @@ namespace Http{
          * @param response 响应
          */
         void sendResponse(const Safe<HttpResponse>& response);
+        /**
+         * @brief: 升级为WebSocket
+         * @param request 请求头
+         * @param response 响应体
+         * @param mask 是否使用掩码,通常客户端需要置为 true 否则置为 false。
+         */
+        const Safe<WebSocket>& upgradeWebSocket(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response,bool mask = false);
     private:
         /**
          * @brief: 处理请求头函数
@@ -84,8 +93,8 @@ namespace Http{
         uint64_t m_CurrentLength;
         std::atomic_bool m_Death;
         Safe<char> m_StreamBuffer;
-        std::atomic_bool m_Upgrade;
         std::ifstream m_FileStream;
+        Safe<WebSocket> m_WebSocket;
         uint64_t m_StreamBufferSize;
         uint64_t m_TotalTransferLength;
         uint64_t m_CurrentTransferLength;

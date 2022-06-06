@@ -48,6 +48,7 @@ if(NetWork STREQUAL ON)
         Source/Magic/NetWork/TcpServer.cpp
         Source/Magic/NetWork/Http/Http.cpp
         Source/Magic/NetWork/Http/MultiPart.cpp
+        Source/Magic/NetWork/Http/WebSocket.cpp
         Source/Magic/NetWork/Http/HttpParser.cpp
         Source/Magic/NetWork/Http/HttpSocket.cpp
         Source/Magic/NetWork/Http/HttpServer.cpp

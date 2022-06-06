@@ -590,7 +590,6 @@ namespace Http{
         std::string m_Resource;
         uint64_t m_ContentLength;
         HttpContentType m_ContentType;
-        std::string m_ContentTypeString;
         std::vector<std::string> m_Cookies;
     };
     std::ostream& operator<<(std::ostream& os, const Safe<HttpRequest>& request);

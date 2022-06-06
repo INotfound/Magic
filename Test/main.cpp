@@ -48,13 +48,21 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
         ResourceServlet(){
         }
 
+        void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
+            Safe<WebSocket> webSocket = httpSocket->upgradeWebSocket(request,response);
+            webSocket->recvTextMessage([](const std::string& msg){
+                MAGIC_DEBUG() << msg;
+            });
+            webSocket->sendTextMessage()
+        }
+
         void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
             request->setHeader("Sec-WebSocket-Key","xxxxx");
             response->setBody("Hello World")->setStatus(HttpStatus::OK);
             httpSocket->sendResponse(response);
         }
 };
-//
+
 //std::atomic_int newNum(0);
 //
 //void* operator new(std::size_t size)
@@ -63,28 +71,34 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
 //    std::cout << "New " << newNum << std::endl;
 //    return std::malloc(size);
 //}
-
+//
+//void operator delete(void* ptr)
+//{
+//    newNum--;
+//    std::cout << "delete " << newNum << std::endl;
+//    std::free(ptr);
+//}
 
 int main(int /*argc*/,char** /*argv*/){
 //    Magic::g_TraceAppender = std::make_shared<>
-    std::printf("ptr[1] size of %llu \n",sizeof(Safe<A>));
+//    std::printf("ptr[1] size of %llu \n",sizeof(Safe<A>));
 //    ObjectWrapper<HttpRequest>
-    std::printf("ptr[2] size of %llu \n",sizeof(ObjectWrapper<A>));
-    std::printf("ptr[3] size of %llu \n",sizeof(ObjectWrapper<Magic::NetWork::Http::HttpRequest>));
+//    std::printf("ptr[2] size of %llu \n",sizeof(ObjectWrapper<A>));
+//    std::printf("ptr[3] size of %llu \n",sizeof(ObjectWrapper<Magic::NetWork::Http::HttpRequest>));
 
-    A* b = new A;
-    b->bb()->bb();
+    system("chcp 65001");
 
-    std::printf("size of %llu\n",sizeof(void*));
+//    std::printf("size of %llu\n",sizeof(void*));
 
     Magic::NetWork::Http::Uri uri;
-    uri.execute("mysql://admin@0.0.0.0/xxx?password=12345678901a");
+    uri.execute("mysql://admin@0.0.0.0:8181/xxx?password=12345678901a");
     std::printf("%s\n",uri.getUser().c_str());
     std::printf("%s\n",uri.getHost().c_str());
     std::printf("%s\n",&(uri.getPath().c_str()[1]));
     std::printf("%s\n",uri.getQuery().c_str());
     std::printf("%s\n",uri.getScheme().c_str());
     std::printf("%s\n",uri.getFragment().c_str());
+    std::printf("%d\n",uri.getPort());
 
     Magic::Thread::SetName("Master");
     Magic::Configure([](const Safe<Magic::Container>& ioc){
@@ -109,11 +123,15 @@ int main(int /*argc*/,char** /*argv*/){
     Safe<Magic::NetWork::Http::HttpServletDispatch> dispatch = std::make_shared<Magic::NetWork::Http::HttpServletDispatch>();
 
     MAGIC_DEBUG() << __cplusplus;
+    MAGIC_WARN() << __cplusplus;
+    MAGIC_ERROR() << __cplusplus;
+    MAGIC_FATAL() << __cplusplus;
 
     dispatch->setHttpServlet(resservlet);
 //    dispatch->addHttpServlet(resservlet);
 
-    resservlet->addRoute("^/?(.*)$",&ResourceServlet::handle1,Magic::NetWork::Http::HttpRouteType::Match);
+    resservlet->addRoute("/",&ResourceServlet::handle1);
+    resservlet->addRoute("/chat",&ResourceServlet::websocket);
 
     server.setServletDispatch(dispatch);
     server.run();

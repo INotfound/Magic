@@ -290,13 +290,13 @@ namespace Http{
             << static_cast<uint32_t>(m_Version >> 4)
             << '.'
             << static_cast<uint32_t>(m_Version & 0x0F)
-            << "\r\n"
-            << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
-        
+            << "\r\n";
+
+        if(m_Headers.find("Connection") == m_Headers.end()){
+            os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
+        }
+
         for(auto& v : m_Headers){
-            if(StringCompareNoCase(v.first,"Connection") == 0){
-                continue;
-            }
             os << v.first << ": " << v.second << "\r\n";
         }
 
@@ -491,22 +491,17 @@ namespace Http{
             << static_cast<uint32_t>(m_Status)
             << ' '
             << (m_Reason.empty() ? HttpStatusToString(m_Status) : m_Reason)
-            << "\r\n"
-            << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
+            << "\r\n";
 
-        if(m_ContentTypeString.empty()){
-            os << "Content-Type: " << HttpContentTypeToString(m_ContentType) << "\r\n";
-        }else{
-            os << "Content-Type: " << m_ContentTypeString << "\r\n";
+        if(m_Headers.find("Connection") == m_Headers.end()){
+            os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         }
+
         /// Headers
         for(auto& v : m_Headers){
-            if(StringCompareNoCase(v.first,"Connection") == 0 || StringCompareNoCase(v.first,"Content-Type") == 0){
-                continue;
-            }
             os << v.first << ": " << v.second << "\r\n";
         }
-        
+
         for(auto& v : m_Cookies){
             os << "Set-Cookie: " << v << "\r\n";
         }
@@ -559,13 +554,13 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setContentType(const std::string& contentType){
-        m_ContentTypeString = contentType;
+        m_Headers["Content-Type"] = contentType;
         return ObjectWrapper<HttpResponse>(this);
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setContentType(const HttpContentType& contentType){
-        m_ContentTypeString.clear();
         m_ContentType = contentType;
+        m_Headers["Content-Type"] = HttpContentTypeToString(m_ContentType);
         return ObjectWrapper<HttpResponse>(this);
     }
 

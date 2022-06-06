@@ -9,6 +9,7 @@
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #endif
+#include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/Crypto.h"
 
 namespace Magic{
@@ -44,6 +45,8 @@ namespace Magic{
         MD5_Init(&m_Md5);
         MD5_Update(&m_Md5,str.data(), str.size());
         MD5_Final(digest,&m_Md5);
+    #else
+        MAGIC_ERROR() << "Requires SSL Support.";
     #endif
         return reinterpret_cast<char*>(digest);
     }
@@ -59,6 +62,8 @@ namespace Magic{
         SHA1_Init(&m_Sha1);
         SHA1_Update(&m_Sha1,str.data(), str.size());
         SHA1_Final(digest,&m_Sha1);
+    #else
+        MAGIC_ERROR() << "Requires SSL Support.";
     #endif
         return reinterpret_cast<char*>(digest);
     }
@@ -75,6 +80,8 @@ namespace Magic{
         MD5_Update(&m_Md5,str.data(), str.size());
         MD5_Final(digest,&m_Md5);
         HexStringFromData(digest,MD5_DIGEST_LENGTH,MD5Chars);
+    #else
+        MAGIC_ERROR() << "Requires SSL Support.";
     #endif
         return MD5Chars;
     }
@@ -91,6 +98,8 @@ namespace Magic{
         SHA1_Update(&m_Sha1,str.data(), str.size());
         SHA1_Final(digest,&m_Sha1);
         HexStringFromData(digest,SHA_DIGEST_LENGTH,SHA1Chars);
+    #else
+        MAGIC_ERROR() << "Requires SSL Support.";
     #endif
         return SHA1Chars;
     }
@@ -114,6 +123,8 @@ namespace Magic{
         MD5_Final(digest,&m_Md5);
         std::fclose(file);
         HexStringFromData(digest,MD5_DIGEST_LENGTH,MD5Chars);
+    #else
+        MAGIC_ERROR() << "Requires SSL Support.";
     #endif
         return MD5Chars;
     }

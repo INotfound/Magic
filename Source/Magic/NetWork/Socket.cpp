@@ -126,11 +126,11 @@ namespace NetWork{
         Mutex::Lock lock(m_Mutex);
     #ifdef OPENSSL
         if(m_SslStream){
-            asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_exactly(size),std::move(readCallBack));
+            asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));
             return;
         }
     #endif
-        asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_exactly(size),std::move(readCallBack));
+        asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));
     }
 
     void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
