@@ -11,7 +11,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     /**
-     * @brief: Http会话超时类
+     * @brief Http会话超时类
      */
     class HttpSessionTimeOutTask :public ITaskNode{
         public:

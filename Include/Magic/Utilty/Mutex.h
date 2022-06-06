@@ -95,7 +95,7 @@ namespace Magic{
         bool m_Locked;
     };
     /**
-     * @brief: 普通锁
+     * @brief 普通锁
      */
     class Mutex :public Noncopyable{
     public:
@@ -108,7 +108,7 @@ namespace Magic{
         Safe<MutexImpl> m_Mutex;
     };
     /**
-     * @brief: 读写锁
+     * @brief 读写锁
      */
     class RWMutex :public Noncopyable{
     public:
@@ -123,7 +123,7 @@ namespace Magic{
         Safe<RWMutexImpl> m_RWLock;
     };
     /**
-     * @brief: 自旋锁
+     * @brief 自旋锁
      */
     class SpinLock :public Noncopyable{
     public:
@@ -136,7 +136,7 @@ namespace Magic{
         Safe<SpinLockImpl> m_SpinLock;
     };
     /**
-     * @brief: 信号量
+     * @brief 信号量
      */
     class Semaphore :public Noncopyable{
     public:

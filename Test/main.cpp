@@ -50,10 +50,9 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
 
         void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
             Safe<WebSocket> webSocket = httpSocket->upgradeWebSocket(request,response);
-            webSocket->recvTextMessage([](const std::string& msg){
+            webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string& msg){
                 MAGIC_DEBUG() << msg;
             });
-            webSocket->sendTextMessage()
         }
 
         void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){

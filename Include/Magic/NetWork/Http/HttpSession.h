@@ -16,41 +16,41 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     /**
-     * @brief: Http会话类
+     * @brief Http会话类
      */
     class HttpSession{
     public:
         /**
-         * @brief: 析构函数
+         * @brief 析构函数
          */
         ~HttpSession();
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param autoGenId 是否自动生成Id信息
          */
         HttpSession(bool autoGenId =true);
         /**
-         * @brief: 获取会话Id函数
+         * @brief 获取会话Id函数
          * @return: 返回会话Id
          */
         const std::string& getId();
         /**
-         * @brief: 设置会话Id函数
+         * @brief 设置会话Id函数
          * @param id 会话Id
          */
         void setId(const std::string& id);
         /**
-         * @brief: 获取最后一次使用时间函数
+         * @brief 获取最后一次使用时间函数
          * @return: 返回最后一次使用时间
          */
         uint64_t getLastAccessTime();
         /**
-         * @brief: 设置最后一次使用时间函数
+         * @brief 设置最后一次使用时间函数
          * @param value 会话时间
          */
         void setLastAccessTime(uint64_t value);
         /**
-         * @brief: 获取会话数据函数
+         * @brief 获取会话数据函数
          * @param key 数据Key
          * @return: 返回会话数据
          */
@@ -66,7 +66,7 @@ namespace Http{
             return std::any_cast<T>(value->second);
         }
         /**
-         * @brief: 设置会话数据函数
+         * @brief 设置会话数据函数
          * @param key 数据Key
          * @param value 数据值
          */
@@ -82,37 +82,37 @@ namespace Http{
         std::unordered_map<std::string,std::any> m_Data;
     };
     /**
-     * @brief: Http会话管理类
+     * @brief Http会话管理类
      */
     class HttpSessionManager :public std::enable_shared_from_this<HttpSessionManager>{
     public:
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          */
         HttpSessionManager(const Safe<Config>& configuration);
         /**
-         * @brief: 删除会话函数
+         * @brief 删除会话函数
          * @param id 会话Id
          */
         void del(const std::string& id);
         /**
-         * @brief: 设置会话超时时间函数
+         * @brief 设置会话超时时间函数
          * @param timeOutMs 超时时间(毫秒)
          */
         void setTimeOut(uint64_t timeOutMs);
         /**
-         * @brief: 添加会话函数
+         * @brief 添加会话函数
          * @param HttpSession 会话对象
          */
         void add(Safe<HttpSession>& httpSession);
         /**
-         * @brief: 获取会话函数
+         * @brief 获取会话函数
          * @param key 会话Id
          * @return: 返回会话对象
          */
         const Safe<HttpSession>& get(const std::string& id);
         /**
-         * @brief: 添加定时轮,处理过期的会话
+         * @brief 添加定时轮,处理过期的会话
          * @param timingWheel 定时轮
          */
         void setTimingWheel(const Safe<TimingWheel>& timingWheel);

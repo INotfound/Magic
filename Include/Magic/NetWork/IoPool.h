@@ -11,29 +11,29 @@
 namespace Magic{
 namespace NetWork{
     /**
-     * @brief: 网络Io池类
+     * @brief 网络Io池类
      */
     class IoPool{
     public:
         /**
-         * @brief: 析构函数
+         * @brief 析构函数
          */
         ~IoPool();
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param configuration 配置器
          */
         explicit IoPool(const Safe<Config>& configuration);
         /**
-         * @brief: 网络Io池运行函数
+         * @brief 网络Io池运行函数
          */
         void run();
         /**
-         * @brief: 网络Io池暂停函数
+         * @brief 网络Io池暂停函数
          */
         void stop();
         /**
-         * @brief: 获取网络Io上下文函数
+         * @brief 获取网络Io上下文函数
          * @return: 返回网络Io上下文
          */
         asio::io_context& get();

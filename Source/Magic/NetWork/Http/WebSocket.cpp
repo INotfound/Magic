@@ -23,7 +23,6 @@ namespace Http{
 
     WebSocket::WebSocket(bool mask,const Safe<Socket>& socket)
         :m_Mask(mask)
-        ,m_Status(Status::Opened)
         ,m_OpCode(0x0)
         ,m_Socket(socket)
         ,m_Death(false){
@@ -31,7 +30,7 @@ namespace Http{
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
             if(m_Death){
                 socket->close();
-                m_Status = Status::Closed;
+                m_DisconnectedCallBack(this->shared_from_this());
                 return;
             }
             m_Death = true;
@@ -50,10 +49,6 @@ namespace Http{
         });
     }
 
-    WebSocket::Status WebSocket::getStatus() const{
-        return m_Status;
-    }
-
     void WebSocket::sendTextMessage(const std::string& message){
         this->sendEncodePackage(0x1,message);
     }
@@ -70,7 +65,15 @@ namespace Http{
         m_BinaryMessageCallBack = callBack;
     }
 
+    void WebSocket::disconnectedCallBack(const DisconnectedCallBack& callBack){
+        m_DisconnectedCallBack = callBack;
+    }
+
     void WebSocket::runAnalyse(){
+        this->handleProtocol();
+    }
+
+    void WebSocket::handleProtocol(){
         if(!m_Socket)
             return;
         auto self = this->shared_from_this();
@@ -87,7 +90,7 @@ namespace Http{
 
                 if(length <= 125) {
                     if (streamBuffer.size() < (offset + length)) {
-                        this->runAnalyse();
+                        this->handleProtocol();
                     } else {
                         this->handleMaskPayload(mask, offset, streamBuffer);
                     }
@@ -95,11 +98,11 @@ namespace Http{
                     length = 2;
                     offset += length;
                     if(streamBuffer.size() < offset) {
-                        this->runAnalyse();
+                        this->handleProtocol();
                     }else {
                         auto size = ByteToType<uint16_t>(data + 2);
                         if(streamBuffer.size() < (offset + size + (m_Mask ? 4 : 0))) {
-                            this->runAnalyse();
+                            this->handleProtocol();
                         }else{
                             this->handleMaskPayload(mask, offset, streamBuffer);
                         }
@@ -108,11 +111,11 @@ namespace Http{
                     length = 8;
                     offset += length;
                     if(streamBuffer.size() < offset) {
-                        this->runAnalyse();
+                        this->handleProtocol();
                     }else {
                         auto size = ByteToType<uint64_t>(data + 2);
                         if (streamBuffer.size() < (offset + size + (m_Mask ? 4 : 0))) {
-                            this->runAnalyse();
+                            this->handleProtocol();
                         } else {
                             this->handleMaskPayload(mask, offset, streamBuffer);
                         }
@@ -214,7 +217,7 @@ namespace Http{
         streamBuffer.clear();
 
         if(!m_Fin){
-            this->runAnalyse();
+            this->handleProtocol();
             return;
         }
 
@@ -223,11 +226,11 @@ namespace Http{
             break;
         case 0x1: /// Text
             if(m_TextMessageCallBack)
-                m_TextMessageCallBack(m_RawData);
+                m_TextMessageCallBack(this->shared_from_this(),m_RawData);
             break;
         case 0x2: /// Binary
             if(m_BinaryMessageCallBack)
-                m_BinaryMessageCallBack(m_RawData);
+                m_BinaryMessageCallBack(this->shared_from_this(),m_RawData);
             break;
         case 0x8: /// Closed
             m_Death = true;
@@ -242,7 +245,7 @@ namespace Http{
         }
 
         m_RawData.clear();
-        this->runAnalyse();
+        this->handleProtocol();
     }
 }
 }

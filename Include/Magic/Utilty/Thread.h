@@ -12,46 +12,46 @@
 
 namespace Magic{
     /**
-     * @brief: 线程类
+     * @brief 线程类
      */
     class Thread :public Noncopyable{
     public:
         /**
-         * @brief: 析构函数
+         * @brief 析构函数
          */
         ~Thread();
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param threadName 线程名称
          * @param callBack 回调函数
          */
         Thread(const std::string& threadName,std::function<void()> callBack);
         /**
-         * @brief: 等待线程执行函数
+         * @brief 等待线程执行函数
          */
         void join();
         /**
-         * @brief: 分离线程执行函数
+         * @brief 分离线程执行函数
          */
         void detach();
         /**
-         * @brief: 获取线程Id函数
+         * @brief 获取线程Id函数
          * @return: 返回线程Id,若返回-1,即线程未初始化
          */
         int64_t getId();
         /**
-         * @brief: 获取线程名称
+         * @brief 获取线程名称
          * @return: 返回线程名,若返回空,即线程未初始化
          */
         static const std::string& GetName();
         /**
-         * @brief: 设置线程名称
+         * @brief 设置线程名称
          * @param threadName 需设置的线程名称
          */
         static void SetName(const std::string& threadName);
     protected:
         /**
-         * @brief: 线程内部回调函数
+         * @brief 线程内部回调函数
          */
         void run();
     private:
@@ -62,7 +62,7 @@ namespace Magic{
         std::function<void()> m_CallBack;
     };
     /**
-     * @brief: 获取线程Id
+     * @brief 获取线程Id
      * @return: 返回线程Id
      */
     uint64_t GetThreadId();

@@ -13,28 +13,28 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     /**
-     * @brief: Http服务端类
+     * @brief Http服务端类
      */
     class HttpServer :public TcpServer{
     public:
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param pool 网络池
          * @param configuration 配置器
          */
         HttpServer(const Safe<IoPool>& pool,const Safe<TimingWheel>& timingWheel,const Safe<Config>& configuration);
         /**
-         * @brief: 配置分发器后启动服务器
+         * @brief 配置分发器后启动服务器
          * @param dispatch Servlet分发器
          */
         void setServletDispatch(const Safe<HttpServletDispatch>& dispatch);
     protected:
         /**
-         * @brief: Socket接收函数
+         * @brief Socket接收函数
          */
         void accept() override;
         /**
-         * @brief: Socket处理函数
+         * @brief Socket处理函数
          */
         void handleFunc(const Safe<Socket>& socket) override;
     private:

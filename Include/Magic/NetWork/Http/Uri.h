@@ -11,7 +11,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
 /**
- * @brief: Uri类
+ * @brief Uri类
  */
 class Uri {
 public:

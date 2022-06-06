@@ -13,7 +13,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     /**
-     * @brief: Servlet类型枚举类
+     * @brief Servlet类型枚举类
      */
     enum class HttpRouteType{
         Match,
@@ -22,7 +22,7 @@ namespace Http{
     class HttpServletDispatch;
     using RouteHandle = std::function<void(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&)>;
     /**
-     * @brief: IHttpServlet类
+     * @brief IHttpServlet类
      */
     class IHttpServlet{
         friend class HttpServletDispatch;
@@ -37,12 +37,12 @@ namespace Http{
         Safe<HttpServletDispatch> m_ServletDispatch;
     };
     /**
-     * @brief: HttpServlet分配器类
+     * @brief HttpServlet分配器类
      */
     class HttpServletDispatch :public std::enable_shared_from_this<HttpServletDispatch>{
     public:
         /**
-         * @brief: 添加Servlet对象函数
+         * @brief 添加Servlet对象函数
          * @param path Servlet的路径
          * @param servlet Servlet对象
          */
@@ -54,7 +54,7 @@ namespace Http{
          */
         void addRoute(const std::string& path,HttpRouteType type,RouteHandle handle);
         /**
-         * @brief: 处理函数
+         * @brief 处理函数
          * @param request Http请求对象
          * @param response Http响应对象
          * @return: 返回True则成功，返回False则失败
@@ -62,7 +62,7 @@ namespace Http{
         void handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& httpRequest,const Safe<HttpResponse>& httpResponse);
     private:
         /**
-         * @brief: 获取匹配的Routed对应的处理函数
+         * @brief 获取匹配的Routed对应的处理函数
          * @param path Route的路径
          * @return: 返回Route对应的处理函数
          */

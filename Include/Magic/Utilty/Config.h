@@ -13,34 +13,34 @@
 
 namespace Magic {
     /**
-     * @brief: 配置项类
+     * @brief 配置项类
      */
     class ConfigValue {
     public:
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param name 键名称
          * @param value 值名称
          * @param comment 注释
          */
         ConfigValue(const std::string& name, const std::string& value, const std::string& comment = "");
         /**
-         * @brief: 是否是注释函数
+         * @brief 是否是注释函数
          * @return: 返回True则是，返回False则否
          */
         bool isComment() const;
         /**
-         * @brief: 获取配置项名称函数
+         * @brief 获取配置项名称函数
          * @return: 返回配置项名称
          */
         const std::string& getName() const;
         /**
-         * @brief: 获取配置项值函数
+         * @brief 获取配置项值函数
          * @return: 返回配置项值
          */
         const std::string& getValue() const;
         /**
-         * @brief: 获取配置项注释函数
+         * @brief 获取配置项注释函数
          * @return: 返回配置项注释
          */
         const std::string& getComment() const;
@@ -52,50 +52,50 @@ namespace Magic {
     };
     typedef std::unordered_map<std::string, Safe<ConfigValue>> ConfigMap;
     /**
-     * @brief: 配置格式化接口类 
+     * @brief 配置格式化接口类
      */
     class IConfigFormatter {
     public:
         virtual ~IConfigFormatter();
         /**
-         * @brief: 将配置键值对写入配置文件函数
+         * @brief 将配置键值对写入配置文件函数
          * @param os 输出流
          * @param keyValue 配置键值对容器
          */
         virtual void write(std::ostream& os, ConfigMap& KeyValue) = 0;
         /**
-         * @brief: 解析配置文件函数
+         * @brief 解析配置文件函数
          * @param content 配置文件正文
          * @param keyValue 配置文件键值对容器
          */
         virtual void parse(const std::string& content, ConfigMap& keyValue) = 0;
     };    
     /**
-     * @brief: 配置文件类
+     * @brief 配置文件类
      */
     class ConfigFile {
     public:
         /**
-         * @brief: 析构函数
+         * @brief 析构函数
          */
         ~ConfigFile();
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param configFormatter 配置文件格式化器
          */
         ConfigFile(const Safe<IConfigFormatter>& configFormatter);
         /**
-         * @brief: 获取配置文件路径函数
+         * @brief 获取配置文件路径函数
          * @return: 返回配置文件路径
          */
         const std::string& getPath() const;
         /**
-         * @brief: 读取配置文件项函数
+         * @brief 读取配置文件项函数
          * @param keyValue 配置文件键值对 
          */
         void read(ConfigMap& keyValue);
         /**
-         * @brief: 写入配置文件项函数
+         * @brief 写入配置文件项函数
          * @param config 配置文件 
          */
         void write(ConfigMap& config);
@@ -104,21 +104,21 @@ namespace Magic {
         Safe<IConfigFormatter> m_Formatter;
     };
     /**
-     * @brief: 配置类
+     * @brief 配置类
      */
     class Config{
     public:
         /**
-         * @brief: 析构函数
+         * @brief 析构函数
          */
         ~Config();
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param configFile 配置文件
          */
         Config(const Safe<ConfigFile>& configFile);
         /**
-         * @brief: 获取配置项值函数
+         * @brief 获取配置项值函数
          * @param defaultName 配置键
          * @param defaultValue 配置值
          * @param defaultComment 配置注释
@@ -127,7 +127,7 @@ namespace Magic {
         template<class T>
         T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "");
         /**
-         * @brief: 修改配置项值函数
+         * @brief 修改配置项值函数
          * @param defaultName 配置键
          * @param defaultValue 配置值
          * @param defaultComment 配置注释
@@ -137,7 +137,7 @@ namespace Magic {
         T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "");
     private:
         /**
-         * @brief: 配置更新函数
+         * @brief 配置更新函数
          */
         void update();
     private:

@@ -17,7 +17,7 @@
 namespace Magic{
 namespace NetWork{
     /**
-     * @brief: Socket类
+     * @brief Socket类
      */
     class Socket :public std::enable_shared_from_this<Socket>{
     public:
@@ -32,72 +32,72 @@ namespace NetWork{
         /// 超时回调方法
         typedef std::function<void(const Safe<Socket>&)> HeartBeatCallBack;
         /**
-         * @brief: 析构函数S
+         * @brief 析构函数S
          */
         virtual ~Socket();
         /**
-         * @brief: 构造函数
+         * @brief 构造函数
          * @param heartBeatMs Socket心跳检测时间(毫秒)
          * @param bufferSize 缓存大小
          * @param context Asio的处理上下文
          */
         Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
         /**
-         * @brief: 关闭Socket
+         * @brief 关闭Socket
          */
         void close();
         /**
-         * @brief: 运行Socket心跳
+         * @brief 运行Socket心跳
          */
         void runHeartBeat(const Safe<void>& life);
         /**
-         * @brief: 获取Socket的实体函数
+         * @brief 获取Socket的实体函数
          * @return: 返回Socket实体
          */
         const Safe<asio::ip::tcp::socket>& getEntity();
     #ifdef OPENSSL
         /**
-         * @brief: 获取SslStream的实体函数
+         * @brief 获取SslStream的实体函数
          * @return: 返回SslStream实体
          */
         const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& getSslEntity();
         /**
-         * @brief: 启用SSL功能
+         * @brief 启用SSL功能
          * @param sslStream ssl流对象
          */
         void enableSsl(const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& sslStream);
     #endif
         /**
-         * @brief: 发送数据函数
+         * @brief 发送数据函数
          * @param data 二进制或文本数据
          * @param length 长度
          * @param callback 发送完成后响应函数
          */
         void send(const char* data,uint64_t length,const SendCallBack& callback = nullptr);
         /**
-         * @brief: 发送数据函数
+         * @brief 发送数据函数
          * @param stream Asio流式缓存数据
          * @param callback 发送完成后响应函数
          */
         void send(const Safe<asio::streambuf>& stream,const SendCallBack& callback = nullptr);
         /**
-         * @brief: 接收数据函数
+         * @brief 接收数据函数
          * @param callBack 接收数据回调函数
          */
         void recv(const RecvCallBack& callBack);
         /**
-         * @brief: 接收数据函数
+         * @brief 接收数据函数
          * @param size 指定接收大小
          * @param callBack 接收数据回调函数
          */
         void recv(uint64_t size,const RecvCallBack& callBack);
         /**
-         * @brief: 设置错误代码回调函数
+         * @brief 设置错误代码回调函数
          * @param errorCallBack 错误码回调函数
          */
         void setErrorCodeCallBack(const ErrorCallBack& errorCallBack);
         /**
-         * @brief: 设置超时回调函数
+         * @brief 设置超时回调函数
          * @param heartBeatCallBack 超时回调函数
          */
         void setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack);
