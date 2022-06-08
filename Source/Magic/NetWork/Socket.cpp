@@ -34,7 +34,6 @@ namespace NetWork{
     void Socket::runHeartBeat(const Safe<void>& life){
         auto self = this->shared_from_this();
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self,life](){
-            Mutex::Lock lock(self->m_Mutex);
             if(self->getEntity() && self->m_HeartBeatCallBack)
                 self->m_HeartBeatCallBack(self);
         });

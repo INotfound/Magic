@@ -38,7 +38,7 @@ namespace Magic{
         if(str.empty()){
             return nullptr;
         }
-        static unsigned char digest[SHA_DIGEST_LENGTH] = {0};
+        static unsigned char digest[SHA_DIGEST_LENGTH + 1] = {0};
     #ifdef OPENSSL
         std::memset(MD5Chars,0,33);
         MD5_CTX m_Md5;
@@ -55,7 +55,7 @@ namespace Magic{
         if(str.empty()){
             return nullptr;
         }
-        static unsigned char digest[SHA_DIGEST_LENGTH] = {0};
+        static unsigned char digest[SHA_DIGEST_LENGTH + 1] = {0};
     #ifdef OPENSSL
         std::memset(SHA1Chars,0,41);
         SHA_CTX m_Sha1;
@@ -94,7 +94,7 @@ namespace Magic{
         std::memset(SHA1Chars,0,41);
         SHA_CTX m_Sha1;
         SHA1_Init(&m_Sha1);
-	    static unsigned char digest[SHA_DIGEST_LENGTH] = {0};
+	    static unsigned char digest[SHA_DIGEST_LENGTH + 1] = {0};
         SHA1_Update(&m_Sha1,str.data(), str.size());
         SHA1_Final(digest,&m_Sha1);
         HexStringFromData(digest,SHA_DIGEST_LENGTH,SHA1Chars);

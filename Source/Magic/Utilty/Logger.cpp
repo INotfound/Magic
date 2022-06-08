@@ -14,7 +14,7 @@
 namespace Magic{
     Safe<Magic::Logger> g_Logger;
 
-    const char* ToString(LogLevel  level){
+    const char* ToString(LogLevel level){
         switch (level)
        {
 #define LEVEL(Name)\
@@ -57,7 +57,7 @@ namespace Magic{
         return m_ThreadId;
     }
 
-    const std::string LogEvent::getContent()       const{
+    const std::string LogEvent::getContent()        const{
         return m_StringStream.str();
     }
 
@@ -246,7 +246,7 @@ namespace Magic{
                 i = n - 1;
             }
             else if (Status == 1){
-                std::cout << "pattern error:" << pattern << "-" << pattern.substr(i) << std::endl;
+                std::cout << "Pattern Error:" << pattern << "-" << pattern.substr(i) << std::endl;
             }
         }
         if (!normalString.empty()){
@@ -260,16 +260,16 @@ namespace Magic{
     #define ItemEx(str,type) \
            {#str,[](const std::string& fmt){ return Safe<ILogFormatItem>(new type(fmt)); }}
             Item(T, TabFormatItem),                //T:Tab
-            Item(l, LineFormatItem),               //l:�к�
-            Item(p, LevelFormatItem),              //p:��־����
-            Item(r, ElapseFormatItem),             //r:�ۼƺ�����
-            Item(m, MessageFormatItem),            //m:��Ϣ
-            Item(c, LogNameFormatItem),            //c:��־����
-            Item(n, NewLineFormatItem),            //n:����
-            Item(t, ThreadIdFormatItem),           //t:�߳�id
-            Item(f, FilePathFormatItem),           //f:�ļ���
-            Item(N, ThreadNameFormatItem),         //N:�߳�����
-            ItemEx(d, DateTimeFormatItem),         //d:ʱ��
+            Item(l, LineFormatItem),               //l:行数
+            Item(p, LevelFormatItem),              //p:级别
+            Item(r, ElapseFormatItem),             //r:\t
+            Item(m, MessageFormatItem),            //m:消息
+            Item(c, LogNameFormatItem),            //c:日志名
+            Item(n, NewLineFormatItem),            //n:新一行
+            Item(t, ThreadIdFormatItem),           //t:线程Id
+            Item(f, FilePathFormatItem),           //f:文件路径
+            Item(N, ThreadNameFormatItem),         //N:线程名
+            ItemEx(d, DateTimeFormatItem),         //d:时间
     #undef ItemEx
     #undef Item
         };

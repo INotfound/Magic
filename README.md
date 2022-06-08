@@ -36,7 +36,7 @@
 
 ---
 
-> 只需支持**C++11**的编译器以及**CMake**构建工具编译即可,  ***MySql、OpenSSl*** 编译可选项.
+> 只需支持**C++11**的编译器以及**CMake** \ **OpenSSL**构建工具编译即可,  ***MySql*** 编译可选项.
 - Linux
   1. **Gnu**构建套件 (跳转在库路径中)
     - `mkdir build && cd build && cmake ../. && make && make install`

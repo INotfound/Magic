@@ -43,20 +43,25 @@ public:
 };
 
 using namespace Magic::NetWork::Http;
+Safe<WebSocket> webSocket;
 class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
     public:
         ResourceServlet(){
         }
 
         void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            Safe<WebSocket> webSocket = httpSocket->upgradeWebSocket(request,response);
+            webSocket = httpSocket->upgradeWebSocket(request,response);
+            webSocket->sendTextMessage("xxxxxx");
             webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string& msg){
                 MAGIC_DEBUG() << msg;
+                socket->sendTextMessage(msg);
+            });
+            webSocket->disconnectedCallBack([](const Safe<WebSocket>& socket){
+                MAGIC_DEBUG() << "disconnected";
             });
         }
 
         void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            request->setHeader("Sec-WebSocket-Key","xxxxx");
             response->setBody("Hello World")->setStatus(HttpStatus::OK);
             httpSocket->sendResponse(response);
         }

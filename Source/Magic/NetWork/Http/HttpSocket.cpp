@@ -147,7 +147,7 @@ namespace Http{
                     ->setHeader("Sec-WebSocket-Accept", Base64Encode(SHA1(wsKey)));
             this->sendResponse(response);
         }
-        auto socket = std::move(m_Socket);
+        Safe<Socket> socket = std::move(m_Socket);
         m_WebSocket = std::make_shared<WebSocket>(mask,socket);
         m_WebSocket->runAnalyse();
         return m_WebSocket;
