@@ -4,7 +4,6 @@
  * @LastEditTime: 2021-02-01 22:33:42
  */
 #if defined(_WIN32) || defined(_WIN64)
-
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/Timer.h"
 #include "Magic/Utilty/Thread.h"
