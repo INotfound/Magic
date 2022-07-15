@@ -5,6 +5,7 @@
  */
 #define PERFORMANCE 1
 #define _WIN32_WINNT 0x0601
+#include <regex>
 #include "Magic/Core/Container.h"
 #include "Magic/NetWork/Http/Uri.h"
 #include "Magic/NetWork/Http/Http.h"
@@ -83,6 +84,25 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
 //    std::free(ptr);
 //}
 
+
+//int main(int /*argc*/,char** /*argv*/){
+//    std::string cpp = "B(Safe<A> a,Safe<B> b,Safe<C> c)";
+//    std::regex reg("B\\((.*?)\\)");
+//    std::smatch match;
+//    std::regex_search(cpp,match,reg);
+//
+//    std::smatch subMatch;
+//    std::regex subReg("Safe<(.+?)+>");
+//    std::string subCpp = match[1];
+//    std::regex_search(subCpp,subMatch,subReg);
+//    for(auto v : subMatch){
+//        std::cout << subMatch.size() << " : " << v << std::endl;
+//    }
+//
+////    std::regex_match(cpp,reg);
+//    return 0;
+//}
+
 int main(int /*argc*/,char** /*argv*/){
 //    Magic::g_TraceAppender = std::make_shared<>
 //    std::printf("ptr[1] size of %llu \n",sizeof(Safe<A>));
@@ -106,7 +126,7 @@ int main(int /*argc*/,char** /*argv*/){
 
     Magic::Thread::SetName("Master");
     Magic::Configure([](const Safe<Magic::Container>& ioc){
-        ioc->registerType<Magic::Logger,Magic::Config>();
+        ioc->registerType<Magic::Logger,Safe<Magic::Config>>();
     });
 
     Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();

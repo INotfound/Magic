@@ -75,6 +75,14 @@ template<class T> struct Safe_Traits<Safe<T>>{
     typedef T Type;
 };
 
+template<class T> struct Safe_Traits<const Safe<T>>{
+    typedef T Type;
+};
+
 template<class T> struct Safe_Traits<const Safe<T>&>{
+    typedef T Type;
+};
+
+template<class T> struct Safe_Traits<const Safe<T>&&>{
     typedef T Type;
 };

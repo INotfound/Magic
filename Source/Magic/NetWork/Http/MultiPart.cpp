@@ -43,8 +43,8 @@ namespace Http {
         m_Parser.setBoundary(boundary);
     }
 
-    void MultiPart::setTempDirectory(const std::string& dirPath) {
-        m_TempDirectory = dirPath;
+    void MultiPart::setUploadDirectory(const std::string& dirPath) {
+        m_UploadDirectory = dirPath;
     }
 
     const std::unordered_map<std::string, std::string> &MultiPart::getParamMap() const {
@@ -126,7 +126,7 @@ namespace Http {
         std::string fileName = self->getFileName();
         if(!fileName.empty()){
             self->m_IsFile = true;
-            self->m_FilePath = self->m_TempDirectory + '/' + fileName;
+            self->m_FilePath = self->m_UploadDirectory + '/' + fileName;
             self->m_FileStream.open(self->m_FilePath,std::ios::binary);
         }
         std::string name = self->getName();

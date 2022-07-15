@@ -107,10 +107,17 @@ if(Analysis STREQUAL ON)
     endif()
 endif()
 
-install(TARGETS ${BINARY}
-    RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
-    ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
-)
+if(Performance STREQUAL OFF)
+    install(TARGETS ${BINARY}
+        RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
+        ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
+    )
+else()
+    install(TARGETS ${BINARY}
+        RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
+        ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib/Performance
+    )
+endif()
 
 add_executable(Test Test/main.cpp)
 target_link_libraries(Test Magic)

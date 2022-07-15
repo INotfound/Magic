@@ -58,12 +58,18 @@ elseif(UNIX)
     set(PLATFORM
     )
 endif()
-# ThirdParty
-find_package(OpenSSL)
 
-if(OpenSSL_FOUND)
+# ThirdParty
+find_library(SSL_LIBRARY ssl)
+find_path(OPENSSL openssl/conf.h)
+find_library(CRYPTO_LIBRARY crypto)
+if(NOT ${SSL} STREQUAL "SSL-NOTFOUND" AND NOT ${CRYPTO} STREQUAL "CRYPTO-NOTFOUND")
     add_definitions(-DOPENSSL)
-    set(THIRDPARTY ${THIRDPARTY} OpenSSL::SSL OpenSSL::Crypto)
+    include_directories(${OPENSSL})
+    message("Found Header: ${OPENSSL}")
+    message("Found Library: ${SSL_LIBRARY}")
+    message("Found Library: ${CRYPTO_LIBRARY}")
+    set(THIRDPARTY ${THIRDPARTY} ${SSL_LIBRARY} ${CRYPTO_LIBRARY})
 endif()
 
 link_libraries(${PLATFORM} ${THIRDPARTY})

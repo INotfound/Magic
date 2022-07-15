@@ -41,7 +41,7 @@ namespace Http{
         bool m_EnableSsl;
         std::string m_KeyFile;
         std::string m_CertFile;
-        std::string m_TempDirectory;
+        std::string m_UploadDirectory;
         Safe<HttpServletDispatch> m_ServletDispatch;
     };
 }

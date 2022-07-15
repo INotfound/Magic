@@ -43,17 +43,17 @@ namespace Http{
          * @brief 设置临时目录路径
          * @param dirPath 目录路径
          */
-        void setTempDirectory(const std::string& dirPath);
+        void setUploadDirectory(const std::string& dirPath);
         /**
          * @brief 接收请求头函数
-         * @param callback 接收回调函数
+         * @param httpRequest
          */
-        void sendRequest(const Safe<HttpRequest>& request);
+        void sendRequest(const Safe<HttpRequest>& httpRequest);
         /**
          * @brief 发送响应函数
-         * @param response 响应
+         * @param httpResponse 响应
          */
-        void sendResponse(const Safe<HttpResponse>& response);
+        void sendResponse(const Safe<HttpResponse>& httpResponse);
         /**
          * @brief 升级为WebSocket
          * @param request 请求头

@@ -14,7 +14,10 @@ namespace NetWork{
 
     IoPool::IoPool(const Safe<Config>& configuration)
         :m_Next(0)
-        ,m_PoolSize(configuration->at<uint32_t>("NetWork.IoPool.Size",2)){
+        ,m_PoolSize(configuration->at<uint32_t>("NetWork.IoPool.Size",0)){
+        if(m_PoolSize == 0){
+            m_PoolSize = std::thread::hardware_concurrency();
+        }
         for(uint32_t i = 0; i<m_PoolSize; i++){
             Safe<asio::io_context> io = std::make_shared<asio::io_context>();
             m_IOServiceWork.push_back(std::make_shared<asio::executor_work_guard<asio::io_context::executor_type>>(asio::make_work_guard(*io)));

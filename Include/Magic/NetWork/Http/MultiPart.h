@@ -28,7 +28,7 @@ namespace Http{
 
         void setBoundary(const std::string &boundary);
 
-        void setTempDirectory(const std::string& dirPath);
+        void setUploadDirectory(const std::string& dirPath);
 
         const std::unordered_map<std::string,std::string>& getParamMap() const;
     private:
@@ -62,7 +62,7 @@ namespace Http{
         std::string m_ParamValue;
         std::string m_HeaderValue;
         std::ofstream m_FileStream;
-        std::string m_TempDirectory;
+        std::string m_UploadDirectory;
         std::vector<std::string> m_FilePaths;
         std::unordered_map<std::string,std::string> m_ParamMap;
         std::unordered_map<std::string,std::string> m_HeaderMap;

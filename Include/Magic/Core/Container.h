@@ -51,13 +51,13 @@ namespace Magic{
             return this->registerTypeEx<T,T,Args...>(isSingleton);
         }
 
-        template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
+        template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_constructible<M, Args...>::value && (std::is_same<T,M>::value || std::is_base_of<T,M>::value)>::type>
         RegisteredType& registerTypeEx(bool isSingleton = true){
             const void* id = CompiletimeIId<T>();
             const void* raw = CompiletimeIId<M>();
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
-            Function<T,Args...> createFunc = &Container::invoke<T,M,Args...>;
+            Function<T,Args...> createFunc = &Container::invoke<T,M,typename Safe_Traits<Args>::Type...>;
             m_RegisteredType[id].emplace(raw,RegisteredType(isSingleton, [this,createFunc](){return (this->*createFunc)();}));
             return m_RegisteredType[id].at(raw);
         }
@@ -166,7 +166,7 @@ namespace Magic{
     private:
         template<typename T, typename M, typename... Args>
         Safe<T> invoke(){
-            return std::make_shared<M>(this->resolve<Args>()...); 
+            return std::make_shared<M>(this->resolve<Args>()...);
         }
     private:
         std::unordered_map<const void*,std::unordered_map<const void*,RegisteredType>> m_RegisteredType;

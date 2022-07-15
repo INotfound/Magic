@@ -16,7 +16,7 @@ namespace Http{
         ,m_EnableSsl(configuration->at<bool>("NetWork.Server.EnableSsl",false))
         ,m_KeyFile(configuration->at<std::string>("NetWork.Server.Ssl.KeyFile",""))
         ,m_CertFile(configuration->at<std::string>("NetWork.Server.Ssl.CertFile",""))
-        ,m_TempDirectory(configuration->at<std::string>("NetWork.Server.TempDirectory","./")){
+        ,m_UploadDirectory(configuration->at<std::string>("NetWork.Server.UploadDirectory", ".")){
         m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
 
@@ -71,7 +71,7 @@ namespace Http{
     void HttpServer::handleFunc(const Safe<Socket>& socket){
         Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(socket);
         socket->runHeartBeat(httpSocket);
-        httpSocket->setTempDirectory(m_TempDirectory);
+        httpSocket->setUploadDirectory(m_UploadDirectory);
         httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
     }
 }
