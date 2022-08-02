@@ -41,6 +41,12 @@
         "Initialize":[
             {
                 "Id":"logger",
+                "InvokeFunctions": {
+                    "externMode":[]
+                }
+            },
+            {
+                "Id":"logger",
                 "Loop":true,
                 "Callee":"Magic::ILogAppender",
                 "CalleeFunctions":["addILogAppender"]

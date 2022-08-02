@@ -10,11 +10,10 @@ namespace Magic{
 namespace NetWork{
     Socket::~Socket() =default;
 
-    Socket::Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel)
+    Socket::Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context)
         :m_BufferSize(bufferSize)
         ,m_HeartBeatMs(heartBeatMs)
         ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
-        ,m_TimingWheel(timingWheel)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
         m_ErrorCodeCallBack = [](const asio::error_code & err){
@@ -31,13 +30,18 @@ namespace NetWork{
         m_Socket->close(ignored);
     }
 
+    void Socket::setHeartBeatTime(uint64_t ms){
+        m_HeartBeatMs = ms;
+    }
+
     void Socket::runHeartBeat(const Safe<void>& life){
         auto self = this->shared_from_this();
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self,life](){
             if(self->getEntity() && self->m_HeartBeatCallBack)
                 self->m_HeartBeatCallBack(self);
         });
-        m_TimingWheel->addTask(m_HeartBeatMs, taskNode);
+        if(g_TimingWheel)
+            g_TimingWheel->addTask(m_HeartBeatMs, taskNode);
     }
 
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){
@@ -130,6 +134,9 @@ namespace NetWork{
         }
     #endif
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));
+    }
+    const Socket::ErrorCallBack& Socket::getErrorCodeCallBack() const{
+        return m_ErrorCodeCallBack;
     }
 
     void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){

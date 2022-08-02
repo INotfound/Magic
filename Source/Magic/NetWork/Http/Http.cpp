@@ -81,12 +81,16 @@ namespace Http{
 		result.reserve(value.size()); // Minimum size of result
 
 		for (auto &chr : value){
-			if (!((chr >= '0' && chr <= '9') || (chr >= 'A' && chr <= 'Z') || (chr >= 'a' && chr <= 'z') || chr == '-' || chr == '.' || chr == '_' || chr == '~'))
+			if (!((chr >= '0' && chr <= '9')
+			    || (chr >= 'A' && chr <= 'Z')
+			    || (chr >= 'a' && chr <= 'z')
+			    || chr == '=' || chr == '-'
+			    || chr == '&' || chr == '_'
+			    || chr == '~' || chr == '.'))
 				result += std::string("%") + hex_chars[static_cast<unsigned char>(chr) >> 4] + hex_chars[static_cast<unsigned char>(chr) & 15];
 			else
 				result += chr;
 		}
-
 		return result;
 	}
 
@@ -172,6 +176,7 @@ namespace Http{
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
+        ,m_Method(HttpMethod::GET)
         ,m_UrlPath("/")
         ,m_ContentLength(0){
     }
@@ -282,10 +287,9 @@ namespace Http{
     std::ostream& HttpRequest::toStream(std::ostream& os){
         os  << HttpMethodToString(m_Method) << ' '
             << m_UrlPath
-            << (m_Query.empty() ? "" : "?")
-            << m_Query
-            << (m_Fragment.empty() ? "" : "#")
-            << m_Fragment << ' '
+            << (m_Query.empty() ? "" : "?" + UrlEncode(m_Query))
+            << (m_Fragment.empty() ? "" : "#" + m_Fragment)
+            << ' '
             << "HTTP/"
             << static_cast<uint32_t>(m_Version >> 4)
             << '.'

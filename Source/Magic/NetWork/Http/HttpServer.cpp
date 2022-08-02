@@ -11,8 +11,8 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    HttpServer::HttpServer(const Safe<IoPool>& pool,const Safe<TimingWheel>& timingWheel,const Safe<Config>& configuration)
-        :TcpServer(pool,timingWheel,configuration)
+    HttpServer::HttpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration)
+        :TcpServer(pool,configuration)
         ,m_EnableSsl(configuration->at<bool>("NetWork.Server.EnableSsl",false))
         ,m_KeyFile(configuration->at<std::string>("NetWork.Server.Ssl.KeyFile",""))
         ,m_CertFile(configuration->at<std::string>("NetWork.Server.Ssl.CertFile",""))
@@ -25,7 +25,7 @@ namespace Http{
     }
 
     void HttpServer::accept(){
-        Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,m_IoPool->get(),m_TimingWheel);
+        Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,*m_IoPool->get());
     #ifdef OPENSSL
         if(m_EnableSsl){
             asio::ssl::context sslContext(asio::ssl::context::sslv23);
@@ -71,7 +71,7 @@ namespace Http{
     void HttpServer::handleFunc(const Safe<Socket>& socket){
         Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(socket);
         socket->runHeartBeat(httpSocket);
-        httpSocket->setUploadDirectory(m_UploadDirectory);
+        httpSocket->setDirectory(m_UploadDirectory);
         httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
     }
 }

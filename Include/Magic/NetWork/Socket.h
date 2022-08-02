@@ -32,20 +32,25 @@ namespace NetWork{
         /// 超时回调方法
         typedef std::function<void(const Safe<Socket>&)> HeartBeatCallBack;
         /**
-         * @brief 析构函数S
+         * @brief Socket
          */
-        virtual ~Socket();
+        ~Socket();
         /**
          * @brief 构造函数
          * @param heartBeatMs Socket心跳检测时间(毫秒)
          * @param bufferSize 缓存大小
          * @param context Asio的处理上下文
          */
-        Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context,const Safe<TimingWheel>& timingWheel);
+        Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context);
         /**
          * @brief 关闭Socket
          */
         void close();
+        /**
+         * @brief
+         * @param ms
+         */
+        void setHeartBeatTime(uint64_t ms);
         /**
          * @brief 运行Socket心跳
          */
@@ -92,6 +97,11 @@ namespace NetWork{
          */
         void recv(uint64_t size,const RecvCallBack& callBack);
         /**
+         * @brief 获取错误处理函数
+         * @return
+         */
+        const ErrorCallBack& getErrorCodeCallBack() const;
+        /**
          * @brief 设置错误代码回调函数
          * @param errorCallBack 错误码回调函数
          */
@@ -107,7 +117,6 @@ namespace NetWork{
         uint64_t m_HeartBeatMs;
         Safe<char> m_ByteBlock;
         StreamBuffer m_StreamBuffer;
-        Safe<TimingWheel> m_TimingWheel;
         ErrorCallBack m_ErrorCodeCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;
         HeartBeatCallBack m_HeartBeatCallBack;

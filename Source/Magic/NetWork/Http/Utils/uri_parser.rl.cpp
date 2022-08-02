@@ -17,26 +17,88 @@ static const int uri_parser_en_main = 451;
 
 #line 131 "uri_parser.rl"
 
+    Uri::Uri(const std::string& uri)
+        :m_Error(false)
+        ,m_Port(0){
+        m_Error = !this->execute(uri);
+    }
 
-    Uri::Uri()
-        :m_Port(0){
+    bool Uri::hasError() const{
+        return m_Error;
+    }
+
+    uint32_t Uri::getPort() const{
+        if(m_Port != 0){
+            return m_Port;
+        }
+        if(m_Scheme == "http"
+            || m_Scheme == "ws"){
+            return 80;
+        } else if(m_Scheme == "https"
+                || m_Scheme == "wss"){
+            return 443;
+        }
+        return m_Port;
+    }
+
+    const std::string& Uri::getUser() const{ 
+        return m_User;
+    }
+    const std::string& Uri::getHost() const{
+        return m_Host;
+    }
+
+    const std::string& Uri::getPath() const{
+        static std::string s_default_path = "/";
+        return m_Path.empty() ? s_default_path : m_Path;
+    }
+    const std::string& Uri::getQuery() const{ 
+        return m_Query;
+    }
+    const std::string& Uri::getScheme() const{ 
+        return m_Scheme;
+    }
+    const std::string& Uri::getFragment() const{
+        return m_Fragment;
+    }
+
+    void Uri::setPort(uint32_t val){ 
+        m_Port = val;
+    }
+    void Uri::setHost(const std::string& val){
+        m_Host = val;
+    }
+    void Uri::setPath(const std::string& val){
+        m_Path = val;
+    }
+    void Uri::setUser(const std::string& val){
+        m_User = val;
+    }
+    void Uri::setQuery(const std::string& val){
+        m_Query = val;
+    }
+    void Uri::setScheme(const std::string& val){
+        m_Scheme = val;
+    }
+    void Uri::setFragment(const std::string& val){
+        m_Fragment = val;
     }
 
     bool Uri::execute(const std::string& uri){
         int cs = 0;
         const char* mark = 0;
         
-#line 30 "uri_parser.rl.cpp"
+#line 92 "uri_parser.rl.cpp"
 	{
 	cs = uri_parser_start;
 	}
 
-#line 141 "uri_parser.rl"
+#line 203 "uri_parser.rl"
         const char *p = uri.c_str();
         const char *pe = p + uri.size();
         const char* eof = pe;
         
-#line 40 "uri_parser.rl.cpp"
+#line 102 "uri_parser.rl.cpp"
 	{
 	if ( p == pe )
 		goto _test_eof;
@@ -227,7 +289,7 @@ st453:
 	if ( ++p == pe )
 		goto _test_eof453;
 case 453:
-#line 231 "uri_parser.rl.cpp"
+#line 293 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 37: goto tr463;
 		case 60: goto st0;
@@ -255,7 +317,7 @@ st454:
 	if ( ++p == pe )
 		goto _test_eof454;
 case 454:
-#line 259 "uri_parser.rl.cpp"
+#line 321 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 37: goto st1;
 		case 60: goto st0;
@@ -283,7 +345,7 @@ st1:
 	if ( ++p == pe )
 		goto _test_eof1;
 case 1:
-#line 287 "uri_parser.rl.cpp"
+#line 349 "uri_parser.rl.cpp"
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st2;
@@ -374,7 +436,7 @@ st455:
 	if ( ++p == pe )
 		goto _test_eof455;
 case 455:
-#line 378 "uri_parser.rl.cpp"
+#line 440 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto st453;
@@ -531,7 +593,7 @@ st456:
 	if ( ++p == pe )
 		goto _test_eof456;
 case 456:
-#line 535 "uri_parser.rl.cpp"
+#line 597 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto tr467;
@@ -558,7 +620,7 @@ st457:
 	if ( ++p == pe )
 		goto _test_eof457;
 case 457:
-#line 562 "uri_parser.rl.cpp"
+#line 624 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto tr469;
@@ -585,7 +647,7 @@ st7:
 	if ( ++p == pe )
 		goto _test_eof7;
 case 7:
-#line 589 "uri_parser.rl.cpp"
+#line 651 "uri_parser.rl.cpp"
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st8;
@@ -674,7 +736,7 @@ st9:
 	if ( ++p == pe )
 		goto _test_eof9;
 case 9:
-#line 678 "uri_parser.rl.cpp"
+#line 740 "uri_parser.rl.cpp"
 	if ( 48 <= (*p) && (*p) <= 52 )
 		goto st10;
 	goto st0;
@@ -820,7 +882,7 @@ st461:
 	if ( ++p == pe )
 		goto _test_eof461;
 case 461:
-#line 824 "uri_parser.rl.cpp"
+#line 886 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 35: goto tr489;
 		case 47: goto tr490;
@@ -837,7 +899,7 @@ st462:
 	if ( ++p == pe )
 		goto _test_eof462;
 case 462:
-#line 841 "uri_parser.rl.cpp"
+#line 903 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 35: goto tr493;
 		case 47: goto tr494;
@@ -983,7 +1045,7 @@ st467:
 	if ( ++p == pe )
 		goto _test_eof467;
 case 467:
-#line 987 "uri_parser.rl.cpp"
+#line 1049 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -1013,7 +1075,7 @@ st31:
 	if ( ++p == pe )
 		goto _test_eof31;
 case 31:
-#line 1017 "uri_parser.rl.cpp"
+#line 1079 "uri_parser.rl.cpp"
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st32;
@@ -1058,7 +1120,7 @@ st468:
 	if ( ++p == pe )
 		goto _test_eof468;
 case 468:
-#line 1062 "uri_parser.rl.cpp"
+#line 1124 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st33;
 		case 35: goto tr489;
@@ -1159,7 +1221,7 @@ st469:
 	if ( ++p == pe )
 		goto _test_eof469;
 case 469:
-#line 1163 "uri_parser.rl.cpp"
+#line 1225 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 2: goto tr472;
 		case 33: goto tr501;
@@ -1197,7 +1259,7 @@ st470:
 	if ( ++p == pe )
 		goto _test_eof470;
 case 470:
-#line 1201 "uri_parser.rl.cpp"
+#line 1263 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1226,7 +1288,7 @@ st36:
 	if ( ++p == pe )
 		goto _test_eof36;
 case 36:
-#line 1230 "uri_parser.rl.cpp"
+#line 1292 "uri_parser.rl.cpp"
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st37;
@@ -1257,7 +1319,7 @@ st471:
 	if ( ++p == pe )
 		goto _test_eof471;
 case 471:
-#line 1261 "uri_parser.rl.cpp"
+#line 1323 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1664,7 +1726,7 @@ st485:
 	if ( ++p == pe )
 		goto _test_eof485;
 case 485:
-#line 1668 "uri_parser.rl.cpp"
+#line 1730 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1698,7 +1760,7 @@ st486:
 	if ( ++p == pe )
 		goto _test_eof486;
 case 486:
-#line 1702 "uri_parser.rl.cpp"
+#line 1764 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1732,7 +1794,7 @@ st487:
 	if ( ++p == pe )
 		goto _test_eof487;
 case 487:
-#line 1736 "uri_parser.rl.cpp"
+#line 1798 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1798,7 +1860,7 @@ st38:
 	if ( ++p == pe )
 		goto _test_eof38;
 case 38:
-#line 1802 "uri_parser.rl.cpp"
+#line 1864 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 58: goto st146;
 		case 118: goto st225;
@@ -4645,7 +4707,7 @@ st489:
 	if ( ++p == pe )
 		goto _test_eof489;
 case 489:
-#line 4649 "uri_parser.rl.cpp"
+#line 4711 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st33;
 		case 35: goto tr493;
@@ -4680,7 +4742,7 @@ st490:
 	if ( ++p == pe )
 		goto _test_eof490;
 case 490:
-#line 4684 "uri_parser.rl.cpp"
+#line 4746 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5101,7 +5163,7 @@ st504:
 	if ( ++p == pe )
 		goto _test_eof504;
 case 504:
-#line 5105 "uri_parser.rl.cpp"
+#line 5167 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5136,7 +5198,7 @@ st505:
 	if ( ++p == pe )
 		goto _test_eof505;
 case 505:
-#line 5140 "uri_parser.rl.cpp"
+#line 5202 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5171,7 +5233,7 @@ st506:
 	if ( ++p == pe )
 		goto _test_eof506;
 case 506:
-#line 5175 "uri_parser.rl.cpp"
+#line 5237 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5239,7 +5301,7 @@ st508:
 	if ( ++p == pe )
 		goto _test_eof508;
 case 508:
-#line 5243 "uri_parser.rl.cpp"
+#line 5305 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto st453;
@@ -5282,7 +5344,7 @@ st509:
 	if ( ++p == pe )
 		goto _test_eof509;
 case 509:
-#line 5286 "uri_parser.rl.cpp"
+#line 5348 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto st453;
@@ -5369,7 +5431,7 @@ st229:
 	if ( ++p == pe )
 		goto _test_eof229;
 case 229:
-#line 5373 "uri_parser.rl.cpp"
+#line 5435 "uri_parser.rl.cpp"
 	if ( 48 <= (*p) && (*p) <= 52 )
 		goto st230;
 	goto st0;
@@ -5539,7 +5601,7 @@ st513:
 	if ( ++p == pe )
 		goto _test_eof513;
 case 513:
-#line 5543 "uri_parser.rl.cpp"
+#line 5605 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto tr563;
@@ -5607,7 +5669,7 @@ st514:
 	if ( ++p == pe )
 		goto _test_eof514;
 case 514:
-#line 5611 "uri_parser.rl.cpp"
+#line 5673 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 35: goto tr566;
 		case 47: goto tr567;
@@ -5624,7 +5686,7 @@ st515:
 	if ( ++p == pe )
 		goto _test_eof515;
 case 515:
-#line 5628 "uri_parser.rl.cpp"
+#line 5690 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 35: goto tr570;
 		case 47: goto tr571;
@@ -5770,7 +5832,7 @@ st520:
 	if ( ++p == pe )
 		goto _test_eof520;
 case 520:
-#line 5774 "uri_parser.rl.cpp"
+#line 5836 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -5800,7 +5862,7 @@ st253:
 	if ( ++p == pe )
 		goto _test_eof253;
 case 253:
-#line 5804 "uri_parser.rl.cpp"
+#line 5866 "uri_parser.rl.cpp"
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st254;
@@ -5845,7 +5907,7 @@ st521:
 	if ( ++p == pe )
 		goto _test_eof521;
 case 521:
-#line 5849 "uri_parser.rl.cpp"
+#line 5911 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st255;
 		case 35: goto tr566;
@@ -5946,7 +6008,7 @@ st522:
 	if ( ++p == pe )
 		goto _test_eof522;
 case 522:
-#line 5950 "uri_parser.rl.cpp"
+#line 6012 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 2: goto tr546;
 		case 33: goto tr578;
@@ -5984,7 +6046,7 @@ st523:
 	if ( ++p == pe )
 		goto _test_eof523;
 case 523:
-#line 5988 "uri_parser.rl.cpp"
+#line 6050 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6013,7 +6075,7 @@ st258:
 	if ( ++p == pe )
 		goto _test_eof258;
 case 258:
-#line 6017 "uri_parser.rl.cpp"
+#line 6079 "uri_parser.rl.cpp"
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st259;
@@ -6044,7 +6106,7 @@ st524:
 	if ( ++p == pe )
 		goto _test_eof524;
 case 524:
-#line 6048 "uri_parser.rl.cpp"
+#line 6110 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6451,7 +6513,7 @@ st538:
 	if ( ++p == pe )
 		goto _test_eof538;
 case 538:
-#line 6455 "uri_parser.rl.cpp"
+#line 6517 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6485,7 +6547,7 @@ st539:
 	if ( ++p == pe )
 		goto _test_eof539;
 case 539:
-#line 6489 "uri_parser.rl.cpp"
+#line 6551 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6519,7 +6581,7 @@ st540:
 	if ( ++p == pe )
 		goto _test_eof540;
 case 540:
-#line 6523 "uri_parser.rl.cpp"
+#line 6585 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6585,7 +6647,7 @@ st260:
 	if ( ++p == pe )
 		goto _test_eof260;
 case 260:
-#line 6589 "uri_parser.rl.cpp"
+#line 6651 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 58: goto st368;
 		case 118: goto st447;
@@ -9432,7 +9494,7 @@ st542:
 	if ( ++p == pe )
 		goto _test_eof542;
 case 542:
-#line 9436 "uri_parser.rl.cpp"
+#line 9498 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st255;
 		case 35: goto tr570;
@@ -9467,7 +9529,7 @@ st543:
 	if ( ++p == pe )
 		goto _test_eof543;
 case 543:
-#line 9471 "uri_parser.rl.cpp"
+#line 9533 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -9888,7 +9950,7 @@ st557:
 	if ( ++p == pe )
 		goto _test_eof557;
 case 557:
-#line 9892 "uri_parser.rl.cpp"
+#line 9954 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -9923,7 +9985,7 @@ st558:
 	if ( ++p == pe )
 		goto _test_eof558;
 case 558:
-#line 9927 "uri_parser.rl.cpp"
+#line 9989 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -9958,7 +10020,7 @@ st559:
 	if ( ++p == pe )
 		goto _test_eof559;
 case 559:
-#line 9962 "uri_parser.rl.cpp"
+#line 10024 "uri_parser.rl.cpp"
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -10816,14 +10878,14 @@ case 560:
             mark = NULL;
         }
 	break;
-#line 10820 "uri_parser.rl.cpp"
+#line 10882 "uri_parser.rl.cpp"
 	}
 	}
 
 	_out: {}
 	}
 
-#line 145 "uri_parser.rl"
+#line 207 "uri_parser.rl"
         if(cs == uri_parser_error){
             return false; //error
         } else if(cs >= uri_parser_first_final){
@@ -10831,76 +10893,7 @@ case 560:
         }
         return false;//error
     }
-    uint32_t Uri::getPort() const{
-        if(m_Port){
-            return m_Port;
-        }
-        if(m_Scheme == "http"
-            || m_Scheme == "ws"){
-            return 80;
-        } else if(m_Scheme == "https"
-                || m_Scheme == "wss"){
-            return 443;
-        }
-        return m_Port;
-    }
 
-    const std::string& Uri::getUser() const{ 
-        return m_User;
-    }
-    const std::string& Uri::getHost() const{
-        return m_Host;
-    }
-
-    const std::string& Uri::getPath() const{
-        static std::string s_default_path = "/";
-        return m_Path.empty() ? s_default_path : m_Path;
-    }
-    const std::string& Uri::getQuery() const{ 
-        return m_Query;
-    }
-    const std::string& Uri::getScheme() const{ 
-        return m_Scheme;
-    }
-    const std::string& Uri::getFragment() const{
-        return m_Fragment;
-    }
-
-    void Uri::setPort(uint32_t val){ 
-        m_Port = val;
-    }
-    void Uri::setHost(const std::string& val){
-        m_Host = val;
-    }
-    void Uri::setPath(const std::string& val){
-        m_Path = val;
-    }
-    void Uri::setUser(const std::string& val){
-        m_User = val;
-    }
-    void Uri::setQuery(const std::string& val){
-        m_Query = val;
-    }
-    void Uri::setScheme(const std::string& val){
-        m_Scheme = val;
-    }
-    void Uri::setFragment(const std::string& val){
-        m_Fragment = val;
-    }
-
-    bool Uri::isDefaultPort() const{
-        if(m_Port == 0){
-            return true;
-        }
-        if(m_Scheme == "http"
-                || m_Scheme == "ws"){
-            return m_Port == 80;
-        } else if(m_Scheme == "https"
-                || m_Scheme == "wss"){
-            return m_Port == 443;
-        }
-        return false;
-    }
 }
 }
 }

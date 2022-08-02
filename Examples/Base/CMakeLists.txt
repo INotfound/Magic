@@ -20,18 +20,18 @@ include(${MAGIC}/Magic.cmake)
 include_directories(${CMAKE_BINARY_DIR})
 
 set(MODULES
-    ${MAGIC}/Modules/Magic.magic
-    ${PROJECT_SOURCE_DIR}/Test.magic
-    ${PROJECT_SOURCE_DIR}/TestLog.magic
-    ${PROJECT_SOURCE_DIR}/TestConfig.magic
+    ${MAGIC}/Modules/Magic.json
+    ${PROJECT_SOURCE_DIR}/Test.json
+    ${PROJECT_SOURCE_DIR}/TestLog.json
+    ${PROJECT_SOURCE_DIR}/TestConfig.json
 )
 
-add_custom_target(Gen ALL)
+add_custom_target(BaseGen ALL)
 add_custom_command(
-    TARGET Gen
+    TARGET BaseGen
     COMMAND ${MAGIC}/Bin/Gen ${MODULES} Base
 )
 
 #Test
-    add_executable(ExampleBase Main.cpp)
+add_executable(ExampleBase Main.cpp)
 

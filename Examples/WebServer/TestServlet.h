@@ -7,9 +7,10 @@
 #include <Magic/NetWork/Http/HttpServlet.h>
 
 namespace Web{
-    class TestServlet :public Magic::NetWork::Http::IHttpServlet{
+    using namespace Magic::NetWork::Http;
+    class TestServlet :public IHttpServlet{
     public:
         TestServlet();
-        bool handle(const Safe<HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response) override;
+        void test(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response);
     };
 }

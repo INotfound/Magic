@@ -6,20 +6,19 @@
 #include "TestServlet.h"
 
 namespace Web{
-    TestServlet::TestServlet()
-        :Magic::NetWork::Http::IHttpServlet("",Magic::NetWork::Http::HttpServletType::Deafult){
+    TestServlet::TestServlet(){
     }
-    bool TestServlet::handle(const Safe<HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
-        response->setStatus(Magic::NetWork::Http::HttpStatus::NOT_FOUND);
-        std::string notfound{R"Template(<html>
-            <head><title>404 Not Found</title></head>
+
+    void TestServlet::test(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
+        std::string helloMagic{R"Template(<html>
+            <head><title>Hello Magic</title></head>
             <body>
-            <center><h1>404 Not Found</h1></center>
+            <center><h1>Hello Magic</h1></center>
             <hr><center>Magic/2.0.0</center>
             </body>
             </html>)Template"};
-        response->setBody(notfound);
+        response->setBody(helloMagic)
+            ->setStatus(HttpStatus::OK);
         httpSocket->sendResponse(response);
-        return true;
     }
 }

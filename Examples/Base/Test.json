@@ -13,8 +13,7 @@
         "Initialize":[
             {
                 "Id":"test",
-                "FunctionPropertys":["printf"],
-                "FunctionArguments":{
+                "InvokeFunctions":{
                     "printf" : ["\"你好啊,我是小白君！\""]
                 }
             }

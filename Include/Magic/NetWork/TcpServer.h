@@ -26,7 +26,7 @@ namespace NetWork{
          * @brief 设置网络Io池
          * @param configuration 配置器
          */
-        TcpServer(const Safe<IoPool>& pool,const Safe<TimingWheel>& timingWheel,const Safe<Config>& configuration);
+        TcpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration);
         /**
          * @brief TcpServer服务端运行函数
          */
@@ -50,7 +50,6 @@ namespace NetWork{
         Safe<IoPool> m_IoPool;
         std::string m_Address;
         uint16_t m_NetworkPort;
-        Safe<TimingWheel> m_TimingWheel;
         Safe<asio::ip::tcp::acceptor> m_Acceptor;
     };
 }

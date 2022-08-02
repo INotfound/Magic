@@ -4,7 +4,6 @@
  * @LastEditTime: 2021-01-18 06:00:25
  */
 #define PERFORMANCE 1
-#define _WIN32_WINNT 0x0601
 #include <regex>
 #include "Magic/Core/Container.h"
 #include "Magic/NetWork/Http/Uri.h"
@@ -16,27 +15,11 @@
 #include "Magic/DataBase/ConnectionPool.h"
 #include "Magic/Core/Adapter.h"
 #include "Magic/Utilty/Trace.h"
+#include "Magic/NetWork/TcpClient.h"
+#include "Magic/NetWork/Http/HttpClient.h"
 
 
 ///// http://127.0.0.1/
-
-class A;
-class B{
-public:
-    friend class A;
-    B(A* self):inner(self){}
-    A* operator->(){
-        return inner;
-    }
-
-    A& operator*(){
-        return *inner;
-    }
-
-private:
-    A* inner;
-};
-
 
 class A{
 public:
@@ -50,7 +33,9 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
         ResourceServlet(){
         }
 
-        void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
+        void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket
+                       ,const Safe<Magic::NetWork::Http::HttpRequest>& request
+                       ,const Safe<Magic::NetWork::Http::HttpResponse>& response){
             webSocket = httpSocket->upgradeWebSocket(request,response);
             webSocket->sendTextMessage("xxxxxx");
             webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string& msg){
@@ -103,6 +88,22 @@ class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
 //    return 0;
 //}
 
+
+class AA{
+public:
+    AA(){
+    }
+};
+class BB{
+public:
+    BB(const Safe<AA>&){
+    }
+    void init(const Safe<AA>& a){
+        std::cout << "xxxxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx: " << (a ? 1 : 0) << std::endl;
+    }
+};
+
+
 int main(int /*argc*/,char** /*argv*/){
 //    Magic::g_TraceAppender = std::make_shared<>
 //    std::printf("ptr[1] size of %llu \n",sizeof(Safe<A>));
@@ -114,20 +115,23 @@ int main(int /*argc*/,char** /*argv*/){
 
 //    std::printf("size of %llu\n",sizeof(void*));
 
-    Magic::NetWork::Http::Uri uri;
-    uri.execute("mysql://admin@0.0.0.0:8181/xxx?password=12345678901a");
+    Magic::NetWork::Http::Uri uri("mysql://admin@0.0.0.0:8181/xxx?password=12345678901a&x=2");
     std::printf("%s\n",uri.getUser().c_str());
     std::printf("%s\n",uri.getHost().c_str());
-    std::printf("%s\n",&(uri.getPath().c_str()[1]));
+    std::printf("%s\n",uri.getPath().c_str());
     std::printf("%s\n",uri.getQuery().c_str());
     std::printf("%s\n",uri.getScheme().c_str());
     std::printf("%s\n",uri.getFragment().c_str());
     std::printf("%d\n",uri.getPort());
 
     Magic::Thread::SetName("Master");
-    Magic::Configure([](const Safe<Magic::Container>& ioc){
-        ioc->registerType<Magic::Logger,Safe<Magic::Config>>();
+    auto ioc = Magic::Configure([](const Safe<Magic::Container>& ioc){
+//        ioc->registerType<Magic::Logger,Safe<Magic::Config>>();
+        ioc->registerType<AA>();
+        ioc->registerType<BB,Safe<AA>>().registerProperty(&BB::init);
     });
+
+    ioc->resolveAll();
 
     Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();
     Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>(formatter);
@@ -137,19 +141,13 @@ int main(int /*argc*/,char** /*argv*/){
     Magic::g_Logger = std::make_shared<Magic::Logger>(config);
     Safe<Magic::ILogAppender> logAppender = std::make_shared<Magic::StdOutLogAppender>();
     Magic::g_Logger->addILogAppender(logAppender);
-    Safe<Magic::TimingWheel> timingWheel = std::make_shared<Magic::TimingWheel>(config);
+    Magic::g_TimingWheel = std::make_shared<Magic::TimingWheel>(config);
     Safe<Magic::NetWork::IoPool> pool = std::make_shared<Magic::NetWork::IoPool>(config);
-    timingWheel->run();
-    Magic::NetWork::Http::HttpServer server(pool,timingWheel,config);
-
+    Magic::g_TimingWheel->run();
+    Magic::NetWork::Http::HttpServer server(pool,config);
 
     Safe<Magic::NetWork::Http::IHttpServlet> resservlet = std::make_shared<ResourceServlet>();
     Safe<Magic::NetWork::Http::HttpServletDispatch> dispatch = std::make_shared<Magic::NetWork::Http::HttpServletDispatch>();
-
-    MAGIC_DEBUG() << __cplusplus;
-    MAGIC_WARN() << __cplusplus;
-    MAGIC_ERROR() << __cplusplus;
-    MAGIC_FATAL() << __cplusplus;
 
     dispatch->setHttpServlet(resservlet);
 //    dispatch->addHttpServlet(resservlet);
@@ -158,45 +156,60 @@ int main(int /*argc*/,char** /*argv*/){
     resservlet->addRoute("/chat",&ResourceServlet::websocket);
 
     server.setServletDispatch(dispatch);
-    server.run();
+
+
+
+//    Magic::NetWork::TcpClient client("www.baidu.com",80);
+//    client.connect([&client](){
+//        Safe<Magic::NetWork::Http::HttpRequest> request = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+//        Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
+//        std::ostream stream(streamBuffer.get());
+//        stream << request;
+//        client.send(streamBuffer);
+//        client.recv([](Magic::NetWork::Socket::StreamBuffer& buffer){
+//            MAGIC_DEBUG() << "xxx " << buffer.data();
+//        });
+//    });
+//
+//    client.run();
+//    server.run();
+//
+    Magic::NetWork::Http::Uri uris("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6f260538-b8d0-4c29-9492-6b04522ba3d3");
+    std::printf("%s\n",uris.getUser().c_str());
+    std::printf("%s\n",uris.getHost().c_str());
+    std::printf("%s\n",uris.getPath().c_str());
+    std::printf("%s\n",uris.getQuery().c_str());
+    std::printf("%s\n",uris.getScheme().c_str());
+    std::printf("%s\n",uris.getFragment().c_str());
+    std::printf("%d\n",uris.getPort());
+    MAGIC_DEBUG() << " Port " << uris.getPort();
+
+
+//    ->setHeader("Content-Type","application/json")
+//    ->setBody(R"Template({
+//    "msgtype": "markdown",
+//    "markdown": {
+//        "content": "中间件开发测试消息<font color=\"warning\">111</font>，请相关同事注意。\n
+//         >类型:<font color=\"comment\">测试</font>
+//         >反馈:<font color=\"comment\">测试</font>",
+//        "mentioned_list":["@all"]
+//    }
+//})Template");
+
+    Magic::Thread thread("",[](){
+        MAGIC_DEBUG() << "xxxx";
+        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+        client->onTimeOut([](){
+            MAGIC_DEBUG() << "请求超时";
+        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+        })->execute(httpRequest);
+    });
+    thread.join();
+
+    MAGIC_DEBUG() << "@@@@@@@@@@@@@@";
+    std::getchar();
     return 0;
 }
-
-//int main(){
-//    system("color");
-//
-//    printf("以下是测试文字：\n");
-//    printf("\033[0m默认文字\033[0m\n");
-//    printf("\033[1m高亮文字\033[0m\n");
-//    printf("\033[2m低亮文字\033[0m\n");
-//    //printf("\033[3m无效文字\033[0m\n");
-//    printf("\033[4m下划线文字\033[0m\n");
-//    printf("\033[5m闪烁文字(无效)\033[0m\n");
-//    //printf("\033[6m无效文字\033[0m\n");
-//    printf("\033[7m反显文字\033[0m\n");
-//    printf("\033[8m消隐文字(无效)\033[0m\n");
-//
-//    printf("\n\033[31;1m字体颜色\033[0m测试文字\n");
-//    printf("\033[30m低亮黑色文字2333\033[0m\t\033[30;1m高亮黑色文字2333\033\n[0m");
-//    printf("\033[31m低亮红色文字\033[0m\t\033[31;1m高亮红色文字\033[0m\n");
-//    printf("\033[32m低亮绿色文字\033[0m\t\033[32;1m高亮绿色文字\033[0m\n");
-//    printf("\033[33m低亮黄色文字\033[0m\t\033[33;1m高亮黄色文字\033[0m\n");
-//    printf("\033[34m低亮蓝色文字\033[0m\t\033[34;1m高亮蓝色文字\033[0m\n");
-//    printf("\033[35m低亮紫色文字\033[0m\t\033[35;1m高亮紫色文字\033[0m\n");
-//    printf("\033[36m低亮浅蓝文字\033[0m\t\033[36;1m高亮浅蓝文字\033[0m\n");
-//    printf("\033[37m低亮白色文字\033[0m\t\033[37;1m高亮白色文字\033[0m\n");
-//    printf("\033[38m测试文字\033[0m\n");
-//    printf("\033[39m测试文字\033[0m\n");
-//
-//    printf("\n\033[31;1m背景颜色\033[0m测试文字\n");
-//    printf("\033[40m低亮文字黑色背景\033[0m\t\033[40;1m高亮文字黑色背景\033[0m\n");
-//    printf("\033[41m低亮文字红色背景\033[0m\t\033[41;1m高亮文字红色背景\033[0m\n");
-//    printf("\033[42m低亮文字绿色背景\033[0m\t\033[42;1m高亮文字绿色背景\033[0m\n");
-//    printf("\033[43m低亮文字黄色背景\033[0m\t\033[43;1m高亮文字黄色背景\033[0m\n");
-//    printf("\033[44m低亮文字蓝色背景\033[0m\t\033[44;1m高亮文字蓝色背景\033[0m\n");
-//    printf("\033[45m低亮文字紫色背景\033[0m\t\033[45;1m高亮文字紫色背景\033[0m\n");
-//    printf("\033[46m低亮文字浅蓝背景\033[0m\t\033[46;1m高亮文字浅蓝背景\033[0m\n");
-//    printf("\033[47m低亮文字白色背景\033[0m\t\033[47;1m高亮文字白色背景\033[0m\n");
-//    printf("\033[48m测试文字\033[0m\n");
-//    printf("\033[49m测试文字\033[0m\n");
-//}

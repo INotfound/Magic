@@ -45,7 +45,7 @@ namespace Magic{
         Safe<asio::steady_timer> m_Time;
         std::function<void()> m_CallBack;
         Safe<asio::io_context> m_IoContext;
-        Safe<asio::io_context::work> m_IoWork;
+        Safe<asio::executor_work_guard<asio::io_context::executor_type>> m_IoWork;
     };
     /**
      * @brief 获取当前时间

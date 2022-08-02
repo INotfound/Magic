@@ -183,7 +183,9 @@ void Generator(std::ostream& stream){
             for(auto& deps : val.Dependencies){
                 if(!deps.empty()){
                     stream << ","
-                           << deps;
+                           << "Safe<"
+                           << deps
+                           << ">";
                 }
             }
             stream << ">()";

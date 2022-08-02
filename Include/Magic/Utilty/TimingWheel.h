@@ -81,7 +81,7 @@ namespace Magic{
     /**
      * @brief 定时轮
      */
-    class TimingWheel{
+    class TimingWheel :public std::enable_shared_from_this<TimingWheel>{
     public:
         /**
          * @brief 构造函数
@@ -97,6 +97,10 @@ namespace Magic{
          * @brief 暂停定时轮函数
          */
         void stop();
+        /**
+         * @brief 外部模式
+         */
+        void externMode();
         /**
          * @brief 改变定时路时间以及函数
          * @param tickMs 需要改变的时间(毫秒)
@@ -121,4 +125,5 @@ namespace Magic{
         Safe<Wheel> m_Wheels;
         uint64_t m_WheelSize;
     };
+    extern Safe<TimingWheel> g_TimingWheel;
 }

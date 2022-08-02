@@ -30,6 +30,11 @@ namespace Http{
          */
         HttpSocket(const Safe<Socket>& socket);
         /**
+        * @brief 设置临时目录路径
+        * @param dirPath 目录路径
+        */
+        void setDirectory(const std::string& dirPath);
+        /**
          * @brief 接收请求头函数
          * @param callback 接收回调函数
          */
@@ -39,11 +44,6 @@ namespace Http{
          * @param callback 接收回调函数
          */
         void recvResponse(const HttpRecvBack& callback);
-        /**
-         * @brief 设置临时目录路径
-         * @param dirPath 目录路径
-         */
-        void setUploadDirectory(const std::string& dirPath);
         /**
          * @brief 接收请求头函数
          * @param httpRequest

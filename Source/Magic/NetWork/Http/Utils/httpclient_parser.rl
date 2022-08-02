@@ -39,7 +39,7 @@
 #include <string.h>
 #include <cerrno>
 //#include "dbg.h"
-#include "Magic/Http/Util/httpclient_parser.h"
+#include "Magic/NetWork/Http/Utils/httpclient_parser.h"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
@@ -195,7 +195,6 @@ int httpclient_parser_execute(httpclient_parser *parser, const char *buffer, siz
     p = buffer+off;
     pe = buffer+len;
 
-    assert(*pe == '\0' && "pointer does not end on NUL");
     assert(pe - p == (int)len - (int)off && "pointers aren't same distance");
 
 

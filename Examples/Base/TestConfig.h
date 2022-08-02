@@ -4,8 +4,8 @@
  * @LastEditTime: 2021-01-13 07:44:12
  */
 #pragma once
-#include <Base.h>
 #include "TestLog.h"
+#include "Examples/Base/Base.h"
 // 注入示例
 namespace Base{
     class TestConfig{

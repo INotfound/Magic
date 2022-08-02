@@ -13,12 +13,14 @@ namespace Magic{
         std::string m_FunctionName;
         std::chrono::time_point<std::chrono::steady_clock> m_TimePoint;
     };
+
     class ITraceAppender{
     public:
         virtual ~ITraceAppender();
         virtual void complete() =0;
         virtual void tracing(const std::string& funcName,uint64_t threadId,int64_t start,int64_t end) =0;
     };
+
     class ChromiumTraceAppender :public ITraceAppender{
     public:
         ~ChromiumTraceAppender() override;

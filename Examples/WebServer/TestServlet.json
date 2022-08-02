@@ -11,7 +11,14 @@
                 "FunctionPropertys":[]
             }
         ],
-        "Initialize":[],
+        "Initialize":[
+            {
+                "Id":"testServlet",
+                "InvokeFunctions":{
+                    "addRoute":["\"/test\"","&Web::TestServlet::test"]
+                }
+            }
+        ],
         "Constructor":{
             "Name":"Initialize",
             "WithParameter": true

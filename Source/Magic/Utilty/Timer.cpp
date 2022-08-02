@@ -22,7 +22,7 @@ namespace Magic{
     }
 
     void Timer::run(){
-        m_IoWork = std::make_shared<asio::io_context::work>(*m_IoContext);
+        m_IoWork = std::make_shared<asio::executor_work_guard<asio::io_context::executor_type>>(asio::make_work_guard(*m_IoContext));
         m_Time->expires_from_now(std::chrono::milliseconds(m_MilliSeconds));
         m_Thread = std::make_shared<Thread>(m_Name,[this](){
             m_Time->async_wait(std::bind(&Timer::handle,this,std::placeholders::_1));

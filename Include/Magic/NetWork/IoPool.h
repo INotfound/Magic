@@ -36,7 +36,12 @@ namespace NetWork{
          * @brief 获取网络Io上下文函数
          * @return: 返回网络Io上下文
          */
-        asio::io_context& get();
+        const Safe<asio::io_context>& get();
+        /**
+         * @brief 获取当前网络Io上下文函数
+         * @return
+         */
+        const Safe<asio::io_context>& getCurrent();
     private:
         uint32_t m_Next;
         uint32_t m_PoolSize;

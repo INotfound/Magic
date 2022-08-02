@@ -162,6 +162,10 @@ namespace Magic{
          */
         Logger(const Safe<Config>& configuration);
         /**
+         * @brief 外部模式
+         */
+        void externMode();
+        /**
          * @brief 设置日志级别函数
          * @param level 日志级别
          */

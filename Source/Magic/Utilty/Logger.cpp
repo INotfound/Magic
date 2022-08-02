@@ -303,20 +303,10 @@ namespace Magic{
         ,m_Formatter(configuration->at<std::string>("Logger.Formatter","[%p]%T%d{%Y-%m-%d %H:%M:%S}%T%t%T%N%T[%c]%T%f:%l%T%m%n")){
     }
 
-    void  Logger::addILogAppender(const Safe<ILogAppender>& logAppender){
-        Mutex::Lock lock(m_Mutex);
+    void Logger::externMode(){
         if(!g_Logger){
             g_Logger = this->shared_from_this();
         }
-        if(!logAppender->m_Formatter){
-            logAppender->m_Formatter = std::make_shared<LogFormatter>(m_Formatter);
-        }
-        this->m_ILogAppenders.push_back(logAppender);
-    }
-
-    void Logger::setFormatter(const std::string& pattern){
-        Mutex::Lock lock(m_Mutex);
-        this->m_Formatter = pattern;
     }
 
     void Logger::setLevel(LogLevel val){
@@ -332,6 +322,11 @@ namespace Magic{
         return this->m_LogName;
     }
 
+    void Logger::setFormatter(const std::string& pattern){
+        Mutex::Lock lock(m_Mutex);
+        this->m_Formatter = pattern;
+    }
+
     void  Logger::log(LogLevel level,const Safe<LogEvent>& event){
         if (level >= m_Level){
             Mutex::Lock lock(m_Mutex);
@@ -341,6 +336,14 @@ namespace Magic{
                 }
             }
         }
+    }
+
+    void  Logger::addILogAppender(const Safe<ILogAppender>& logAppender){
+        Mutex::Lock lock(m_Mutex);
+        if(!logAppender->m_Formatter){
+            logAppender->m_Formatter = std::make_shared<LogFormatter>(m_Formatter);
+        }
+        this->m_ILogAppenders.push_back(logAppender);
     }
 
     LogWrap::LogWrap(LogLevel level, Safe<LogEvent>&& event ,const Safe<Logger>& logger)

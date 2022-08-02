@@ -45,15 +45,16 @@ if(NetWork STREQUAL ON)
         ${SOURCES}
         Source/Magic/NetWork/IoPool.cpp
         Source/Magic/NetWork/Socket.cpp
+        Source/Magic/NetWork/TcpClient.cpp
         Source/Magic/NetWork/TcpServer.cpp
         Source/Magic/NetWork/Http/Http.cpp
         Source/Magic/NetWork/Http/MultiPart.cpp
         Source/Magic/NetWork/Http/WebSocket.cpp
         Source/Magic/NetWork/Http/HttpParser.cpp
         Source/Magic/NetWork/Http/HttpSocket.cpp
+        Source/Magic/NetWork/Http/HttpClient.cpp
         Source/Magic/NetWork/Http/HttpServer.cpp
         Source/Magic/NetWork/Http/HttpServlet.cpp
-        Source/Magic/NetWork/Http/HttpSession.cpp
         Source/Magic/NetWork/Http/Utils/MultiPartParser.cpp
 # Ragel
         Source/Magic/NetWork/Http/Utils/uri_parser.rl.cpp
@@ -119,5 +120,16 @@ else()
     )
 endif()
 
-add_executable(Test Test/main.cpp)
+### TEST ###
+add_executable(Test Tests/main.cpp)
 target_link_libraries(Test Magic)
+
+add_executable(HttpClient Tests/HttpClient.cpp)
+target_link_libraries(HttpClient Magic)
+
+add_executable(WebServer Tests/WebServer.cpp)
+target_link_libraries(WebServer Magic)
+### TEST ###
+
+#add_subdirectory(Examples/Base)
+#add_subdirectory(Examples/WebServer)

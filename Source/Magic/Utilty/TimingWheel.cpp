@@ -8,6 +8,8 @@
 #include "Magic/Utilty/TimingWheel.h"
 
 namespace Magic{
+    Safe<TimingWheel> g_TimingWheel;
+
     ITaskNode::~ITaskNode() =default;
 
     FunctionTaskNode::FunctionTaskNode(std::function<void()> func)
@@ -87,6 +89,11 @@ namespace Magic{
         m_IsRun = false;
         m_Timer->stop();
         m_Timer.reset();
+    }
+
+    void TimingWheel::externMode(){
+        if(g_TimingWheel)
+            g_TimingWheel = this->shared_from_this();
     }
 
     void  TimingWheel::change(uint64_t tickMs,uint64_t wheelSize){

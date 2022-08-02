@@ -20,14 +20,14 @@ include(${MAGIC}/Magic.cmake)
 include_directories(${CMAKE_BINARY_DIR})
 
 set(MODULES
-    ${MAGIC}/Modules/Magic.magic
-    ${MAGIC}/Modules/WebServer.magic
-    ${PROJECT_SOURCE_DIR}/TestServlet.magic
+    ${MAGIC}/Modules/Magic.json
+    ${MAGIC}/Modules/WebServer.json
+    ${PROJECT_SOURCE_DIR}/TestServlet.json
 )
 
-add_custom_target(Gen ALL)
+add_custom_target(WebServerGen ALL)
 add_custom_command(
-    TARGET Gen
+    TARGET WebServerGen
     COMMAND ${MAGIC}/Bin/Gen ${MODULES} WebServer
 )
 

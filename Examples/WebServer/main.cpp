@@ -4,9 +4,9 @@
  * @LastEditTime: 2020-12-17 17:56:19
  */
 #include <iostream>
-#include "WebServer.h"
+#include "Examples/WebServer/WebServer.h"
 int main(){
-    Web::Initialize([](const Safe<Magic::Container>& ioc){
-    });
+    auto ioc = Web::Initialize([](const Safe<Magic::Container>& ioc){});
+    ioc->resolve<Magic::NetWork::Http::HttpServer>()->run();
     return EXIT_SUCCESS;
 }

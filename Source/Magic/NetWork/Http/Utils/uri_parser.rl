@@ -129,28 +129,18 @@ namespace Http{
         main := URI_reference;
         write data;
     }%%
-
-    Uri::Uri()
-        :m_Port(0){
+    Uri::Uri(const std::string& uri)
+        :m_Error(false)
+        ,m_Port(0){
+        m_Error = !this->execute(uri);
     }
 
-    bool Uri::execute(const std::string& uri){
-        int cs = 0;
-        const char* mark = 0;
-        %% write init;
-        const char *p = uri.c_str();
-        const char *pe = p + uri.size();
-        const char* eof = pe;
-        %% write exec;
-        if(cs == uri_parser_error){
-            return false; //error
-        } else if(cs >= uri_parser_first_final){
-            return true;//ok
-        }
-        return false;//error
+    bool Uri::hasError() const{
+        return m_Error;
     }
+
     uint32_t Uri::getPort() const{
-        if(m_Port){
+        if(m_Port != 0){
             return m_Port;
         }
         if(m_Scheme == "http"
@@ -206,19 +196,22 @@ namespace Http{
         m_Fragment = val;
     }
 
-    bool Uri::isDefaultPort() const{
-        if(m_Port == 0){
-            return true;
+    bool Uri::execute(const std::string& uri){
+        int cs = 0;
+        const char* mark = 0;
+        %% write init;
+        const char *p = uri.c_str();
+        const char *pe = p + uri.size();
+        const char* eof = pe;
+        %% write exec;
+        if(cs == uri_parser_error){
+            return false; //error
+        } else if(cs >= uri_parser_first_final){
+            return true;//ok
         }
-        if(m_Scheme == "http"
-                || m_Scheme == "ws"){
-            return m_Port == 80;
-        } else if(m_Scheme == "https"
-                || m_Scheme == "wss"){
-            return m_Port == 443;
-        }
-        return false;
+        return false;//error
     }
+
 }
 }
 }

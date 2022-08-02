@@ -7,7 +7,6 @@
 #include "Magic/Utilty/Thread.h"
 #include "Magic/NetWork/IoPool.h"
 
-
 namespace Magic{
 namespace NetWork{
     IoPool::~IoPool() =default;
@@ -44,14 +43,18 @@ namespace NetWork{
             m_IOServiceWork.at(i).reset();
         }
     }
-    
-    asio::io_context& IoPool::get(){
-        asio::io_context& io = *m_IOService.at(m_Next);
+
+    const Safe<asio::io_context>& IoPool::get(){
+        const auto& io = m_IOService.at(m_Next);
         m_Next++;
         if(m_Next == m_PoolSize){
             m_Next = 0;
         }
         return io;
+    }
+
+    const Safe<asio::io_context>& IoPool::getCurrent(){
+        return m_IOService.at(m_Next);
     }
 }
 }

@@ -27,7 +27,7 @@
                 "Id":"httpServer",
                 "Class":"Magic::NetWork::Http::HttpServer",
                 "IncludePath": "Magic/NetWork/Http/HttpServer.h",
-                "Dependencies":["Magic::NetWork::IoPool","Magic::TimingWheel","Magic::Config"],
+                "Dependencies":["Magic::NetWork::IoPool","Magic::Config"],
                 "FunctionPropertys":["setServletDispatch"]
             }
         ],
@@ -35,7 +35,8 @@
             {
                 "Id":"timingWheel",
                 "InvokeFunctions":{
-                    "run":[]
+                    "run":[],
+                    "externMode":[]
                 }
             },
             {

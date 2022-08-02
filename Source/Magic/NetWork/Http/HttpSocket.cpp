@@ -37,13 +37,6 @@ namespace Http{
 
         m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
             m_Death = true;
-            m_MultiPart.reset();
-            m_FileStream.close();
-            m_StreamBuffer.reset();
-            m_RequestParser->reset();
-            m_ResponseParser->reset();
-            m_TotalTransferLength = 0;
-            m_CurrentTransferLength = 0;
         #ifdef WIN32
             if(err.value() == WSAECONNABORTED) return;
         #endif
@@ -53,18 +46,18 @@ namespace Http{
         });
     }
 
+    void HttpSocket::setDirectory(const std::string& dirPath) {
+        m_MultiPart.setDirectory(dirPath);
+    }
+
     void HttpSocket::recvRequest(const HttpRecvBack& callback){
-        m_RecvRequestCallBack = callback;
+        m_RecvRequestCallBack = std::move(callback);
         this->requestParser();
     }
 
     void HttpSocket::recvResponse(const HttpRecvBack& callback){
-        m_RecvResponseCallBack = callback;
+        m_RecvResponseCallBack = std::move(callback);
         this->responseParser();
-    }
-
-    void HttpSocket::setUploadDirectory(const std::string& dirPath) {
-        m_MultiPart.setUploadDirectory(dirPath);
     }
 
     void HttpSocket::sendRequest(const Safe<HttpRequest>& httpRequest){
@@ -165,7 +158,8 @@ namespace Http{
         }
         response->setVersion(request->getVersion());
         response->setKeepAlive(request->getKeepAlive());
-        m_RecvRequestCallBack(this->shared_from_this(),request,response);
+        if(m_RecvRequestCallBack)
+            m_RecvRequestCallBack(this->shared_from_this(),request,response);
 
         m_MultiPart.reset();
         m_RequestParser->reset();
@@ -176,11 +170,10 @@ namespace Http{
     void HttpSocket::handleResponse(){
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
-        m_RecvRequestCallBack(this->shared_from_this(),request,response);
-
+        if(m_RecvResponseCallBack)
+            m_RecvResponseCallBack(this->shared_from_this(),request,response);
         m_RequestParser->reset();
         m_ResponseParser->reset();
-        this->responseParser();
     }
 
     void HttpSocket::requestParser(){
@@ -189,7 +182,7 @@ namespace Http{
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
             m_Death = false;
-            uint32_t nparse = m_RequestParser->execute(data.data(),data.size());
+            uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()){
                 return;
             }
@@ -199,9 +192,8 @@ namespace Http{
                 this->requestParser();
                 return;
             }
-            auto& request = m_RequestParser->getData();
-
             m_CurrentLength = 0;
+            auto& request = m_RequestParser->getData();
             m_TotalLength = m_RequestParser->getContentLength();
             const std::string& value = request->getHeader("Content-Type");
             auto pos = value.find("boundary=");
