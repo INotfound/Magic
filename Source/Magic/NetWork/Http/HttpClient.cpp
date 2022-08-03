@@ -11,9 +11,7 @@ namespace NetWork{
 namespace Http{
     Safe<asio::io_context> g_IOService = std::make_shared<asio::io_context>();
 
-    HttpClient::~HttpClient() {
-        MAGIC_FATAL() << "~HttpClient";
-    }
+    HttpClient::~HttpClient() =default;
 
     HttpClient::HttpClient(const std::string& url,uint64_t timeOutMs)
         :m_Url(url)
@@ -25,8 +23,6 @@ namespace Http{
             if(m_Death){
                 if(!m_Finish)
                     m_TimeOutCallBack();
-                m_HttpSocket.reset();
-                m_Socket.reset();
                 socket->close();
                 return;
             }
@@ -120,8 +116,17 @@ namespace Http{
         g_IOService->run();
     }
 
-    ObjectWrapper<HttpClient> HttpClient::onTimeOut(const std::function<void()>& callback) {
+    ObjectWrapper<HttpClient> HttpClient::onTimeOut(const std::function<void()>& callback){
         m_TimeOutCallBack = std::move(callback);
+        return ObjectWrapper<HttpClient>(this);
+    }
+
+
+    ObjectWrapper<HttpClient> HttpClient::onError(const std::function<void(const asio::error_code&)>& callback){
+        m_Socket->setErrorCodeCallBack([this,callback](const asio::error_code& errorCode){
+            m_Finish = true;
+            callback(errorCode);
+        });
         return ObjectWrapper<HttpClient>(this);
     }
 

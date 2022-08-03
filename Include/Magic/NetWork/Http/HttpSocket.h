@@ -37,11 +37,13 @@ namespace Http{
         /**
          * @brief 接收请求头函数
          * @param callback 接收回调函数
+         * @warning 回调函数同HttpSocket生命周期一直存在！
          */
         void recvRequest(const HttpRecvBack& callback);
         /**
          * @brief 接收响应头函数
          * @param callback 接收回调函数
+         * @warning 回调函数同HttpSocket生命周期一直存在！
          */
         void recvResponse(const HttpRecvBack& callback);
         /**
@@ -58,7 +60,7 @@ namespace Http{
          * @brief 升级为WebSocket
          * @param request 请求头
          * @param response 响应体
-         * @param mask 是否使用掩码,客户端置为 true 否则置为 false
+         * @param mask 是否使用掩码,客户端置为 true 服务端置为 false
          * @warning 当升级失败时候，返回 Safe<WebSocket> 会为 nullptr
          * @return Http转化的WebSocket实体
          */

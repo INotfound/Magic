@@ -6,7 +6,7 @@
 
 using namespace Magic::NetWork::Http;
 
-#define leak
+//#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);
@@ -65,16 +65,16 @@ int main(int /*argc*/,char** /*argv*/){
 
 
 //
-    std::printf("_______________________________________________________________\n");
+    std::printf("\n_______________________________________________________________\n");
     {
         std::vector<Safe<Magic::Thread>> m_Thread;
         for(auto i = 0; i < 40; i++){
             m_Thread.emplace_back(std::make_shared<Magic::Thread>(std::string("HttpClient ") + Magic::AsString(i),[](){
                 Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
                 httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-                Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+                Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",10);
                 client->onTimeOut([](){
-                    MAGIC_WARN() << "请求超时";
+                    MAGIC_WARN() << "Time Out";
                 })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
                     MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
                 })->execute(httpRequest);
@@ -85,19 +85,33 @@ int main(int /*argc*/,char** /*argv*/){
             v->join();
         }
     }
+    std::printf("\n_______________________________________________________________\n");
 
+    for(auto i = 0; i < 10; i++){
+        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+        client->onTimeOut([](){
+            MAGIC_WARN() << "Time Out";
+        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+        })->execute(httpRequest);
+    }
 
-//    for(auto i = 0; i < 10; i++){
-//        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-//        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-//        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
-//        client->onTimeOut([](){
-//            MAGIC_WARN() << "请求超时";
-//        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-//            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-//        })->execute(httpRequest);
-//    }
+    {
+        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.xx.com/",1000);
+        client->onError([](const asio::error_code& errorCode){
+            MAGIC_FATAL() << "xx " << errorCode.message();
+        })->onTimeOut([](){
+            MAGIC_WARN() << "Time Out";
+        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+        })->execute(httpRequest);
+    }
 
+    std::printf("\n_______________________________________________________________\n");
     std::getchar();
 
     return 0;

@@ -77,23 +77,27 @@ namespace NetWork{
          * @param data 二进制或文本数据
          * @param length 长度
          * @param callback 发送完成后响应函数
+         * @warning 回调函数不会保证生命周期,需要注意！
          */
         void send(const char* data,uint64_t length,const SendCallBack& callback = nullptr);
         /**
          * @brief 发送数据函数
          * @param stream Asio流式缓存数据
          * @param callback 发送完成后响应函数
+         * @warning 回调函数不会保证生命周期,需要注意！
          */
         void send(const Safe<asio::streambuf>& stream,const SendCallBack& callback = nullptr);
         /**
          * @brief 接收数据函数
          * @param callBack 接收数据回调函数
+         * @warning 回调函数不会保证生命周期,需要注意！
          */
         void recv(const RecvCallBack& callBack);
         /**
          * @brief 接收数据函数
          * @param size 指定接收大小
          * @param callBack 接收数据回调函数
+         * @warning 回调函数不会保证生命周期,需要注意！
          */
         void recv(uint64_t size,const RecvCallBack& callBack);
         /**
