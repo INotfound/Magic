@@ -69,7 +69,7 @@ if(NOT ${SSL} STREQUAL "SSL-NOTFOUND" AND NOT ${CRYPTO} STREQUAL "CRYPTO-NOTFOUN
     message("Found Library: ${SSL}")
     message("Found Library: ${CRYPTO}")
     message("Found Header: ${OPENSSL}")
-    set(THIRDPARTY ${THIRDPARTY} ${SSL_LIBRARY} ${CRYPTO_LIBRARY})
+    set(THIRDPARTY ${THIRDPARTY} ${SSL} ${CRYPTO})
 endif()
 
-link_libraries(${PLATFORM} ${THIRDPARTY})
+set(MAGIC_DEPEND_LIBRARY ${PLATFORM} ${THIRDPARTY})

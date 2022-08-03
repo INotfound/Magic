@@ -64,11 +64,11 @@ if(NetWork STREQUAL ON)
 endif()
 
 if(MySql STREQUAL ON)
-    set(LIBS ${LIBS} mariadbclient)
     set(SOURCES
         ${SOURCES}
         Source/Magic/DataBase/MySql.cpp
     )
+    set(MAGIC_DEPEND_LIBRARY ${MAGIC_DEPEND_LIBRARY} mariadbclient)
 endif()
 
 if(Performance STREQUAL ON)
@@ -80,8 +80,8 @@ if(Performance STREQUAL ON)
 endif()
 
 set(BINARY Magic)
-link_libraries(${LIBS})
 add_library(Magic ${SOURCES})
+target_link_libraries(Magic ${MAGIC_DEPEND_LIBRARY})
 
 if(Sanitize STREQUAL Thread)
     set(Analysis OFF)
@@ -120,16 +120,6 @@ else()
     )
 endif()
 
-### TEST ###
-add_executable(Test Tests/main.cpp)
-target_link_libraries(Test Magic)
-
-add_executable(HttpClient Tests/HttpClient.cpp)
-target_link_libraries(HttpClient Magic)
-
-add_executable(WebServer Tests/WebServer.cpp)
-target_link_libraries(WebServer Magic)
-### TEST ###
-
+add_subdirectory(Tests)
 #add_subdirectory(Examples/Base)
 #add_subdirectory(Examples/WebServer)
