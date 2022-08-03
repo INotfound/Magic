@@ -64,10 +64,12 @@ namespace Http{
                 errorCallBack(errorCode);
             return;
         }
+    #ifdef OPENSSL
         if(port == 443){
             asio::ssl::context sslContext(asio::ssl::context::sslv23);
             m_Socket->enableSsl(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*m_Socket->getEntity(),sslContext));
         }
+    #endif
 
         m_Socket->getEntity()->async_connect(results->endpoint(),[this,request](const asio::error_code& errorCode){
             if(errorCode) {
@@ -79,6 +81,7 @@ namespace Http{
                 return;
             }
             m_Death = false;
+        #ifdef OPENSSL
             auto sslStream = m_Socket->getSslEntity();
             if(sslStream){
                 sslStream->set_verify_mode(asio::ssl::verify_none);
@@ -101,6 +104,7 @@ namespace Http{
                 });
                 return;
             }
+        #endif
             m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
             m_HttpSocket->sendRequest(request);
             m_HttpSocket->recvResponse([this](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
