@@ -30,6 +30,10 @@ namespace Http{
          */
         HttpSocket(const Safe<Socket>& socket);
         /**
+         * @brief 启动心跳
+         */
+        void runHeartBeat();
+        /**
         * @brief 设置临时目录路径
         * @param dirPath 目录路径
         */

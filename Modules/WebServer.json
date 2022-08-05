@@ -33,6 +33,12 @@
         ],
         "Initialize":[
             {
+                "Id":"ioPool",
+                "InvokeFunctions":{
+                    "externMode":[]
+                }
+            },
+            {
                 "Id":"timingWheel",
                 "InvokeFunctions":{
                     "run":[],

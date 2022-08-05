@@ -1,3 +1,4 @@
+#include "Magic/Magic"
 #include "Magic/Core/Container.h"
 #include "Magic/NetWork/Http/Uri.h"
 #include "Magic/NetWork/Http/Http.h"
@@ -13,6 +14,9 @@
 
 using namespace Magic::NetWork::Http;
 
+#define leak
+
+#ifdef leak
 std::atomic_int newNum(0);
 
 void* operator new(std::size_t size)
@@ -28,6 +32,7 @@ void operator delete(void* ptr)
     std::cout << "Pointer Num: " << newNum << std::endl;
     std::free(ptr);
 }
+#endif
 
 Safe<WebSocket> g_webSocket;
 class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
@@ -55,30 +60,45 @@ public:
         httpSocket->sendResponse(response);
     }
 };
+const Safe<Magic::Container>& Magic::Application::initialize(const std::function<void(const Safe<Container>&)>& callback){
+    m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
+    m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
+    m_Container->registerTypeEx<Magic::IConfigFormatter,Magic::InIConfigFormatter>();
+
+    m_Container->registerType<Magic::Logger,Safe<Magic::Config>>();
+    m_Container->registerTypeEx<Magic::ILogAppender,Magic::StdOutLogAppender>();
+
+    m_Container->registerType<Magic::NetWork::IoPool,Safe<Magic::Config>>();
+    m_Container->registerType<Magic::TimingWheel,Safe<Magic::Config>>();
+
+    m_Container->registerType<Magic::NetWork::Http::HttpServletDispatch>();
+    m_Container->registerType<Magic::NetWork::Http::HttpServer,Safe<Magic::NetWork::IoPool>,Safe<Magic::Config>>();
+
+    if(callback)
+        callback(m_Container);
+
+    auto logger = m_Container->resolve<Magic::Logger>();
+    logger->externMode();
+    for(auto& v : m_Container->resolveAll<Magic::ILogAppender>()){
+        logger->addILogAppender(v);
+    }
+
+    auto timingWheel = m_Container->resolve<TimingWheel>();
+    timingWheel->externMode();
+    timingWheel->run();
+
+    auto httpServer = m_Container->resolve<Magic::NetWork::Http::HttpServer>();
+    httpServer->setServletDispatch(m_Container->resolve<Magic::NetWork::Http::HttpServletDispatch>());
+    httpServer->run();
+
+    m_Container->resolveAll();
+    return m_Container;
+}
 
 int main(int /*argc*/,char** /*argv*/){
-    /// Config
-    Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();
-    Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>(formatter);
-    Safe<Magic::Config> config = std::make_shared<Magic::Config>(configFile);
-    /// Logger
-    Magic::g_Logger = std::make_shared<Magic::Logger>(config);
-    Safe<Magic::ILogAppender> logAppender = std::make_shared<Magic::StdOutLogAppender>();
-    Magic::g_Logger->addILogAppender(logAppender);
-    /// TimingWheel
-    Safe<Magic::NetWork::IoPool> pool = std::make_shared<Magic::NetWork::IoPool>(config);
-    Magic::g_TimingWheel = std::make_shared<Magic::TimingWheel>(config);
-    Magic::g_TimingWheel->run();
-    /// WebServer
-    Magic::NetWork::Http::HttpServer server(pool,config);
-    Safe<Magic::NetWork::Http::IHttpServlet> resservlet = std::make_shared<ResourceServlet>();
-    Safe<Magic::NetWork::Http::HttpServletDispatch> dispatch = std::make_shared<Magic::NetWork::Http::HttpServletDispatch>();
-
-    dispatch->setHttpServlet(resservlet);
-    resservlet->addRoute("/",&ResourceServlet::handle1);
-    resservlet->addRoute("/chat",&ResourceServlet::websocket);
-    server.setServletDispatch(dispatch);
-    MAGIC_DEBUG() << "WebServer Testing...";
-    server.run();
-    return 0;
+    Safe<Magic::Application> application = std::make_shared<Magic::Application>();
+    application->initialize([](const Safe<Magic::Container>& ioc){
+        ioc->registerTypeEx<Magic::NetWork::Http::IHttpServlet,ResourceServlet>();
+    });
+    return EXIT_SUCCESS;
 }

@@ -8,15 +8,10 @@ namespace Magic{
         auto timePoint = std::chrono::steady_clock::now();
         int64_t end = std::chrono::time_point_cast<std::chrono::microseconds>(timePoint).time_since_epoch().count();
         int64_t start = std::chrono::time_point_cast<std::chrono::microseconds>(m_TimePoint).time_since_epoch().count();
-    #ifndef UTILTY
-        if(g_TraceAppender){
-            g_TraceAppender->tracing(m_FunctionName,0,start,end);
-        }
-    #else
+
         if(g_TraceAppender){
             g_TraceAppender->tracing(m_FunctionName,Magic::GetThreadId(),start,end);
         }
-    #endif
     }
 
     TraceTimer::TraceTimer(const std::string& funcName)

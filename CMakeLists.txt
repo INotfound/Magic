@@ -5,10 +5,6 @@ project(Magic)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-option(Utilty "UTILTY Module Compilation Options" ON)
-option(NetWork "NETWORK Module Compilation Options" ON)
-option(Performance "Performance Trace Compilation Options" OFF)
-
 include(Magic.cmake)
 
 include_directories(
@@ -18,50 +14,39 @@ include_directories(
 )
 
 set(SOURCES
-    Source/Magic/Core/Container.cpp
+    Source/Magic/Magic.cpp
+# Utilty
+    Source/Magic/Utilty/Trace.cpp
+    Source/Magic/Utilty/Timer.cpp
+    Source/Magic/Utilty/Crypto.cpp
+    Source/Magic/Utilty/Logger.cpp
+    Source/Magic/Utilty/Config.cpp
+    Source/Magic/Utilty/Thread.cpp
+    Source/Magic/Utilty/TimingWheel.cpp
+# Adapter
+    Source/Magic/Adapter/Win//Utils.cpp
+    Source/Magic/Adapter/Win//Mutex.cpp
+    Source/Magic/Adapter/Linux/Utils.cpp
+    Source/Magic/Adapter/Linux/Mutex.cpp
+# NetWork
+    Source/Magic/NetWork/IoPool.cpp
+    Source/Magic/NetWork/Socket.cpp
+    Source/Magic/NetWork/TcpClient.cpp
+    Source/Magic/NetWork/TcpServer.cpp
+    Source/Magic/NetWork/Http/Http.cpp
+    Source/Magic/NetWork/Http/MultiPart.cpp
+    Source/Magic/NetWork/Http/WebSocket.cpp
+    Source/Magic/NetWork/Http/HttpParser.cpp
+    Source/Magic/NetWork/Http/HttpSocket.cpp
+    Source/Magic/NetWork/Http/HttpClient.cpp
+    Source/Magic/NetWork/Http/HttpServer.cpp
+    Source/Magic/NetWork/Http/HttpServlet.cpp
+    Source/Magic/NetWork/Http/Utils/MultiPartParser.cpp
+    Source/Magic/NetWork/Http/Utils/uri_parser.rl.cpp
+    Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
+    Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
 )
 
-if(Utilty STREQUAL ON)
-    add_definitions(-DUTILTY)
-    set(SOURCES
-        ${SOURCES}
-        Source/Magic/Utilty/Timer.cpp
-        Source/Magic/Utilty/Crypto.cpp
-        Source/Magic/Utilty/Logger.cpp
-        Source/Magic/Utilty/Config.cpp
-        Source/Magic/Utilty/Thread.cpp
-        Source/Magic/Utilty/TimingWheel.cpp
-        
-        Source/Magic/Adapter/Win//Utils.cpp
-        Source/Magic/Adapter/Win//Mutex.cpp
-        Source/Magic/Adapter/Linux/Utils.cpp
-        Source/Magic/Adapter/Linux/Mutex.cpp
-    )
-endif()
-
-if(NetWork STREQUAL ON)
-    add_definitions(-DNETWORK)
-    set(SOURCES
-        ${SOURCES}
-        Source/Magic/NetWork/IoPool.cpp
-        Source/Magic/NetWork/Socket.cpp
-        Source/Magic/NetWork/TcpClient.cpp
-        Source/Magic/NetWork/TcpServer.cpp
-        Source/Magic/NetWork/Http/Http.cpp
-        Source/Magic/NetWork/Http/MultiPart.cpp
-        Source/Magic/NetWork/Http/WebSocket.cpp
-        Source/Magic/NetWork/Http/HttpParser.cpp
-        Source/Magic/NetWork/Http/HttpSocket.cpp
-        Source/Magic/NetWork/Http/HttpClient.cpp
-        Source/Magic/NetWork/Http/HttpServer.cpp
-        Source/Magic/NetWork/Http/HttpServlet.cpp
-        Source/Magic/NetWork/Http/Utils/MultiPartParser.cpp
-# Ragel
-        Source/Magic/NetWork/Http/Utils/uri_parser.rl.cpp
-        Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
-        Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
-    )
-endif()
 
 if(MySql STREQUAL ON)
     set(SOURCES
@@ -69,14 +54,6 @@ if(MySql STREQUAL ON)
         Source/Magic/DataBase/MySql.cpp
     )
     set(MAGIC_DEPEND_LIBRARY ${MAGIC_DEPEND_LIBRARY} mariadbclient)
-endif()
-
-if(Performance STREQUAL ON)
-    add_definitions(-DPERFORMANCE)
-    set(SOURCES
-        ${SOURCES}
-        Source/Magic/Utilty/Trace.cpp
-    )
 endif()
 
 set(BINARY Magic)
@@ -108,18 +85,11 @@ if(Analysis STREQUAL ON)
     endif()
 endif()
 
-if(Performance STREQUAL OFF)
-    install(TARGETS ${BINARY}
-        RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
-        ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
-    )
-else()
-    install(TARGETS ${BINARY}
-        RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
-        ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib/Performance
-    )
-endif()
+install(TARGETS ${BINARY}
+    RUNTIME DESTINATION ${PROJECT_SOURCE_DIR}/Bin
+    ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
+)
 
 add_subdirectory(Tests)
 #add_subdirectory(Examples/Base)
-#add_subdirectory(Examples/WebServer)
+add_subdirectory(Examples/WebServer)

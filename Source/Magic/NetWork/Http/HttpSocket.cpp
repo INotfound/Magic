@@ -23,6 +23,18 @@ namespace Http{
         m_RequestParser = std::make_shared<HttpRequestParser>();
         m_ResponseParser = std::make_shared<HttpResponseParser>();
 
+        m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
+            m_Death = true;
+        #ifdef WIN32
+            if(err.value() == WSAECONNABORTED) return;
+        #endif
+            if(err == asio::error::eof || err == asio::error::operation_aborted)
+                return;
+            MAGIC_WARN() << err.message();
+        });
+    }
+
+    void HttpSocket::runHeartBeat() {
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
             if(m_WebSocket){ /// WebSocket
                 socket->runHeartBeat(m_WebSocket);
@@ -34,16 +46,7 @@ namespace Http{
             m_Death = true;
             socket->runHeartBeat(this->shared_from_this());
         });
-
-        m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
-            m_Death = true;
-        #ifdef WIN32
-            if(err.value() == WSAECONNABORTED) return;
-        #endif
-            if(err == asio::error::eof || err == asio::error::operation_aborted)
-                return;
-            MAGIC_WARN() << err.message();
-        });
+        m_Socket->runHeartBeat(this->shared_from_this());
     }
 
     void HttpSocket::setDirectory(const std::string& dirPath) {

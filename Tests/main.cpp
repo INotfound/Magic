@@ -5,7 +5,7 @@
  */
 #define PERFORMANCE 1
 #include <regex>
-#include "Magic/Core/Container.h"
+#include "Magic/Magic"
 #include "Magic/NetWork/Http/Uri.h"
 #include "Magic/NetWork/Http/Http.h"
 
@@ -19,188 +19,45 @@
 #include "Magic/NetWork/Http/HttpClient.h"
 
 
-///// http://127.0.0.1/
 
-class A{
-public:
-    ObjectWrapper<A> bb() {return ObjectWrapper<A>(this);};
-};
+const Safe<Magic::Container>& Magic::Application::initialize(const std::function<void(const Safe<Container>&)>& callback){
+    m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
+    m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
+    m_Container->registerTypeEx<Magic::IConfigFormatter,Magic::InIConfigFormatter>();
 
-using namespace Magic::NetWork::Http;
-Safe<WebSocket> webSocket;
-class ResourceServlet :public Magic::NetWork::Http::IHttpServlet{
-    public:
-        ResourceServlet(){
-        }
+    m_Container->registerType<Magic::Logger,Safe<Magic::Config>>();
+    m_Container->registerTypeEx<Magic::ILogAppender,Magic::StdOutLogAppender>();
 
-        void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket
-                       ,const Safe<Magic::NetWork::Http::HttpRequest>& request
-                       ,const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            webSocket = httpSocket->upgradeWebSocket(request,response);
-            webSocket->sendTextMessage("xxxxxx");
-            webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string& msg){
-                MAGIC_DEBUG() << msg;
-                socket->sendTextMessage(msg);
-            });
-            webSocket->disconnectedCallBack([](const Safe<WebSocket>& socket){
-                MAGIC_DEBUG() << "disconnected";
-            });
-        }
+    m_Container->registerType<Magic::NetWork::IoPool,Safe<Magic::Config>>();
+    m_Container->registerType<Magic::TimingWheel,Safe<Magic::Config>>();
 
-        void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket,const Safe<Magic::NetWork::Http::HttpRequest>& request,const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            response->setBody("Hello World")->setStatus(HttpStatus::OK);
-            httpSocket->sendResponse(response);
-        }
-};
+    if(callback)
+        callback(m_Container);
 
-//std::atomic_int newNum(0);
-//
-//void* operator new(std::size_t size)
-//{
-//    newNum++;
-//    std::cout << "New " << newNum << std::endl;
-//    return std::malloc(size);
-//}
-//
-//void operator delete(void* ptr)
-//{
-//    newNum--;
-//    std::cout << "delete " << newNum << std::endl;
-//    std::free(ptr);
-//}
-
-
-//int main(int /*argc*/,char** /*argv*/){
-//    std::string cpp = "B(Safe<A> a,Safe<B> b,Safe<C> c)";
-//    std::regex reg("B\\((.*?)\\)");
-//    std::smatch match;
-//    std::regex_search(cpp,match,reg);
-//
-//    std::smatch subMatch;
-//    std::regex subReg("Safe<(.+?)+>");
-//    std::string subCpp = match[1];
-//    std::regex_search(subCpp,subMatch,subReg);
-//    for(auto v : subMatch){
-//        std::cout << subMatch.size() << " : " << v << std::endl;
-//    }
-//
-////    std::regex_match(cpp,reg);
-//    return 0;
-//}
-
-
-class AA{
-public:
-    AA(){
+    auto logger = m_Container->resolve<Magic::Logger>();
+    logger->externMode();
+    for(auto& v : m_Container->resolveAll<Magic::ILogAppender>()){
+        logger->addILogAppender(v);
     }
-};
-class BB{
-public:
-    BB(const Safe<AA>&){
-    }
-    void init(const Safe<AA>& a){
-        std::cout << "xxxxXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx: " << (a ? 1 : 0) << std::endl;
-    }
-};
 
+    auto ioPool = m_Container->resolve<Magic::NetWork::IoPool>();
+    ioPool->externMode();
+
+    auto timingWheel = m_Container->resolve<TimingWheel>();
+    timingWheel->externMode();
+    timingWheel->run();
+
+    m_Container->resolveAll();
+    return m_Container;
+}
 
 int main(int /*argc*/,char** /*argv*/){
-//    Magic::g_TraceAppender = std::make_shared<>
-//    std::printf("ptr[1] size of %llu \n",sizeof(Safe<A>));
-//    ObjectWrapper<HttpRequest>
-//    std::printf("ptr[2] size of %llu \n",sizeof(ObjectWrapper<A>));
-//    std::printf("ptr[3] size of %llu \n",sizeof(ObjectWrapper<Magic::NetWork::Http::HttpRequest>));
-
-    system("chcp 65001");
-
-//    std::printf("size of %llu\n",sizeof(void*));
-
-    Magic::NetWork::Http::Uri uri("mysql://admin@0.0.0.0:8181/xxx?password=12345678901a&x=2");
-    std::printf("%s\n",uri.getUser().c_str());
-    std::printf("%s\n",uri.getHost().c_str());
-    std::printf("%s\n",uri.getPath().c_str());
-    std::printf("%s\n",uri.getQuery().c_str());
-    std::printf("%s\n",uri.getScheme().c_str());
-    std::printf("%s\n",uri.getFragment().c_str());
-    std::printf("%d\n",uri.getPort());
-
-    Magic::Thread::SetName("Master");
-    auto ioc = Magic::Configure([](const Safe<Magic::Container>& ioc){
-//        ioc->registerType<Magic::Logger,Safe<Magic::Config>>();
-        ioc->registerType<AA>();
-        ioc->registerType<BB,Safe<AA>>().registerProperty(&BB::init);
-    });
-
-    ioc->resolveAll();
-
-    Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();
-    Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>(formatter);
-    Safe<Magic::Config> config = std::make_shared<Magic::Config>(configFile);
-
-
-    Magic::g_Logger = std::make_shared<Magic::Logger>(config);
-    Safe<Magic::ILogAppender> logAppender = std::make_shared<Magic::StdOutLogAppender>();
-    Magic::g_Logger->addILogAppender(logAppender);
-    Magic::g_TimingWheel = std::make_shared<Magic::TimingWheel>(config);
-    Safe<Magic::NetWork::IoPool> pool = std::make_shared<Magic::NetWork::IoPool>(config);
-    Magic::g_TimingWheel->run();
-    Magic::NetWork::Http::HttpServer server(pool,config);
-
-    Safe<Magic::NetWork::Http::IHttpServlet> resservlet = std::make_shared<ResourceServlet>();
-    Safe<Magic::NetWork::Http::HttpServletDispatch> dispatch = std::make_shared<Magic::NetWork::Http::HttpServletDispatch>();
-
-    dispatch->setHttpServlet(resservlet);
-//    dispatch->addHttpServlet(resservlet);
-
-    resservlet->addRoute("/",&ResourceServlet::handle1);
-    resservlet->addRoute("/chat",&ResourceServlet::websocket);
-
-    server.setServletDispatch(dispatch);
-
-
-
-//    Magic::NetWork::TcpClient client("www.baidu.com",80);
-//    client.connect([&client](){
-//        Safe<Magic::NetWork::Http::HttpRequest> request = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-//        Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
-//        std::ostream stream(streamBuffer.get());
-//        stream << request;
-//        client.send(streamBuffer);
-//        client.recv([](Magic::NetWork::Socket::StreamBuffer& buffer){
-//            MAGIC_DEBUG() << "xxx " << buffer.data();
-//        });
-//    });
-//
-//    client.run();
-//    server.run();
-//
-    Magic::NetWork::Http::Uri uris("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6f260538-b8d0-4c29-9492-6b04522ba3d3");
-    std::printf("%s\n",uris.getUser().c_str());
-    std::printf("%s\n",uris.getHost().c_str());
-    std::printf("%s\n",uris.getPath().c_str());
-    std::printf("%s\n",uris.getQuery().c_str());
-    std::printf("%s\n",uris.getScheme().c_str());
-    std::printf("%s\n",uris.getFragment().c_str());
-    std::printf("%d\n",uris.getPort());
-    MAGIC_DEBUG() << " Port " << uris.getPort();
-
-
-//    ->setHeader("Content-Type","application/json")
-//    ->setBody(R"Template({
-//    "msgtype": "markdown",
-//    "markdown": {
-//        "content": "中间件开发测试消息<font color=\"warning\">111</font>，请相关同事注意。\n
-//         >类型:<font color=\"comment\">测试</font>
-//         >反馈:<font color=\"comment\">测试</font>",
-//        "mentioned_list":["@all"]
-//    }
-//})Template");
-
+    Safe<Magic::Application> application = std::make_shared<Magic::Application>();
+    application->initialize();
     Magic::Thread thread("",[](){
-        MAGIC_DEBUG() << "xxxx";
         Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
         httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+        Safe<Magic::NetWork::Http::HttpClient> client = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/");
         client->onTimeOut([](){
             MAGIC_DEBUG() << "请求超时";
         })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
@@ -209,6 +66,8 @@ int main(int /*argc*/,char** /*argv*/){
     });
     thread.join();
 
+    std::getchar();
+    thread.join();
     MAGIC_DEBUG() << "@@@@@@@@@@@@@@";
     std::getchar();
     return 0;

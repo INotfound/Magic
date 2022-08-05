@@ -22,6 +22,8 @@ include(${MAGIC}/Magic.cmake)
 add_executable(Test main.cpp)
 target_link_libraries(Test Magic ${MAGIC_DEPEND_LIBRARY})
 
+message(${MAGIC_DEPEND_LIBRARY})
+
 add_executable(HttpClient HttpClient.cpp)
 target_link_libraries(HttpClient Magic ${MAGIC_DEPEND_LIBRARY})
 

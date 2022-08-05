@@ -1,4 +1,5 @@
 #define _WIN32_WINNT 0x0601
+#include "Magic/Magic"
 #include "Magic/Utilty/Logger.h"
 #include "Magic/NetWork/IoPool.h"
 #include "Magic/NetWork/Http/Http.h"
@@ -6,7 +7,7 @@
 
 using namespace Magic::NetWork::Http;
 
-//#define leak
+#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);
@@ -25,94 +26,110 @@ void operator delete(void* ptr)
     std::free(ptr);
 }
 #endif
+const Safe<Magic::Container>& Magic::Application::initialize(const std::function<void(const Safe<Container>&)>& callback){
+    m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
+    m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
+    m_Container->registerTypeEx<Magic::IConfigFormatter,Magic::InIConfigFormatter>();
+
+    m_Container->registerType<Magic::Logger,Safe<Magic::Config>>();
+    m_Container->registerTypeEx<Magic::ILogAppender,Magic::StdOutLogAppender>();
+
+    m_Container->registerType<Magic::NetWork::IoPool,Safe<Magic::Config>>();
+    m_Container->registerType<Magic::TimingWheel,Safe<Magic::Config>>();
+
+    if(callback)
+        callback(m_Container);
+
+    auto logger = m_Container->resolve<Magic::Logger>();
+    logger->externMode();
+    for(auto& v : m_Container->resolveAll<Magic::ILogAppender>()){
+        logger->addILogAppender(v);
+    }
+
+    auto ioPool = m_Container->resolve<Magic::NetWork::IoPool>();
+    ioPool->externMode();
+
+    auto timingWheel = m_Container->resolve<TimingWheel>();
+    timingWheel->externMode();
+    timingWheel->run();
+
+    m_Container->resolveAll();
+    return m_Container;
+}
 
 int main(int /*argc*/,char** /*argv*/){
-    /// Config
-    Safe<Magic::IConfigFormatter>  formatter = std::make_shared<Magic::InIConfigFormatter>();
-    Safe<Magic::ConfigFile> configFile = std::make_shared<Magic::ConfigFile>(formatter);
-    Safe<Magic::Config> config = std::make_shared<Magic::Config>(configFile);
-    /// Logger
-    Magic::g_Logger = std::make_shared<Magic::Logger>(config);
-    Safe<Magic::ILogAppender> logAppender = std::make_shared<Magic::StdOutLogAppender>();
-    Magic::g_Logger->addILogAppender(logAppender);
-    /// IoPool
-    Safe<Magic::NetWork::IoPool> pool = std::make_shared<Magic::NetWork::IoPool>(config);
-    /// TimingWheel
-    Magic::g_TimingWheel = std::make_shared<Magic::TimingWheel>(config);
-    Magic::g_TimingWheel->run();
-
-    MAGIC_DEBUG() << "HttpClient Testing..." << _WIN32_WINNT;
-    auto function1 = [configFile,pool,logAppender](){};
-    auto funciont2 = [function1](){};
-    auto funciont3 = [function1,funciont2](){};
-    std::function<void()> function4 = [function1,funciont2,funciont3](){};
-
-    MAGIC_DEBUG() << "Size: "  << sizeof(function1)<< " " << sizeof(funciont2) << " " << sizeof(funciont3) << " " << sizeof(function4) << sizeof(std::function<void()>);
-//    MAGIC_DEBUG() << "Pointer Num: " << newNum << "\n";
-
-    /// HttpClient
-//    {
-//        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-//        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-//        Safe<HttpClient> client = std::make_shared<HttpClient>("https://www.baidu.com/",1000);
-//        client->onTimeOut([](){
-//            MAGIC_WARN() << "请求超时";
-//        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-//            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-//        })->execute(httpRequest);
-//    }
-
-
-
-//
-    std::printf("\n_______________________________________________________________\n");
     {
-        std::vector<Safe<Magic::Thread>> m_Thread;
-        for(auto i = 0; i < 40; i++){
-            m_Thread.emplace_back(std::make_shared<Magic::Thread>(std::string("HttpClient ") + Magic::AsString(i),[](){
-                Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-                httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-                Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",10);
-                client->onTimeOut([](){
-                    MAGIC_WARN() << "Time Out";
-                })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-                    MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-                })->execute(httpRequest);
-            }));
-        }
+        Safe<Magic::Application> application = std::make_shared<Magic::Application>();
+        application->initialize();
 
-        for(auto& v : m_Thread){
-            v->join();
-        }
-    }
-    std::printf("\n_______________________________________________________________\n");
+        auto function1 = [](){};
+        auto funciont2 = [function1](){};
+        auto funciont3 = [function1,funciont2](){};
+        std::function<void()> function4 = [function1,funciont2,funciont3](){};
 
-    for(auto i = 0; i < 10; i++){
+        MAGIC_DEBUG() << "Size: "  << sizeof(function1)<< " " << sizeof(funciont2) << " " << sizeof(funciont3) << " " << sizeof(function4) << sizeof(std::function<void()>);
+
+        std::printf("\n_______________________________________________________________\n");
         Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
         httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
         Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
         client->onTimeOut([](){
             MAGIC_WARN() << "Time Out";
         })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus()) << " " << response->getBody() << " end";
         })->execute(httpRequest);
-    }
 
-    {
-        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.xx.com/",1000);
-        client->onError([](const asio::error_code& errorCode){
-            MAGIC_FATAL() << "xx " << errorCode.message();
-        })->onTimeOut([](){
-            MAGIC_WARN() << "Time Out";
-        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-        })->execute(httpRequest);
+//#define looper
+#ifdef looper
+        std::getchar();
+        for(auto i = 0; i < 10; i++){
+            Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+            httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+            Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+            client->onTimeOut([](){
+                MAGIC_WARN() << "Time Out";
+            })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+                MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+            })->execute(httpRequest);
+        }
+        std::getchar();
+        for(auto i = 0; i < 10; i++){
+            Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+            httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+            Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+            client->onTimeOut([](){
+                MAGIC_WARN() << "Time Out";
+            })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+                MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+            })->execute(httpRequest);
+        }
+        std::getchar();
+        for(auto i = 0; i < 10; i++){
+            Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+            httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+            Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+            client->onTimeOut([](){
+                MAGIC_WARN() << "Time Out";
+            })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+                MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+            })->execute(httpRequest);
+        }
+        std::getchar();
+        for(auto i = 0; i < 10; i++){
+            Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+            httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+            Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+            client->onTimeOut([](){
+                MAGIC_WARN() << "Time Out";
+            })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+                MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+            })->execute(httpRequest);
+        }
+        std::getchar();
+        ioc->resolve<Magic::NetWork::IoPool>()->stop();
+#endif
     }
-
-    std::printf("\n_______________________________________________________________\n");
+    std::printf("\n________________________________+_______________________________\n");
     std::getchar();
-
-    return 0;
+    return EXIT_SUCCESS;
 }

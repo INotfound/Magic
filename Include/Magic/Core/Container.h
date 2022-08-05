@@ -46,6 +46,15 @@ namespace Magic{
         };
 
     public:
+        template<typename T>
+        bool contain(){
+            const void* id = CompiletimeIId<T>();
+            auto iter = m_RegisteredType.find(id);
+            if(iter == m_RegisteredType.end())
+                return false;
+            return true;
+        }
+
         template<typename T,typename... Args>
         RegisteredType& registerType(bool isSingleton = true){
             return this->registerTypeEx<T,T,Args...>(isSingleton);
@@ -86,13 +95,14 @@ namespace Magic{
         template<typename T>
         Safe<T> resolve() {
             const void* id = CompiletimeIId<T>();
-            auto self = this->shared_from_this();
+
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
             auto rawIter = iter->second.begin();
             if(rawIter == iter->second.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
+            auto self = this->shared_from_this();
             auto& registeredType = rawIter->second;
             if(registeredType.m_IsSingelton){
                 if(!registeredType.m_Object){
@@ -110,13 +120,13 @@ namespace Magic{
         Safe<T> resolve() {
             const void* id = CompiletimeIId<T>();
             const void* raw = CompiletimeIId<M>();
-            auto self = this->shared_from_this();
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
                 throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
             auto rawIter = iter->second.find(raw);
             if(rawIter == iter->second.end())
                 throw std::logic_error(std::string(typeid(M).name()) + " Is Not Registered!!!");
+            auto self = this->shared_from_this();
             auto& registeredType = iter->second.at(raw);
             if(registeredType.m_IsSingelton){
                 if(!registeredType.m_Object){
@@ -171,6 +181,4 @@ namespace Magic{
     private:
         std::unordered_map<const void*,std::unordered_map<const void*,RegisteredType>> m_RegisteredType;
     };
-    extern Safe<Container> g_Container;
-    const Safe<Container>& Configure(const std::function<void(const Safe<Container>&)>& configure);
 }

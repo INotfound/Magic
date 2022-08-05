@@ -26,17 +26,15 @@ namespace NetWork{
         if(m_IsRun)
             return;
         m_IsRun = true;
-        this->accept();
-        MAGIC_INFO() << "Server Running";
+        MAGIC_INFO() << "Server Start Running";
         MAGIC_INFO() << "Server.IpPort: " << m_NetworkPort;
         MAGIC_INFO() << "Server.IpAddress: " << m_Address;
-        m_IoPool->run();
+        this->accept();
     }
 
     void TcpServer::stop(){
-        MAGIC_INFO() << "Server Stoping";
+        MAGIC_INFO() << "Server Start Stoping";
         m_IsRun = false;
-        m_IoPool->stop();
     }
 
     void TcpServer::accept(){
@@ -45,7 +43,7 @@ namespace NetWork{
         Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,*m_IoPool->get());
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(err){
-                //TODO: ...
+                /// TODO: ...
                 MAGIC_WARN() << err.message();
                 return;
             }

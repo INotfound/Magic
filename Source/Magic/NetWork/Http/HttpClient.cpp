@@ -6,19 +6,18 @@
 #include "Magic/Utilty/Logger.h"
 #include "Magic/NetWork/IoPool.h"
 #include "Magic/NetWork/Http/HttpClient.h"
+
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    Safe<asio::io_context> g_IOService = std::make_shared<asio::io_context>();
-
     HttpClient::~HttpClient() =default;
 
     HttpClient::HttpClient(const std::string& url,uint64_t timeOutMs)
         :m_Url(url)
         ,m_Death(false)
         ,m_Finish(false){
-        m_Socket = std::make_shared<Socket>(timeOutMs,4096,*g_IOService);
-        m_HttpSocket = std::make_shared<HttpSocket>(m_Socket);
+        m_IOService = g_IoPool->get();
+        m_Socket = std::make_shared<Socket>(timeOutMs,4096,*m_IOService);
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
             if(m_Death){
                 if(!m_Finish)
@@ -56,7 +55,7 @@ namespace Http{
             request->setHeader("Host",host);
 
         asio::error_code errorCode;
-        asio::ip::tcp::resolver resolver(*g_IOService);
+        asio::ip::tcp::resolver resolver(*m_IOService);
         auto results = resolver.resolve(host, AsString(port),errorCode);
         if(errorCode){
             auto& errorCallBack = m_Socket->getErrorCodeCallBack();
@@ -70,8 +69,8 @@ namespace Http{
             m_Socket->enableSsl(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*m_Socket->getEntity(),sslContext));
         }
     #endif
-
-        m_Socket->getEntity()->async_connect(results->endpoint(),[this,request](const asio::error_code& errorCode){
+        auto self = this->shared_from_this();
+        m_Socket->getEntity()->async_connect(results->endpoint(),[this,self,request](const asio::error_code& errorCode){
             if(errorCode) {
                 if(errorCode == asio::error::eof || errorCode == asio::error::operation_aborted)
                     return;
@@ -80,23 +79,21 @@ namespace Http{
                     errorCallBack(errorCode);
                 return;
             }
-            m_Death = false;
         #ifdef OPENSSL
             auto sslStream = m_Socket->getSslEntity();
             if(sslStream){
                 sslStream->set_verify_mode(asio::ssl::verify_none);
-                sslStream->async_handshake(asio::ssl::stream_base::client,[this,request](const asio::error_code& errorCode){
+                sslStream->async_handshake(asio::ssl::stream_base::client,[this,self,request](const asio::error_code& errorCode){
                     if(errorCode){
                         auto& errorCallBack = m_Socket->getErrorCodeCallBack();
                         if(errorCallBack)
                             errorCallBack(errorCode);
                         return;
                     }
-                    m_Death = false;
                     m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
-                    m_HttpSocket->sendRequest(request);
-                    m_HttpSocket->recvResponse([this](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
-                        m_Death = true;
+                    Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(m_Socket);
+                    httpSocket->sendRequest(request);
+                    httpSocket->recvResponse([this,self](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
                         m_Finish = true;
                         m_Socket->close();
                         m_ResponseCallBack(httpResponse);
@@ -106,18 +103,15 @@ namespace Http{
             }
         #endif
             m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
-            m_HttpSocket->sendRequest(request);
-            m_HttpSocket->recvResponse([this](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
-                m_Death = true;
+            Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(m_Socket);
+            httpSocket->sendRequest(request);
+            httpSocket->recvResponse([this,self](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
                 m_Finish = true;
                 m_Socket->close();
                 m_ResponseCallBack(httpResponse);
             });
         });
-        m_Socket->runHeartBeat(this->shared_from_this());
-        if(g_IOService->stopped())
-            g_IOService->restart();
-        g_IOService->run();
+        m_Socket->runHeartBeat(self);
     }
 
     ObjectWrapper<HttpClient> HttpClient::onTimeOut(const std::function<void()>& callback){

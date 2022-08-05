@@ -26,7 +26,7 @@ class HttpClient :public std::enable_shared_from_this<HttpClient>{
         Safe<Socket> m_Socket;
         std::atomic_bool m_Death;
         std::atomic_bool m_Finish;
-        Safe<HttpSocket> m_HttpSocket;
+        Safe<asio::io_context> m_IOService;
         std::function<void()> m_TimeOutCallBack;
         std::function<void(const Safe<HttpResponse>&)> m_ResponseCallBack;
     };

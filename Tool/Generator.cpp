@@ -29,9 +29,6 @@ typedef struct{
     std::vector<std::pair<std::string,std::vector<std::string>>> InvokeFunctions;
 }Initialize;
 
-std::string g_NameSpace;
-std::string g_Constructor;
-bool g_ConstructorWithParameter;
 std::vector<Initialize> g_InitializeMap;
 std::vector<Registered> g_RegisteredMap;
 
@@ -150,31 +147,21 @@ void Generator(std::ostream& stream){
         stream << LF;
     }
 
-    if(!g_NameSpace.empty()){
-        stream << "namespace "
-               << g_NameSpace
-               << "{"
-               << LF;
-    }
-    
-    stream << "    const Safe<Magic::Container>& "
-           << g_Constructor;
-    if(g_ConstructorWithParameter){
-        stream << "(const std::function<void(const Safe<Magic::Container>&)>& configure){";
-    }else{
-        stream << "(){";
-    }
+
+    stream << "namespace Magic{"
+           << LF;
+
+
+    stream << "    const Safe<Magic::Container>& Application::initialize"
+           << "(const std::function<void(const Safe<Magic::Container>&)>& configure){";
     stream << LF;
 
     {   /// Registereds
-        stream << "        const auto& iocContainer = Magic::Configure([](const Safe<Magic::Container>& ioc){"
-               << LF;
- 
         for(auto val : g_RegisteredMap){
             if(val.Interface.empty()){
-                stream << "            ioc->registerType<";
+                stream << "        m_Container->registerType<";
             }else{
-                stream << "            ioc->registerTypeEx<"
+                stream << "        m_Container->registerTypeEx<"
                     << val.Interface 
                     << ",";
             }
@@ -197,13 +184,11 @@ void Generator(std::ostream& stream){
             }
             stream << ";" << LF;
         }
-        stream << "        });" << LF;
     }
     
     { /// Constructor
-        if(g_ConstructorWithParameter){
-            stream << "        configure(iocContainer);" << LF;
-        }
+        stream << "        if(configure)" << LF
+               << "            configure(m_Container);" << LF;
     }
 
     { /// Initializes
@@ -224,7 +209,7 @@ void Generator(std::ostream& stream){
                 stream << "            "
                        << "auto "
                        << val.Id << " = "
-                       << "iocContainer->resolve<";
+                       << "m_Container->resolve<";
                 if(CallerIter.Interface.empty()){
                     stream << CallerIter.Class;
                 }else{
@@ -233,7 +218,7 @@ void Generator(std::ostream& stream){
                 stream << ">();"
                        << LF
                        << "            for(auto& v : "
-                       << "iocContainer->resolveAll<"
+                       << "m_Container->resolveAll<"
                        << val.Callee
                        << ">()){"
                        << LF
@@ -248,7 +233,7 @@ void Generator(std::ostream& stream){
             }else{
                 stream << "            auto "
                        << val.Id << " = "
-                       << "iocContainer->resolve<";
+                       << "m_Container->resolve<";
                 if(CallerIter.Interface.empty()){
                     stream << CallerIter.Class;
                 }else{
@@ -280,16 +265,14 @@ void Generator(std::ostream& stream){
         }  
     }
     stream << "        "
-           << "iocContainer->resolveAll();"
+           << "m_Container->resolveAll();"
            << LF;
     {
-        stream << "        return iocContainer;"
+        stream << "        return m_Container;"
             << LF
             << "    }"
-            << LF;
-        if(!g_NameSpace.empty()){
-            stream << "}";
-        }
+            << LF
+            << "}";
     }
     std::printf("Code Generation Successful!!!\n");
 }
@@ -315,27 +298,8 @@ bool CheckConfiguration(const std::string& path){
         std::printf("[Err]: Wrong JsonDocument Format Code!!\n");
         return false;
     }
-    g_Constructor = "Configure";
-    g_ConstructorWithParameter = false;
 
     auto object = jsonDoc["Configurations"].GetObject();
-
-    if(object.HasMember("NameSpace")){
-        std::string nameSpace = object["NameSpace"].GetString();
-        if(!nameSpace.empty()){
-            g_NameSpace = nameSpace;
-        }
-    }
-
-    if(object.HasMember("Constructor")){
-        auto constructor = object["Constructor"].GetObject();
-        if(constructor.HasMember("Name")){
-            g_Constructor = constructor["Name"].GetString();
-        }
-        if(constructor.HasMember("WithParameter")){
-            g_ConstructorWithParameter = constructor["WithParameter"].GetBool();
-        }
-    }
 
     if(!object.HasMember("Registered")){
         std::printf("[Err]: Unused Registered!!!\n");

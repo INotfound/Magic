@@ -92,7 +92,7 @@ namespace Magic{
     }
 
     void TimingWheel::externMode(){
-        if(g_TimingWheel)
+        if(!g_TimingWheel)
             g_TimingWheel = this->shared_from_this();
     }
 

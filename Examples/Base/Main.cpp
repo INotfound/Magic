@@ -6,7 +6,7 @@
 #include "Examples/Base/Base.h"
 
 int main(){
-    Base::Initialize([](const Safe<Magic::Container>& ioc){
-    });
+    Safe<Magic::Application> application = std::make_shared<Magic::Application>();
+    application->initialize();
     return EXIT_SUCCESS;
 }
