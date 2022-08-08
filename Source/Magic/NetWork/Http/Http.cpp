@@ -503,13 +503,17 @@ namespace Http{
         }
 
         bool hasBody = !m_Body.empty();
+    #ifdef ZLIB
         bool hasContentEncoding = false;
+    #endif
         auto contentEncodingIter = m_Headers.find("Content-Encoding");
 
         if(contentEncodingIter != m_Headers.end()){
             if(hasBody){
+        #ifdef ZLIB
                 hasContentEncoding = true;
             }else{
+        #endif
                 m_Headers.erase(contentEncodingIter);
             }
         }
