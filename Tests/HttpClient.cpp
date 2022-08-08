@@ -7,7 +7,7 @@
 
 using namespace Magic::NetWork::Http;
 
-#define leak
+//#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);
@@ -72,7 +72,7 @@ int main(int /*argc*/,char** /*argv*/){
         std::printf("\n_______________________________________________________________\n");
         Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
         httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
+        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000000);
         client->onTimeOut([](){
             MAGIC_WARN() << "Time Out";
         })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){

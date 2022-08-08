@@ -60,6 +60,16 @@ elseif(UNIX)
 endif()
 
 # ThirdParty
+find_library(Z z)
+find_path(ZLIB zlib.h)
+if(NOT ${Z} STREQUAL "Z-NOTFOUND" AND NOT ${ZLIB} STREQUAL "ZLIB-NOTFOUND")
+    add_definitions(-DZLIB)
+    include_directories(${ZLIB})
+    message("Found Library: ${Z}")
+    message("Found Header: ${ZLIB}")
+    set(THIRDPARTY ${THIRDPARTY} ${Z})
+endif()
+
 find_library(SSL ssl)
 find_library(CRYPTO crypto)
 find_path(OPENSSL openssl/conf.h)

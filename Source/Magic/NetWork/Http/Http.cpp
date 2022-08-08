@@ -6,6 +6,7 @@
 #include <cstring>
 #include <algorithm>
 
+#include "Magic/Utilty/Gzip.h"
 #include "Magic/Utilty/String.h"
 #include "Magic/NetWork/Http/Http.h"
 
@@ -501,6 +502,18 @@ namespace Http{
             os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         }
 
+        bool hasBody = !m_Body.empty();
+        bool hasContentEncoding = false;
+        auto contentEncodingIter = m_Headers.find("Content-Encoding");
+
+        if(contentEncodingIter != m_Headers.end()){
+            if(hasBody){
+                hasContentEncoding = true;
+            }else{
+                m_Headers.erase(contentEncodingIter);
+            }
+        }
+
         /// Headers
         for(auto& v : m_Headers){
             os << v.first << ": " << v.second << "\r\n";
@@ -510,9 +523,21 @@ namespace Http{
             os << "Set-Cookie: " << v << "\r\n";
         }
 
-        if(!m_Body.empty()){
+        if(hasBody){
+        #ifdef ZLIB
+            if(hasContentEncoding){
+                std::string compressData;
+                Magic::GzipCompress(m_Body,compressData);
+                os  << "Content-Length: " << compressData.size() << "\r\n\r\n"
+                    << compressData;
+            }else{
+                os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
+                    << m_Body;
+            }
+        #else
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
                 << m_Body;
+        #endif
         }else{
             if(m_ContentLength != 0){
                 os  << "Content-Length: " << m_ContentLength << "\r\n";

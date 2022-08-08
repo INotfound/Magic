@@ -16,6 +16,7 @@ include_directories(
 set(SOURCES
     Source/Magic/Magic.cpp
 # Utilty
+    Source/Magic/Utilty/Gzip.cpp
     Source/Magic/Utilty/Trace.cpp
     Source/Magic/Utilty/Timer.cpp
     Source/Magic/Utilty/Crypto.cpp
@@ -46,7 +47,6 @@ set(SOURCES
     Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
     Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
 )
-
 
 if(MySql STREQUAL ON)
     set(SOURCES
