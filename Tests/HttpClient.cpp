@@ -72,7 +72,7 @@ int main(int /*argc*/,char** /*argv*/){
         std::printf("\n_______________________________________________________________\n");
         Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
         httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-        Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000000);
+        Safe<HttpClient> client = std::make_shared<HttpClient>("https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=6f260538-b8d0-4c29-9492-6b04522ba3d3&debug=1",1000000);
         client->onTimeOut([](){
             MAGIC_WARN() << "Time Out";
         })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){

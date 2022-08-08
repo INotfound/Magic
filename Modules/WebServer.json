@@ -3,16 +3,16 @@
         "NameSpace":"Web",
         "Registered":[
             {
-                "Id":"timingWheel",
-                "Class":"Magic::TimingWheel",
-                "IncludePath": "Magic/Utilty/TimingWheel.h",
+                "Id":"ioPool",
+                "Class":"Magic::NetWork::IoPool",
+                "IncludePath": "Magic/NetWork/IoPool.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
             {
-                "Id":"ioPool",
-                "Class":"Magic::NetWork::IoPool",
-                "IncludePath": "Magic/NetWork/IoPool.h",
+                "Id":"timingWheel",
+                "Class":"Magic::TimingWheel",
+                "IncludePath": "Magic/Utilty/TimingWheel.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
@@ -50,6 +50,12 @@
                 "Loop":true,
                 "CalleeFunctions":["setHttpServlet"],
                 "Callee":"Magic::NetWork::Http::IHttpServlet"
+            },
+            {
+                "Id":"httpServer",
+                "InvokeFunctions":{
+                    "run":[]
+                }
             }
         ],
         "Constructor":{
