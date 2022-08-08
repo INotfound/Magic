@@ -90,6 +90,6 @@ install(TARGETS ${BINARY}
     ARCHIVE DESTINATION ${PROJECT_SOURCE_DIR}/Lib
 )
 
-add_subdirectory(Tests)
+#add_subdirectory(Tests)
 #add_subdirectory(Examples/Base)
-add_subdirectory(Examples/WebServer)
+#add_subdirectory(Examples/WebServer)
