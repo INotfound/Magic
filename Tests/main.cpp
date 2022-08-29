@@ -6,6 +6,7 @@
 #define PERFORMANCE 1
 #include <regex>
 #include "Magic/Magic"
+#include "Magic/Utilty/String.h"
 #include "Magic/NetWork/Http/Uri.h"
 #include "Magic/NetWork/Http/Http.h"
 
@@ -54,7 +55,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
 int main(int /*argc*/,char** /*argv*/){
     Safe<Magic::Application> application = std::make_shared<Magic::Application>();
     application->initialize();
-    Magic::Thread thread("",[](){
+    Magic::Thread thread("Test",[](){
         Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
         httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
         Safe<Magic::NetWork::Http::HttpClient> client = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/");
@@ -65,6 +66,8 @@ int main(int /*argc*/,char** /*argv*/){
         })->execute(httpRequest);
     });
     thread.join();
+    std::string string("12:32:ab:23");
+    MAGIC_DEBUG() << "xxx: " << Magic::Replace(Magic::ToUpper(string),":","");
 
     std::getchar();
     thread.join();

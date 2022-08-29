@@ -14,7 +14,7 @@
 
 using namespace Magic::NetWork::Http;
 
-//#define leak
+#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);

@@ -23,6 +23,7 @@ namespace NetWork{
 
     void Socket::close() {
         asio::error_code ignored;
+        Mutex::Lock lock(m_Mutex);
         if(m_Socket->is_open()) {
             m_Socket->cancel(ignored);
             m_Socket->shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
@@ -66,6 +67,9 @@ namespace NetWork{
                 callback();
         },std::placeholders::_1,std::placeholders::_2,callback);
         Mutex::Lock lock(m_Mutex);
+        if(!m_Socket->is_open()){
+            return;
+        }
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
@@ -85,6 +89,9 @@ namespace NetWork{
                 callback();
         },std::placeholders::_1,std::placeholders::_2,callback);
         Mutex::Lock lock(m_Mutex);
+        if(!m_Socket->is_open()){
+            return;
+        }
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_write(*m_SslStream,*stream,std::move(sendCallBack));
@@ -104,6 +111,9 @@ namespace NetWork{
             callback(this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
         Mutex::Lock lock(m_Mutex);
+        if(!m_Socket->is_open()){
+            return;
+        }
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
@@ -127,6 +137,9 @@ namespace NetWork{
             callback(this->m_StreamBuffer);
         },std::placeholders::_1,std::placeholders::_2,callBack);
         Mutex::Lock lock(m_Mutex);
+        if(!m_Socket->is_open()){
+            return;
+        }
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_read(*m_SslStream,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));

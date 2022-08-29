@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <algorithm>
 
 namespace Magic{
     static const std::string g_EmptyString;
@@ -99,24 +100,23 @@ namespace Magic{
         return isOk;
     }
 
-
-    inline std::string TimeToString(std::time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
-        struct tm nowTime;
-    #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime, &ts);
-    #else
-        localtime_r(&ts, &nowTime);
-    #endif
-        char buf[64] = {0};
-        std::strftime(buf, sizeof(buf), format.c_str(), &nowTime);
-        return buf;
-    }
-
     inline std::string TimeToGMTString(std::time_t tt){
         struct tm* GMTime = gmtime(&tt);
         char buff[512]={0};
         std::strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);
         return buff;
+    }
+
+    inline std::string ToLower(const std::string& string){
+        std::string newString = string;
+        std::transform(string.begin(),string.end(),newString.begin(),[](char c){return std::tolower(c);});
+        return newString;
+    }
+
+    inline std::string ToUpper(const std::string& string){
+        std::string newString = string;
+        std::transform(string.begin(),string.end(),newString.begin(),[](char c){return std::toupper(c);});
+        return newString;
     }
 
     inline std::string Trim(std::string str,const std::string flag = " ") {
@@ -127,12 +127,7 @@ namespace Magic{
         return str;
     }
 
-    inline std::string SubString(const std::string& str, uint64_t index,const std::string& delim) {
-        uint64_t pos = str.find(delim, index);
-        if (pos == std::string::npos)
-            return str.substr(index, str.size() - index);;
-        return str.substr(index, pos - index);
-    }
+    int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
 
     inline std::vector<std::string> Split(const std::string& str,const std::string& delim) {
         std::size_t previous = 0;
@@ -151,5 +146,34 @@ namespace Magic{
         return elems;
     }
 
-    int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
+    inline std::string SubString(const std::string& str, uint64_t index,const std::string& delim){
+        uint64_t pos = str.find(delim, index);
+        if (pos == std::string::npos)
+            return str.substr(index, str.size() - index);;
+        return str.substr(index, pos - index);
+    }
+
+    inline std::string TimeToString(std::time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
+        struct tm nowTime;
+    #if defined(_WIN32) || defined(_WIN64)
+        localtime_s(&nowTime, &ts);
+    #else
+        localtime_r(&ts, &nowTime);
+    #endif
+        char buf[64] = {0};
+        std::strftime(buf, sizeof(buf), format.c_str(), &nowTime);
+        return buf;
+    }
+
+    inline std::string Replace(const std::string& string,const std::string& oldStr,const std::string& newStr){
+        std::string newString = string;
+        for(std::string::size_type pos = 0;pos != std::string::npos;pos += newStr.length()){
+            if((pos = newString.find(oldStr,pos)) != std::string::npos){
+                newString.replace(pos,oldStr.length(),newStr);
+            }else{
+                return newString;
+            }
+        }
+        return newString;
+    }
 }

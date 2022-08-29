@@ -78,10 +78,21 @@ int main(int /*argc*/,char** /*argv*/){
         })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
             MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus()) << " " << response->getBody() << " end";
         })->execute(httpRequest);
-
-//#define looper
+        
+#define looper
 #ifdef looper
-        std::getchar();
+
+        for(auto i = 0; i < 10; i++){
+            Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+            httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+            Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidus.com/",1);
+            client->onTimeOut([](){
+                MAGIC_WARN() << "Time Out";
+            })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+                MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+            })->execute(httpRequest);
+        }
+
         for(auto i = 0; i < 10; i++){
             Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
             httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
@@ -92,7 +103,7 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
             })->execute(httpRequest);
         }
-        std::getchar();
+
         for(auto i = 0; i < 10; i++){
             Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
             httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
@@ -103,7 +114,7 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
             })->execute(httpRequest);
         }
-        std::getchar();
+
         for(auto i = 0; i < 10; i++){
             Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
             httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
@@ -114,19 +125,6 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
             })->execute(httpRequest);
         }
-        std::getchar();
-        for(auto i = 0; i < 10; i++){
-            Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-            httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-            Safe<HttpClient> client = std::make_shared<HttpClient>("http://www.baidu.com/",1000);
-            client->onTimeOut([](){
-                MAGIC_WARN() << "Time Out";
-            })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-                MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-            })->execute(httpRequest);
-        }
-        std::getchar();
-        ioc->resolve<Magic::NetWork::IoPool>()->stop();
 #endif
     }
     std::printf("\n________________________________+_______________________________\n");
