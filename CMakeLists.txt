@@ -13,48 +13,7 @@ include_directories(
     ThirdParty/RapidJSON/Include
 )
 
-set(SOURCES
-    Source/Magic/Magic.cpp
-# Utilty
-    Source/Magic/Utilty/Gzip.cpp
-    Source/Magic/Utilty/Trace.cpp
-    Source/Magic/Utilty/Timer.cpp
-    Source/Magic/Utilty/Crypto.cpp
-    Source/Magic/Utilty/Logger.cpp
-    Source/Magic/Utilty/Config.cpp
-    Source/Magic/Utilty/Thread.cpp
-    Source/Magic/Utilty/TimingWheel.cpp
-# Adapter
-    Source/Magic/Adapter/Win//Utils.cpp
-    Source/Magic/Adapter/Win//Mutex.cpp
-    Source/Magic/Adapter/Linux/Utils.cpp
-    Source/Magic/Adapter/Linux/Mutex.cpp
-# NetWork
-    Source/Magic/NetWork/IoPool.cpp
-    Source/Magic/NetWork/Socket.cpp
-    Source/Magic/NetWork/TcpClient.cpp
-    Source/Magic/NetWork/TcpServer.cpp
-    Source/Magic/NetWork/Http/Http.cpp
-    Source/Magic/NetWork/Http/MultiPart.cpp
-    Source/Magic/NetWork/Http/WebSocket.cpp
-    Source/Magic/NetWork/Http/HttpParser.cpp
-    Source/Magic/NetWork/Http/HttpSocket.cpp
-    Source/Magic/NetWork/Http/HttpClient.cpp
-    Source/Magic/NetWork/Http/HttpServer.cpp
-    Source/Magic/NetWork/Http/HttpServlet.cpp
-    Source/Magic/NetWork/Http/Utils/MultiPartParser.cpp
-    Source/Magic/NetWork/Http/Utils/uri_parser.rl.cpp
-    Source/Magic/NetWork/Http/Utils/http11_parser.rl.cpp
-    Source/Magic/NetWork/Http/Utils/httpclient_parser.rl.cpp
-)
-
-if(MySql STREQUAL ON)
-    set(SOURCES
-        ${SOURCES}
-        Source/Magic/DataBase/MySql.cpp
-    )
-    set(MAGIC_DEPEND_LIBRARY ${MAGIC_DEPEND_LIBRARY} mariadbclient)
-endif()
+file(GLOB_RECURSE SOURCES Source/Magic/*.cpp)
 
 set(BINARY Magic)
 add_library(Magic ${SOURCES})

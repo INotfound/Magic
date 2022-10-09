@@ -11,7 +11,6 @@
 #include "Magic/NetWork/Http/WebSocket.h"
 #include "Magic/NetWork/Http/HttpParser.h"
 
-
 namespace Magic{
 namespace NetWork{
 namespace Http{
@@ -21,7 +20,7 @@ namespace Http{
     class HttpSocket :public std::enable_shared_from_this<HttpSocket>{
     public:
         /// Http处理方法
-        typedef std::function<void(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&)> HttpRecvBack;
+        typedef std::function<void(const Safe<HttpSocket>&)> HttpRecvBack;
         ~HttpSocket();
         /**
          * @brief 构造函数
@@ -39,6 +38,16 @@ namespace Http{
         */
         void setDirectory(const std::string& dirPath);
         /**
+         * 获取Http请求
+         * @return HttpRequest
+         */
+        const Safe<HttpRequest>& getRequest() const;
+        /**
+         * 获取Http响应
+         * @return HttpResponse
+         */
+        const Safe<HttpResponse>& getResponse() const;
+        /**
          * @brief 接收请求头函数
          * @param callback 接收回调函数
          * @warning 回调函数同HttpSocket生命周期一直存在！
@@ -52,7 +61,7 @@ namespace Http{
         void recvResponse(const HttpRecvBack& callback);
         /**
          * @brief 接收请求头函数
-         * @param httpRequest
+         * @param httpRequest 请求
          */
         void sendRequest(const Safe<HttpRequest>& httpRequest);
         /**
@@ -95,7 +104,7 @@ namespace Http{
          */
         void transferFileStream();
     private:
-        MultiPart m_MultiPart;
+
         Safe<Socket> m_Socket;
         uint64_t m_TotalLength;
         uint64_t m_CurrentLength;
@@ -103,6 +112,7 @@ namespace Http{
         Safe<char> m_StreamBuffer;
         std::ifstream m_FileStream;
         Safe<WebSocket> m_WebSocket;
+        Safe<MultiPart> m_MultiPart;
         uint64_t m_StreamBufferSize;
         uint64_t m_TotalTransferLength;
         uint64_t m_CurrentTransferLength;

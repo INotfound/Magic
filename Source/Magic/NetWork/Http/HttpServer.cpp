@@ -72,7 +72,7 @@ namespace Http{
         Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(socket);
         httpSocket->runHeartBeat();
         httpSocket->setDirectory(m_UploadDirectory);
-        httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
+        httpSocket->recvRequest(std::bind(&HttpServletDispatch::handle,m_ServletDispatch.get(),std::placeholders::_1));
     }
 }
 }

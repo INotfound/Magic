@@ -20,6 +20,7 @@ namespace Http{
         ,m_StreamBufferSize(1024*1024)
         ,m_TotalTransferLength(0)
         ,m_CurrentTransferLength(0){
+        m_MultiPart = std::make_shared<MultiPart>();
         m_RequestParser = std::make_shared<HttpRequestParser>();
         m_ResponseParser = std::make_shared<HttpResponseParser>();
 
@@ -50,7 +51,15 @@ namespace Http{
     }
 
     void HttpSocket::setDirectory(const std::string& dirPath) {
-        m_MultiPart.setDirectory(dirPath);
+        m_MultiPart->setDirectory(dirPath);
+    }
+
+    const Safe<HttpRequest>& HttpSocket::getRequest() const{
+        return m_RequestParser->getData();
+    }
+
+    const Safe<HttpResponse> &HttpSocket::getResponse() const{
+        return m_ResponseParser->getData();
     }
 
     void HttpSocket::recvRequest(const HttpRecvBack& callback){
@@ -70,6 +79,8 @@ namespace Http{
         std::ostream stream(streamBuffer.get());
         stream << httpRequest;
         m_Socket->send(streamBuffer);
+        m_RequestParser->reset();
+        m_ResponseParser->reset();
     }
 
     void HttpSocket::sendResponse(const Safe<HttpResponse>& httpResponse){
@@ -121,6 +132,8 @@ namespace Http{
             stream << httpResponse;
             m_Socket->send(streamBuffer);
         }
+        m_RequestParser->reset();
+        m_ResponseParser->reset();
     }
 
     const Safe<WebSocket>& HttpSocket::upgradeWebSocket(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response,bool mask){
@@ -150,7 +163,7 @@ namespace Http{
     }
 
     void HttpSocket::handleRequest(){
-        auto& params = m_MultiPart.getParamMap();
+        auto& params = m_MultiPart->getParamMap();
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
         for(auto& v :params){
@@ -168,21 +181,15 @@ namespace Http{
         }
     #endif
         if(m_RecvRequestCallBack)
-            m_RecvRequestCallBack(this->shared_from_this(),request,response);
+            m_RecvRequestCallBack(this->shared_from_this());
 
-        m_MultiPart.reset();
-        m_RequestParser->reset();
-        m_ResponseParser->reset();
+        m_MultiPart->reset();
         this->requestParser();
     }
 
     void HttpSocket::handleResponse(){
-        auto& request = m_RequestParser->getData();
-        auto& response = m_ResponseParser->getData();
         if(m_RecvResponseCallBack)
-            m_RecvResponseCallBack(this->shared_from_this(),request,response);
-        m_RequestParser->reset();
-        m_ResponseParser->reset();
+            m_RecvResponseCallBack(this->shared_from_this());
     }
 
     void HttpSocket::requestParser(){
@@ -208,7 +215,7 @@ namespace Http{
             auto pos = value.find("boundary=");
             if(pos != std::string::npos){
                 pos += 9;
-                m_MultiPart.setBoundary(value.substr(pos,value.length() - pos));
+                m_MultiPart->setBoundary(value.substr(pos,value.length() - pos));
                 this->multiPartParser();
             }else{
                 /// Max Request Size == 5MB
@@ -264,16 +271,16 @@ namespace Http{
         });
     }
 
-    void HttpSocket::multiPartParser() {
+    void HttpSocket::multiPartParser(){
         if(!m_Socket)
             return;
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
             size_t fed = 0;
             do {
-                size_t ret = m_MultiPart.feed(data.data() + fed,data.size() - fed);
+                size_t ret = m_MultiPart->feed(data.data() + fed,data.size() - fed);
                 fed += ret;
-            }while(fed < data.size() && !m_MultiPart.stopped());
+            }while(fed < data.size() && !m_MultiPart->stopped());
             m_CurrentLength += data.size();
             data.resize(0);
             if(m_CurrentLength == m_TotalLength){

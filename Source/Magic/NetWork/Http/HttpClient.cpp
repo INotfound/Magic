@@ -93,10 +93,10 @@ namespace Http{
                     m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
                     Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(m_Socket);
                     httpSocket->sendRequest(request);
-                    httpSocket->recvResponse([this,self](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
+                    httpSocket->recvResponse([this,self](const Safe<HttpSocket>& socket){
                         m_Finish = true;
                         m_Socket->close();
-                        m_ResponseCallBack(httpResponse);
+                        m_ResponseCallBack(socket->getResponse());
                     });
                 });
                 return;
@@ -105,10 +105,10 @@ namespace Http{
             m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
             Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(m_Socket);
             httpSocket->sendRequest(request);
-            httpSocket->recvResponse([this,self](const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>& httpResponse){
+            httpSocket->recvResponse([this,self](const Safe<HttpSocket>& socket){
                 m_Finish = true;
                 m_Socket->close();
-                m_ResponseCallBack(httpResponse);
+                m_ResponseCallBack(socket->getResponse());
             });
         });
         m_Socket->runHeartBeat(self);

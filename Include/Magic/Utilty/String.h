@@ -153,18 +153,6 @@ namespace Magic{
         return str.substr(index, pos - index);
     }
 
-    inline std::string TimeToString(std::time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
-        struct tm nowTime;
-    #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&nowTime, &ts);
-    #else
-        localtime_r(&ts, &nowTime);
-    #endif
-        char buf[64] = {0};
-        std::strftime(buf, sizeof(buf), format.c_str(), &nowTime);
-        return buf;
-    }
-
     inline std::string Replace(const std::string& string,const std::string& oldStr,const std::string& newStr){
         std::string newString = string;
         for(std::string::size_type pos = 0;pos != std::string::npos;pos += newStr.length()){

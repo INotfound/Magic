@@ -13,6 +13,19 @@ namespace NetWork{
 namespace Http{
     IHttpServlet::~IHttpServlet() =default;
 
+    void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
+        const auto& request = httpSocket->getRequest();
+        const auto& handle = this->getMatchedServlet(request->getPath());
+        if(handle){
+            handle(httpSocket);
+        }else{
+            const auto& response = httpSocket->getResponse();
+            response->setStatus(HttpStatus::NOT_FOUND);
+            response->setBody("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>");
+            httpSocket->sendResponse(response);
+        };
+    }
+
     void HttpServletDispatch::setHttpServlet(const Safe<IHttpServlet>& servlet){
         RWMutex::WriteLock lock(m_Mutex);
         servlet->m_ServletDispatch = this->shared_from_this();
@@ -28,17 +41,6 @@ namespace Http{
                 break;
         }
         MAGIC_INFO() << "HttpServlet Path: " << path << " Successfully Loaded";
-    }
-
-    void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& httpRequest,const Safe<HttpResponse>& httpResponse){
-        const auto& handle = this->getMatchedServlet(httpRequest->getPath());
-        if(handle){
-            handle(httpSocket,httpRequest,httpResponse);
-        }else{
-            httpResponse->setStatus(HttpStatus::NOT_FOUND);
-            httpResponse->setBody("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>");
-            httpSocket->sendResponse(httpResponse);
-        };
     }
 
     const RouteHandle& HttpServletDispatch::getMatchedServlet(const std::string& path){

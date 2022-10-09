@@ -49,14 +49,14 @@ namespace DataBase{
     class ConnectionPool :public std::enable_shared_from_this<ConnectionPool<T>>{
         friend class Connection<T>;
     public:
-        ConnectionPool(const Safe<Magic::Config>& configuration)
+        explicit ConnectionPool(const Safe<Magic::Config>& configuration)
             :m_Count(configuration->at("DataBase.Connection.Count",1)){
         }
 
         Connection<T> getConnection(){
             Magic::Mutex::Lock locker(m_Mutex);
             if(m_IdleEntity.empty()){
-                const Safe<T> conn = m_InitFunction();
+                const Safe<T> conn = m_CreateFunction();
                 if(conn){
                     m_IdleEntity.push_back(conn);
                 }else{
@@ -69,12 +69,12 @@ namespace DataBase{
         }
 
         void initialize(const std::function<const Safe<T>(void)>& initFunc){
-            m_InitFunction = std::move(initFunc);
+            m_CreateFunction = std::move(initFunc);
         }
     private:
         void restore(const Safe<T>& entity){
             Magic::Mutex::Lock locker(m_Mutex);
-            if(m_IdleEntity.size() == m_Count){
+            if(m_IdleEntity.size() > m_Count){
                 return;
             }
             m_IdleEntity.push_back(entity);
@@ -83,7 +83,7 @@ namespace DataBase{
         uint32_t m_Count;
         Magic::Mutex m_Mutex;
         std::list<Safe<T>> m_IdleEntity;
-        std::function<const Safe<T>(void)> m_InitFunction;
+        std::function<const Safe<T>(void)> m_CreateFunction;
     };
 }
 }

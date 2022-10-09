@@ -1,7 +1,7 @@
 #include <cstring>
 #include "Magic/Utilty/Logger.h"
 #include "Magic/DataBase/MySql.h"
-
+#ifdef MYSQL
 namespace Magic{
 namespace DataBase{
     class MySqlLibraryWrapper{
@@ -386,3 +386,4 @@ namespace DataBase{
     }
 }
 }
+#endif

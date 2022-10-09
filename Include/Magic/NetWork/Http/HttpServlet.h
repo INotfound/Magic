@@ -20,7 +20,7 @@ namespace Http{
         Normal
     };
     class HttpServletDispatch;
-    using RouteHandle = std::function<void(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&)>;
+    using RouteHandle = std::function<void(const Safe<HttpSocket>&)>;
     /**
      * @brief IHttpServlet类
      */
@@ -28,11 +28,13 @@ namespace Http{
         friend class HttpServletDispatch;
     public:
         template<typename T,typename... Args>
-        using ClassMemberFunction = void(T::*)(const Safe<HttpSocket>&,const Safe<HttpRequest>&,const Safe<HttpResponse>&);
+        using ClassMemberFunction = void(T::*)(const Safe<HttpSocket>&);
     public:
         virtual ~IHttpServlet();
         template<class T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
-        void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc,HttpRouteType type =HttpRouteType::Normal);
+        void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc);
+        template<class T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
+        void addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc);
     private:
         Safe<HttpServletDispatch> m_ServletDispatch;
     };
@@ -41,6 +43,13 @@ namespace Http{
      */
     class HttpServletDispatch :public std::enable_shared_from_this<HttpServletDispatch>{
     public:
+        /**
+         * @brief 处理函数
+         * @param request Http请求对象
+         * @param response Http响应对象
+         * @return: 返回True则成功，返回False则失败
+         */
+        void handle(const Safe<HttpSocket>& httpSocket);
         /**
          * @brief 添加Servlet对象函数
          * @param path Servlet的路径
@@ -53,13 +62,6 @@ namespace Http{
          * @param handle 处理函数
          */
         void addRoute(const std::string& path,HttpRouteType type,RouteHandle handle);
-        /**
-         * @brief 处理函数
-         * @param request Http请求对象
-         * @param response Http响应对象
-         * @return: 返回True则成功，返回False则失败
-         */
-        void handle(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& httpRequest,const Safe<HttpResponse>& httpResponse);
     private:
         /**
          * @brief 获取匹配的Routed对应的处理函数
@@ -75,12 +77,18 @@ namespace Http{
     };
 
     template<class T, typename>
-    void IHttpServlet::addRoute(const std::string &path, IHttpServlet::ClassMemberFunction<T> memberFunc,HttpRouteType type) {
+    void IHttpServlet::addRoute(const std::string &path, IHttpServlet::ClassMemberFunction<T> memberFunc) {
         if(m_ServletDispatch){
-            m_ServletDispatch->addRoute(path,type,std::bind(memberFunc,reinterpret_cast<T*>(this),std::placeholders::_1,std::placeholders::_2,std::placeholders::_3));
+            m_ServletDispatch->addRoute(path,HttpRouteType::Normal,std::bind(memberFunc,reinterpret_cast<T*>(this),std::placeholders::_1));
         }
     }
 
+    template<class T, typename>
+    void IHttpServlet::addMatchRoute(const std::string &path, ClassMemberFunction<T> memberFunc) {
+        if(m_ServletDispatch){
+            m_ServletDispatch->addRoute(path,HttpRouteType::Match,std::bind(memberFunc,reinterpret_cast<T*>(this),std::placeholders::_1));
+        }
+    }
 }
 }
 }

@@ -4,10 +4,12 @@
  * @LastEditTime: 2021-02-01 22:20:28
  */
 #pragma once
+#ifdef MYSQL
 #include <mysql/mysql.h>
 
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/Mutex.h"
+#include "Magic/DataBase/ConnectionPool.h"
 
 namespace Magic{
 namespace DataBase{
@@ -89,3 +91,4 @@ namespace DataBase{
 
 }
 }
+#endif

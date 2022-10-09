@@ -4,7 +4,8 @@
  * @LastEditTime: 2021-02-01 23:55:58
  */
 #include <tuple>
-#include <time.h>
+#include <ctime>
+#include <iomanip>
 #include <iostream>
 
 #include "Magic/Core/Core.h"
@@ -132,7 +133,7 @@ namespace Magic{
         }
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             std::time_t time_secounds = static_cast<int32_t>(event->getTime());
-            os << Magic::TimeToString(time_secounds,this->m_FormatString).c_str();
+            os << std::put_time(std::localtime(&time_secounds),this->m_FormatString.c_str());
         }
     private:
         std::string m_FormatString;
