@@ -10,7 +10,7 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    template<class T,class B>
+    template<typename T,typename B>
     inline T ByteToType(const B* src){
         T value = 0;
         for(uint32_t i = 0;i < sizeof(T);i++){

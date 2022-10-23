@@ -11,7 +11,7 @@ namespace Magic{
     class SpinLockImpl;
     class SemaphoreImpl;
 
-    template<class T>
+    template<typename T>
     class ScopedLockImpl :public Noncopyable{
     public:
         explicit ScopedLockImpl(T& mutex)
@@ -39,7 +39,7 @@ namespace Magic{
         bool m_Locked;
     };
 
-    template<class T>
+    template<typename T>
     class ReadScopedLockImpl :public Noncopyable{
     public:
         explicit ReadScopedLockImpl(T& mutex)
@@ -67,7 +67,7 @@ namespace Magic{
         bool m_Locked;
     };
 
-    template<class T>
+    template<typename T>
     class WriteScopedLockImpl :public Noncopyable{
     public:
         explicit WriteScopedLockImpl(T& mutex)

@@ -57,8 +57,8 @@ namespace NetWork{
         m_SslStream = sslStream;
     }
 #endif
-    void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
-        auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t /*length*/,const SendCallBack& callback){
+    void Socket::send(const char* data,uint64_t length,const SendCallBack callback){
+        auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -79,8 +79,8 @@ namespace NetWork{
         asio::async_write(*m_Socket,asio::const_buffer(data,length),std::move(sendCallBack));
     }
 
-    void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
-        auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t /*length*/,const SendCallBack& callback){
+    void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack callback){
+        auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -101,8 +101,8 @@ namespace NetWork{
         asio::async_write(*m_Socket,*stream,std::move(sendCallBack));
     }
 
-    void Socket::recv(const RecvCallBack& callBack){
-        auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+    void Socket::recv(const RecvCallBack callBack){
+        auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -123,8 +123,8 @@ namespace NetWork{
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
     }
 
-    void Socket::recv(uint64_t size,const RecvCallBack& callBack){
-        auto readCallBack = std::bind([this,size](const asio::error_code &err, std::size_t length,const RecvCallBack& callback){
+    void Socket::recv(uint64_t size,const RecvCallBack callBack){
+        auto readCallBack = std::bind([this,size](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
             if(err) {
                 m_ErrorCodeCallBack(err);
                 return;
@@ -152,12 +152,12 @@ namespace NetWork{
         return m_ErrorCodeCallBack;
     }
 
-    void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
-        m_ErrorCodeCallBack = errorCallBack;
+    void Socket::setErrorCodeCallBack(const ErrorCallBack errorCallBack){
+        m_ErrorCodeCallBack = std::move(errorCallBack);
     }
 
-    void Socket::setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack){
-        m_HeartBeatCallBack = heartBeatCallBack;
+    void Socket::setHeartBeatCallBack(const HeartBeatCallBack heartBeatCallBack){
+        m_HeartBeatCallBack = std::move(heartBeatCallBack);
     }
 }
 }

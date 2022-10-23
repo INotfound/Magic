@@ -14,7 +14,7 @@
 
 using namespace Magic::NetWork::Http;
 
-#define leak
+//#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);
@@ -58,6 +58,18 @@ public:
         httpSocket->sendResponse(httpSocket->getResponse());
     }
 };
+
+class Aop{
+public:
+    bool before(const Safe<HttpSocket>& httpSocket){ std::cout << "111111111111" << std::endl; return true;};
+    bool after(const Safe<HttpSocket>& httpSocket){  std::cout << "222222222222" << std::endl; return true;};
+};
+class AopEx{
+public:
+    bool before(const Safe<HttpSocket>& httpSocket){ std::cout << "XXXXXXXXXXXX" << std::endl; return true;};
+    bool after(const Safe<HttpSocket>& httpSocket){  std::cout << "SSSSSSSSSSSS" << std::endl; return true;};
+};
+
 const Safe<Magic::Container>& Magic::Application::initialize(const std::function<void(const Safe<Container>&)>& callback){
     m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
     m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
@@ -73,6 +85,9 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     m_Container->registerType<Magic::NetWork::Http::HttpServletDispatch>();
     m_Container->registerTypeEx<Magic::NetWork::Http::IHttpServlet,ResourceServlet>();
     m_Container->registerType<Magic::NetWork::Http::HttpServer,Safe<Magic::NetWork::IoPool>,Safe<Magic::Config>>();
+
+    m_Container->registerType<Aop>();
+    m_Container->registerType<AopEx>();
 
     if(callback)
         callback(m_Container);
@@ -97,6 +112,8 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     httpServer->run();
 
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/",&ResourceServlet::handle1);
+    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/1",&ResourceServlet::handle1,m_Container->resolve<Aop>());
+    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/2",&ResourceServlet::handle1,m_Container->resolve<Aop>(),m_Container->resolve<AopEx>());
 
     m_Container->resolveAll();
     return m_Container;

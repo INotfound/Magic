@@ -14,54 +14,56 @@ namespace Http{
     IHttpServlet::~IHttpServlet() =default;
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
-        const auto& request = httpSocket->getRequest();
-        const auto& handle = this->getMatchedServlet(request->getPath());
-        if(handle){
-            handle(httpSocket);
-        }else{
-            const auto& response = httpSocket->getResponse();
-            response->setStatus(HttpStatus::NOT_FOUND);
-            response->setBody("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>");
-            httpSocket->sendResponse(response);
-        };
+        const auto& httpPath = httpSocket->getRequest()->getPath();
+        RWMutex::ReadLock lock(m_Mutex);
+        auto exactlyIter = m_NormalRoutes.find(httpPath);
+        auto exactlyEnd = m_NormalRoutes.end();
+        if(exactlyIter != exactlyEnd){
+            const auto& vectorAfter = std::get<2>(exactlyIter->second);
+            const auto& vectorBefore = std::get<1>(exactlyIter->second);
+            for(const auto& func : vectorBefore){
+                if(!func(httpSocket))
+                    return;
+            }
+            std::get<0>(exactlyIter->second)(httpSocket);
+            for(const auto& func : vectorAfter){
+                if(!func(httpSocket))
+                    return;
+            }
+            return;
+        }
+
+        auto matchIter = m_MatchRoutes.begin();
+        auto matchEnd = m_MatchRoutes.end();
+        std::regex reg;
+        for(; matchIter != matchEnd; matchIter++){
+            reg.assign(matchIter->first);
+            if(std::regex_match(httpPath,reg)){
+                const auto& vectorAfter = std::get<2>(matchIter->second);
+                const auto& vectorBefore = std::get<1>(matchIter->second);
+                for(const auto& func : vectorBefore){
+                    if(!func(httpSocket))
+                        return;
+                }
+                std::get<0>(matchIter->second)(httpSocket);
+                for(const auto& func : vectorAfter){
+                    if(!func(httpSocket))
+                        return;
+                }
+                return;
+            }
+        }
+        const auto& response = httpSocket->getResponse();
+        response->setStatus(HttpStatus::NOT_FOUND);
+        response->setBody("<html><head><title>404 Not Found</title></head><body><center><h1>404 Not Found</h1></center><hr><center>Magic/2.0.0</center></body></html>");
+        httpSocket->sendResponse(response);
+
     }
 
     void HttpServletDispatch::setHttpServlet(const Safe<IHttpServlet>& servlet){
         RWMutex::WriteLock lock(m_Mutex);
         servlet->m_ServletDispatch = this->shared_from_this();
     }
-
-    void HttpServletDispatch::addRoute(const std::string& path,HttpRouteType type,RouteHandle handle){
-        switch(type){
-            case HttpRouteType::Match:
-                m_MatchRoutes.emplace(path,handle);
-                break;
-            case HttpRouteType::Normal:
-                m_NormalRoutes.emplace(path,handle);
-                break;
-        }
-        MAGIC_INFO() << "HttpServlet Path: " << path << " Successfully Loaded";
-    }
-
-    const RouteHandle& HttpServletDispatch::getMatchedServlet(const std::string& path){
-        RWMutex::ReadLock lock(m_Mutex);
-        auto exactlyIter = m_NormalRoutes.find(path);
-        auto exactlyEnd = m_NormalRoutes.end();
-        if(exactlyIter != exactlyEnd){
-            return exactlyIter->second;
-        }
-        std::regex reg;
-        auto matchIter = m_MatchRoutes.begin();
-        auto matchEnd = m_MatchRoutes.end();
-        for(; matchIter != matchEnd; matchIter++){
-            reg.assign(matchIter->first);
-            if(std::regex_match(path,reg)){
-                return matchIter->second;
-            }
-        }
-        return m_EmptyRouteHandle;
-    }
 }
-
 }
 }

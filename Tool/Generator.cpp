@@ -248,15 +248,22 @@ void Generator(std::ostream& stream){
                         << "->"
                         << ifs.first
                         << "(";
-
-                    uint32_t i = 0;
-                    for(auto& fas : ifs.second){
-                        if(i == 0){
-                            i++;
-                            stream << fas;
-                            continue;
+                    for(uint32_t i = 0;i < ifs.second.size();i++){
+                        if(i != 0){
+                            stream << ",";
                         }
-                        stream << "," << fas;
+                        const std::string& fas = ifs.second.at(i);
+                        iter = g_RegisteredMap.begin();
+                        for(;iter != g_RegisteredMap.end();iter++){
+                            if(fas == iter->Id){
+                                break;
+                            }
+                        }
+                        if(iter == g_RegisteredMap.end()){
+                            stream << fas;
+                        }else{
+                            stream << "m_Container->resolve<" << iter->Class << ">()";
+                        }
                     }
                     stream << ");" << LF;
                 }

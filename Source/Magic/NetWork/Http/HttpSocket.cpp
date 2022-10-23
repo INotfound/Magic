@@ -62,12 +62,12 @@ namespace Http{
         return m_ResponseParser->getData();
     }
 
-    void HttpSocket::recvRequest(const HttpRecvBack& callback){
+    void HttpSocket::recvRequest(const HttpRecvBack callback){
         m_RecvRequestCallBack = std::move(callback);
         this->requestParser();
     }
 
-    void HttpSocket::recvResponse(const HttpRecvBack& callback){
+    void HttpSocket::recvResponse(const HttpRecvBack callback){
         m_RecvResponseCallBack = std::move(callback);
         this->responseParser();
     }
@@ -79,8 +79,6 @@ namespace Http{
         std::ostream stream(streamBuffer.get());
         stream << httpRequest;
         m_Socket->send(streamBuffer);
-        m_RequestParser->reset();
-        m_ResponseParser->reset();
     }
 
     void HttpSocket::sendResponse(const Safe<HttpResponse>& httpResponse){
@@ -132,8 +130,6 @@ namespace Http{
             stream << httpResponse;
             m_Socket->send(streamBuffer);
         }
-        m_RequestParser->reset();
-        m_ResponseParser->reset();
     }
 
     const Safe<WebSocket>& HttpSocket::upgradeWebSocket(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response,bool mask){
@@ -184,12 +180,18 @@ namespace Http{
             m_RecvRequestCallBack(this->shared_from_this());
 
         m_MultiPart->reset();
+        m_RequestParser->reset();
+        m_ResponseParser->reset();
         this->requestParser();
     }
 
     void HttpSocket::handleResponse(){
         if(m_RecvResponseCallBack)
             m_RecvResponseCallBack(this->shared_from_this());
+
+        m_MultiPart->reset();
+        m_RequestParser->reset();
+        m_ResponseParser->reset();
     }
 
     void HttpSocket::requestParser(){

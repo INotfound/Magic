@@ -35,7 +35,7 @@ namespace std{
             return m_TypeIndex == std::type_index(typeid(U));
         }
 
-        template<class T>
+        template<typename T>
         friend T& any_cast(const any& other);
         
         //将any转换为实际的类型
@@ -87,7 +87,7 @@ namespace std{
         std::type_index m_TypeIndex;
     };
     
-    template<class T>
+    template<typename T>
     T& any_cast(const any& other){
         if (!other.Is<T>()){
            std::printf("Can not cast %s to %s",typeid(T).name(),other.m_TypeIndex.name());

@@ -124,7 +124,7 @@ namespace Magic {
          * @param defaultComment 配置注释
          * @return: 返回配置项值
          */
-        template<class T>
+        template<typename T>
         T at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment = "");
         /**
          * @brief 修改配置项值函数
@@ -133,7 +133,7 @@ namespace Magic {
          * @param defaultComment 配置注释
          * @return: 返回配置项值
          */
-        template<class T>
+        template<typename T>
         T revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment = "");
     private:
         /**
@@ -154,14 +154,7 @@ namespace Magic {
         void parse(const std::string& content, ConfigMap& keyValue) override;
     };
 
-    class JsonConfigFormatter :public IConfigFormatter {
-    public:
-        ~JsonConfigFormatter() {};
-        void write(std::ostream& os, ConfigMap& KeyValue) override;
-        void parse(const std::string& content, ConfigMap& keyValue) override;
-    };
-
-    template<class T>
+    template<typename T>
     T Config::at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment) {
         RWMutex::WriteLock lock(m_Mutex);
         auto iter = m_ConfigMap.find(defaultName);
@@ -173,7 +166,7 @@ namespace Magic {
         this->update();
         return defaultValue;
     }
-    template<class T>
+    template<typename T>
     T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
         RWMutex::WriteLock lock(m_Mutex);
         m_IsChange = true;

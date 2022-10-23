@@ -12,8 +12,7 @@
 namespace Magic{
     static thread_local std::string g_ThreadName = "UNKNOWN";
 
-    Thread::~Thread() {
-    }
+    Thread::~Thread() =default;
     
     Thread::Thread(const std::string& threadName,std::function<void()> callback)
         :m_Id(-1)

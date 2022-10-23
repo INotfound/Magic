@@ -5,8 +5,6 @@
 -->
 # Magic
 
-> Magic [v2.0.0] 正式发布.
-
 ## 简介
 
 > ​		Use Standard C++ 11 && CMake.
@@ -17,26 +15,31 @@
 
 ### 快速开发
 
+---
 - **高内聚,低耦合**.
 - 超强的**通用性**以及高度**跨平台**.
 - 实现**模块化**开发方式便于协作开发.
+- 支持**Http/WebSocket**协议以及**WebServer**开发
 - 基于 IoC `(Inversion of Control)`的方式对每个类进行托管以及自动注入构建.
 
 ### 模块配置
 
+---
 - 功能模块可高度**重用**，方便**扩展**以及**维护**.
 - 使用**Json**格式配置文件`(*.json)`对功能进行模块划分.
 
 ### 非侵入式
 
+---
 - 高度解耦
 - 代码**移植度**高.
 - **无任何侵入式代码**.
+
 ### 安装
 
 ---
 
-> 只需支持**C++11**的编译器以及**CMake** \ **OpenSSL**构建工具编译即可,  ***MySql*** 编译可选项.
+> 只需支持**C++11**的编译器以及**CMake**构建工具编译即可, 编译可选项: ***MySql*** ***Zlib*** ***SSL***.
 - Linux
   1. **Gnu**构建套件 (跳转在库路径中)
     - `mkdir build && cd build && cmake ../. && make && make install`
@@ -45,8 +48,7 @@
 - Win
   - VS 20XX
     - `cmake -G "Visual Studio 15 2017"` // or ***Visual Studio xx 20xx***
-> `*.json` 模块每次被修改完成时,请调用一次 `cmake ../. `
-
+  
 ### 使用方法
 
 ---
@@ -66,12 +68,9 @@ if(NOT DEFINED MAGIC)
 endif()
 
 include_directories(
-    ${MAGIC} 
     ${MAGIC}/Include
-    ${PROJECT_SOURCE_DIR}
     ${PROJECT_SOURCE_DIR}/Include
     ${MAGIC}/ThirdParty/Asio/Include
-    ${MAGIC}/ThirdParty/RapidJSON/Include
 )
 link_directories(
     ${MAGIC}/Lib
@@ -84,6 +83,7 @@ add_custom_command(
     TARGET Gen
     COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json Test
 )
+
 ```
 3. 打开***Test.json***配置文件,并添加上自定义的类.
 ```jsonc
@@ -119,8 +119,8 @@ add_custom_command(
 4.  对***CMake***配置文件进行编辑添加**Test**模块(**Test.json**)
 ```cmake
 add_custom_command(
-        TARGET Gen
-        COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json ${PROJECT_SOURCE_DIR}/Test.json Test
+    TARGET Gen
+    COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json ${PROJECT_SOURCE_DIR}/Test.json Test
 )
 ```
 5.  跳转build目录中 调用 `cmake ../.` 或 `cmake ../. -Gxxx` 并且进行Build. 
@@ -129,11 +129,13 @@ add_custom_command(
 #include "Test.h" //添加头文件
 
 int main(){
-    Test::Initialize(); //添加初始化代码. [Configurations.NameSpace]::[Constructor.Name]命名设定
+    auto application = std::make_shared<Magic::Application>();
+    application->initialize([](const Safe<Magic::Container>& ioc){
+    });
     return EXIT_SUCCESS;
 }
 ```
-5. ***编译即可***
+5. ***Make Or Ninjia 编译即可***
 
 ### 本库示例
 
@@ -143,7 +145,6 @@ int main(){
 ```jsonc
 {                                                           // 日志以及配置模块示例
     "Configurations":{
-        "NameSpace":"Magic",                                // 同C++的namespace.
         "Registered":[                                      // 类信息注册(强制,必须要具有一个).
             {
                 "Id":"config",                              // 类Id标识(任意名).
@@ -163,15 +164,17 @@ int main(){
         "Initialize":[                                      // 初始化(非强制)
             {
                 "Id":"logger",
+                "InvokeFunctions":{
+                    "externMode":[]                         //调用Id: logger 对象的externMode函数  
+                }
+            },
+            {
+                "Id":"logger",
                 "Loop":true,                                // Loop 循环加入接口类对象
                 "Callee":"Magic::ILogAppender",             // 接口类类型 若Loop == true则该属性必须具有值.
                 "CalleeFunctions":["addILogAppender"],      // 接口类对象添加函数.
             }
-        ],
-        "Constructor":{                                     // 构造函数定义
-            "Name":"Initialize",                            // 暴露给main函数中调用名.
-            "WithParameter": false                          // 是否需要自定义注册参数.
-        }
+        ]
     }
 }
 ```

@@ -5,6 +5,7 @@
  */
 #define PERFORMANCE 1
 #include <regex>
+#include <type_traits>
 #include "Magic/Magic"
 #include "Magic/Utilty/String.h"
 #include "Magic/NetWork/Http/Uri.h"
@@ -52,26 +53,84 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     return m_Container;
 }
 
-int main(int /*argc*/,char** /*argv*/){
-    Safe<Magic::Application> application = std::make_shared<Magic::Application>();
-    application->initialize();
-    Magic::Thread thread("Test",[](){
-        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
-        Safe<Magic::NetWork::Http::HttpClient> client = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/");
-        client->onTimeOut([](){
-            MAGIC_DEBUG() << "请求超时";
-        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
-            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-        })->execute(httpRequest);
-    });
-    thread.join();
-    std::string string("12:32:ab:23");
-    MAGIC_DEBUG() << "xxx: " << Magic::Replace(Magic::ToUpper(string),":","");
 
-    std::getchar();
-    thread.join();
-    MAGIC_DEBUG() << "@@@@@@@@@@@@@@";
-    std::getchar();
+struct Hello
+{
+    void before(int) { return; }
+};
+
+struct Generic {
+    void xxx(int) { return; }
+};
+
+// SFINAE test
+template<typename T,typename Sign>
+class HasBefore{
+    typedef char no[2];
+    typedef char yes[1];
+    template <typename U,U>
+    struct TypeCheck;
+    template <typename C>
+    static no& Check(...);
+    template <typename C>
+    static yes& Check(TypeCheck<Sign, &C::before>*);
+public:
+    enum { value = sizeof(Check<T>(nullptr)) == sizeof(char) };
+};
+
+template <typename Ret, typename... Args>
+std::tuple<Ret, Args...> FunctionChecker(std::function<Ret(Args...)>);
+
+void syszuxPrint(){std::cout<<std::endl;}
+
+template<typename T, typename... Ts>
+void syszuxPrint(T arg1, Ts... arg_left){
+    std::cout<<arg1<<", ";
+    syszuxPrint(arg_left...);
+}
+
+class Aop{
+public:
+    bool before(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){return false;}
+    bool after(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){return false;}
+};
+
+
+int main(int /*argc*/,char** /*argv*/){
+    std::cout << HasBefore<Hello,void(Hello::*)(int)>::value << std::endl;
+    std::cout << HasBefore<Generic,std::string(Generic::*)()>::value << std::endl;
+
+    Hello hello;
+    Generic generic;
+    std::function<void(int)> xxx = std::bind(&Hello::before,&hello,std::placeholders::_1);
+    std::function<void(int)> xxs = std::bind(&Generic::xxx,&generic,std::placeholders::_1);
+    std::cout << std::is_same<decltype(FunctionChecker(xxx)),decltype(FunctionChecker(xxs))>::value << std::endl;
+
+//    Safe<Aop> aop = std::make_shared<Aop>();
+    using RouteHandle = std::function<void(const Safe<Magic::NetWork::Http::HttpSocket>&)>;
+    std::cout << std::is_same<decltype(Magic::NetWork::Http::FunctionChecker(typename std::remove_reference<RouteHandle&>::type())),decltype(Magic::NetWork::Http::FunctionChecker(RouteHandle()))>::value << std::endl;
     return 0;
 }
+//int main(int /*argc*/,char** /*argv*/){
+//    Safe<Magic::Application> application = std::make_shared<Magic::Application>();
+//    application->initialize();
+//    Magic::Thread thread("Test",[](){
+//        Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+//        httpRequest->setMethod(Magic::NetWork::Http::HttpMethod::GET);
+//        Safe<Magic::NetWork::Http::HttpClient> client = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/");
+//        client->onTimeOut([](){
+//            MAGIC_DEBUG() << "请求超时";
+//        })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
+//            MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
+//        })->execute(httpRequest);
+//    });
+//    thread.join();
+//    std::string string("12:32:ab:23");
+//    MAGIC_DEBUG() << "xxx: " << Magic::Replace(Magic::ToUpper(string),":","");
+//
+//    std::getchar();
+//    thread.join();
+//    MAGIC_DEBUG() << "@@@@@@@@@@@@@@";
+//    std::getchar();
+//    return 0;
+//}

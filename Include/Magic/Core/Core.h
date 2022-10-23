@@ -44,7 +44,7 @@ private:
     T* m_Inner;
 };
 
-template<class T>
+template<typename T>
 class SingletonPtr :public Noncopyable{
 public:
     static const Safe<T>& GetInstance(){
@@ -53,7 +53,7 @@ public:
     }
 };
 
-template<class T,class M,typename = typename std::enable_if<std::is_base_of<T,M>::value>::type>
+template<typename T,class M,typename = typename std::enable_if<std::is_base_of<T,M>::value>::type>
 class SingletonPtrEx :public Noncopyable{
 public:
     static const Safe<T>& GetInstance(){
@@ -62,27 +62,27 @@ public:
     }
 };
 
-template<class T>
+template<typename T>
 const void* CompiletimeIId(){
     return reinterpret_cast<const void*>(&CompiletimeIId<T>);
 }
 
-template<class T> struct Safe_Traits{
-    typedef void Type;
-};
-
-template<class T> struct Safe_Traits<Safe<T>>{
+template<typename T> struct Safe_Traits{
     typedef T Type;
 };
 
-template<class T> struct Safe_Traits<const Safe<T>>{
+template<typename T> struct Safe_Traits<Safe<T>>{
     typedef T Type;
 };
 
-template<class T> struct Safe_Traits<const Safe<T>&>{
+template<typename T> struct Safe_Traits<const Safe<T>>{
     typedef T Type;
 };
 
-template<class T> struct Safe_Traits<const Safe<T>&&>{
+template<typename T> struct Safe_Traits<const Safe<T>&>{
+    typedef T Type;
+};
+
+template<typename T> struct Safe_Traits<const Safe<T>&&>{
     typedef T Type;
 };

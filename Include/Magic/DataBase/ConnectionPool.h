@@ -11,12 +11,12 @@
 
 namespace Magic{
 namespace DataBase{
-    template<class T>
+    template<typename T>
     class Connection;
-    template<class T>
+    template<typename T>
     class ConnectionPool;
 
-    template<class T>
+    template<typename T>
     class Connection{
         friend class ConnectionPool<T>;
     public:
@@ -45,7 +45,7 @@ namespace DataBase{
         Safe<ConnectionPool<T>> m_Pool;
     };
 
-    template<class T>
+    template<typename T>
     class ConnectionPool :public std::enable_shared_from_this<ConnectionPool<T>>{
         friend class Connection<T>;
     public:

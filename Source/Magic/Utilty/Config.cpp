@@ -156,41 +156,4 @@ namespace Magic {
             normalString.append(1, charValue);
         }
     }
-
-    // void JsonConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
-    //     Safe<rapidjson::Document> json(new rapidjson::Document);
-    //     rapidjson::Document::AllocatorType& allocator = json->GetAllocator();
-    //     json->SetObject();
-    //     for(auto&v : KeyValue)
-    //     {            
-    //         if (v.second->isComment()) {
-    //             std::string commentName(v.first + "Comment");
-    //             rapidjson::Value jsonName(commentName.c_str(), allocator);
-    //             rapidjson::Value jsonValue(v.second->getComment().c_str() , allocator);
-    //             json->AddMember(jsonName, jsonValue, allocator);
-    //         }
-    //         rapidjson::Value jsonName(v.first.c_str(), allocator);
-    //         rapidjson::Value jsonValue(v.second->getValue().c_str() , allocator);
-    //         json->AddMember(jsonName, jsonValue, allocator);
-    //     }
-    //     Safe<rapidjson::StringBuffer> buffer(new rapidjson::StringBuffer);
-    //     Safe<rapidjson::Writer<rapidjson::StringBuffer>> writer(new rapidjson::Writer<rapidjson::StringBuffer>(*buffer));
-    //     json->Accept(*writer);
-    //     os << buffer->GetString();
-    // }
-    
-    // void JsonConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
-    //     if (content.empty())
-    //         return;
-    //     Safe<rapidjson::Document> json(new rapidjson::Document);
-    //     json->Parse(content.c_str());
-    //     auto iter = json->MemberBegin();
-    //     auto end = json->MemberEnd();
-    //     for (; iter != end; iter++)
-    //     {
-    //         std::string keyName(iter->name.GetString());
-    //         Safe<ConfigValue> value(new ConfigValue(keyName,iter->value.GetString()));
-    //         keyValue[keyName] = std::move(value);
-    //     }
-    // }
 }

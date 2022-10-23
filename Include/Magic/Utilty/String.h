@@ -13,14 +13,14 @@
 namespace Magic{
     static const std::string g_EmptyString;
     
-    template<class T>
+    template<typename T>
     std::string AsString(const T& value) {
         std::ostringstream formatStream;
         formatStream << value;
         return formatStream.str();
     }
 
-    template<class T>
+    template<typename T>
     T StringAs(const std::string& value) {
         std::stringstream formatStream;
         formatStream.clear();
