@@ -58,14 +58,14 @@ namespace NetWork{
     }
 #endif
     void Socket::send(const char* data,uint64_t length,const SendCallBack callback){
-        auto sendCallBack = std::bind([this](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
+        auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
             if(callback)
                 callback();
-        },std::placeholders::_1,std::placeholders::_2,callback);
+        };
         Mutex::Lock lock(m_Mutex);
         if(!m_Socket->is_open()){
             return;
@@ -80,14 +80,14 @@ namespace NetWork{
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack callback){
-        auto sendCallBack = std::bind([this,stream](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
+        auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
             if(callback)
                 callback();
-        },std::placeholders::_1,std::placeholders::_2,callback);
+        };
         Mutex::Lock lock(m_Mutex);
         if(!m_Socket->is_open()){
             return;
@@ -102,14 +102,14 @@ namespace NetWork{
     }
 
     void Socket::recv(const RecvCallBack callBack){
-        auto readCallBack = std::bind([this](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
+        auto readCallBack = [this,callBack](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
             callback(this->m_StreamBuffer);
-        },std::placeholders::_1,std::placeholders::_2,callBack);
+        };
         Mutex::Lock lock(m_Mutex);
         if(!m_Socket->is_open()){
             return;
@@ -124,7 +124,7 @@ namespace NetWork{
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack callBack){
-        auto readCallBack = std::bind([this,size](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
+        auto readCallBack = [this,size,callBack](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
             if(err) {
                 m_ErrorCodeCallBack(err);
                 return;
@@ -135,7 +135,7 @@ namespace NetWork{
                 return;
             }
             callback(this->m_StreamBuffer);
-        },std::placeholders::_1,std::placeholders::_2,callBack);
+        };
         Mutex::Lock lock(m_Mutex);
         if(!m_Socket->is_open()){
             return;
@@ -148,6 +148,7 @@ namespace NetWork{
     #endif
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));
     }
+
     const Socket::ErrorCallBack& Socket::getErrorCodeCallBack() const{
         return m_ErrorCodeCallBack;
     }
