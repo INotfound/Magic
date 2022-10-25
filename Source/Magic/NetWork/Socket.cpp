@@ -58,7 +58,7 @@ namespace NetWork{
     }
 #endif
     void Socket::send(const char* data,uint64_t length,const SendCallBack callback){
-        auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
+        auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -80,7 +80,7 @@ namespace NetWork{
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack callback){
-        auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/,const SendCallBack callback){
+        auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -102,13 +102,14 @@ namespace NetWork{
     }
 
     void Socket::recv(const RecvCallBack callBack){
-        auto readCallBack = [this,callBack](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
+        auto readCallBack = [this,callBack](const asio::error_code &err, std::size_t length){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
-            callback(this->m_StreamBuffer);
+            if(callBack)
+                callBack(this->m_StreamBuffer);
         };
         Mutex::Lock lock(m_Mutex);
         if(!m_Socket->is_open()){
@@ -124,17 +125,18 @@ namespace NetWork{
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack callBack){
-        auto readCallBack = [this,size,callBack](const asio::error_code &err, std::size_t length,const RecvCallBack callback){
-            if(err) {
+        auto readCallBack = [this,size,callBack](const asio::error_code &err, std::size_t length){
+            if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
             m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
             if(size > length){
-                this->recv(size - length,callback);
+                this->recv(size - length,callBack);
                 return;
             }
-            callback(this->m_StreamBuffer);
+            if(callBack)
+                callBack(this->m_StreamBuffer);
         };
         Mutex::Lock lock(m_Mutex);
         if(!m_Socket->is_open()){
