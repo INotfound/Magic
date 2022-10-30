@@ -19,14 +19,9 @@
 
 std::string g_LF = "\n";
 std::string g_MagicPath;
-std::string g_MainCpp=R"Template(#include <Magic/Magic>
 
-int main(int argc, char** argv){
-    return EXIT_SUCCESS;
-})Template";
 std::string g_Module = R"Template({
     "Configurations":{
-        "NameSpace":"",
         "Registered":[
             {
                 "Id":"",
@@ -40,22 +35,22 @@ std::string g_Module = R"Template({
         "Initialize":[
             {
                 "Id":"",
+                "InvokeFunctions": {
+                    "":[]
+                }
+            },
+            {
+                "Id":"",
                 "Loop":false,
                 "Callee":"",
-                "FunctionPropertys":[],
-                "FunctionArguments":{}
+                "CalleeFunctions":[]
             }
-        ],
-        "Constructor":{
-            "Name":"Initialize",
-            "WithParameter": false
-        }
+        ]
     }
 })Template";
 
 std::string g_Template = R"Template({
     "Configurations":{
-        "NameSpace":"",                     // 同C++的namespace,若不想具有namespace留空即可.
         "Registered":[                      // 类信息注册(强制,必须要具有一个).
             {
                 "Id":"",                    // 类Id标识(任意名)用于Initialize中使用.
@@ -69,34 +64,43 @@ std::string g_Template = R"Template({
         "Initialize":[                      // 初始化(非强制)
             {
                 "Id":"",                    // 类Id标识应与上方Registered中一致.
+                "InvokeFunctions": {        // 需要初始化的函数.
+                    "":[]
+                }
+            },
+            {
+                "Id":"",                    // 类Id标识应与上方Registered中一致.
                 "Loop":false,               // Loop 循环加入接口类对象
                 "Callee":"",                // 接口类类型 若Loop == true则该属性必须具有值.
-                "FunctionPropertys":[],     // 需要初始化的函数.
-                "FunctionArguments":{}      // 函数中对应的 RAW Arguments. “XX”:["XXX"]写法.
+                "CalleeFunctions":[],       // 需要初始化的函数.
             }
-        ],
-        "Constructor":{                     // 构造函数定义
-            "Name":"Initialize",            // 暴露给main函数中调用名.
-            "WithParameter": false          // 是否需要自定义注册参数.
-        }
+        ]
     }
 })Template";
 
-void OutPutMainCpp(){
+void OutPutMainCpp(const std::string& name){
     std::ofstream ostream;
     ostream.open("Main.cpp",std::ios::out);
     if(!ostream.is_open()){
         std::printf("Main.cpp output failed.\n");
         return;
     }
-    ostream << g_MainCpp;
+    ostream << "#include <Magic/Magic>" << g_LF
+            << "#include \"" << name << ".h\"" << g_LF
+            << g_LF
+            << "int main(int argc, char** argv){" << g_LF
+            << "    Safe<Magic::Application> application = std::make_shared<Magic::Application>();" << g_LF
+            << "    application->initialize([](const Safe<Magic::Container>& ioc){});" << g_LF
+            << "    MAGIC_DEBUG() << \"Hello World!\";" << g_LF
+            << "    return EXIT_SUCCESS;" << g_LF
+            << "}";
     ostream.flush();
     ostream.close();
 }
 
 void OutPutModuleFile(const std::string& name){
     std::ofstream ostream;
-    std::string moduleFile = name + ".magic";
+    std::string moduleFile = name + ".json";
     ostream.open(moduleFile,std::ios::out);
     if(!ostream.is_open()){
         std::printf("%s output failed.\n",moduleFile.c_str());
@@ -108,7 +112,7 @@ void OutPutModuleFile(const std::string& name){
 }
 void OutPutGuideFile(){
     std::ofstream ostream;
-    std::string guideFile = "Guide.magic";
+    std::string guideFile = "Guide.json";
     ostream.open(guideFile,std::ios::out);
     if(!ostream.is_open()){
         std::printf("%s output failed.\n",guideFile.c_str());
@@ -136,27 +140,26 @@ void OutPutCMakeFile(const std::string& name){
             << "    message(FATAL_ERROR \"Please Add The Directory Path Of The Magic Library!!!\")" << g_LF
             << "endif()" << g_LF << g_LF
             << "include_directories(" << g_LF
-            << "    ${MAGIC}" << g_LF
             << "    ${MAGIC}/Include" << g_LF
             << "    ${PROJECT_SOURCE_DIR}" << g_LF
+            << "    ${PROJECT_BINARY_DIR}/Include" << g_LF
             << "    ${MAGIC}/ThirdParty/Asio/Include" << g_LF
-            << "    ${MAGIC}/ThirdParty/RapidJSON/Include" << g_LF
             << ")" << g_LF
-            << "link_directories(" << g_LF
-            << "    ${MAGIC}/Lib" << g_LF
-            << ")" << g_LF
-            << "link_libraries(Magic)" << g_LF 
-            << "include(${MAGIC}/Magic.cmake)" << g_LF 
-            << "include_directories(${CMAKE_BINARY_DIR})" << g_LF << g_LF
+            << "include(${MAGIC}/Magic.cmake)" << g_LF
+            << "link_directories(${MAGIC}/Lib)" << g_LF << g_LF
             << "set(MODULES" << g_LF
-            << "    ${MAGIC}/Modules/Magic.magic" << g_LF
+            << "    ${MAGIC}/Modules/Magic.json" << g_LF
             << ")" << g_LF << g_LF
             << "add_custom_target(Gen ALL)" << g_LF
+            << "file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/Include)" << g_LF
             << "add_custom_command(" << g_LF
             << "    TARGET Gen" << g_LF
-            << "    COMMAND ${MAGIC}/Bin/Gen ${MODULES} " << name << g_LF
+            << "    COMMAND ${MAGIC}/Bin/Gen ${MODULES} ${PROJECT_BINARY_DIR}/Include/" << name << g_LF
             << ")" << g_LF << g_LF
-            << "add_executable(" << name <<" Main.cpp)";
+            << "add_executable(" << name << g_LF
+            << "    Main.cpp" << g_LF
+            << ")" << g_LF
+            << "target_link_libraries(" << name << " Magic ${MAGIC_DEPEND_LIBRARY})";
     ostream.flush();
     ostream.close();
 }
@@ -176,7 +179,7 @@ int main(int argc, char** argv){
         std::printf("Magic Library Error Path!\n");
         return EXIT_FAILURE;
     }
-    OutPutMainCpp();
+    OutPutMainCpp(argv[1]);
     OutPutCMakeFile(argv[1]);
     OutPutModuleFile(argv[1]);
     return EXIT_SUCCESS;

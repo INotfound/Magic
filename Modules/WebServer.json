@@ -1,6 +1,5 @@
 {
     "Configurations":{
-        "NameSpace":"Web",
         "Registered":[
             {
                 "Id":"ioPool",
@@ -57,10 +56,6 @@
                     "run":[]
                 }
             }
-        ],
-        "Constructor":{
-            "Name":"Initialize",
-            "WithParameter": false
-        }
+        ]
     }
 }

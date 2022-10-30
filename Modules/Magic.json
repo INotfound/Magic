@@ -1,6 +1,5 @@
 {
     "Configurations":{
-        "NameSpace":"Magic",
         "Registered":[
             {
                 "Id":"logger",
@@ -51,10 +50,6 @@
                 "Callee":"Magic::ILogAppender",
                 "CalleeFunctions":["addILogAppender"]
             }
-        ],
-        "Constructor":{
-            "Name":"Initialize",
-            "WithParameter": true
-        }
+        ]
     }
 }
