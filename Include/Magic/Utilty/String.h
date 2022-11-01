@@ -90,7 +90,7 @@ namespace Magic{
     inline bool StringAs<bool>(const std::string& value) {
         bool isOk = true;
         std::string tValue;
-        std::transform(value.begin(), value.end(), tValue.begin(),::toupper);
+        std::transform(value.begin(),value.end(),std::back_inserter(tValue),::toupper);
         if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
             isOk = false;
         return isOk;
@@ -104,14 +104,14 @@ namespace Magic{
     }
 
     inline std::string ToLower(const std::string& string){
-        std::string newString = string;
-        std::transform(string.begin(),string.end(),newString.begin(),::tolower);
+        std::string newString;
+        std::transform(string.begin(),string.end(),std::back_inserter(newString),::tolower);
         return newString;
     }
 
     inline std::string ToUpper(const std::string& string){
-        std::string newString = string;
-        std::transform(string.begin(),string.end(),newString.begin(),::tolower);
+        std::string newString;
+        std::transform(string.begin(),string.end(),std::back_inserter(newString),::tolower);
         return newString;
     }
 
