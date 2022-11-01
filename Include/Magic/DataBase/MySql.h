@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-02-01 22:20:28
  */
 #pragma once
-#ifdef MYSQL
+#ifdef MYSQLDB
 #include <mysql/mysql.h>
 
 #include "Magic/Core/Core.h"

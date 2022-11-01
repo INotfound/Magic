@@ -132,8 +132,8 @@ namespace Magic{
             }
         }
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
-            std::time_t time_secounds = static_cast<int32_t>(event->getTime());
-            os << std::put_time(std::localtime(&time_secounds),this->m_FormatString.c_str());
+            std::time_t time_secounds = static_cast<std::time_t>(event->getTime());
+            os << TimeToString(time_secounds,this->m_FormatString.c_str());
         }
     private:
         std::string m_FormatString;

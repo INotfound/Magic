@@ -5,6 +5,7 @@
  */
 #pragma once
 #include <ctime>
+#include <cctype>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -88,13 +89,8 @@ namespace Magic{
     template<>
     inline bool StringAs<bool>(const std::string& value) {
         bool isOk = true;
-        std::string tValue(value);
-        {
-            auto begin = tValue.begin();
-            auto end = tValue.end();
-            for (; begin != end; begin++)
-                *begin = std::toupper(*begin);
-        }
+        std::string tValue;
+        std::transform(value.begin(), value.end(), tValue.begin(),::toupper);
         if (tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
             isOk = false;
         return isOk;
@@ -109,13 +105,13 @@ namespace Magic{
 
     inline std::string ToLower(const std::string& string){
         std::string newString = string;
-        std::transform(string.begin(),string.end(),newString.begin(),[](char c){return std::tolower(c);});
+        std::transform(string.begin(),string.end(),newString.begin(),::tolower);
         return newString;
     }
 
     inline std::string ToUpper(const std::string& string){
         std::string newString = string;
-        std::transform(string.begin(),string.end(),newString.begin(),[](char c){return std::toupper(c);});
+        std::transform(string.begin(),string.end(),newString.begin(),::tolower);
         return newString;
     }
 
@@ -144,6 +140,19 @@ namespace Magic{
             elems.push_back(str.substr(previous));
         }
         return elems;
+    }
+
+
+    inline std::string TimeToString(std::time_t ts,const std::string& format ="%Y-%m-%d %H:%M:%S"){
+        struct tm nowTime;
+    #if defined(_WIN32) || defined(_WIN64)
+        localtime_s(&nowTime, &ts);
+    #else
+        localtime_r(&ts, &nowTime);
+    #endif
+        char buf[64] = {0};
+        std::strftime(buf, sizeof(buf), format.c_str(), &nowTime);
+        return buf;
     }
 
     inline std::string SubString(const std::string& str, uint64_t index,const std::string& delim){

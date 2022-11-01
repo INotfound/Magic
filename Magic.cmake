@@ -83,8 +83,8 @@ if(NOT ${SSL} STREQUAL "SSL-NOTFOUND" AND NOT ${CRYPTO} STREQUAL "CRYPTO-NOTFOUN
 endif()
 
 if(MySql STREQUAL ON)
-    add_definitions(-DMYSQL)
-    set(MAGIC_DEPEND_LIBRARY ${MAGIC_DEPEND_LIBRARY} mariadbclient)
+    add_definitions(-DMYSQLDB)
+    set(THIRDPARTY ${THIRDPARTY} mariadbclient)
 endif()
 
 set(MAGIC_DEPEND_LIBRARY ${PLATFORM} ${THIRDPARTY})
