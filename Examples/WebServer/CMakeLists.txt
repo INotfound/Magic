@@ -1,35 +1,41 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(ExampleWebServer)
+set(PROJECT_NAME WebServer)
+project(${PROJECT_NAME})
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+#Please Add The Directory Path Of The Magic Library.
 set(MAGIC ${PROJECT_SOURCE_DIR}/../../../Magic)
+
+if(NOT DEFINED MAGIC)
+	message(FATAL_ERROR "Please Add The Directory Path Of The Magic Library!!!")
+endif()
+
 include_directories(
-    ${MAGIC}
 	${MAGIC}/Include
-    ${PROJECT_SOURCE_DIR}
-    ${MAGIC}/ThirdParty/Asio/Include
-    ${MAGIC}/ThirdParty/RapidJSON/Include
+	${PROJECT_BINARY_DIR}/Include
+	${MAGIC}/ThirdParty/Asio/Include
+	${PROJECT_SOURCE_DIR}/../../../Magic/Examples
 )
-link_directories(
-    ${MAGIC}/Lib
-)
-link_libraries(Magic)
 include(${MAGIC}/Magic.cmake)
-include_directories(${CMAKE_BINARY_DIR})
+link_directories(${MAGIC}/Lib)
 
 set(MODULES
-    ${MAGIC}/Modules/Magic.json
-    ${MAGIC}/Modules/WebServer.json
-    ${PROJECT_SOURCE_DIR}/TestServlet.json
+	${MAGIC}/Modules/Magic.json
+	${MAGIC}/Modules/WebServer.json
+	${PROJECT_SOURCE_DIR}/TestServlet.json
 )
 
-add_custom_target(WebServerGen ALL)
+file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/Include)
+file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)
+
 add_custom_command(
-    TARGET WebServerGen
-    COMMAND ${MAGIC}/Bin/Gen ${MODULES} WebServer
+	OUTPUT ${PROJECT_NAME}.h
+	WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Include
+	COMMAND ${MAGIC}/Bin/Gen ${MODULES} ${PROJECT_NAME}
 )
 
-#ExampleWebServer
-add_executable(ExampleWebServer main.cpp TestServlet.cpp)
+add_executable(${PROJECT_NAME} ${PROJECT_NAME}.h ${SOURCES})
+target_link_libraries(${PROJECT_NAME} Magic ${MAGIC_DEPEND_LIBRARY})

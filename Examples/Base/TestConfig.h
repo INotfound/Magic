@@ -5,7 +5,7 @@
  */
 #pragma once
 #include "TestLog.h"
-#include "Examples/Base/Base.h"
+#include "Base.h"
 // 注入示例
 namespace Base{
     class TestConfig{

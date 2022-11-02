@@ -6,7 +6,7 @@
                 "Id":"testServlet",
                 "Class":"Web::TestServlet",
                 "Interface":"Magic::NetWork::Http::IHttpServlet",
-                "IncludePath":"TestServlet.h",
+                "IncludePath":"WebServer/TestServlet.h",
                 "Dependencies":[],
                 "FunctionPropertys":[]
             }

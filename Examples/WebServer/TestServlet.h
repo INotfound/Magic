@@ -11,6 +11,6 @@ namespace Web{
     class TestServlet :public IHttpServlet{
     public:
         TestServlet();
-        void test(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response);
+        void test(const Safe<HttpSocket>& httpSocket);
     };
 }

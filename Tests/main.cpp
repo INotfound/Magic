@@ -109,6 +109,11 @@ int main(int /*argc*/,char** /*argv*/){
 //    Safe<Aop> aop = std::make_shared<Aop>();
     using RouteHandle = std::function<void(const Safe<Magic::NetWork::Http::HttpSocket>&)>;
     std::cout << std::is_same<decltype(Magic::NetWork::Http::FunctionChecker(typename std::remove_reference<RouteHandle&>::type())),decltype(Magic::NetWork::Http::FunctionChecker(RouteHandle()))>::value << std::endl;
+
+    std::string value("0");
+    std::string tValue;
+    std::transform(value.begin(), value.end(), std::back_inserter(tValue),::toupper);
+    std::cout << "xxx xxx " << tValue << std::endl;
     return 0;
 }
 //int main(int /*argc*/,char** /*argv*/){

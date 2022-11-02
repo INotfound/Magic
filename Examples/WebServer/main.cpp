@@ -4,7 +4,7 @@
  * @LastEditTime: 2020-12-17 17:56:19
  */
 #include <iostream>
-#include "Examples/WebServer/WebServer.h"
+#include "WebServer.h"
 int main(){
     Safe<Magic::Application> application = std::make_shared<Magic::Application>();
     auto& ioc = application->initialize();

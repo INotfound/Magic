@@ -5,7 +5,7 @@
             {
                 "Id":"testLog",
                 "Class":"Base::TestLog",
-                "IncludePath": "TestLog.h",
+                "IncludePath": "Base/TestLog.h",
                 "Dependencies":[],
                 "FunctionPropertys":[]
             }

@@ -5,7 +5,7 @@
             {
                 "Id":"test",
                 "Class":"Base::Test",
-                "IncludePath": "Test.h",
+                "IncludePath": "Base/Test.h",
                 "Dependencies":[],
                 "FunctionPropertys":[]
             }

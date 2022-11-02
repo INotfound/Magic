@@ -23,28 +23,8 @@ std::string g_MagicPath;
 std::string g_Module = R"Template({
     "Configurations":{
         "Registered":[
-            {
-                "Id":"",
-                "Class":"",
-                "Interface":"",
-                "IncludePath": "",
-                "Dependencies":[],
-                "FunctionPropertys":[]
-            }
         ],
         "Initialize":[
-            {
-                "Id":"",
-                "InvokeFunctions": {
-                    "":[]
-                }
-            },
-            {
-                "Id":"",
-                "Loop":false,
-                "Callee":"",
-                "CalleeFunctions":[]
-            }
         ]
     }
 })Template";
@@ -131,7 +111,8 @@ void OutPutCMakeFile(const std::string& name){
         return;
     }
     ostream << "cmake_minimum_required(VERSION 3.0)" << g_LF << g_LF
-            << "project(" << name << ")" << g_LF
+            << "set(PROJECT_NAME " << name << ")" << g_LF
+            << "project(${PROJECT_NAME})" << g_LF << g_LF
             << "set(CMAKE_CXX_STANDARD 11)" << g_LF
             << "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)" << g_LF << g_LF
             << "#Please Add The Directory Path Of The Magic Library." << g_LF
@@ -141,7 +122,6 @@ void OutPutCMakeFile(const std::string& name){
             << "endif()" << g_LF << g_LF
             << "include_directories(" << g_LF
             << "    ${MAGIC}/Include" << g_LF
-            << "    ${PROJECT_SOURCE_DIR}" << g_LF
             << "    ${PROJECT_BINARY_DIR}/Include" << g_LF
             << "    ${MAGIC}/ThirdParty/Asio/Include" << g_LF
             << ")" << g_LF
@@ -150,16 +130,15 @@ void OutPutCMakeFile(const std::string& name){
             << "set(MODULES" << g_LF
             << "    ${MAGIC}/Modules/Magic.json" << g_LF
             << ")" << g_LF << g_LF
-            << "add_custom_target(Gen ALL)" << g_LF
             << "file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/Include)" << g_LF
+            << "file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)" << g_LF << g_LF
             << "add_custom_command(" << g_LF
-            << "    TARGET Gen" << g_LF
-            << "    COMMAND ${MAGIC}/Bin/Gen ${MODULES} ${PROJECT_BINARY_DIR}/Include/" << name << g_LF
+            << "    OUTPUT ${PROJECT_NAME}.h" << g_LF
+            << "    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Include" << g_LF
+            << "    COMMAND ${MAGIC}/Bin/Gen ${MODULES} ${PROJECT_NAME}" << g_LF
             << ")" << g_LF << g_LF
-            << "add_executable(" << name << g_LF
-            << "    Main.cpp" << g_LF
-            << ")" << g_LF
-            << "target_link_libraries(" << name << " Magic ${MAGIC_DEPEND_LIBRARY})";
+            << "add_executable(${PROJECT_NAME} ${PROJECT_NAME}.h ${SOURCES})" << g_LF
+            << "target_link_libraries(${PROJECT_NAME} Magic ${MAGIC_DEPEND_LIBRARY})";
     ostream.flush();
     ostream.close();
 }
@@ -176,7 +155,7 @@ int main(int argc, char** argv){
     std::string path = g_MagicPath;
     path += "/Magic.cmake";
     if(IS_FILE(path.c_str()) != 0){
-        std::printf("Magic Library Error Path!\n");
+        std::printf("Magic Library Path Error!\n");
         return EXIT_FAILURE;
     }
     OutPutMainCpp(argv[1]);

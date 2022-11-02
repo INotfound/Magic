@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-02-01 23:09:16
  */
 #pragma once
-#include "Examples/Base/Base.h"
+#include "Base.h"
 
 // 注入示例
 namespace Base{

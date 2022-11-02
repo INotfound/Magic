@@ -5,7 +5,7 @@
             {
                 "Id":"testConfig",
                 "Class":"Base::TestConfig",
-                "IncludePath": "TestConfig.h",
+                "IncludePath": "Base/TestConfig.h",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":["call"]
             }

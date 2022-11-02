@@ -9,7 +9,7 @@ namespace Web{
     TestServlet::TestServlet(){
     }
 
-    void TestServlet::test(const Safe<HttpSocket>& httpSocket,const Safe<HttpRequest>& request,const Safe<HttpResponse>& response){
+    void TestServlet::test(const Safe<HttpSocket>& httpSocket){
         std::string helloMagic{R"Template(<html>
             <head><title>Hello Magic</title></head>
             <body>
@@ -17,8 +17,8 @@ namespace Web{
             <hr><center>Magic/2.0.0</center>
             </body>
             </html>)Template"};
-        response->setBody(helloMagic)
+        httpSocket->getResponse()->setBody(helloMagic)
             ->setStatus(HttpStatus::OK);
-        httpSocket->sendResponse(response);
+        httpSocket->sendResponse(httpSocket->getResponse());
     }
 }
