@@ -9,7 +9,7 @@
 
 > ​		Use Standard C++ 11 && CMake.
 
-> ​		基于IoC的快速开发库(C++ Rapid development library based on Inversion of Control),配合CMake构建套件开发,支持跨平台开发,并配备了更多的高性能组件.
+> ​		基于IoC和AoP的快速开发库(C++ Rapid development library based on Inversion of Control And Aspect Oriented Programming Support),配合CMake构建套件开发,支持跨平台开发,并配备了更多的高性能组件.
 
 ## 特点
 
@@ -17,23 +17,18 @@
 
 ---
 - **高内聚,低耦合**.
+- **无任何侵入式代码**.
 - 超强的**通用性**以及高度**跨平台**.
 - 实现**模块化**开发方式便于协作开发.
 - 支持**Http/WebSocket**协议以及**WebServer**开发
-- 基于 IoC `(Inversion of Control)`的方式对每个类进行托管以及自动注入构建.
+- 基于 IoC`(Inversion of Control)` 以及 AoP`(Aspect Oriented Programming Support)`.
 
 ### 模块配置
 
 ---
+- 支持灵活配置各个模块.
 - 功能模块可高度**重用**，方便**扩展**以及**维护**.
 - 使用**Json**格式配置文件`(*.json)`对功能进行模块划分.
-
-### 非侵入式
-
----
-- 高度解耦
-- 代码**移植度**高.
-- **无任何侵入式代码**.
 
 ### 安装
 
@@ -48,83 +43,26 @@
 - Win
   - VS 20XX
     - `cmake -G "Visual Studio 15 2017"` // or ***Visual Studio xx 20xx***
-  
+
 ### 使用方法
 
 ---
 
 1. 使用本库工具 Magic/Bin/***Create***
-  1. 创建项目文件目录名,跳转项目文件目录中
-  2. 使用 `Create Test /root/Magic` 创建项目模板, ***(Test 项目名)*** ***("/root/Magic" Magic库路径)***
-  3. 当前目录会生成 ***CMakeLists.txt Main.cpp Test.json***三个文件
-
-2. 查看***Test***项目文件夹中***CMakeLists.txt***文件.
+    1. 创建项目文件目录名,跳转项目文件目录中
+    2. 使用 `Create Test /root/Magic` 创建项目模板, ***(Test 项目名)*** ***("/root/Magic" Magic库路径)***
+    3. 当前目录会生成 ***CMakeLists.txt Main.cpp Test.json***三个文件
+  
+2. 打开***Test.json***配置文件,并添加上需要IoC管理的类.
+4.  对***CMakeLists.txt***配置文件进行编辑添加**Test**模块(**Test.json**)
 ```cmake
-#Please Add The Directory Path Of The Magic Library.
-set(MAGIC /root/Magic)
-
-if(NOT DEFINED MAGIC)
-    message(FATAL_ERROR "Please Add The Directory Path Of The Magic Library!!!")
-endif()
-
-include_directories(
-    ${MAGIC}/Include
-    ${PROJECT_SOURCE_DIR}/Include
-    ${MAGIC}/ThirdParty/Asio/Include
-)
-link_directories(
-    ${MAGIC}/Lib
-)
-link_libraries(Magic)
-include(${MAGIC}/Magic.cmake)
-
-add_custom_target(Gen ALL)
-add_custom_command(
-    TARGET Gen
-    COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json Test
-)
-
-```
-3. 打开***Test.json***配置文件,并添加上自定义的类.
-```jsonc
-{
-    "Configurations":{
-        "NameSpace":"Test",                 // 同 C++ 的namespace
-        "Registered":[                      // 类信息注册(强制,必须要具有一个).
-            {
-                "Id":"",                    // 类Id标识(任意名).
-                "Class":"",                 // 类名,如果有namespace,则需加上即可(XXX::ClassName).
-                "Interface":"",             // 继承的接口类,通常需要抽象的时候才使用.
-                "IncludePath": "",          // 类所在的文件路径(如何有相同的可以忽略).
-                "Dependencies":[],          // 依赖的其他类的类名.
-                "FunctionPropertys":[]      // 需要注册的属性函数.
-            }
-        ],
-        "Initialize":[                      // 初始化(非强制)
-            {
-                "Id":"",                    // 类Id标识应与上方Registered中一致.
-                "Loop":false,               // Loop 循环初始化
-                "Callee":"",                // 被调用的接口类类型 若Loop == true则该属性必须具有值.
-                "CalleeFunctions":[],       // 被调用的函数.
-                "InvokeFunctions":{}        // 函数中对应的 RAW Arguments. “XX”:["XXX"]写法.
-            }
-        ],
-        "Constructor":{                     // 构造函数定义
-            "Name":"Initialize",            // 暴露给main函数中调用名.
-            "WithParameter": false          // 是否需要自定义注册参数.
-        }
-    }
-}
-```
-4.  对***CMake***配置文件进行编辑添加**Test**模块(**Test.json**)
-```cmake
-add_custom_command(
-    TARGET Gen
-    COMMAND ${MAGIC}/Bin/Gen ${MAGIC}/Magic.json ${PROJECT_SOURCE_DIR}/Test.json Test
+set(MODULES
+    ${MAGIC}/Modules/Magic.json
+    ${PROJECT_SOURCE_DIR}/Test.json # Test.json 模块
 )
 ```
-5.  跳转build目录中 调用 `cmake ../.` 或 `cmake ../. -Gxxx` 并且进行Build. 
-6.  打开***Main.cpp***源文件
+5.  创建并跳转build目录中 调用 `cmake ../.` 并且进行Build.
+6.  打开***Main.cpp***源文件,添加一下代码.
 ```c++
 #include "Test.h" //添加头文件
 
@@ -179,6 +117,15 @@ int main(){
 }
 ```
 .....
+## 注意
+> 本库使用了异常,所有使用异常接口都会有对应 **warring** 注释标注.
+```c++
+try{
+    ...
+}catch(Magic::Failure&){
+    ...
+}
+```
 ## 其他
   - [基础用法&演示地址一](https://www.bilibili.com/video/BV1V54y1x7KM)
   - [Web服务端&演示地址二](https://www.bilibili.com/video/BV1a5411H7af)

@@ -109,17 +109,20 @@ namespace Http{
     uint64_t HttpRequestParser::getContentLength(){
         std::string length;
         length = m_Data->getHeader("Content-Length");
-        if(length.empty()){
-            length = m_Data->getHeader("content-length");
-            if(!length.empty()){
-                m_Data->setContentLength(StringAs<uint64_t>(length));
-                return m_Data->getContentLength();
+        try{
+            if(length.empty()){
+                length = m_Data->getHeader("content-length");
+                if(!length.empty()){
+                    m_Data->setContentLength(StringAs<uint64_t>(length,10));
+                }else{
+                    m_Data->setContentLength(0);
+                }
             }else{
-                m_Data->setContentLength(0);
-                return 0;
+                m_Data->setContentLength(StringAs<uint64_t>(length,10));
             }
+        }catch (...){
+            m_Data->setContentLength(0);
         }
-        m_Data->setContentLength(StringAs<uint64_t>(length));
         return m_Data->getContentLength();
     }
 
@@ -215,16 +218,21 @@ namespace Http{
 
     uint32_t HttpResponseParser::getContentLength(){
         std::string length;
-        length = m_Data->getHeader("Content-Length");
-        if(length.empty()){
-            length = m_Data->getHeader("content-length");
-            if(!length.empty()){
-                return StringAs<uint64_t>(length);
+        try{
+            length = m_Data->getHeader("Content-Length");
+            if(length.empty()){
+                length = m_Data->getHeader("content-length");
+                if(!length.empty()){
+                    return StringAs<uint64_t>(length,10);
+                }else{
+                    return 0;
+                }
             }else{
-                return 0;
+                return StringAs<uint64_t>(length,10);
             }
+        }catch (...){
+            return 0;
         }
-        return StringAs<uint64_t>(length);
     }
     
     const Safe<HttpResponse>& HttpResponseParser::getData(){

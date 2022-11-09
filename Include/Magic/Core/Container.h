@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "Magic/Core/Core.h"
+#include "Magic/Core/Except.h"
 
 namespace Magic{
     class Container :public std::enable_shared_from_this<Container>{
@@ -65,7 +66,7 @@ namespace Magic{
             const void* id = CompiletimeIId<T>();
             const void* raw = CompiletimeIId<M>();
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
-                throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
+                throw Failure(std::string(typeid(T).name()) + " Is Multiple Registered!");
             Function<T,Args...> createFunc = &Container::invoke<T,M,typename Safe_Traits<Args>::Type...>;
             m_RegisteredType[id].emplace(raw,RegisteredType(isSingleton, [this,createFunc](){return (this->*createFunc)();}));
             return m_RegisteredType[id].at(raw);
@@ -75,7 +76,7 @@ namespace Magic{
         RegisteredType& registerInstance(const Safe<T>& instance){
             const void* id = CompiletimeIId<T>();
             if(m_RegisteredType.find(id) != m_RegisteredType.end())
-                throw std::logic_error(std::string(typeid(T).name()) + " Is Multiple Registered!!!");
+                throw Failure(std::string(typeid(T).name()) + " Is Multiple Registered!");
             RegisteredType registerObject(true,[](){return Safe<void>();});
             registerObject.m_Object = std::move(instance);
             m_RegisteredType[id].emplace(id,registerObject);
@@ -98,10 +99,10 @@ namespace Magic{
 
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
-                throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
+                throw Failure(std::string(typeid(T).name()) + " Is Not Registered!");
             auto rawIter = iter->second.begin();
             if(rawIter == iter->second.end())
-                throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
+                throw Failure(std::string(typeid(T).name()) + " Is Not Registered!");
             auto self = this->shared_from_this();
             auto& registeredType = rawIter->second;
             if(registeredType.m_IsSingelton){
@@ -122,10 +123,10 @@ namespace Magic{
             const void* raw = CompiletimeIId<M>();
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
-                throw std::logic_error(std::string(typeid(T).name()) + " Is Not Registered!!!");
+                throw Failure(std::string(typeid(T).name()) + " Is Not Registered!");
             auto rawIter = iter->second.find(raw);
             if(rawIter == iter->second.end())
-                throw std::logic_error(std::string(typeid(M).name()) + " Is Not Registered!!!");
+                throw Failure(std::string(typeid(M).name()) + " Is Not Registered!");
             auto self = this->shared_from_this();
             auto& registeredType = iter->second.at(raw);
             if(registeredType.m_IsSingelton){

@@ -159,13 +159,18 @@ namespace Magic {
         RWMutex::WriteLock lock(m_Mutex);
         auto iter = m_ConfigMap.find(defaultName);
         if (iter != m_ConfigMap.end()) {
-            return StringAs<T>(iter->second->getValue());
+            try{
+                return StringAs<T>(iter->second->getValue());
+            }catch (...){
+                return defaultValue;
+            }
         }
         m_IsChange = true;
         m_ConfigMap[defaultName] = std::make_shared<ConfigValue>(defaultName, AsString<T>(defaultValue), defaultComment);
         this->update();
         return defaultValue;
     }
+
     template<typename T>
     T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
         RWMutex::WriteLock lock(m_Mutex);

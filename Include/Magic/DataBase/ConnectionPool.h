@@ -5,6 +5,7 @@
  */
 #pragma once
 #include "Magic/Core/Core.h"
+#include "Magic/Core/Except.h"
 #include "Magic/Utilty/Config.h"
 #include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/TimingWheel.h"
@@ -50,18 +51,18 @@ namespace DataBase{
         friend class Connection<T>;
     public:
         explicit ConnectionPool(const Safe<Magic::Config>& configuration)
-            :m_Count(configuration->at("DataBase.Connection.Count",1)){
+            :m_Count(configuration->at("DataBase.Connection.Count",2)){
+            m_IdleEntity.reserve(m_Count);
         }
-
+        /**
+         * @brief 从连接池中获取单个连接
+         * @return Connection<T>单个连接
+         * @warning Use Exception!
+         */
         Connection<T> getConnection(){
             Magic::Mutex::Lock locker(m_Mutex);
             if(m_IdleEntity.empty()){
-                const Safe<T> conn = m_CreateFunction();
-                if(conn){
-                    m_IdleEntity.push_back(conn);
-                }else{
-                    return Connection<T>();
-                }
+                throw Failure("Connection Pool No Idle Entity!");
             }
             Safe<T> entity = m_IdleEntity.front();
             m_IdleEntity.pop_front();
@@ -70,19 +71,22 @@ namespace DataBase{
 
         void initialize(const std::function<const Safe<T>(void)>& initFunc){
             m_CreateFunction = std::move(initFunc);
+            for(uint32_t i = 0; i < m_Count; i++){
+                const Safe<T> connection = m_CreateFunction();
+                if(connection){
+                    m_IdleEntity.push_back(connection);
+                }
+            }
         }
     private:
         void restore(const Safe<T>& entity){
             Magic::Mutex::Lock locker(m_Mutex);
-            if(m_IdleEntity.size() > m_Count){
-                return;
-            }
             m_IdleEntity.push_back(entity);
         }
     private:
         uint32_t m_Count;
         Magic::Mutex m_Mutex;
-        std::list<Safe<T>> m_IdleEntity;
+        std::vector<Safe<T>> m_IdleEntity;
         std::function<const Safe<T>(void)> m_CreateFunction;
     };
 }

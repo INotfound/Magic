@@ -13,10 +13,11 @@ include_directories(
     ThirdParty/RapidJSON/Include
 )
 
+file(GLOB_RECURSE HEADERS Include/Magic/*.h)
 file(GLOB_RECURSE SOURCES Source/Magic/*.cpp)
 
 set(BINARY Magic)
-add_library(Magic ${SOURCES})
+add_library(Magic ${HEADERS} ${SOURCES})
 target_link_libraries(Magic ${MAGIC_DEPEND_LIBRARY})
 
 if(Sanitize STREQUAL Thread)

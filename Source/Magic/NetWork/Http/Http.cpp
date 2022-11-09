@@ -211,7 +211,11 @@ namespace Http{
         if(iter != m_Headers.end()){
             std::string value = iter->second;
             auto splitPos = value.find('-');
-            return StringAs<uint64_t>(value.substr(splitPos + 1,value.length() - splitPos));
+            try{
+                return StringAs<uint64_t>(value.substr(splitPos + 1,value.length() - splitPos),10);
+            }catch (...){
+                return 0;
+            }
         }
         return 0;
     }
@@ -221,7 +225,12 @@ namespace Http{
         if(iter != m_Headers.end()){
             std::string value = iter->second;
             auto splitPos = value.find('-');
-            return StringAs<uint64_t>(value.substr(6,splitPos-6));
+            try{
+                return StringAs<uint64_t>(value.substr(6,splitPos-6),10);
+            }catch (...){
+                return 0;
+            }
+
         }
         return 0;
     }
@@ -422,7 +431,11 @@ namespace Http{
             auto secondSplitPos = value.find('/');
             if(firstSplitPos != std::string::npos 
                             && secondSplitPos != std::string::npos){
-               return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
+                try{
+                    return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos),10);
+                }catch (...){
+                    return 0;
+                }
             }
         }
         return 0;
@@ -439,7 +452,11 @@ namespace Http{
             auto secondSplitPos = value.find('-');
             std::string::size_type firstSplitPos = 5;
             if(secondSplitPos != std::string::npos){
-               return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
+                try{
+                    return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos),10);
+                }catch (...){
+                    return 0;
+                }
             }
         }
         return 0;
@@ -461,7 +478,11 @@ namespace Http{
             auto secondSplitPos = value.length();
             if(firstSplitPos != std::string::npos 
                             && secondSplitPos != std::string::npos){
-               return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos));
+                try{
+                    return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos),10);
+                }catch (...){
+                    return 0;
+                }
             }
         }
        return 0;

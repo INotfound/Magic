@@ -119,7 +119,6 @@ namespace Http{
         return ObjectWrapper<HttpClient>(this);
     }
 
-
     ObjectWrapper<HttpClient> HttpClient::onError(const std::function<void(const asio::error_code&)>& callback){
         m_Socket->setErrorCodeCallBack([this,callback](const asio::error_code& errorCode){
             m_Finish = true;

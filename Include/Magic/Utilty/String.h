@@ -10,6 +10,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include "Magic/Core/Except.h"
 
 namespace Magic{
     static const std::string g_EmptyString;
@@ -30,60 +31,58 @@ namespace Magic{
         formatStream >> temp;
         return temp;
     }
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline float StringAs<float>(const std::string& value) {
+        return std::stof(value);
+    }
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline double StringAs<double>(const std::string& value) {
+        return std::stod(value);
+    }
 
     template<>
     inline std::string StringAs<std::string>(const std::string& value) {
         return value;
     }
 
-    template<>
-    inline int32_t StringAs<int32_t>(const std::string& value) {
-        try{
-            return std::stoi(value);
-        }catch(const std::exception&){
-            return int32_t();
-        }
+    template<typename T>
+    T StringAs(const std::string&,uint8_t) {
+        throw Magic::Failure("Type Not Supported!");
+        return T();
     }
-
+    /**
+     * @warning Use Exception!
+     */
     template<>
-    inline int64_t StringAs<int64_t>(const std::string& value) {
-        try{
-            return std::stol(value);
-        }catch(const std::exception&){
-            return int64_t();
-        }
+    inline int32_t StringAs<int32_t>(const std::string& value,uint8_t base) {
+        return std::stoi(value, nullptr,base);
     }
+    /**
+     * @warning Use Exception!
+     */
     template<>
-    inline uint32_t StringAs<uint32_t>(const std::string& value) {
-        try{
-            return static_cast<uint32_t>(std::stoul(value));
-        }catch(const std::exception&){
-            return uint32_t();
-        }
+    inline int64_t StringAs<int64_t>(const std::string& value,uint8_t base) {
+        return std::stol(value, nullptr,base);
     }
+    /**
+     * @warning Use Exception!
+     */
     template<>
-    inline uint64_t StringAs<uint64_t>(const std::string& value) {
-        try{
-            return static_cast<uint64_t>(std::stoul(value));
-        }catch(const std::exception&){
-            return uint64_t();
-        }
+    inline uint32_t StringAs<uint32_t>(const std::string& value,uint8_t base) {
+        return static_cast<uint32_t>(std::stoul(value,nullptr,base));
     }
+    /**
+     * @warning Use Exception!
+     */
     template<>
-    inline float StringAs<float>(const std::string& value) {
-        try{
-            return std::stof(value);
-        }catch(const std::exception&){
-            return float();
-        }
-    }
-    template<>
-    inline double StringAs<double>(const std::string& value) {
-        try{
-            return std::stod(value);
-        }catch(const std::exception&){
-            return double();
-        }
+    inline uint64_t StringAs<uint64_t>(const std::string& value,uint8_t base) {
+        return static_cast<uint64_t>(std::stoul(value,nullptr,base));
     }
 
     template<>

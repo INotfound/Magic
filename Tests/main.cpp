@@ -96,6 +96,20 @@ public:
 };
 
 
+class A{
+public:
+    A(){
+        std::cout << "A()" << std::endl;
+        throw std::logic_error("test");
+    }
+
+    ~A(){
+        std::cout << "~A()" << std::endl;
+    }
+};
+
+
+
 int main(int /*argc*/,char** /*argv*/){
     std::cout << HasBefore<Hello,void(Hello::*)(int)>::value << std::endl;
     std::cout << HasBefore<Generic,std::string(Generic::*)()>::value << std::endl;
@@ -114,6 +128,13 @@ int main(int /*argc*/,char** /*argv*/){
     std::string tValue;
     std::transform(value.begin(), value.end(), std::back_inserter(tValue),::toupper);
     std::cout << "xxx xxx " << tValue << std::endl;
+
+    try{
+        throw Magic::Failure("Test");
+    }catch (std::exception& ec){
+        std::cout << ec.what() << std::endl;
+    }
+    std::getchar();
     return 0;
 }
 //int main(int /*argc*/,char** /*argv*/){
