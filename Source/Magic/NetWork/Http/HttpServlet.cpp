@@ -14,8 +14,8 @@ namespace Http{
     IHttpServlet::~IHttpServlet() =default;
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
+        std::lock_guard<std::mutex> locker(m_Mutex);
         const auto& httpPath = httpSocket->getRequest()->getPath();
-        RWMutex::ReadLock lock(m_Mutex);
         auto exactlyIter = m_NormalRoutes.find(httpPath);
         auto exactlyEnd = m_NormalRoutes.end();
         if(exactlyIter != exactlyEnd){
@@ -61,7 +61,7 @@ namespace Http{
     }
 
     void HttpServletDispatch::setHttpServlet(const Safe<IHttpServlet>& servlet){
-        RWMutex::WriteLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         servlet->m_ServletDispatch = this->shared_from_this();
     }
 }

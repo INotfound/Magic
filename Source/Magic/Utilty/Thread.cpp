@@ -17,7 +17,6 @@ namespace Magic{
     Thread::Thread(const std::string& threadName,std::function<void()> callback)
         :m_Id(-1)
         ,m_Name(threadName)
-        ,m_Thread(&Thread::run,this)
         ,m_CallBack(std::move(callback)){
         MAGIC_INFO() << "Start Thread: " << threadName;
         if(threadName.empty()){
@@ -25,16 +24,19 @@ namespace Magic{
         }
         if(!m_CallBack){
             MAGIC_ERROR() << "Thread-CallBack Is Null";
+            throw Magic::Failure("Thread CallBack Is NullPtr");
         }
-        m_Mutex.notify();
+        m_Thread = std::make_shared<std::thread>(&Thread::run,this);
     }
 
     void Thread::join() {
-        m_Thread.join();
+        if(m_Thread)
+            m_Thread->join();
     }
 
     void Thread::detach(){
-        m_Thread.detach();
+        if(m_Thread)
+            m_Thread->detach();
     }
 
     int64_t Thread::getId(){
@@ -50,9 +52,8 @@ namespace Magic{
     }
     
     void Thread::run(){
-        m_Mutex.wait();
-        SetName(m_Name);
         m_Id = Magic::GetThreadId();
+        SetName(m_Name);
         m_CallBack();
     }
 }

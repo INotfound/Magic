@@ -8,7 +8,6 @@
 #include <mysql/mysql.h>
 
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Mutex.h"
 #include "Magic/DataBase/ConnectionPool.h"
 
 namespace Magic{
@@ -22,8 +21,8 @@ namespace DataBase{
         bool execute(const std::string& sql);
         bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port);
     private:
-        Mutex m_Mutex;
         MYSQL m_MySql;
+        std::mutex m_Mutex;
     };
     class MySqlStmt{
     public:
@@ -81,7 +80,7 @@ namespace DataBase{
             enum_field_types m_Type;
         };
     private:
-        RWMutex m_Mutex;
+        std::mutex m_Mutex;
         MYSQL_STMT* m_Stmt;
         const Safe<MySql>& m_MySql;
         std::vector<SqlResult>  m_MySqlResults;

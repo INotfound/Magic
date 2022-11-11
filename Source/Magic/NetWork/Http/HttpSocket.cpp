@@ -40,7 +40,7 @@ namespace Http{
             if(m_WebSocket){ /// WebSocket
                 socket->runHeartBeat(m_WebSocket);
                 return;
-            }else if(m_Death){
+            }else if(m_Death && !socket->isWorking()){
                 socket->close();
                 return;
             }

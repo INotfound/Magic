@@ -62,7 +62,7 @@ namespace DataBase{
     }
 
     bool MySql::execute(const std::string& sql){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&m_MySql) != 0){
             this->printError();
         }
@@ -73,7 +73,7 @@ namespace DataBase{
     }
 
     bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!mysql_init(&m_MySql)){
             this->printError();
             return false;
@@ -107,12 +107,12 @@ namespace DataBase{
     }
 
     bool MySqlStmt::fetch(){
-        RWMutex::WriteLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         return mysql_stmt_fetch(m_Stmt) == 0;
     }
 
     bool MySqlStmt::query(){
-        RWMutex::WriteLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&m_MySql->m_MySql) != 0){
             this->printError();
         }
@@ -193,7 +193,7 @@ namespace DataBase{
     }
 
     bool MySqlStmt::prepare(const std::string& sql){
-        RWMutex::ReadLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&this->m_MySql->m_MySql) != 0){
             this->printError();
         }
@@ -213,12 +213,12 @@ namespace DataBase{
     }
 
     void MySqlStmt::bindNull(uint32_t index){
-        RWMutex::WriteLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         m_MySqlModifyBinds[index].buffer_type = MYSQL_TYPE_NULL;
     }
 
     #define BIND_COPY(Type,Ptr,Size)                                \
-        RWMutex::WriteLock lock(m_Mutex);                           \
+        std::lock_guard<std::mutex> locker(m_Mutex);                \
         m_MySqlModifyBinds[index].buffer_type = Type;               \
         uint32_t length = Size;                                     \
         if(m_MySqlModifyBinds[index].buffer == nullptr){            \
@@ -295,13 +295,14 @@ namespace DataBase{
     }
 
     bool MySqlStmt::isNull(uint32_t index){
-        RWMutex::ReadLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         return m_MySqlResults[index].m_IsNull;
     }
 
-    #define CAST(T)                         \
-        RWMutex::ReadLock lock(m_Mutex);    \
+    #define CAST(T)                                     \
+        std::lock_guard<std::mutex> locker(m_Mutex);    \
         return *reinterpret_cast<T*>(m_MySqlResults.at(index).m_Data)
+
     int8_t MySqlStmt::getInt8(uint32_t index){
         CAST(int8_t);
     }
@@ -344,7 +345,7 @@ namespace DataBase{
     #undef CAST
 
     std::time_t MySqlStmt::getTime(uint32_t index){
-        RWMutex::ReadLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         MYSQL_TIME* mt = reinterpret_cast<MYSQL_TIME*>(m_MySqlResults[index].m_Data);
         std::time_t ts = 0;
         MySqlTimeToTime(*mt,ts);
@@ -352,12 +353,12 @@ namespace DataBase{
     }
 
     std::string MySqlStmt::getString(uint32_t index){
-        RWMutex::ReadLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         return std::string(m_MySqlResults[index].m_Data,m_MySqlResults[index].m_Length);
     }
 
     std::string MySqlStmt::getBlob(uint32_t index){
-        RWMutex::ReadLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         return std::string(m_MySqlResults[index].m_Data,m_MySqlResults[index].m_Length);
     }
 

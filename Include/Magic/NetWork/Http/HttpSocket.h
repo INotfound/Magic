@@ -104,7 +104,6 @@ namespace Http{
          */
         void transferFileStream();
     private:
-
         Safe<Socket> m_Socket;
         uint64_t m_TotalLength;
         uint64_t m_CurrentLength;

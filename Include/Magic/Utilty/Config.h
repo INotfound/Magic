@@ -8,7 +8,6 @@
 #include <fstream>
 
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Mutex.h"
 #include "Magic/Utilty/String.h"
 
 namespace Magic {
@@ -142,7 +141,7 @@ namespace Magic {
         void update();
     private:
         bool m_IsChange;
-        RWMutex m_Mutex;
+        std::mutex m_Mutex;
         ConfigMap m_ConfigMap;
         Safe<ConfigFile> m_ConfigFile;
     };
@@ -156,7 +155,7 @@ namespace Magic {
 
     template<typename T>
     T Config::at(const std::string& defaultName, const T& defaultValue, const std::string defaultComment) {
-        RWMutex::WriteLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         auto iter = m_ConfigMap.find(defaultName);
         if (iter != m_ConfigMap.end()) {
             try{
@@ -173,7 +172,7 @@ namespace Magic {
 
     template<typename T>
     T Config::revise(const std::string& defaultName, const T& defaultValue, const std::string& defaultComment) {
-        RWMutex::WriteLock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         m_IsChange = true;
         m_ConfigMap[defaultName].reset();
         m_ConfigMap[defaultName] = std::make_shared<ConfigValue>(defaultName, AsString<T>(defaultValue), defaultComment);

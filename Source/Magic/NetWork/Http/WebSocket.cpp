@@ -28,7 +28,7 @@ namespace Http{
         ,m_Death(false){
 
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
-            if(m_Death){
+            if(m_Death && !socket->isWorking()){
                 m_DisconnectedCallBack(this->shared_from_this());
                 socket->close();
                 return;

@@ -14,6 +14,7 @@ namespace NetWork{
         :m_BufferSize(bufferSize)
         ,m_HeartBeatMs(heartBeatMs)
         ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
+        ,m_Working(false)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
         m_ErrorCodeCallBack = [](const asio::error_code & err){
@@ -21,14 +22,18 @@ namespace NetWork{
         };
     }
 
-    void Socket::close() {
+    void Socket::close(){
         asio::error_code ignored;
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(m_Socket->is_open()) {
             m_Socket->cancel(ignored);
             m_Socket->shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
         }
         m_Socket->close(ignored);
+    }
+
+    bool Socket::isWorking() const{
+        return m_Working;
     }
 
     void Socket::setHeartBeatTime(uint64_t ms){
@@ -59,6 +64,7 @@ namespace NetWork{
 #endif
     void Socket::send(const char* data,uint64_t length,const SendCallBack callback){
         auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/){
+            m_Working = false;
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -66,10 +72,11 @@ namespace NetWork{
             if(callback)
                 callback();
         };
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
             return;
         }
+        m_Working = true;
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
@@ -81,6 +88,7 @@ namespace NetWork{
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack callback){
         auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/){
+            m_Working = false;
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -88,10 +96,11 @@ namespace NetWork{
             if(callback)
                 callback();
         };
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
             return;
         }
+        m_Working = true;
     #ifdef OPENSSL
         if(m_SslStream){
             asio::async_write(*m_SslStream,*stream,std::move(sendCallBack));
@@ -111,7 +120,7 @@ namespace NetWork{
             if(callBack)
                 callBack(this->m_StreamBuffer);
         };
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
             return;
         }
@@ -138,7 +147,7 @@ namespace NetWork{
             if(callBack)
                 callBack(this->m_StreamBuffer);
         };
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
             return;
         }

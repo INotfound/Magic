@@ -60,7 +60,7 @@ namespace DataBase{
          * @warning Use Exception!
          */
         Connection<T> getConnection(){
-            Magic::Mutex::Lock locker(m_Mutex);
+            std::lock_guard<std::mutex> locker(m_Mutex);
             if(m_IdleEntity.empty()){
                 throw Failure("Connection Pool No Idle Entity!");
             }
@@ -80,12 +80,12 @@ namespace DataBase{
         }
     private:
         void restore(const Safe<T>& entity){
-            Magic::Mutex::Lock locker(m_Mutex);
+            std::lock_guard<std::mutex> locker(m_Mutex);
             m_IdleEntity.push_back(entity);
         }
     private:
         uint32_t m_Count;
-        Magic::Mutex m_Mutex;
+        std::mutex m_Mutex;
         std::vector<Safe<T>> m_IdleEntity;
         std::function<const Safe<T>(void)> m_CreateFunction;
     };

@@ -30,7 +30,7 @@ namespace Magic{
     }
 
     void Wheel::add(uint64_t ms,Safe<ITaskNode>& node){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(ms > m_Interval){
             if(!m_NextWheel){
                 m_NextWheel = std::make_shared<Wheel>(m_Interval,m_WheelSize);
@@ -44,7 +44,7 @@ namespace Magic{
     }
 
     void Wheel::tick(std::vector<TaskList>& task){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         m_ClockHand++;
         if(m_ClockHand >= m_WheelSize){
             m_ClockHand = 0;
@@ -66,7 +66,7 @@ namespace Magic{
     }
 
     void  TimingWheel::run(){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(m_IsRun){
             return;
         }
@@ -85,7 +85,7 @@ namespace Magic{
     }
 
     void  TimingWheel::stop(){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         m_IsRun = false;
         m_Timer->stop();
         m_Timer.reset();
@@ -97,13 +97,13 @@ namespace Magic{
     }
 
     void  TimingWheel::change(uint64_t tickMs,uint64_t wheelSize){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         m_TickMs = tickMs;
         m_WheelSize = wheelSize;
     }
 
     void  TimingWheel::addTask(uint64_t timeOutMs,Safe<ITaskNode>& taskNode){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Wheels){
             return;
         }

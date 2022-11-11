@@ -530,13 +530,15 @@ namespace Http{
         auto contentEncodingIter = m_Headers.find("Content-Encoding");
 
         if(contentEncodingIter != m_Headers.end()){
-            if(hasBody){
         #ifdef ZLIB
+            if(contentEncodingIter->second.find("gzip") != std::string::npos) {
                 hasContentEncoding = true;
             }else{
-        #endif
                 m_Headers.erase(contentEncodingIter);
             }
+        #else
+            m_Headers.erase(contentEncodingIter);
+        #endif
         }
 
         /// Headers

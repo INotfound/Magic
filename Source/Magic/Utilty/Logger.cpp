@@ -311,7 +311,7 @@ namespace Magic{
     }
 
     void Logger::setLevel(LogLevel val){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         this->m_Level = val;
     }
 
@@ -324,13 +324,13 @@ namespace Magic{
     }
 
     void Logger::setFormatter(const std::string& pattern){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         this->m_Formatter = pattern;
     }
 
     void  Logger::log(LogLevel level,const Safe<LogEvent>& event){
         if (level >= m_Level){
-            Mutex::Lock lock(m_Mutex);
+            std::lock_guard<std::mutex> locker(m_Mutex);
             if (!this->m_ILogAppenders.empty()){
                 for (auto& v : this->m_ILogAppenders){
                     v->log(level, event);
@@ -340,7 +340,7 @@ namespace Magic{
     }
 
     void  Logger::addILogAppender(const Safe<ILogAppender>& logAppender){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!logAppender->m_Formatter){
             logAppender->m_Formatter = std::make_shared<LogFormatter>(m_Formatter);
         }
@@ -363,7 +363,7 @@ namespace Magic{
 
     FileLogAppender::FileLogAppender(const Safe<Config>& configuration) 
         :m_Path(configuration->at<std::string>("Logger.FilePath","./log.txt")){
-        Mutex::Lock lock(m_Mutex);
+        std::lock_guard<std::mutex> locker(m_Mutex);
         this->m_FileStream.open(this->m_Path, std::ios_base::out | std::ios_base::app);
     }
 

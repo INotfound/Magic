@@ -11,7 +11,6 @@
 #endif
 #include <atomic>
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Mutex.h"
 #include "Magic/Utilty/TimingWheel.h"
 
 namespace Magic{
@@ -46,6 +45,11 @@ namespace NetWork{
          * @brief 关闭Socket
          */
         void close();
+        /**
+         * @brief 是否是正在工作
+         * @return
+         */
+        bool isWorking() const;
         /**
          * @brief
          * @param ms
@@ -116,10 +120,11 @@ namespace NetWork{
          */
         void setHeartBeatCallBack(const HeartBeatCallBack heartBeatCallBack);
     private:
-        Mutex m_Mutex;
+        std::mutex m_Mutex;
         uint64_t m_BufferSize;
         uint64_t m_HeartBeatMs;
         Safe<char> m_ByteBlock;
+        std::atomic_bool m_Working;
         StreamBuffer m_StreamBuffer;
         ErrorCallBack m_ErrorCodeCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;

@@ -5,7 +5,6 @@
  */
 #pragma once
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Mutex.h"
 #include "Magic/NetWork/Http/Http.h"
 #include "Magic/NetWork/Http/HttpSocket.h"
 
@@ -119,7 +118,7 @@ namespace Http{
         template<typename T>
         void addAspectBefore(const RouteMaps::iterator&,const T&,typename std::enable_if<!HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type* =nullptr);
     private:
-        RWMutex m_Mutex;
+        std::mutex m_Mutex;
         RouteMaps m_MatchRoutes;
         RouteMaps m_NormalRoutes;
         RouteHandle m_EmptyRouteHandle;
@@ -159,6 +158,7 @@ namespace Http{
 
     template<typename T,typename>
     void HttpServletDispatch::addRoute(const std::string& path,HttpRouteType routeType,T handle){
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(routeType == HttpRouteType::Match){
             auto iter = m_MatchRoutes.find(path);
             if(iter == m_MatchRoutes.end()){
@@ -174,6 +174,7 @@ namespace Http{
 
     template<typename T,typename... Args,typename>
     void HttpServletDispatch::addRoute(const std::string& path,HttpRouteType routeType,T handle,Args ...args){
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(routeType == HttpRouteType::Match){
             auto iter = m_MatchRoutes.find(path);
             if(iter == m_MatchRoutes.end()){

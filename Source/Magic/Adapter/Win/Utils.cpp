@@ -31,12 +31,6 @@ namespace Magic {
     #undef EPOCHFILETIME
     }
 
-    uint32_t GetProcessorsNumber() {
-        SYSTEM_INFO info;
-        GetSystemInfo(&info);
-        return info.dwNumberOfProcessors;
-    }
-
     uint64_t GetThreadId() {
         return GetCurrentThreadId();
     }

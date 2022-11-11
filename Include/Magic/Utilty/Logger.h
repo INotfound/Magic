@@ -11,7 +11,6 @@
 
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/Timer.h"
-#include "Magic/Utilty/Mutex.h"
 #include "Magic/Utilty/Thread.h"
 #include "Magic/Utilty/Config.h"
 #include "Magic/Utilty/Thread.h"
@@ -197,8 +196,8 @@ namespace Magic{
          */
         void addILogAppender(const Safe<ILogAppender>& logAppender);
     private:
-        Mutex m_Mutex;
         LogLevel m_Level;
+        std::mutex m_Mutex;
         std::string m_LogName;
         std::string m_Formatter;
         std::list<Safe<ILogAppender>> m_ILogAppenders;
@@ -237,7 +236,7 @@ namespace Magic{
         explicit FileLogAppender(const Safe<Config>& configuration);
         void log(LogLevel level,const Safe<LogEvent>& event) override;
     private:
-        Mutex m_Mutex;
+        std::mutex m_Mutex;
         std::string m_Path;
         std::ofstream m_FileStream;
     };

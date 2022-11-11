@@ -5,10 +5,9 @@
  */
 #pragma once
 #include <thread>
+#include <condition_variable>
 
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Mutex.h"
-
 
 namespace Magic{
     /**
@@ -56,9 +55,8 @@ namespace Magic{
         void run();
     private:
         int64_t  m_Id;
-        Semaphore m_Mutex;
         std::string m_Name;
-        std::thread m_Thread;
+        Safe<std::thread> m_Thread;
         std::function<void()> m_CallBack;
     };
     /**

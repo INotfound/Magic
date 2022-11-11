@@ -8,7 +8,6 @@
 #include <vector>
 
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Mutex.h"
 #include "Magic/Utilty/Timer.h"
 #include "Magic/Utilty/Config.h"
 
@@ -70,8 +69,8 @@ namespace Magic{
          */
         void tick(std::vector<TaskList>& taskList);
     private:
-        Mutex m_Mutex;
         uint64_t m_TickMs;
+        std::mutex m_Mutex;
         uint64_t m_Interval;
         uint64_t m_WheelSize;
         uint64_t m_ClockHand;
@@ -119,8 +118,8 @@ namespace Magic{
         void addTask(uint64_t timeOutMs,Safe<ITaskNode>& taskNode);
     private:
         bool m_IsRun;
-        Mutex m_Mutex;
         uint64_t m_TickMs;
+        std::mutex m_Mutex;
         Safe<Timer> m_Timer;
         Safe<Wheel> m_Wheels;
         uint64_t m_WheelSize;

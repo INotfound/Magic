@@ -5,6 +5,7 @@
  */ 
 #pragma once
 #include <list>
+#include <mutex>
 #include <deque>
 #include <string>
 #include <vector>

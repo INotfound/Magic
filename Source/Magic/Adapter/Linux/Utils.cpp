@@ -28,12 +28,6 @@ namespace Magic {
         return tv.tv_sec * 1000 * 1000ul  + tv.tv_usec;
     }
 
-    uint32_t GetProcessorsNumber() {
-        unsigned int count = 1;
-        count = sysconf(_SC_NPROCESSORS_CONF);
-        return count;
-    }
-
     uint64_t GetThreadId() {
         return syscall(SYS_gettid);
     }
