@@ -61,8 +61,8 @@ namespace Magic{
 
     TimingWheel::TimingWheel(const Safe<Config>& configuration)
         :m_IsRun(false)
-        ,m_TickMs(configuration->at<uint64_t>("TimingWheel.TickMs",100))
-        ,m_WheelSize(configuration->at<uint64_t>("TimingWheel.WheelSize",10)){
+        ,m_TickMs(configuration->at<uint64_t>("TimingWheel.TickMs",1000))
+        ,m_WheelSize(configuration->at<uint64_t>("TimingWheel.WheelSize",60)){
     }
 
     void  TimingWheel::run(){

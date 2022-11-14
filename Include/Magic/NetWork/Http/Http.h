@@ -318,7 +318,7 @@ namespace Http{
         const std::string& getParam(const std::string& key) const;
         /**
          * @brief 获取头参数函数
-         * @param key 指定的键
+         * @param key 指定的键 不区分大小写
          * @return: 返回根据指定的键对应的值
          */
         const std::string& getHeader(const std::string& key) const;

@@ -14,7 +14,7 @@ namespace NetWork{
 
     TcpServer::TcpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration)
         :m_IsRun(false)
-        ,m_TimeOutMs(configuration->at<uint64_t>("NetWork.Server.TimeOutMs",30000))
+        ,m_TimeOutMs(configuration->at<uint64_t>("NetWork.Server.TimeOutMs",60000))
         ,m_IoPool(pool)
         ,m_Address(configuration->at<std::string>("NetWork.Server.IpAddress","0.0.0.0"))
         ,m_NetworkPort(configuration->at<uint16_t>("NetWork.Server.IpPort",80)){

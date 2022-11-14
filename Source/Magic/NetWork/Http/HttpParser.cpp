@@ -110,14 +110,7 @@ namespace Http{
         std::string length;
         length = m_Data->getHeader("Content-Length");
         try{
-            if(length.empty()){
-                length = m_Data->getHeader("content-length");
-                if(!length.empty()){
-                    m_Data->setContentLength(StringAs<uint64_t>(length,10));
-                }else{
-                    m_Data->setContentLength(0);
-                }
-            }else{
+            if(!length.empty()){
                 m_Data->setContentLength(StringAs<uint64_t>(length,10));
             }
         }catch (...){

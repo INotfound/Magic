@@ -129,6 +129,14 @@ int main(int /*argc*/,char** /*argv*/){
     std::transform(value.begin(), value.end(), std::back_inserter(tValue),::toupper);
     std::cout << "xxx xxx " << tValue << std::endl;
 
+
+    Magic::NetWork::Http::HttpResponse::KeyValue keyValue{
+        {"String","String"},
+        {"string1","string1"}
+    };
+
+    std::cout << keyValue.find("string")->second << " " << keyValue.find("String1")->second << std::endl;
+
     try{
         throw Magic::Failure("Test");
     }catch (std::exception& ec){

@@ -230,7 +230,6 @@ namespace Http{
             }catch (...){
                 return 0;
             }
-
         }
         return 0;
     }
@@ -404,7 +403,7 @@ namespace Http{
     }
 
     bool HttpResponse::isRange() const{
-        return m_Headers.find("Content-Range") != m_Headers.end(); 
+        return m_Headers.find("Content-Range") != m_Headers.end();
     }
 
     bool HttpResponse::hasResource() const{
