@@ -19,14 +19,27 @@ namespace Http{
         auto exactlyIter = m_NormalRoutes.find(httpPath);
         auto exactlyEnd = m_NormalRoutes.end();
         if(exactlyIter != exactlyEnd){
-            const auto& vectorAfter = std::get<2>(exactlyIter->second);
-            const auto& vectorBefore = std::get<1>(exactlyIter->second);
-            for(const auto& func : vectorBefore){
+            /// Global Before
+            for(const auto& func : m_AspectBefores){
                 if(!func(httpSocket))
                     return;
             }
+            const auto& aspectAfters = std::get<2>(exactlyIter->second);
+            const auto& aspectBefores = std::get<1>(exactlyIter->second);
+            /// Before
+            for(const auto& func : aspectAfters){
+                if(!func(httpSocket))
+                    return;
+            }
+            /// Handle
             std::get<0>(exactlyIter->second)(httpSocket);
-            for(const auto& func : vectorAfter){
+            /// After
+            for(const auto& func : aspectBefores){
+                if(!func(httpSocket))
+                    return;
+            }
+            /// Global After
+            for(const auto& func : m_AspectAfters){
                 if(!func(httpSocket))
                     return;
             }
@@ -39,14 +52,27 @@ namespace Http{
         for(; matchIter != matchEnd; matchIter++){
             reg.assign(matchIter->first);
             if(std::regex_match(httpPath,reg)){
-                const auto& vectorAfter = std::get<2>(matchIter->second);
-                const auto& vectorBefore = std::get<1>(matchIter->second);
-                for(const auto& func : vectorBefore){
+                /// Global Before
+                for(const auto& func : m_AspectBefores){
                     if(!func(httpSocket))
                         return;
                 }
+                const auto& aspectAfters = std::get<2>(matchIter->second);
+                const auto& aspectBefores = std::get<1>(matchIter->second);
+                /// Before
+                for(const auto& func : aspectAfters){
+                    if(!func(httpSocket))
+                        return;
+                }
+                /// Handle
                 std::get<0>(matchIter->second)(httpSocket);
-                for(const auto& func : vectorAfter){
+                /// After
+                for(const auto& func : aspectBefores){
+                    if(!func(httpSocket))
+                        return;
+                }
+                /// Global After
+                for(const auto& func : m_AspectAfters){
                     if(!func(httpSocket))
                         return;
                 }

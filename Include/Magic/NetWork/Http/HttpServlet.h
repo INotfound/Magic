@@ -85,6 +85,7 @@ namespace Http{
          */
         void setHttpServlet(const Safe<IHttpServlet>& servlet);
         /**
+         * @brief 添加路由
          * @param path Url 子路径
          * @param type 路由类型
          * @param handle 处理函数
@@ -93,15 +94,24 @@ namespace Http{
         void addRoute(const std::string& path,HttpRouteType routeType,T handle);
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_same<decltype(FunctionChecker(T())),decltype(FunctionChecker(RouteHandle()))>::value>::type>
         void addRoute(const std::string& path,HttpRouteType routeType,T handle,Args ...args);
+        /**
+         * @brief 添加全局的切片
+         * @param aspect  需要添加的全局切片
+         */
+        template<typename T,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value || HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type>
+        void addGlobalAspect(const T& aspect);
+        template<typename T,typename ...Args,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value || HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type>
+        void addGlobalAspect(const T& aspect,Args ...args);
     private:
         /**
-         * @brief 获取匹配的Routed对应的处理函数
-         * @param path Route的路径
-         * @return: 返回Route对应的处理函数
+         * @param aspect  需要添加的全局切片
          */
-        const RouteHandle& getMatchedServlet(const std::string& path);
+        template<typename T,typename = typename std::enable_if<HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type>
+        void addGlobalAspectAfter(const T& aspect);
+        template<typename T,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type>
+        void addGlobalAspectBefore(const T& aspect);
         /**
-         * @param iter 切片迭代器
+         * @param iter 路由迭代器
          * @param aspect  需要添加的切片
          */
         template<typename T,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value || HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type>
@@ -114,6 +124,10 @@ namespace Http{
         void addAspect(const RouteMaps::iterator& iter,const T& aspect,Args ...args);
         ////////////////////
         template<typename T>
+        void addGlobalAspectAfter(const T&,typename std::enable_if<!HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type* =nullptr);
+        template<typename T>
+        void addGlobalAspectBefore(const T&,typename std::enable_if<!HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type* =nullptr);
+        template<typename T>
         void addAspectAfter(const RouteMaps::iterator&,const T&,typename std::enable_if<!HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type* =nullptr);
         template<typename T>
         void addAspectBefore(const RouteMaps::iterator&,const T&,typename std::enable_if<!HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type* =nullptr);
@@ -121,7 +135,8 @@ namespace Http{
         std::mutex m_Mutex;
         RouteMaps m_MatchRoutes;
         RouteMaps m_NormalRoutes;
-        RouteHandle m_EmptyRouteHandle;
+        std::deque<AspectHandle> m_AspectAfters;
+        std::deque<AspectHandle> m_AspectBefores;
     };
 
     template<typename T,typename>
@@ -191,6 +206,36 @@ namespace Http{
     }
 
     template<typename T,typename>
+    void HttpServletDispatch::addGlobalAspect(const T& aspect){
+        if(HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value){
+            this->addGlobalAspectAfter(aspect);
+        }
+        if(HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value){
+            this->addGlobalAspectBefore(aspect);
+        }
+    }
+
+    template<typename T,typename... Args,typename>
+    void HttpServletDispatch::addGlobalAspect(const T& aspect,Args ...args){
+        this->addGlobalAspect(aspect);
+        this->addGlobalAspect(args...);
+    }
+
+    template<typename T,typename>
+    void HttpServletDispatch::addGlobalAspectAfter(const T& aspect){
+        std::lock_guard<std::mutex> locker(m_Mutex);
+        AspectHandle handle = [aspect](const Safe<HttpSocket>& httpSocket){return aspect->after(httpSocket);};
+        m_AspectAfters.push_front(handle);
+    }
+
+    template<typename T,typename>
+    void HttpServletDispatch::addGlobalAspectBefore(const T& aspect){
+        std::lock_guard<std::mutex> locker(m_Mutex);
+        AspectHandle handle = [aspect](const Safe<HttpSocket>& httpSocket){return aspect->before(httpSocket);};
+        m_AspectBefores.push_back(handle);
+    }
+
+    template<typename T,typename>
     void HttpServletDispatch::addAspect(const RouteMaps::iterator& iter,const T& aspect){
         if(HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value){
             this->addAspectAfter(iter,aspect);
@@ -218,6 +263,13 @@ namespace Http{
         this->addAspect(iter,args...);
     }
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    template<typename T>
+    void HttpServletDispatch::addGlobalAspectAfter(const T&,typename std::enable_if<!HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type*){
+    }
+    template<typename T>
+    void HttpServletDispatch::addGlobalAspectBefore(const T&,typename std::enable_if<!HasBefore<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type*){
+    }
     template<typename T>
     void HttpServletDispatch::addAspectAfter(const RouteMaps::iterator&,const T&,typename std::enable_if<!HasAfter<typename Safe_Traits<T>::Type,bool(Safe_Traits<T>::Type::*)(const Safe<HttpSocket>& httpSocket)>::value>::type*){
     }
