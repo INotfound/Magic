@@ -42,13 +42,9 @@ namespace NetWork{
          * @return: 返回网络Io上下文
          */
         const Safe<asio::io_context>& get();
-        /**
-         * @brief 获取当前网络Io上下文函数
-         * @return
-         */
-        const Safe<asio::io_context>& getCurrent();
     private:
         uint32_t m_Next;
+        std::mutex m_Mutex;
         uint32_t m_PoolSize;
         std::vector<Safe<Thread>> m_Threads;
         std::vector<Safe<asio::io_context>> m_IOService;

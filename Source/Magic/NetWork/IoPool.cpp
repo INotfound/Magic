@@ -40,27 +40,26 @@ namespace NetWork{
     }
 
     void IoPool::stop(){
+        std::lock_guard<std::mutex> locker(m_Mutex);
         for(uint32_t i = 0; i<m_PoolSize; i++){
             m_IOServiceWork.at(i).reset();
         }
     }
 
     void IoPool::externMode() {
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!g_IoPool)
             g_IoPool = this->shared_from_this();
     }
 
     const Safe<asio::io_context>& IoPool::get(){
+        std::lock_guard<std::mutex> locker(m_Mutex);
         const auto& io = m_IOService.at(m_Next);
         m_Next++;
         if(m_Next == m_PoolSize){
             m_Next = 0;
         }
         return io;
-    }
-
-    const Safe<asio::io_context>& IoPool::getCurrent(){
-        return m_IOService.at(m_Next);
     }
 }
 }

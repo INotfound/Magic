@@ -20,7 +20,7 @@ namespace Http{
         m_Socket = std::make_shared<Socket>(timeOutMs,4096,*m_IOService);
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
             if(m_Death){
-                if(!m_Finish)
+                if(m_TimeOutCallBack && !m_Finish)
                     m_TimeOutCallBack();
                 socket->close();
                 return;
@@ -108,7 +108,8 @@ namespace Http{
             httpSocket->recvResponse([this,self](const Safe<HttpSocket>& socket){
                 m_Finish = true;
                 m_Socket->close();
-                m_ResponseCallBack(socket->getResponse());
+                if(m_ResponseCallBack)
+                    m_ResponseCallBack(socket->getResponse());
             });
         });
         m_Socket->runHeartBeat(self);
