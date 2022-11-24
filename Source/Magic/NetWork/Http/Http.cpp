@@ -19,21 +19,21 @@ namespace Http{
         #undef XX
     };
 
-    static const std::map<std::string,std::string,CaseInsensitiveLess> g_HttpContent ={
+    static const std::map<std::string,std::string,CaseInsensitiveLess> g_HttpContent = {
         #define XX(name,extName,desc){extName,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    static const std::map<HttpContentType,std::string> g_HttpContentType ={
+    static const std::map<HttpContentType,std::string> g_HttpContentType = {
         #define XX(name,extName,desc){HttpContentType::name,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
     bool IsUrlEncode(const std::string& str){
-		return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
-	}
+        return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
+    }
 
     HttpMethod CharsToHttpMethod(const char* str){
         #define XX(num,name,string) \
@@ -45,7 +45,7 @@ namespace Http{
         return HttpMethod::INVALID_METHOD;
     }
 
-    HttpMethod StringToHttpMethod(const std::string &str){
+    HttpMethod StringToHttpMethod(const std::string& str){
         #define XX(num,name,string) \
             if(strcmp(#name,str.c_str()) == 0){ \
                 return HttpMethod::name; \
@@ -55,7 +55,7 @@ namespace Http{
         return HttpMethod::INVALID_METHOD;
     }
 
-    const char* HttpMethodToString(const HttpMethod & method){
+    const char* HttpMethodToString(const HttpMethod& method){
         auto index = static_cast<uint64_t>(method);
         if(index >= (sizeof(g_MethodString) / sizeof(g_MethodString[0]))){
             return "<unknown>";
@@ -63,23 +63,23 @@ namespace Http{
         return g_MethodString[index];
     }
 
-    const char* HttpStatusToString(const HttpStatus & status){
+    const char* HttpStatusToString(const HttpStatus& status){
         switch(status){
-            #define XX(code,name,desc) \
+        #define XX(code,name,desc)  \
             case HttpStatus::name : \
                 return #desc;
             HTTP_STATUS_MAP(XX)
-            #undef XX
+        #undef XX
             default:
                 return "<unknown>";
         }
     }
 
-   std::string UrlEncode(const std::string &value) noexcept {
-		static auto hex_chars = "0123456789ABCDEF";
+    std::string UrlEncode(const std::string& value) noexcept{
+        static auto hex_chars = "0123456789ABCDEF";
 
-		std::string result;
-		result.reserve(value.size()); // Minimum size of result
+        std::string result;
+        result.reserve(value.size()); // Minimum size of result
 
 		for (auto &chr : value){
 			if (!((chr >= '0' && chr <= '9')
@@ -95,32 +95,31 @@ namespace Http{
 		return result;
 	}
 
-	std::string UrlDecode(const std::string &value) noexcept {
-		std::string result;
-		result.reserve(value.size() / 3 + (value.size() % 3)); // Minimum size of result
+    std::string UrlDecode(const std::string& value) noexcept{
+        std::string result;
+        result.reserve(value.size() / 3 + (value.size() % 3)); // Minimum size of result
 
-		for (std::size_t i = 0; i < value.size(); ++i){
-			auto &chr = value[i];
-			if (chr == '%' && i + 2 < value.size()){
-				auto hex = value.substr(i + 1, 2);
-				auto decoded_chr = static_cast<char>(std::strtol(hex.c_str(), nullptr, 16));
-				result += decoded_chr;
-				i += 2;
-			}
-			else if (chr == '+')
-				result += ' ';
-			else
-				result += chr;
-		}
+        for(std::size_t i = 0;i < value.size();++i){
+            auto& chr = value[i];
+            if(chr == '%' && i + 2 < value.size()){
+                auto hex = value.substr(i + 1,2);
+                auto decoded_chr = static_cast<char>(std::strtol(hex.c_str(),nullptr,16));
+                result += decoded_chr;
+                i += 2;
+            }else if(chr == '+')
+                result += ' ';
+            else
+                result += chr;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
     const char* FileTypeToHttpContentType(const std::string& fileName){
         std::string extName;
         auto pos = fileName.rfind('.');
         if(pos != std::string::npos){
-            extName = fileName.substr(pos+1);
+            extName = fileName.substr(pos + 1);
             std::transform(extName.begin(),extName.end(),extName.begin(),tolower);
             auto iter = g_HttpContent.find(extName);
             if(iter != g_HttpContent.end()){
@@ -133,41 +132,39 @@ namespace Http{
     const char* HttpContentTypeToString(const HttpContentType& contentType){
         return g_HttpContentType.at(contentType).c_str();
     }
-    
+
     template<class Map>
     inline void Parse(const std::string& str,Map& map,const std::string& flag){
         uint64_t pos = 0;
-        do {
+        do{
             uint64_t key = 0;
-            std::string subString(SubString(str, pos, flag));
+            std::string subString(SubString(str,pos,flag));
             if(IsUrlEncode(subString)){
                 subString = UrlDecode(subString);
             }
             pos += static_cast<uint64_t>(subString.size() + 1);
             key = subString.find('=');
-            if (key == std::string::npos)
+            if(key == std::string::npos)
                 break;
-            map.emplace(subString.substr(0, key)
-                ,subString.substr(key + 1));
-        } while (pos <= str.size());
-    } 
+            map.emplace(subString.substr(0,key),subString.substr(key + 1));
+        }while(pos <= str.size());
+    }
 
     template<class Map>
     inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
         uint64_t pos = 0;
-        do {
+        do{
             uint64_t key = 0;
-            std::string subString(SubString(str, pos, flag));
+            std::string subString(SubString(str,pos,flag));
             if(IsUrlEncode(subString)){
                 subString = UrlDecode(subString);
             }
             pos += static_cast<uint64_t>(subString.size() + 1);
             key = subString.find('=');
-            if (key == std::string::npos)
+            if(key == std::string::npos)
                 break;
-            map.emplace(Trim(subString.substr(0, key))
-                ,Trim(subString.substr(key + 1)));
-        } while (pos <= str.size());
+            map.emplace(Trim(subString.substr(0,key)),Trim(subString.substr(key + 1)));
+        }while(pos <= str.size());
     }
 
     bool CaseInsensitiveLess::operator()(const std::string& lhs,const std::string& rhs) const{
@@ -191,13 +188,13 @@ namespace Http{
     }
 
     bool HttpRequest::isRange() const{
-        return m_Headers.find("Range") != m_Headers.end(); 
+        return m_Headers.find("Range") != m_Headers.end();
     }
 
     bool HttpRequest::getKeepAlive() const{
         return m_KeepAlive;
     }
-    
+
     uint8_t HttpRequest::getVersion() const{
         return m_Version;
     }
@@ -213,7 +210,7 @@ namespace Http{
             auto splitPos = value.find('-');
             try{
                 return StringAs<uint64_t>(value.substr(splitPos + 1,value.length() - splitPos),10);
-            }catch (...){
+            }catch(...){
                 return 0;
             }
         }
@@ -226,8 +223,8 @@ namespace Http{
             std::string value = iter->second;
             auto splitPos = value.find('-');
             try{
-                return StringAs<uint64_t>(value.substr(6,splitPos-6),10);
-            }catch (...){
+                return StringAs<uint64_t>(value.substr(6,splitPos - 6),10);
+            }catch(...){
                 return 0;
             }
         }
@@ -269,7 +266,7 @@ namespace Http{
         return value->second;
     }
 
-    const std::string& HttpRequest::getParam(const std::string& key)const{
+    const std::string& HttpRequest::getParam(const std::string& key) const{
         auto iter = m_Params.find(key);
         if(iter == m_Params.end()){
             return g_EmptyString;
@@ -277,7 +274,7 @@ namespace Http{
         return iter->second;
     }
 
-    const std::string& HttpRequest::getHeader(const std::string& key)const{
+    const std::string& HttpRequest::getHeader(const std::string& key) const{
         auto iter = m_Headers.find(key);
         if(iter == m_Headers.end()){
             return g_EmptyString;
@@ -292,7 +289,7 @@ namespace Http{
     void HttpRequest::delHeader(const std::string& key){
         m_Headers.erase(key);
     }
-    
+
     std::ostream& HttpRequest::toStream(std::ostream& os){
         os  << HttpMethodToString(m_Method) << ' '
             << m_UrlPath
@@ -318,9 +315,9 @@ namespace Http{
                 << m_Body;
         }else{
             if(m_ContentLength != 0){
-                os  << "Content-Length: " << m_ContentLength << "\r\n";
+                os << "Content-Length: " << m_ContentLength << "\r\n";
             }
-            os  << "\r\n";
+            os << "\r\n";
         }
         return os;
     }
@@ -370,7 +367,7 @@ namespace Http{
         value.append(AsString<uint64_t>(start));
         value.append("-");
         value += (stop == 0) ? "" : AsString<uint64_t>(stop);
-        m_Headers.emplace("Range", value);
+        m_Headers.emplace("Range",value);
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -380,17 +377,17 @@ namespace Http{
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setParam(const std::string& key,const std::string& value){
-        m_Params.emplace(key, value);
+        m_Params.emplace(key,value);
         return ObjectWrapper<HttpRequest>(this);
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setHeader(const std::string& key,const std::string& value){
-        m_Headers.emplace(key, value);
+        m_Headers.emplace(key,value);
         return ObjectWrapper<HttpRequest>(this);
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setCookie(const std::string& key,const std::string& value){
-        m_Cookies.emplace(key, value);
+        m_Cookies.emplace(key,value);
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -428,11 +425,10 @@ namespace Http{
             std::string value = iter->second;
             auto firstSplitPos = value.find('-');
             auto secondSplitPos = value.find('/');
-            if(firstSplitPos != std::string::npos 
-                            && secondSplitPos != std::string::npos){
+            if(firstSplitPos != std::string::npos && secondSplitPos != std::string::npos){
                 try{
                     return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos),10);
-                }catch (...){
+                }catch(...){
                     return 0;
                 }
             }
@@ -453,7 +449,7 @@ namespace Http{
             if(secondSplitPos != std::string::npos){
                 try{
                     return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos),10);
-                }catch (...){
+                }catch(...){
                     return 0;
                 }
             }
@@ -475,16 +471,15 @@ namespace Http{
             std::string value = iter->second;
             auto firstSplitPos = value.find('/');
             auto secondSplitPos = value.length();
-            if(firstSplitPos != std::string::npos 
-                            && secondSplitPos != std::string::npos){
+            if(firstSplitPos != std::string::npos && secondSplitPos != std::string::npos){
                 try{
                     return StringAs<uint64_t>(value.substr(firstSplitPos + 1,secondSplitPos - firstSplitPos),10);
-                }catch (...){
+                }catch(...){
                     return 0;
                 }
             }
         }
-       return 0;
+        return 0;
     }
 
     const std::string& HttpResponse::getReason() const{
@@ -530,7 +525,7 @@ namespace Http{
 
         if(contentEncodingIter != m_Headers.end()){
         #ifdef ZLIB
-            if(contentEncodingIter->second.find("gzip") != std::string::npos) {
+            if(contentEncodingIter->second.find("gzip") != std::string::npos){
                 hasContentEncoding = true;
             }else{
                 m_Headers.erase(contentEncodingIter);
@@ -566,7 +561,7 @@ namespace Http{
         #endif
         }else{
             if(m_ContentLength != 0){
-                os  << "Content-Length: " << m_ContentLength << "\r\n";
+                os << "Content-Length: " << m_ContentLength << "\r\n";
             }
             os << "\r\n";
         }
@@ -626,7 +621,7 @@ namespace Http{
         value.append(AsString<uint64_t>(stop));
         value.append("/");
         value.append(AsString<uint64_t>(totalLength));
-        m_Headers.emplace("Content-Range", value);
+        m_Headers.emplace("Content-Range",value);
         return ObjectWrapper<HttpResponse>(this);
     }
 
@@ -635,8 +630,7 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string& key, const std::string& val,std::time_t expired
-            ,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
+    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string& key,const std::string& val,std::time_t expired,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
         std::string result;
         result.reserve(256);
         result.append(key);
@@ -664,11 +658,11 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    std::ostream& operator<<(std::ostream& os, const Safe<HttpRequest>& request){
+    std::ostream& operator<<(std::ostream& os,const Safe<HttpRequest>& request){
         return request->toStream(os);
     }
 
-    std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& response){
+    std::ostream& operator<<(std::ostream& os,const Safe<HttpResponse>& response){
         return response->toStream(os);
     }
 }

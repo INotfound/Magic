@@ -1,6 +1,7 @@
 #include <mutex>
 #include "Magic/Utilty/Trace.h"
 #include "Magic/Utilty/Thread.h"
+
 namespace Magic{
     Safe<ITraceAppender> g_TraceAppender;
 
@@ -19,23 +20,23 @@ namespace Magic{
         m_TimePoint = std::chrono::steady_clock::now();
     }
 
-    ITraceAppender::~ITraceAppender(){}
+    ITraceAppender::~ITraceAppender() = default;
 
-    ChromiumTraceAppender::~ChromiumTraceAppender() {
+    ChromiumTraceAppender::~ChromiumTraceAppender(){
         this->complete();
     }
 
-    ChromiumTraceAppender::ChromiumTraceAppender(const std::string &outFilePath)
+    ChromiumTraceAppender::ChromiumTraceAppender(const std::string& outFilePath)
         :m_UseSplit(false)
         ,m_FilePath(outFilePath){
-        m_FileStream.open(outFilePath,std::ios_base::out|std::ios_base::trunc);
+        m_FileStream.open(outFilePath,std::ios_base::out | std::ios_base::trunc);
         if(m_FileStream.is_open()){
             m_FileStream << "{\"otherData\":{},\"traceEvents\":[";
             m_FileStream.flush();
         }
     }
 
-    void ChromiumTraceAppender::complete() {
+    void ChromiumTraceAppender::complete(){
         if(!m_FileStream.is_open()){
             return;
         }
@@ -44,7 +45,7 @@ namespace Magic{
         m_FileStream.close();
     }
 
-    void ChromiumTraceAppender::tracing(const std::string &funcName,uint64_t threadId,int64_t start,int64_t end){
+    void ChromiumTraceAppender::tracing(const std::string& funcName,uint64_t threadId,int64_t start,int64_t end){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_FileStream.is_open()){
             return;

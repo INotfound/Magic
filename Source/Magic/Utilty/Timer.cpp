@@ -9,7 +9,7 @@
 #include "Magic/Utilty/Timer.h"
 
 namespace Magic{
-    Timer::~Timer() {
+    Timer::~Timer(){
         m_Time->cancel();
     }
 
@@ -25,7 +25,7 @@ namespace Magic{
         m_IoWork = std::make_shared<asio::executor_work_guard<asio::io_context::executor_type>>(asio::make_work_guard(*m_IoContext));
         m_Time->expires_from_now(std::chrono::milliseconds(m_MilliSeconds));
         m_Thread = std::make_shared<Thread>(m_Name,[this](){
-            m_Time->async_wait([this](const asio::error_code& err){this->handle(err);});
+            m_Time->async_wait([this](const asio::error_code& err){ this->handle(err); });
             m_IoContext->run();
         });
         m_Thread->detach();
@@ -37,9 +37,10 @@ namespace Magic{
     }
 
     void Timer::handle(const asio::error_code& err){
-        if(err) return;
+        if(err)
+            return;
         m_CallBack();
         m_Time->expires_from_now(std::chrono::milliseconds(m_MilliSeconds));
-        m_Time->async_wait([this](const asio::error_code& err){this->handle(err);});
+        m_Time->async_wait([this](const asio::error_code& err){ this->handle(err); });
     }
 }

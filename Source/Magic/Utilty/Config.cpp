@@ -9,15 +9,18 @@
 // #include "rapidjson/document.h"
 // #include "rapidjson/stringbuffer.h"
 
-namespace Magic {
+namespace Magic{
     std::string g_ConfigPath = "./Magic.conf";
 
-    ConfigValue::ConfigValue(const std::string& name, const std::string& value, const std::string& comment)
-        :m_IsComment(false),m_Name(name), m_Value(value), m_Comment(comment){
-        if (!m_Comment.empty())
+    ConfigValue::ConfigValue(const std::string& name,const std::string& value,const std::string& comment)
+        :m_IsComment(false)
+        ,m_Name(name)
+        ,m_Value(value)
+        ,m_Comment(comment){
+        if(!m_Comment.empty())
             m_IsComment = true;
     }
-    
+
     bool ConfigValue::isComment() const{
         return m_IsComment;
     }
@@ -34,11 +37,9 @@ namespace Magic {
         return m_Comment;
     }
 
-    IConfigFormatter::~IConfigFormatter() {
-    }
+    IConfigFormatter::~IConfigFormatter() = default;
 
-    ConfigFile::~ConfigFile(){
-    }
+    ConfigFile::~ConfigFile() = default;
 
     ConfigFile::ConfigFile(const Safe<IConfigFormatter>& configFormatter)
         :m_Path(g_ConfigPath)
@@ -54,9 +55,9 @@ namespace Magic {
 
         std::ifstream readFileStream;
         readFileStream.open(m_Path,std::ios_base::in);
-        if (readFileStream.is_open() && m_Formatter){
+        if(readFileStream.is_open() && m_Formatter){
             content << readFileStream.rdbuf();
-            m_Formatter->parse(content.str(), keyValue);
+            m_Formatter->parse(content.str(),keyValue);
         }
     }
 
@@ -67,7 +68,7 @@ namespace Magic {
         writeFileStream.flush();
     }
 
-    Config::~Config() {
+    Config::~Config(){
         this->update();
     }
 
@@ -78,7 +79,7 @@ namespace Magic {
     }
 
     void Config::update(){
-        if (!m_IsChange){
+        if(!m_IsChange){
             return;
         }
         m_IsChange = false;
@@ -86,12 +87,12 @@ namespace Magic {
         m_ConfigFile->write(m_ConfigMap);
     }
 
-    void InIConfigFormatter::write(std::ostream& os, ConfigMap& KeyValue) {
+    void InIConfigFormatter::write(std::ostream& os,ConfigMap& KeyValue){
         auto iter = KeyValue.begin();
-        auto end  = KeyValue.end();
-        for (; iter != end; iter++) {
+        auto end = KeyValue.end();
+        for(;iter != end;iter++){
             Safe<ConfigValue>& value = iter->second;
-            if (!value->getComment().empty()) {
+            if(!value->getComment().empty()){
                 os << "# " << value->getComment() << std::endl;
             }
             os << value->getName() << "=" << value->getValue() << std::endl;
@@ -99,7 +100,7 @@ namespace Magic {
         }
     }
 
-    void InIConfigFormatter::parse(const std::string& content, ConfigMap& keyValue) {
+    void InIConfigFormatter::parse(const std::string& content,ConfigMap& keyValue){
         std::string valueString;
         std::string normalString;
         std::string commentString;
@@ -107,53 +108,51 @@ namespace Magic {
         bool isValue = false;
         bool isComment = false;
         uint64_t length = content.length();
-        for (uint64_t i = 0; i < length; i++){
+        for(uint64_t i = 0;i < length;i++){
             std::string::value_type charValue = content.at(i);
             //Comment
-            if (charValue == '#') {
+            if(charValue == '#'){
                 isComment = true;
                 continue;
-            }else if (isComment) {
+            }else if(isComment){
                 if(charValue == ' '){
                     continue;
                 }
-                if (charValue != '\n') {
-                    
-                    commentString.append(1, charValue);
+                if(charValue != '\n'){
+                    commentString.append(1,charValue);
                     continue;
-                }
-                else {
+                }else{
                     isComment = false;
                     continue;
                 }
             }
             // normal and value
-            if ((charValue == '\n' || i == (length - 1)) && isValue) {
+            if((charValue == '\n' || i == (length - 1)) && isValue){
                 isEmpty = true;
                 isValue = false;
-                if (i == (length - 1) && charValue != '\n')
-                    valueString.append(1, charValue);
-                
+                if(i == (length - 1) && charValue != '\n')
+                    valueString.append(1,charValue);
+
                 keyValue[normalString] = std::make_shared<ConfigValue>(normalString,valueString,commentString);
                 commentString.clear();
                 normalString.clear();
                 valueString.clear();
                 continue;
-            }else if (isValue) {
-                if (!(charValue == ' ' && isEmpty)) {
+            }else if(isValue){
+                if(!(charValue == ' ' && isEmpty)){
                     isEmpty = false;
-                    valueString.append(1, charValue);
+                    valueString.append(1,charValue);
                 }
                 continue;
-            }else if (charValue == '=') {
+            }else if(charValue == '='){
                 isValue = true;
                 continue;
             }
             //empty
-            if (charValue == ' ' || charValue == '\r' || charValue == '\n') {
+            if(charValue == ' ' || charValue == '\r' || charValue == '\n'){
                 continue;
             }
-            normalString.append(1, charValue);
+            normalString.append(1,charValue);
         }
     }
 }

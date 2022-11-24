@@ -10,7 +10,7 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    HttpClient::~HttpClient() =default;
+    HttpClient::~HttpClient() = default;
 
     HttpClient::HttpClient(const std::string& url,uint64_t timeOutMs)
         :m_Url(url)
@@ -33,9 +33,9 @@ namespace Http{
     void HttpClient::execute(const Safe<HttpRequest>& request){
         Uri uri(m_Url);
         if(uri.hasError()){
-            auto &errorCallBack = m_Socket->getErrorCodeCallBack();
-            if (errorCallBack)
-                errorCallBack(std::error_code(static_cast<int>(UriErrorCode::ParseError), Magic::NetWork::Http::UriErrorCategory()));;
+            auto& errorCallBack = m_Socket->getErrorCodeCallBack();
+            if(errorCallBack)
+                errorCallBack(std::error_code(static_cast<int>(UriErrorCode::ParseError),Magic::NetWork::Http::UriErrorCategory()));;
             return;
         }
 
@@ -56,7 +56,7 @@ namespace Http{
 
         asio::error_code errorCode;
         asio::ip::tcp::resolver resolver(*m_IOService);
-        auto results = resolver.resolve(host, AsString(port),errorCode);
+        auto results = resolver.resolve(host,AsString(port),errorCode);
         if(errorCode){
             auto& errorCallBack = m_Socket->getErrorCodeCallBack();
             if(errorCallBack)
@@ -71,7 +71,7 @@ namespace Http{
     #endif
         auto self = this->shared_from_this();
         m_Socket->getEntity()->async_connect(results->endpoint(),[this,self,request](const asio::error_code& errorCode){
-            if(errorCode) {
+            if(errorCode){
                 if(errorCode == asio::error::eof || errorCode == asio::error::operation_aborted)
                     return;
                 auto& errorCallBack = m_Socket->getErrorCodeCallBack();

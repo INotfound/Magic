@@ -2,56 +2,55 @@
 
 namespace Magic{
 namespace NetWork{
-namespace Http {
-
+namespace Http{
     MultiPart::MultiPart()
         :m_IsFile(false){
         setParserCallBacks();
     }
 
-    MultiPart::MultiPart(const std::string &boundary)
+    MultiPart::MultiPart(const std::string& boundary)
         :m_IsFile(false)
         ,m_Parser(boundary){
         setParserCallBacks();
     }
 
-    void MultiPart::reset() {
+    void MultiPart::reset(){
         m_Parser.reset();
     }
 
-    bool MultiPart::stopped() const {
+    bool MultiPart::stopped() const{
         return m_Parser.stopped();
     }
 
-    bool MultiPart::hasError() const {
+    bool MultiPart::hasError() const{
         return m_Parser.hasError();
     }
 
-    bool MultiPart::succeeded() const {
+    bool MultiPart::succeeded() const{
         return m_Parser.succeeded();
     }
 
-    const char *MultiPart::getErrorMessage() const {
+    const char* MultiPart::getErrorMessage() const{
         return m_Parser.getErrorMessage();
     }
 
-    size_t MultiPart::feed(const char *buffer, size_t len) {
-        return m_Parser.feed(buffer, len);
+    size_t MultiPart::feed(const char* buffer,size_t len){
+        return m_Parser.feed(buffer,len);
     }
 
-    void MultiPart::setBoundary(const std::string &boundary) {
+    void MultiPart::setBoundary(const std::string& boundary){
         m_Parser.setBoundary(boundary);
     }
 
-    void MultiPart::setDirectory(const std::string& dirPath) {
+    void MultiPart::setDirectory(const std::string& dirPath){
         m_Directory = dirPath;
     }
 
-    const std::unordered_map<std::string, std::string> &MultiPart::getParamMap() const {
+    const std::unordered_map<std::string,std::string>& MultiPart::getParamMap() const{
         return m_ParamMap;
     }
 
-    void MultiPart::setParserCallBacks() {
+    void MultiPart::setParserCallBacks(){
         m_Parser.onPartBegin = PartBegin;
         m_Parser.onHeaderField = HeaderField;
         m_Parser.onHeaderValue = HeaderValue;
@@ -63,62 +62,62 @@ namespace Http {
         m_Parser.userData = this;
     }
 
-    std::string MultiPart::getName() {
+    std::string MultiPart::getName(){
         auto it = m_HeaderMap.find("Content-Disposition");
-        if (it != m_HeaderMap.end()) {
+        if(it != m_HeaderMap.end()){
             auto pos = it->second.find("name");
-            if (pos != std::string::npos) {
-                auto start = it->second.find('"', pos) + 1;
+            if(pos != std::string::npos){
+                auto start = it->second.find('"',pos) + 1;
                 auto end = it->second.find('"',start + 1);
-                if (start != std::string::npos || end != std::string::npos || end > start) {
-                    return it->second.substr(start, end - start);
+                if(start != std::string::npos || end != std::string::npos || end > start){
+                    return it->second.substr(start,end - start);
                 }
             }
         }
         return std::string();
     }
 
-    std::string MultiPart::getFileName() {
+    std::string MultiPart::getFileName(){
         auto it = m_HeaderMap.find("Content-Disposition");
-        if (it != m_HeaderMap.end()) {
+        if(it != m_HeaderMap.end()){
             auto pos = it->second.find("filename");
-            if (pos != std::string::npos) {
-                auto start = it->second.find('"', pos) + 1;
+            if(pos != std::string::npos){
+                auto start = it->second.find('"',pos) + 1;
                 auto end = it->second.find('"',start + 1);
-                if (start != std::string::npos || end != std::string::npos || end > start) {
-                    return it->second.substr(start, end - start);
+                if(start != std::string::npos || end != std::string::npos || end > start){
+                    return it->second.substr(start,end - start);
                 }
             }
         }
         return std::string();
     }
 
-    void MultiPart::PartBegin(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
+    void MultiPart::PartBegin(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
         self->m_IsFile = false;
         self->m_HeaderName.clear();
         self->m_HeaderValue.clear();
     }
 
-    void MultiPart::HeaderField(const char *buffer, size_t start, size_t end, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
-        self->m_HeaderName.append(buffer + start, end - start);
+    void MultiPart::HeaderField(const char* buffer,size_t start,size_t end,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
+        self->m_HeaderName.append(buffer + start,end - start);
     }
 
-    void MultiPart::HeaderValue(const char *buffer, size_t start, size_t end, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
-        self->m_HeaderValue.append(buffer + start, end - start);
+    void MultiPart::HeaderValue(const char* buffer,size_t start,size_t end,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
+        self->m_HeaderValue.append(buffer + start,end - start);
     }
 
-    void MultiPart::HeaderEnd(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
-        self->m_HeaderMap.insert(std::make_pair(self->m_HeaderName, self->m_HeaderValue));
+    void MultiPart::HeaderEnd(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
+        self->m_HeaderMap.insert(std::make_pair(self->m_HeaderName,self->m_HeaderValue));
         self->m_HeaderName.clear();
         self->m_HeaderValue.clear();
     }
 
-    void MultiPart::HeadersEnd(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
+    void MultiPart::HeadersEnd(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
         self->m_HeaderName.clear();
         self->m_HeaderValue.clear();
         self->m_HeaderMaps.push_back(self->m_HeaderMap);
@@ -136,17 +135,17 @@ namespace Http {
         self->m_HeaderMap.clear();
     }
 
-    void MultiPart::PartData(const char *buffer, size_t start, size_t end, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
+    void MultiPart::PartData(const char* buffer,size_t start,size_t end,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
         if(self->m_IsFile && self->m_FileStream.is_open()){
-            self->m_FileStream.write(buffer + start, end - start);
+            self->m_FileStream.write(buffer + start,end - start);
         }else if(!self->m_ParamName.empty()){
-            self->m_ParamValue.append(buffer + start, end - start);
+            self->m_ParamValue.append(buffer + start,end - start);
         }
     }
 
-    void MultiPart::PartEnd(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
+    void MultiPart::PartEnd(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
         if(!self->m_ParamName.empty()){
             if(self->m_IsFile){
                 self->m_ParamMap.emplace(self->m_ParamName,self->m_FilePath);
@@ -165,8 +164,8 @@ namespace Http {
         }
     }
 
-    void MultiPart::End(const char */*buffer*/, size_t /*start*/, size_t /*end*/, void *userData) {
-        auto *self = reinterpret_cast<MultiPart *>(userData);
+    void MultiPart::End(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
+        auto* self = reinterpret_cast<MultiPart*>(userData);
         self->m_HeaderMaps.push_back(self->m_HeaderMap);
         self->m_HeaderMap.clear();
     }

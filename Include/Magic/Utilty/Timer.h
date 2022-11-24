@@ -4,6 +4,7 @@
  * @LastEditTime: 2021-02-01 22:30:39
  */
 #pragma once
+
 #include <functional>
 
 #include "asio.hpp"
@@ -17,6 +18,7 @@ namespace Magic{
     class Timer{
     public:
         ~Timer();
+
         /**
          * @brief 构造函数
          * @param name 定时器名称
@@ -24,20 +26,24 @@ namespace Magic{
          * @param callBack 定时器回调执行函数
          */
         Timer(const std::string& name,uint32_t tickMs,std::function<void()> callBack);
+
         /**
          * @brief 运行定时器
          */
         void run();
+
         /**
          * @brief 暂停定时器
          */
         void stop();
+
     private:
         /**
          * @brief 定时器处理函数
          * @param err 错误码
          */
         void handle(const asio::error_code& err);
+
     private:
         std::string m_Name;
         Safe<Thread> m_Thread;
@@ -47,11 +53,13 @@ namespace Magic{
         Safe<asio::io_context> m_IoContext;
         Safe<asio::executor_work_guard<asio::io_context::executor_type>> m_IoWork;
     };
+
     /**
      * @brief 获取当前时间
      * @return: 返回当前时间
      */
     uint64_t GetCurrentTimeMS();
+
     /**
      * @brief 获取当前时间
      * @return: 返回当前时间

@@ -9,7 +9,7 @@
 
 namespace Magic{
 namespace NetWork{
-    TcpServer::~TcpServer() =default;
+    TcpServer::~TcpServer() = default;
 
     TcpServer::TcpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration)
         :m_IsRun(false)
@@ -17,8 +17,7 @@ namespace NetWork{
         ,m_IoPool(pool)
         ,m_Address(configuration->at<std::string>("NetWork.Server.IpAddress","0.0.0.0"))
         ,m_NetworkPort(configuration->at<uint16_t>("NetWork.Server.IpPort",80)){
-        m_Acceptor = std::make_shared<asio::ip::tcp::acceptor>(*m_IoPool->get()
-            ,asio::ip::tcp::endpoint(asio::ip::address::from_string(m_Address),m_NetworkPort));
+        m_Acceptor = std::make_shared<asio::ip::tcp::acceptor>(*m_IoPool->get(),asio::ip::tcp::endpoint(asio::ip::address::from_string(m_Address),m_NetworkPort));
     }
 
     void TcpServer::run(){

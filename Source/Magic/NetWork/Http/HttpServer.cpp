@@ -16,7 +16,7 @@ namespace Http{
         ,m_EnableSsl(configuration->at<bool>("NetWork.Server.EnableSsl",false))
         ,m_KeyFile(configuration->at<std::string>("NetWork.Server.Ssl.KeyFile",""))
         ,m_CertFile(configuration->at<std::string>("NetWork.Server.Ssl.CertFile",""))
-        ,m_UploadDirectory(configuration->at<std::string>("NetWork.Server.UploadDirectory", ".")){
+        ,m_UploadDirectory(configuration->at<std::string>("NetWork.Server.UploadDirectory",".")){
         m_Acceptor->set_option(asio::ip::tcp::acceptor::reuse_address(true));
     }
 
@@ -29,9 +29,7 @@ namespace Http{
     #ifdef OPENSSL
         if(m_EnableSsl){
             asio::ssl::context sslContext(asio::ssl::context::sslv23);
-            sslContext.set_options(asio::ssl::context::no_sslv2
-                                   | asio::ssl::context::single_dh_use
-                                   | asio::ssl::context::default_workarounds);
+            sslContext.set_options(asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use | asio::ssl::context::default_workarounds);
             sslContext.use_certificate_chain_file(m_CertFile);
             sslContext.use_private_key_file(m_KeyFile,asio::ssl::context::pem);
             socket->enableSsl(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*socket->getEntity(),sslContext));
@@ -46,7 +44,7 @@ namespace Http{
                     sslStream->async_handshake(asio::ssl::stream_base::server,[this,socket](const asio::error_code& err){
                         if(err){
                             socket->close();
-                            MAGIC_WARN() <<  err.message();
+                            MAGIC_WARN() << err.message();
                             return;
                         }
                         this->handleFunc(socket);
@@ -61,18 +59,18 @@ namespace Http{
                 socket->close();
                 if(err == asio::error::operation_aborted)
                     return;
-                MAGIC_WARN() <<  err.message();
+                MAGIC_WARN() << err.message();
             }
             if(m_IsRun)
                 this->accept();
         });
     }
-    
+
     void HttpServer::handleFunc(const Safe<Socket>& socket){
         Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(socket);
         httpSocket->runHeartBeat();
         httpSocket->setDirectory(m_UploadDirectory);
-        httpSocket->recvRequest([this](const Safe<HttpSocket>& httpSocket){m_ServletDispatch->handle(httpSocket);});
+        httpSocket->recvRequest([this](const Safe<HttpSocket>& httpSocket){ m_ServletDispatch->handle(httpSocket); });
     }
 }
 }

@@ -4,6 +4,7 @@
  * @LastEditTime: 2020-10-01 16:40:22
  */
 #pragma once
+
 #include <map>
 #include <ostream>
 
@@ -14,7 +15,7 @@ namespace NetWork{
 namespace Http{
     /* Request Methods */
     #undef DELETE
-    #define HTTP_METHOD_MAP(XX)         \
+    #define HTTP_METHOD_MAP(XX)           \
         XX(0,  DELETE,      DELETE)       \
         XX(1,  GET,         GET)          \
         XX(2,  HEAD,        HEAD)         \
@@ -121,7 +122,7 @@ namespace Http{
         XX(511, NETWORK_AUTHENTICATION_REQUIRED, Network Authentication Required) \
 
     /* Content Type */
-    #define HTTP_CONTENT_TYPE(XX) \
+    #define HTTP_CONTENT_TYPE(XX)                                                               \
         XX(TEXT_CSS,                    "css",      "text/css; charset=utf-8")                  \
         XX(TEXT_XML,                    "xml",      "text/xml; charset=utf-8")                  \
         XX(TEXT_XSL,                    "xsl",      "text/xsl; charset=utf-8")                  \
@@ -172,65 +173,75 @@ namespace Http{
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
+
     /**
      * @brief 是否是Url的编码
      * @param str 需要检查的字符串
      * @return: 返回True则是，返回False则是否
      */
     bool IsUrlEncode(const std::string& str);
+
     /**
      * @brief 将String转换成HttpMethod
      * @param str 需要转换的字符串
      * @return: 返回HttpMethod
      */
     HttpMethod CharsToHttpMethod(const char* str);
+
     /**
      * @brief 将String转换成HttpMethod
      * @param str 需要转换的字符串
      * @return: 返回HttpMethod
      */
     HttpMethod StringToHttpMethod(const std::string& str);
+
     /**
      * @brief 将HttpMethod转换成String
      * @param method 需要转换的HttpMethod
      * @return: 返回转换后的String
      */
     const char* HttpMethodToString(const HttpMethod& method);
+
     /**
      * @brief 将HttpStatus转换成String
      * @param status 需要转换的HttpStatus
      * @return: 返回转换后的String
      */
     const char* HttpStatusToString(const HttpStatus& status);
+
     /**
      * @brief 进行Url编码
      * @param value 需要编码的字符串
      * @return: 返回编码后的String
      */
-    std::string UrlEncode(const std::string &value) noexcept;
+    std::string UrlEncode(const std::string& value) noexcept;
+
     /**
      * @brief 进行Url解码
      * @param value 需要解码的字符串
      * @return: 返回解码的String
      */
-	std::string UrlDecode(const std::string &value) noexcept;
+    std::string UrlDecode(const std::string& value) noexcept;
+
     /**
      * @brief 将FileType转换成HttpContentType
      * @param fileName 需要转换的文件名称
      * @return: 返回String类型的HttpContentType
      */
     const char* FileTypeToHttpContentType(const std::string& fileName);
+
     /**
      * @brief 将HttpContent转换成返回HttpContentType
      * @param contentType 需要转换的HttpContentType
      * @return: 返回String类型的HttpContentType
      */
     const char* HttpContentTypeToString(const HttpContentType& contentType);
-	
+
     class CaseInsensitiveLess{
     public:
-        bool operator()(const std::string&, const std::string&) const;
+        bool operator()(const std::string&,const std::string&) const;
     };
+
     /**
      * @brief Http请求类
      */
@@ -244,164 +255,195 @@ namespace Http{
          * @param version Http协议版本
          */
         explicit HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
+
         /**
          * @brief 获取所有参数函数
          * @return: 返回键值对容器
          */
         KeyValue& atParams();
+
         /**
          * @brief 获取所有Http头中的参数函数
          * @return: 返回键值对容器
          */
         KeyValue& atHeaders();
+
         /**
          * @brief 是否Range切片
          * @return: 返回True则是，返回False则是否
          */
         bool isRange() const;
+
         /**
          * @brief 获取是否为长连接函数
          * @return: 返回True则是，返回False则是否
          */
         bool getKeepAlive() const;
+
         /**
          * @brief 获取版本号函数
          * @return: 返回版本号
          */
         uint8_t getVersion() const;
+
         /**
          * @brief 获取HttpMethod函数
          * @return: 返回HttpMethod类型
          */
         HttpMethod getMethod() const;
+
         /**
          * @brief 获取切片结束位置函数
          * @return: 返回切片结束位置
          */
         uint64_t getRangeStop() const;
+
         /**
          * @brief 获取切片开始位置函数
          * @return: 返回切片开始位置
          */
         uint64_t getRangeStart() const;
+
         /**
          * @brief 获取正文长度函数
          * @return: 返回正文长度
          */
         uint64_t getContentLength() const;
+
         /**
          * @brief 获取路径函数
          * @return: 返回路径字符串
          */
         const std::string& getPath() const;
+
         /**
          * @brief 获取主体正文函数
          * @return: 返回主体正文字符串
          */
         const std::string& getBody() const;
+
         /**
          * @brief 获取查询函数
          * @return: 返回查询字符串
          */
         const std::string& getQuery() const;
+
         /**
          * @brief 获取Cookie函数
          * @param key 指定的键
          * @return: 返回根据指定的键对应的值
          */
         const std::string& getCookie(const std::string& key);
+
         /**
          * @brief 获取参数函数
          * @param key 指定的键
          * @return: 返回根据指定的键对应的值
          */
         const std::string& getParam(const std::string& key) const;
+
         /**
          * @brief 获取头参数函数
          * @param key 指定的键 不区分大小写
          * @return: 返回根据指定的键对应的值
          */
         const std::string& getHeader(const std::string& key) const;
+
         /**
          * @brief 删除参数函数
          * @param key 指定的键
          */
         void delParam(const std::string& key);
+
         /**
          * @brief 删除头参数函数
          * @param key 指定的键
          */
         void delHeader(const std::string& key);
+
         /**
          * @brief 获取输出流函数
          * @param os 输出流
          * @return: 返回输出流
          */
         std::ostream& toStream(std::ostream& os);
+
         /**
          * @brief 设置版本号函数
          * @param ver 版本号
          */
         ObjectWrapper<HttpRequest> setVersion(uint8_t ver);
+
         /**
          * @brief 设置HttpMethod函数
          * @param method HttpMethod类型
          */
         ObjectWrapper<HttpRequest> setMethod(HttpMethod method);
+
         /**
          * @brief 设置是否为长连接函数
          * @param keepAlive 是否为长连接
          */
         ObjectWrapper<HttpRequest> setKeepAlive(bool keepAlive);
+
         /**
          * @brief 设置查询字符串函数
          * @param query 查询字符串
          */
         ObjectWrapper<HttpRequest> setQuery(const std::string& query);
+
         /**
          * @brief 设置Url路径函数
          * @param urlPath Url路径
          */
         ObjectWrapper<HttpRequest> setPath(const std::string& urlPath);
+
         /**
          * @brief 设置主体正文函数
          * @param body 主体正文
          */
         ObjectWrapper<HttpRequest> setBody(const std::string& body);
+
         /**
          * @brief 设置主体正文长度函数
          * @param length 正文长度
          */
         ObjectWrapper<HttpRequest> setContentLength(uint64_t length);
+
         /**
          * @brief 设置切片范围
          * @param start 切片开始范围
          * @param stop 切片结束范围
          */
         ObjectWrapper<HttpRequest> setRange(uint64_t start,uint64_t stop);
+
         /**
          * @brief 设置片段函数
          * @param fragment 片段
          */
         ObjectWrapper<HttpRequest> setFragment(const std::string& fragment);
+
         /**
          * @brief 设置参数函数
          * @param key 键
          * @param value 值
          */
         ObjectWrapper<HttpRequest> setParam(const std::string& key,const std::string& value);
+
         /**
          * @brief 设置Http头中的参数函数
          * @param key 键
          * @param value 值
          */
         ObjectWrapper<HttpRequest> setHeader(const std::string& key,const std::string& value);
+
         /**
          * @brief 设置Cookie函数
          * @param key 键
          * @param value 值
          */
         ObjectWrapper<HttpRequest> setCookie(const std::string& key,const std::string& value);
+
     private:
         bool m_KeepAlive;
         uint8_t m_Version;
@@ -415,6 +457,7 @@ namespace Http{
         std::string m_Fragment;
         uint64_t m_ContentLength;
     };
+
     /**
      * @brief Http响应类
      */
@@ -428,133 +471,159 @@ namespace Http{
          * @param version 版本号
          */
         explicit HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
+
         /**
          * @brief 是否Range切片
          * @return: 返回True则是，返回False则是否
          */
         bool isRange() const;
+
         /**
          * @brief 是否拥有资源
          * @return: 返回True则是，返回False则是否
          */
         bool hasResource() const;
+
         /**
          * @brief 获取Http头键值对容器函数
          * @return: 返回Http头键值对容器
          */
         KeyValue& getHeaders();
+
         /**
          * @brief 获取是否为长连接函数
          * @return: 返回是否为长连接
          */
         bool getKeepAlive() const;
+
         /**
          * @brief 获取版本号函数
          * @return: 返回版本号
          */
         uint8_t getVersion() const;
+
         /**
          * @brief 获取切片结束位置函数
          * @return: 返回切片结束位置
          */
         uint64_t getRangeStop() const;
+
         /**
          * @brief 获取HttpStatus函数
          * @return: 返回HttpStatus类型
          */
         HttpStatus getStatus() const;
+
         /**
          * @brief 获取切片开始位置函数
          * @return: 返回切片开始位置
          */
         uint64_t getRangeStart() const;
+
         /**
          * @brief 获取正文长度函数
          * @return: 返回正文长度
          */
         uint64_t getContentLength() const;
+
         /**
          * @brief 获取主体正文函数
          * @return: 返回主体正文
          */
         const std::string& getBody() const;
+
         /**
          * @brief 获取切片总共长度函数
          * @return: 返回切片总共长度位置
          */
         uint64_t getRangeTotalLength() const;
+
         /**
          * @brief 获取响应解释函数
          * @return: 返回响应解释
          */
         const std::string& getReason() const;
+
         /**
          * @brief 获取资源函数
          * @return: 返回资源路径
          */
         const std::string& getResource() const;
+
         /**
          * @brief 获取Http头键值对函数
          * @param key 指定的键
          * @return: 返回根据指定的键对应的值
          */
         const std::string& getHeader(const std::string& key);
+
         /**
          * @brief 删除Http头键值对函数
          * @param key 指定的键
          */
         void delHeader(const std::string& key);
+
         /**
          * @brief 获取输出流函数
          * @param os 输出流
          * @return: 返回输出流
          */
         std::ostream& toStream(std::ostream& os);
+
         /**
          * @brief 设置版本号函数
          * @param ver 版本号
          */
         ObjectWrapper<HttpResponse> setVersion(uint8_t ver);
+
         /**
          * @brief 设置HttpStatus函数
          * @param status HttpStatus类型
          */
         ObjectWrapper<HttpResponse> setStatus(HttpStatus status);
+
         /**
          * @brief 设置是否为长连接函数
          * @param keepAlive 是否为长连接
          */
         ObjectWrapper<HttpResponse> setKeepAlive(bool keepAlive);
+
         /**
          * @brief 设置主体正文函数
          * @param body 主体正文
          */
         ObjectWrapper<HttpResponse> setBody(const std::string& body);
+
         /**
          * @brief 设置主体正文长度函数
          * @param length 主体正文长度
          */
         ObjectWrapper<HttpResponse> setContentLength(uint64_t length);
+
         /**
          * @brief 设置响应解释函数
          * @param reason 解释
          */
         ObjectWrapper<HttpResponse> setReason(const std::string& reason);
+
         /**
          * @brief 设置资源函数
          * @param filePath 资源路径
          */
         ObjectWrapper<HttpResponse> setResource(const std::string& filePath);
+
         /**
          * @brief 设置正文类型函数
          * @param contentType 正文类型
          */
         ObjectWrapper<HttpResponse> setContentType(const std::string& contentType);
+
         /**
          * @brief 设置正文类型函数
          * @param contentType 正文类型
          */
         ObjectWrapper<HttpResponse> setContentType(const HttpContentType& contentType);
+
         /**
          * @brief 设置切片范围
          * @param start 切片开始范围
@@ -562,12 +631,14 @@ namespace Http{
          * @param totalLength 切片总长度
          */
         ObjectWrapper<HttpResponse> setRange(uint64_t start,uint64_t stop,uint64_t totalLength);
+
         /**
          * @brief 设置Http头键值对函数
          * @param key 键
          * @param value 值
          */
         ObjectWrapper<HttpResponse> setHeader(const std::string& key,const std::string& value);
+
         /**
          * @brief 设置Cookie函数
          * @param key 键
@@ -578,22 +649,24 @@ namespace Http{
          * @param httpOnly 是否HttpOnly
          * @param secure 是否Secure
          */
-        ObjectWrapper<HttpResponse> setCookie(const std::string& key, const std::string& val,std::time_t expired =0
-                ,const std::string& path ="",const std::string& domain ="",bool httpOnly =true,bool secure =false);
+        ObjectWrapper<HttpResponse> setCookie(const std::string& key,const std::string& val,std::time_t expired = 0,const std::string& path = "",const std::string& domain = "",bool httpOnly = true,bool secure = false);
+
     private:
         bool m_KeepAlive;
         uint8_t m_Version;
         KeyValue m_Headers;
         std::string m_Body;
-        HttpStatus m_Status; 
+        HttpStatus m_Status;
         std::string m_Reason;
         std::string m_Resource;
         uint64_t m_ContentLength;
         HttpContentType m_ContentType;
         std::vector<std::string> m_Cookies;
     };
-    std::ostream& operator<<(std::ostream& os, const Safe<HttpRequest>& request);
-    std::ostream& operator<<(std::ostream& os, const Safe<HttpResponse>& response);
+
+    std::ostream& operator<<(std::ostream& os,const Safe<HttpRequest>& request);
+
+    std::ostream& operator<<(std::ostream& os,const Safe<HttpResponse>& response);
 }
 }
 }

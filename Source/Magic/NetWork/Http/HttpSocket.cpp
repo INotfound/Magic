@@ -10,21 +10,21 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    HttpSocket::~HttpSocket() =default;
+    HttpSocket::~HttpSocket() = default;
 
     HttpSocket::HttpSocket(const Safe<Socket>& socket)
         :m_Socket(socket)
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
         ,m_Death(false)
-        ,m_StreamBufferSize(1024*1024)
+        ,m_StreamBufferSize(1024 * 1024)
         ,m_TotalTransferLength(0)
         ,m_CurrentTransferLength(0){
         m_MultiPart = std::make_shared<MultiPart>();
         m_RequestParser = std::make_shared<HttpRequestParser>();
         m_ResponseParser = std::make_shared<HttpResponseParser>();
 
-        m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
+        m_Socket->setErrorCodeCallBack([this](const asio::error_code& err){
             m_Death = true;
         #ifdef WIN32
             if(err.value() == WSAECONNABORTED) return;
@@ -35,7 +35,7 @@ namespace Http{
         });
     }
 
-    void HttpSocket::runHeartBeat() {
+    void HttpSocket::runHeartBeat(){
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
             if(m_WebSocket){ /// WebSocket
                 socket->runHeartBeat(m_WebSocket);
@@ -50,7 +50,7 @@ namespace Http{
         m_Socket->runHeartBeat(this->shared_from_this());
     }
 
-    void HttpSocket::setDirectory(const std::string& dirPath) {
+    void HttpSocket::setDirectory(const std::string& dirPath){
         m_MultiPart->setDirectory(dirPath);
     }
 
@@ -58,7 +58,7 @@ namespace Http{
         return m_RequestParser->getData();
     }
 
-    const Safe<HttpResponse> &HttpSocket::getResponse() const{
+    const Safe<HttpResponse>& HttpSocket::getResponse() const{
         return m_ResponseParser->getData();
     }
 
@@ -88,7 +88,7 @@ namespace Http{
         std::ostream stream(streamBuffer.get());
         if(httpResponse->hasResource()){
             std::string filePath = httpResponse->getResource();
-            m_FileStream.open(filePath,std::ios::in|std::ios::binary);
+            m_FileStream.open(filePath,std::ios::in | std::ios::binary);
             if(m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
@@ -106,7 +106,7 @@ namespace Http{
                         m_TotalTransferLength = (rangeStop - rangeStart) + 1;
                     }
                     httpResponse->setContentLength(m_TotalTransferLength);
-                    httpResponse->setRange(rangeStart, rangeStart + m_TotalTransferLength - 1, totalLength);
+                    httpResponse->setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
                     /// Send Response
                     stream << httpResponse;
                     m_Socket->send(streamBuffer);
@@ -116,7 +116,7 @@ namespace Http{
                     m_TotalTransferLength = totalLength;
                     httpResponse->setStatus(HttpStatus::OK);
                     httpResponse->setContentLength(m_TotalTransferLength);
-                    httpResponse->setHeader("Accept-Ranges", "bytes");
+                    httpResponse->setHeader("Accept-Ranges","bytes");
                     stream << httpResponse;
                     m_Socket->send(streamBuffer);
                     this->transferFileStream();
@@ -149,7 +149,7 @@ namespace Http{
             response->setHeader("Upgrade","websocket")
                     ->setHeader("Connection","Upgrade")
                     ->setStatus(HttpStatus::SWITCHING_PROTOCOLS)
-                    ->setHeader("Sec-WebSocket-Accept", Base64Encode(SHA1(wsKey)));
+                    ->setHeader("Sec-WebSocket-Accept",Base64Encode(SHA1(wsKey)));
             this->sendResponse(response);
         }
         Safe<Socket> socket = std::move(m_Socket);
@@ -221,7 +221,7 @@ namespace Http{
                 this->multiPartParser();
             }else{
                 /// Max Request Size == 5MB
-                if(m_TotalLength > 0 && m_TotalLength < 1024*1024*5){
+                if(m_TotalLength > 0 && m_TotalLength < 1024 * 1024 * 5){
                     m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
                         std::string body;
                         auto& request = m_RequestParser->getData();
@@ -279,7 +279,7 @@ namespace Http{
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
             size_t fed = 0;
-            do {
+            do{
                 size_t ret = m_MultiPart->feed(data.data() + fed,data.size() - fed);
                 fed += ret;
             }while(fed < data.size() && !m_MultiPart->stopped());

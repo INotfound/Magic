@@ -11,7 +11,7 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    IHttpServlet::~IHttpServlet() =default;
+    IHttpServlet::~IHttpServlet() = default;
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
         std::lock_guard<std::mutex> locker(m_Mutex);
@@ -49,7 +49,7 @@ namespace Http{
         auto matchIter = m_MatchRoutes.begin();
         auto matchEnd = m_MatchRoutes.end();
         std::regex reg;
-        for(; matchIter != matchEnd; matchIter++){
+        for(;matchIter != matchEnd;matchIter++){
             reg.assign(matchIter->first);
             if(std::regex_match(httpPath,reg)){
                 /// Global Before

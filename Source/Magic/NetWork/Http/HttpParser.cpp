@@ -19,7 +19,7 @@ namespace Http{
         auto* parser = static_cast<HttpRequestParser*>(data);
         parser->getData()->setPath(std::string(at,length));
     }
-    
+
     void OnRequestQuery(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
         parser->getData()->setQuery(std::string(at,length));
@@ -49,7 +49,7 @@ namespace Http{
         }
         parser->getData()->setVersion(ver);
     }
-    
+
     void OnRequestFragment(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
         parser->getData()->setFragment(std::string(at,length));
@@ -59,32 +59,31 @@ namespace Http{
         //HttpRequestParser *parser = static_cast<HttpRequestParser*>(data);
     }
 
-    void OnRequestHttpField(void *data,const char*field,size_t flen,const char* value,size_t vlen){
+    void OnRequestHttpField(void* data,const char* field,size_t flen,const char* value,size_t vlen){
         auto* parser = static_cast<HttpRequestParser*>(data);
         if(flen == 0){
             //TODO
             parser->setError(true);
             return;
         }
-        parser->getData()->setHeader(std::string(field, flen), std::string(value, vlen));
+        parser->getData()->setHeader(std::string(field,flen),std::string(value,vlen));
     }
 
     HttpRequestParser::HttpRequestParser()
         :m_Error(false)
         ,m_Data(std::make_shared<HttpRequest>())
         ,m_Parser(std::make_shared<http_parser>()){
-        
-        http_parser_init(m_Parser.get());
-        m_Parser->request_uri    = OnRequestUri;
-        m_Parser->request_path   = OnRequestPath;
-        m_Parser->query_string   = OnRequestQuery;
-        m_Parser->request_method = OnRequestMethod;
-        m_Parser->http_version   = OnRequestVersion;
-        m_Parser->fragment       = OnRequestFragment;
-        m_Parser->http_field     = OnRequestHttpField;
-        m_Parser->header_done    = OnRequestHeaderDone;
-        m_Parser->data = this;
 
+        http_parser_init(m_Parser.get());
+        m_Parser->request_uri = OnRequestUri;
+        m_Parser->request_path = OnRequestPath;
+        m_Parser->fragment = OnRequestFragment;
+        m_Parser->query_string = OnRequestQuery;
+        m_Parser->http_version = OnRequestVersion;
+        m_Parser->http_field = OnRequestHttpField;
+        m_Parser->request_method = OnRequestMethod;
+        m_Parser->header_done = OnRequestHeaderDone;
+        m_Parser->data = this;
     }
 
     void HttpRequestParser::reset(){
@@ -93,7 +92,7 @@ namespace Http{
         m_Data = std::make_shared<HttpRequest>();
         http_parser_init(m_Parser.get());
     }
-    
+
     bool HttpRequestParser::hasError(){
         return m_Error || http_parser_has_error(m_Parser.get());
     }
@@ -113,7 +112,7 @@ namespace Http{
             if(!length.empty()){
                 m_Data->setContentLength(StringAs<uint64_t>(length,10));
             }
-        }catch (...){
+        }catch(...){
             m_Data->setContentLength(0);
         }
         return m_Data->getContentLength();
@@ -133,7 +132,7 @@ namespace Http{
         auto* parser = static_cast<HttpResponseParser*>(data);
         parser->getData()->setReason(std::string(at,length));
     }
-    
+
     void OnResponseStatus(void* data,const char* at,size_t /*length*/){
         auto* parser = static_cast<HttpResponseParser*>(data);
         auto status = static_cast<HttpStatus>(atol(at));
@@ -166,7 +165,7 @@ namespace Http{
     void OnResponseHeaderOne(void* /*data*/,const char* /*at*/,size_t /*length*/){
     }
 
-    void OnResponseHttpField(void *data,const char*field,size_t flen,const char* value,size_t vlen){
+    void OnResponseHttpField(void* data,const char* field,size_t flen,const char* value,size_t vlen){
         auto* parser = static_cast<HttpResponseParser*>(data);
         if(flen == 0){
             //TODO
@@ -175,19 +174,19 @@ namespace Http{
         }
         parser->getData()->setHeader(std::string(field,flen),std::string(value,vlen));
     }
-    
+
     HttpResponseParser::HttpResponseParser()
         :m_Error(false)
         ,m_Data(std::make_shared<HttpResponse>())
         ,m_Parser(std::make_shared<httpclient_parser>()){
         httpclient_parser_init(m_Parser.get());
-        m_Parser->reason_phrase  = OnResponseReason;
-        m_Parser->status_code    = OnResponseStatus;
-        m_Parser->http_version   = OnResponseVersion;
-        m_Parser->last_chunk     = OnResponseLastChunk;
-        m_Parser->chunk_size     = OnResponseChunkSize;
-        m_Parser->header_done    = OnResponseHeaderOne;
-        m_Parser->http_field     = OnResponseHttpField;
+        m_Parser->status_code = OnResponseStatus;
+        m_Parser->reason_phrase = OnResponseReason;
+        m_Parser->http_version = OnResponseVersion;
+        m_Parser->last_chunk = OnResponseLastChunk;
+        m_Parser->chunk_size = OnResponseChunkSize;
+        m_Parser->http_field = OnResponseHttpField;
+        m_Parser->header_done = OnResponseHeaderOne;
         m_Parser->data = this;
     }
 
@@ -223,11 +222,11 @@ namespace Http{
             }else{
                 return StringAs<uint64_t>(length,10);
             }
-        }catch (...){
+        }catch(...){
             return 0;
         }
     }
-    
+
     const Safe<HttpResponse>& HttpResponseParser::getData(){
         return m_Data;
     }

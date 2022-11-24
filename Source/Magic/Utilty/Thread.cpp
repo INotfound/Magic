@@ -10,8 +10,8 @@
 namespace Magic{
     static thread_local std::string g_ThreadName = "UNKNOWN";
 
-    Thread::~Thread() =default;
-    
+    Thread::~Thread() = default;
+
     Thread::Thread(const std::string& threadName,std::function<void()> callback)
         :m_Id(-1)
         ,m_Name(threadName)
@@ -27,7 +27,7 @@ namespace Magic{
         m_Thread = std::make_shared<std::thread>(&Thread::run,this);
     }
 
-    void Thread::join() {
+    void Thread::join(){
         if(m_Thread)
             m_Thread->join();
     }
@@ -48,7 +48,7 @@ namespace Magic{
     void Thread::SetName(const std::string& threadName){
         g_ThreadName = threadName;
     }
-    
+
     void Thread::run(){
         m_Id = Magic::GetThreadId();
         SetName(m_Name);

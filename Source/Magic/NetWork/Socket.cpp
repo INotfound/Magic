@@ -8,7 +8,7 @@
 
 namespace Magic{
 namespace NetWork{
-    Socket::~Socket() =default;
+    Socket::~Socket() = default;
 
     Socket::Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context)
         :m_BufferSize(bufferSize)
@@ -17,7 +17,7 @@ namespace NetWork{
         ,m_Working(false)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
         m_StreamBuffer.reserve(m_BufferSize);
-        m_ErrorCodeCallBack = [](const asio::error_code & err){
+        m_ErrorCodeCallBack = [](const asio::error_code& err){
             MAGIC_WARN() << err.message();
         };
     }
@@ -25,9 +25,9 @@ namespace NetWork{
     void Socket::close(){
         asio::error_code ignored;
         std::lock_guard<std::mutex> locker(m_Mutex);
-        if(m_Socket->is_open()) {
+        if(m_Socket->is_open()){
             m_Socket->cancel(ignored);
-            m_Socket->shutdown(asio::ip::tcp::socket::shutdown_both, ignored);
+            m_Socket->shutdown(asio::ip::tcp::socket::shutdown_both,ignored);
         }
         m_Socket->close(ignored);
     }
@@ -47,12 +47,13 @@ namespace NetWork{
                 self->m_HeartBeatCallBack(self);
         });
         if(g_TimingWheel)
-            g_TimingWheel->addTask(m_HeartBeatMs, taskNode);
+            g_TimingWheel->addTask(m_HeartBeatMs,taskNode);
     }
 
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){
         return m_Socket;
     }
+
 #ifdef OPENSSL
     const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& Socket::getSslEntity(){
         return m_SslStream;
@@ -62,8 +63,9 @@ namespace NetWork{
         m_SslStream = sslStream;
     }
 #endif
+
     void Socket::recv(const RecvCallBack& callBack){
-        auto readCallBack = [this,callBack](const asio::error_code &err, std::size_t length){
+        auto readCallBack = [this,callBack](const asio::error_code& err,std::size_t length){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -90,7 +92,7 @@ namespace NetWork{
     }
 
     void Socket::recv(uint64_t size,const RecvCallBack& callBack){
-        auto readCallBack = [this,size,callBack](const asio::error_code &err, std::size_t length){
+        auto readCallBack = [this,size,callBack](const asio::error_code& err,std::size_t length){
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -125,7 +127,7 @@ namespace NetWork{
     }
 
     void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
-        auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/){
+        auto sendCallBack = [this,callback](const asio::error_code& err,std::size_t /*length*/){
             m_Working = false;
             if(err){
                 m_ErrorCodeCallBack(err);
@@ -149,7 +151,7 @@ namespace NetWork{
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
-        auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/){
+        auto sendCallBack = [this,stream,callback](const asio::error_code& err,std::size_t /*length*/){
             m_Working = false;
             if(err){
                 m_ErrorCodeCallBack(err);

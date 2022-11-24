@@ -4,19 +4,20 @@
  * @LastEditTime: 2021-02-01 22:59:55
  */
 #pragma once
+
 #include <utility>
 
 #include "Magic/Core/Core.h"
 #include "Magic/Core/Except.h"
 
 namespace Magic{
-    class Container :public std::enable_shared_from_this<Container>{
+    class Container:public std::enable_shared_from_this<Container>{
         template<typename Return,typename... Args>
         using Function = Safe<Return>(Container::*)();
         template<typename Instance,typename... Args>
-        using ClassMemberFunction = void(Instance::*)(Args...);
-        
-        class RegisteredType {
+        using ClassMemberFunction = void (Instance::*)(Args...);
+
+        class RegisteredType{
             friend class Container;
             using CreateFunc = std::function<Safe<void>()>;
             using MemberFunc = std::function<void(Safe<Container>&)>;
@@ -28,17 +29,20 @@ namespace Magic{
                 });
                 return (*this);
             }
+
         private:
-            RegisteredType(bool singelton, CreateFunc createFunc)
+            RegisteredType(bool singelton,CreateFunc createFunc)
                 :m_IsSingelton(singelton)
                 ,m_Object(nullptr)
                 ,m_CreateFunc(std::move(createFunc)){
             }
+
             void resolveMemberFunction(Safe<Container>& con){
                 for(auto& callBack :m_MemberFuncs){
                     callBack(con);
                 }
             }
+
         private:
             bool m_IsSingelton;
             Safe<void> m_Object;
@@ -61,14 +65,15 @@ namespace Magic{
             return this->registerTypeEx<T,T,Args...>(isSingleton);
         }
 
-        template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_constructible<M, Args...>::value && (std::is_same<T,M>::value || std::is_base_of<T,M>::value)>::type>
+        template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_constructible<M,Args...>::value
+            && (std::is_same<T,M>::value || std::is_base_of<T,M>::value)>::type>
         RegisteredType& registerTypeEx(bool isSingleton = true){
             const void* id = CompiletimeIId<T>();
             const void* raw = CompiletimeIId<M>();
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw Failure(std::string(typeid(T).name()) + " Is Multiple Registered!");
             Function<T,Args...> createFunc = &Container::invoke<T,M,typename Safe_Traits<Args>::Type...>;
-            m_RegisteredType[id].emplace(raw,RegisteredType(isSingleton, [this,createFunc](){return (this->*createFunc)();}));
+            m_RegisteredType[id].emplace(raw,RegisteredType(isSingleton,[this,createFunc](){ return (this->*createFunc)(); }));
             return m_RegisteredType[id].at(raw);
         }
 
@@ -77,7 +82,7 @@ namespace Magic{
             const void* id = CompiletimeIId<T>();
             if(m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw Failure(std::string(typeid(T).name()) + " Is Multiple Registered!");
-            RegisteredType registerObject(true,[](){return Safe<void>();});
+            RegisteredType registerObject(true,[](){ return Safe<void>(); });
             registerObject.m_Object = std::move(instance);
             m_RegisteredType[id].emplace(id,registerObject);
             return m_RegisteredType[id].at(id);
@@ -87,14 +92,14 @@ namespace Magic{
         RegisteredType& registerInstance(const Safe<M>& instance){
             const void* id = CompiletimeIId<T>();
             const void* raw = CompiletimeIId<M>();
-            RegisteredType registerObject(true,[](){return Safe<void>();});
+            RegisteredType registerObject(true,[](){ return Safe<void>(); });
             registerObject.m_Object = std::move(instance);
             m_RegisteredType[id].emplace(raw,registerObject);
             return m_RegisteredType[id].at(raw);
         }
 
         template<typename T>
-        Safe<T> resolve() {
+        Safe<T> resolve(){
             const void* id = CompiletimeIId<T>();
 
             auto iter = m_RegisteredType.find(id);
@@ -118,7 +123,7 @@ namespace Magic{
         }
 
         template<typename T,typename M,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
-        Safe<T> resolve() {
+        Safe<T> resolve(){
             const void* id = CompiletimeIId<T>();
             const void* raw = CompiletimeIId<M>();
             auto iter = m_RegisteredType.find(id);
@@ -174,11 +179,13 @@ namespace Magic{
             }
             return objectList;
         }
+
     private:
-        template<typename T, typename M, typename... Args>
+        template<typename T,typename M,typename... Args>
         Safe<T> invoke(){
             return std::make_shared<M>(this->resolve<Args>()...);
         }
+
     private:
         std::unordered_map<const void*,std::unordered_map<const void*,RegisteredType>> m_RegisteredType;
     };

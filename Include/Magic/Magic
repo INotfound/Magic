@@ -1,18 +1,22 @@
 #pragma once
+
 #include <Magic/Core/Core.h>
 #include <Magic/Core/Container.h>
 
 namespace Magic{
-    class Application :public std::enable_shared_from_this<Application>{
+    class Application:public std::enable_shared_from_this<Application>{
     public:
         ~Application();
+
         Application();
+
         /**
          * @brief 配置IoC容器
          * @return 返回 Ioc 容器
          * @note 该函数在外部实现
          */
         const Safe<Container>& initialize(const std::function<void(const Safe<Container>&)>& configure = nullptr);
+
     private:
         Safe<Container> m_Container;
     };

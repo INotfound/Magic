@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Magic/Utilty/Logger.h"
 #include "Magic/DataBase/MySql.h"
+
 #ifdef MYSQLDB
 namespace Magic{
 namespace DataBase{
@@ -9,8 +10,9 @@ namespace DataBase{
         ~MySqlLibraryWrapper(){
             mysql_library_end();
         }
+
         MySqlLibraryWrapper(){
-            mysql_library_init(0, NULL, NULL);
+            mysql_library_init(0,nullptr,nullptr);
         }
     };
 
@@ -19,9 +21,9 @@ namespace DataBase{
     void MySqlTimeToTime(const MYSQL_TIME& mt,std::time_t ts){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&time, &ts);
+        localtime_s(&time,&ts);
     #else
-        localtime_r(&ts, &time);
+        localtime_r(&ts,&time);
     #endif
         time.tm_mday = mt.day;
         time.tm_hour = mt.hour;
@@ -38,9 +40,9 @@ namespace DataBase{
     void TimeToMySqlTime(const std::time_t ts,MYSQL_TIME& mt){
         struct tm time;
     #if defined(_WIN32) || defined(_WIN64)
-        localtime_s(&time, &ts);
+        localtime_s(&time,&ts);
     #else
-        localtime_r(&ts, &time);
+        localtime_r(&ts,&time);
     #endif
         mt.day = time.tm_mday;
         mt.hour = time.tm_hour;
@@ -72,15 +74,15 @@ namespace DataBase{
         return false;
     }
 
-    bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string&  password,uint16_t port){
+    bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string& password,uint16_t port){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!mysql_init(&m_MySql)){
             this->printError();
             return false;
         }
         char value = 1;
-        mysql_options(&m_MySql, MYSQL_OPT_RECONNECT, &value);
-        mysql_options(&m_MySql, MYSQL_SET_CHARSET_NAME, "utf8mb4");
+        mysql_options(&m_MySql,MYSQL_OPT_RECONNECT,&value);
+        mysql_options(&m_MySql,MYSQL_SET_CHARSET_NAME,"utf8mb4");
         if(!mysql_real_connect(&m_MySql,ip.c_str(),user.c_str(),password.c_str(),dataBase.c_str(),port,0,0)){
             this->printError();
             return false;
@@ -116,7 +118,7 @@ namespace DataBase{
         if(mysql_ping(&m_MySql->m_MySql) != 0){
             this->printError();
         }
-        mysql_stmt_bind_param(m_Stmt, m_MySqlModifyBinds.data());
+        mysql_stmt_bind_param(m_Stmt,m_MySqlModifyBinds.data());
         uint32_t err = mysql_stmt_errno(m_Stmt);
         if(err){
             MAGIC_WARN() << mysql_stmt_error(m_Stmt);
@@ -131,28 +133,28 @@ namespace DataBase{
         MYSQL_FIELD* fields = mysql_fetch_fields(res);
         m_MySqlResults.resize(num);
         m_MySqlResultBinds.resize(num);
-        std::memset(m_MySqlResultBinds.data(),0,sizeof(MYSQL_BIND)*num);
-        for(uint32_t i =0;i<num;i++){
+        std::memset(m_MySqlResultBinds.data(),0,sizeof(MYSQL_BIND) * num);
+        for(uint32_t i = 0;i < num;i++){
             m_MySqlResults[i].m_Type = fields[i].type;
-            switch (fields[i].type){
-            #define XX(M,T)                                             \
-            case M:                                                     \
-                m_MySqlResults[i].alloc(sizeof(T));                     \
-                break;
-            XX(MYSQL_TYPE_TINY, int8_t);
-            XX(MYSQL_TYPE_SHORT, int16_t);
-            XX(MYSQL_TYPE_LONG, int32_t);
-            XX(MYSQL_TYPE_LONGLONG, int64_t);
-            XX(MYSQL_TYPE_FLOAT, float);
-            XX(MYSQL_TYPE_DOUBLE, double);
-            XX(MYSQL_TYPE_TIMESTAMP, MYSQL_TIME);
-            XX(MYSQL_TYPE_DATETIME, MYSQL_TIME);
-            XX(MYSQL_TYPE_DATE, MYSQL_TIME);
-            XX(MYSQL_TYPE_TIME, MYSQL_TIME);
+            switch(fields[i].type){
+            #define XX(M,T)                                                 \
+                case M:                                                     \
+                    m_MySqlResults[i].alloc(sizeof(T));                     \
+                    break;
+                XX(MYSQL_TYPE_TINY,int8_t);
+                XX(MYSQL_TYPE_SHORT,int16_t);
+                XX(MYSQL_TYPE_LONG,int32_t);
+                XX(MYSQL_TYPE_LONGLONG,int64_t);
+                XX(MYSQL_TYPE_FLOAT,float);
+                XX(MYSQL_TYPE_DOUBLE,double);
+                XX(MYSQL_TYPE_TIMESTAMP,MYSQL_TIME);
+                XX(MYSQL_TYPE_DATETIME,MYSQL_TIME);
+                XX(MYSQL_TYPE_DATE,MYSQL_TIME);
+                XX(MYSQL_TYPE_TIME,MYSQL_TIME);
             #undef XX
-            default:
-                m_MySqlResults[i].alloc(fields[i].length);
-                break;
+                default:
+                    m_MySqlResults[i].alloc(fields[i].length);
+                    break;
             }
             m_MySqlResultBinds[i].buffer = m_MySqlResults[i].m_Data;
             m_MySqlResultBinds[i].error = &m_MySqlResults[i].m_Error;
@@ -169,7 +171,7 @@ namespace DataBase{
         if(!this->execute()){
             return false;
         }
-        if(mysql_stmt_store_result(m_Stmt) !=0){
+        if(mysql_stmt_store_result(m_Stmt) != 0){
             MAGIC_WARN() << "MySql Store Result Failed";
             return false;
         }
@@ -229,11 +231,11 @@ namespace DataBase{
         }                                                           \
         std::memcpy(m_MySqlModifyBinds[index].buffer,Ptr,length);   \
         m_MySqlModifyBinds[index].buffer_length = length
-    
+
     void MySqlStmt::bind(uint32_t index,const float value){
         BIND_COPY(MYSQL_TYPE_FLOAT,&value,sizeof(value));
     }
-    
+
     void MySqlStmt::bind(uint32_t index,const double value){
         BIND_COPY(MYSQL_TYPE_DOUBLE,&value,sizeof(value));
     }
@@ -267,7 +269,7 @@ namespace DataBase{
         BIND_COPY(MYSQL_TYPE_LONG,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
-    
+
     void MySqlStmt::bind(uint32_t index,const int64_t value){
         BIND_COPY(MYSQL_TYPE_LONGLONG,&value,sizeof(value));
         m_MySqlModifyBinds[index].is_unsigned = false;
@@ -326,7 +328,7 @@ namespace DataBase{
     uint32_t MySqlStmt::getUint32(uint32_t index){
         CAST(uint32_t);
     }
-    
+
     int64_t MySqlStmt::getInt64(uint32_t index){
         CAST(int64_t);
     }
@@ -342,6 +344,7 @@ namespace DataBase{
     double MySqlStmt::getDouble(uint32_t index){
         CAST(double);
     }
+
     #undef CAST
 
     std::time_t MySqlStmt::getTime(uint32_t index){

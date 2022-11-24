@@ -23,14 +23,14 @@ std::atomic_int newNum(0);
 void* operator new(std::size_t size)
 {
     newNum++;
-    std::cout << "Pointer Num: " << newNum << std::endl;
+    std::printf("Pointer Num: %d\n",newNum.load());
     return std::malloc(size);
 }
 
 void operator delete(void* ptr)
 {
     newNum--;
-    std::cout << "Pointer Num: " << newNum << std::endl;
+    std::printf("Pointer Num: %d\n",newNum.load());
     std::free(ptr);
 }
 #endif
@@ -66,9 +66,8 @@ public:
 //        });
 //        httpClient->execute(httpRequest);
 
-            response->setBody("HELLO WORD!")
-            ->setStatus(HttpStatus::OK);
-           httpSocket->sendResponse(response);
+            response->setStatus(HttpStatus::OK);
+            httpSocket->sendResponse(response);
     }
 };
 

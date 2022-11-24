@@ -19,7 +19,7 @@ namespace Http{
         return value;
     }
 
-    WebSocket::~WebSocket() =default;
+    WebSocket::~WebSocket() = default;
 
     WebSocket::WebSocket(bool mask,const Safe<Socket>& socket)
         :m_Mask(mask)
@@ -38,7 +38,7 @@ namespace Http{
             socket->runHeartBeat(this->shared_from_this());
         });
 
-        m_Socket->setErrorCodeCallBack([this](const asio::error_code & err){
+        m_Socket->setErrorCodeCallBack([this](const asio::error_code& err){
             m_Death = true;
         #ifdef WIN32
             if(err.value() == WSAECONNABORTED) return;
@@ -78,9 +78,9 @@ namespace Http{
             return;
         auto self = this->shared_from_this();
         m_Socket->recv([this,self](Socket::StreamBuffer& streamBuffer){
-            if(streamBuffer.size() >= 2) {
+            if(streamBuffer.size() >= 2){
                 uint32_t offset = 2;
-                const uint8_t * data = reinterpret_cast<uint8_t*>(streamBuffer.data());
+                const uint8_t* data = reinterpret_cast<uint8_t*>(streamBuffer.data());
                 uint8_t one = data[0];
                 uint8_t two = data[1];
                 m_OpCode = one & 0x0F;
@@ -88,36 +88,36 @@ namespace Http{
                 m_Fin = ((one >> 7) & 0x01) == 0x01 ? true : false;
                 bool mask = ((two >> 7) & 0x01) == 1 ? true : false;
 
-                if(length <= 125) {
-                    if (streamBuffer.size() < (offset + length)) {
+                if(length <= 125){
+                    if(streamBuffer.size() < (offset + length)){
                         this->handleProtocol();
-                    } else {
-                        this->handleMaskPayload(mask, offset, streamBuffer);
+                    }else{
+                        this->handleMaskPayload(mask,offset,streamBuffer);
                     }
-                }else if(length == 126) {
+                }else if(length == 126){
                     length = 2;
                     offset += length;
-                    if(streamBuffer.size() < offset) {
+                    if(streamBuffer.size() < offset){
                         this->handleProtocol();
-                    }else {
+                    }else{
                         auto size = ByteToType<uint16_t>(data + 2);
-                        if(streamBuffer.size() < (offset + size + (m_Mask ? 4 : 0))) {
+                        if(streamBuffer.size() < (offset + size + (m_Mask ? 4 : 0))){
                             this->handleProtocol();
                         }else{
-                            this->handleMaskPayload(mask, offset, streamBuffer);
+                            this->handleMaskPayload(mask,offset,streamBuffer);
                         }
                     }
-                }else if(length == 127) {
+                }else if(length == 127){
                     length = 8;
                     offset += length;
-                    if(streamBuffer.size() < offset) {
+                    if(streamBuffer.size() < offset){
                         this->handleProtocol();
-                    }else {
+                    }else{
                         auto size = ByteToType<uint64_t>(data + 2);
-                        if (streamBuffer.size() < (offset + size + (m_Mask ? 4 : 0))) {
+                        if(streamBuffer.size() < (offset + size + (m_Mask ? 4 : 0))){
                             this->handleProtocol();
-                        } else {
-                            this->handleMaskPayload(mask, offset, streamBuffer);
+                        }else{
+                            this->handleMaskPayload(mask,offset,streamBuffer);
                         }
                     }
                 }else{
@@ -163,7 +163,7 @@ namespace Http{
         if(m_Mask){
             std::random_device randomDevice;
             std::default_random_engine defaultRandomEngine(randomDevice());
-            std::uniform_int_distribution<uint32_t> uniformIntDistribution(0x80000000, UINT32_MAX);
+            std::uniform_int_distribution<uint32_t> uniformIntDistribution(0x80000000,UINT32_MAX);
             uint32_t maskKey = uniformIntDistribution(defaultRandomEngine);
             package[packageLength] = static_cast<char>(maskKey >> 24) & 0xFF;
             package[packageLength + 1] = static_cast<char>(maskKey >> 16) & 0xFF;
@@ -181,7 +181,7 @@ namespace Http{
                         maskIdx = 0;
                     packageData = data[i];
                     packageMask = package[packageLength + maskIdx];
-                    stream.put(static_cast<char>(((~packageMask)&packageData) | (packageMask&(~packageData))));
+                    stream.put(static_cast<char>(((~packageMask) & packageData) | (packageMask & (~packageData))));
                     maskIdx++;
                 }
                 m_Socket->send(streamBuffer);
@@ -208,7 +208,7 @@ namespace Http{
             std::memcpy(maskData,data,4);
             data = streamBuffer.data() + offset;
             length = streamBuffer.size() - offset;
-            for(uint64_t i = 0; i < length; i++) {
+            for(uint64_t i = 0;i < length;i++){
                 data[i] ^= maskData[i % 4];
             }
         }
@@ -221,27 +221,27 @@ namespace Http{
             return;
         }
 
-        switch (m_OpCode) {
-        case 0x0: /// Contine
-            break;
-        case 0x1: /// Text
-            if(m_TextMessageCallBack)
-                m_TextMessageCallBack(this->shared_from_this(),m_RawData);
-            break;
-        case 0x2: /// Binary
-            if(m_BinaryMessageCallBack)
-                m_BinaryMessageCallBack(this->shared_from_this(),m_RawData);
-            break;
-        case 0x8: /// Closed
-            m_Death = true;
-            break;
-        case 0x9: /// Ping
-            /// Send Pong
-            this->sendEncodePackage(0xA,m_RawData);
-            break;
-        case 0xA: /// Pong
-            m_Death = false;
-            break;
+        switch(m_OpCode){
+            case 0x0: /// Contine
+                break;
+            case 0x1: /// Text
+                if(m_TextMessageCallBack)
+                    m_TextMessageCallBack(this->shared_from_this(),m_RawData);
+                break;
+            case 0x2: /// Binary
+                if(m_BinaryMessageCallBack)
+                    m_BinaryMessageCallBack(this->shared_from_this(),m_RawData);
+                break;
+            case 0x8: /// Closed
+                m_Death = true;
+                break;
+            case 0x9: /// Ping
+                /// Send Pong
+                this->sendEncodePackage(0xA,m_RawData);
+                break;
+            case 0xA: /// Pong
+                m_Death = false;
+                break;
         }
 
         m_RawData.clear();

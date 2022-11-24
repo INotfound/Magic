@@ -1,4 +1,5 @@
 #pragma once
+
 #include <map>
 #include <utility>
 #include <fstream>
@@ -12,7 +13,7 @@ namespace Http{
     public:
         MultiPart();
 
-        explicit MultiPart(const std::string &boundary);
+        explicit MultiPart(const std::string& boundary);
 
         void reset();
 
@@ -24,13 +25,14 @@ namespace Http{
 
         const char* getErrorMessage() const;
 
-        size_t feed(const char *buffer, size_t len);
+        size_t feed(const char* buffer,size_t len);
 
-        void setBoundary(const std::string &boundary);
+        void setBoundary(const std::string& boundary);
 
         void setDirectory(const std::string& dirPath);
 
         const std::unordered_map<std::string,std::string>& getParamMap() const;
+
     private:
         void setParserCallBacks();
 
@@ -38,21 +40,22 @@ namespace Http{
 
         std::string getFileName();
 
-        static void PartBegin(const char *buffer, size_t start, size_t end, void *userData);
+        static void PartBegin(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void HeaderField(const char *buffer, size_t start, size_t end, void *userData);
+        static void HeaderField(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void HeaderValue(const char *buffer, size_t start, size_t end, void *userData);
+        static void HeaderValue(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void HeaderEnd(const char *buffer, size_t start, size_t end, void *userData);
+        static void HeaderEnd(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void HeadersEnd(const char *buffer, size_t start, size_t end, void *userData);
+        static void HeadersEnd(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void PartData(const char *buffer, size_t start, size_t end, void *userData);
+        static void PartData(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void PartEnd(const char *buffer, size_t start, size_t end, void *userData);
+        static void PartEnd(const char* buffer,size_t start,size_t end,void* userData);
 
-        static void End(const char *buffer, size_t start, size_t end, void *userData);
+        static void End(const char* buffer,size_t start,size_t end,void* userData);
+
     private:
         bool m_IsFile;
         std::string m_FilePath;
