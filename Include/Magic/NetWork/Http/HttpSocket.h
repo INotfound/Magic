@@ -27,7 +27,7 @@ namespace Http{
          * @param timeOutMs 超时时间
          * @param context  Asio的处理上下文
          */
-        HttpSocket(const Safe<Socket>& socket);
+        explicit HttpSocket(const Safe<Socket>& socket);
         /**
          * @brief 启动心跳
          */
@@ -52,13 +52,13 @@ namespace Http{
          * @param callback 接收回调函数
          * @warning 回调函数同HttpSocket生命周期一直存在！
          */
-        void recvRequest(const HttpRecvBack callback);
+        void recvRequest(const HttpRecvBack& callback);
         /**
          * @brief 接收响应头函数
          * @param callback 接收回调函数
          * @warning 回调函数同HttpSocket生命周期一直存在！
          */
-        void recvResponse(const HttpRecvBack callback);
+        void recvResponse(const HttpRecvBack& callback);
         /**
          * @brief 接收请求头函数
          * @param httpRequest 请求

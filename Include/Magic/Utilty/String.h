@@ -114,7 +114,7 @@ namespace Magic{
         return newString;
     }
 
-    inline std::string Trim(std::string str,const std::string flag = " ") {
+    inline std::string Trim(std::string str,const std::string& flag = " ") {
         if (str.empty())
             return str;
         str.erase(0, str.find_first_not_of(flag));

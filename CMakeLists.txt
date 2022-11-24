@@ -24,6 +24,8 @@ if(Sanitize STREQUAL Thread)
     set(Analysis OFF)
 elseif(Sanitize STREQUAL Address)
     set(Analysis OFF)
+elseif(Sanitize STREQUAL Undefined)
+    set(Analysis OFF)
 endif()
 
 set(BINARY

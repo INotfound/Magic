@@ -9,7 +9,6 @@
 #include <iostream>
 
 #include "Magic/Core/Core.h"
-#include "Magic/Core/Adapter.h"
 #include "Magic/Utilty/Logger.h"
 
 namespace Magic{
@@ -79,7 +78,7 @@ namespace Magic{
     }
 
 //###############################BEGIN##################################
-    ILogFormatItem::~ILogFormatItem(){}
+    ILogFormatItem::~ILogFormatItem() =default;
 
     class MessageFormatItem :public ILogFormatItem{
     public:
@@ -132,8 +131,8 @@ namespace Magic{
             }
         }
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
-            std::time_t time_secounds = static_cast<std::time_t>(event->getTime());
-            os << TimeToString(time_secounds,this->m_FormatString.c_str());
+            auto time_secounds = static_cast<std::time_t>(event->getTime());
+            os << TimeToString(time_secounds,m_FormatString.c_str());
         }
     private:
         std::string m_FormatString;

@@ -41,7 +41,7 @@ public:
 
     MultiPartParser();
 
-    MultiPartParser(const std::string &boundary);
+    explicit MultiPartParser(const std::string &boundary);
 
     ~MultiPartParser();
 

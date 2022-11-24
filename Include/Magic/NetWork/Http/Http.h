@@ -243,7 +243,7 @@ namespace Http{
          * @param keepAlive 是否长连接
          * @param version Http协议版本
          */
-        HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
+        explicit HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
         /**
          * @brief 获取所有参数函数
          * @return: 返回键值对容器
@@ -427,7 +427,7 @@ namespace Http{
          * @param keepAlive 是否长连接
          * @param version 版本号
          */
-        HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
+        explicit HttpResponse(bool keepAlive = true,uint8_t version = 0x11);
         /**
          * @brief 是否Range切片
          * @return: 返回True则是，返回False则是否

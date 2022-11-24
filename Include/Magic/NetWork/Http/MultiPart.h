@@ -12,7 +12,7 @@ namespace Http{
     public:
         MultiPart();
 
-        MultiPart(const std::string &boundary);
+        explicit MultiPart(const std::string &boundary);
 
         void reset();
 

@@ -16,7 +16,7 @@ namespace Http{
 class HttpClient :public std::enable_shared_from_this<HttpClient>{
     public:
         ~HttpClient();
-        HttpClient(const std::string& url,uint64_t timeOutMs = 1000);
+        explicit HttpClient(const std::string& url,uint64_t timeOutMs = 1000);
         void execute(const Safe<HttpRequest>& request);
         ObjectWrapper<HttpClient> onTimeOut(const std::function<void()>& callback);
         ObjectWrapper<HttpClient> onError(const std::function<void(const asio::error_code&)>& callBack);

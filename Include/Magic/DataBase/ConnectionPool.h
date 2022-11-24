@@ -26,13 +26,16 @@ namespace DataBase{
                 m_Pool->restore(m_Entity);
             }
         }
-        Connection(){}
+
+        Connection() =default;
+
         explicit operator bool() const{
             if(m_Entity){
                 return true;
             }
             return false;
         }
+
         const Safe<T>& operator *() const{
             return m_Entity;
         }
@@ -86,7 +89,7 @@ namespace DataBase{
     private:
         uint32_t m_Count;
         std::mutex m_Mutex;
-        std::vector<Safe<T>> m_IdleEntity;
+        std::deque<Safe<T>> m_IdleEntity;
         std::function<const Safe<T>(void)> m_CreateFunction;
     };
 }

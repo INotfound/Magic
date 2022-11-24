@@ -9,8 +9,7 @@
 
 namespace Magic{
 namespace NetWork{
-    TcpServer::~TcpServer(){
-    }
+    TcpServer::~TcpServer() =default;
 
     TcpServer::TcpServer(const Safe<IoPool>& pool,const Safe<Config>& configuration)
         :m_IsRun(false)

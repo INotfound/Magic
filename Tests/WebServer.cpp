@@ -15,7 +15,7 @@
 
 using namespace Magic::NetWork::Http;
 
-//#define leak
+#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);
@@ -55,16 +55,20 @@ public:
 
     void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         auto& response = httpSocket->getResponse();
-        auto httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-        auto httpClient = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/",10000);
-        httpClient->onTimeOut([](){
-            MAGIC_DEBUG() << "Time Out";
-        })->onResponse([httpSocket,response](const Safe<Magic::NetWork::Http::HttpResponse>& httpResponse){
-            response->setBody(httpResponse->getBody())
+//        auto httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
+//        auto httpClient = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/",10000);
+//        httpClient->onTimeOut([](){
+//            MAGIC_DEBUG() << "Time Out";
+//        })->onResponse([httpSocket,response](const Safe<Magic::NetWork::Http::HttpResponse>& httpResponse){
+//            response->setBody(httpResponse->getBody())
+//            ->setStatus(HttpStatus::OK);
+//           httpSocket->sendResponse(response);
+//        });
+//        httpClient->execute(httpRequest);
+
+            response->setBody("HELLO WORD!")
             ->setStatus(HttpStatus::OK);
            httpSocket->sendResponse(response);
-        });
-        httpClient->execute(httpRequest);
     }
 };
 

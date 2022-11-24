@@ -62,55 +62,7 @@ namespace NetWork{
         m_SslStream = sslStream;
     }
 #endif
-    void Socket::send(const char* data,uint64_t length,const SendCallBack callback){
-        auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/){
-            m_Working = false;
-            if(err){
-                m_ErrorCodeCallBack(err);
-                return;
-            }
-            if(callback)
-                callback();
-        };
-        std::lock_guard<std::mutex> locker(m_Mutex);
-        if(!m_Socket->is_open()){
-            return;
-        }
-        m_Working = true;
-    #ifdef OPENSSL
-        if(m_SslStream){
-            asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
-            return;
-        }
-    #endif
-        asio::async_write(*m_Socket,asio::const_buffer(data,length),std::move(sendCallBack));
-    }
-
-    void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack callback){
-        auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/){
-            m_Working = false;
-            if(err){
-                m_ErrorCodeCallBack(err);
-                return;
-            }
-            if(callback)
-                callback();
-        };
-        std::lock_guard<std::mutex> locker(m_Mutex);
-        if(!m_Socket->is_open()){
-            return;
-        }
-        m_Working = true;
-    #ifdef OPENSSL
-        if(m_SslStream){
-            asio::async_write(*m_SslStream,*stream,std::move(sendCallBack));
-            return;
-        }
-    #endif
-        asio::async_write(*m_Socket,*stream,std::move(sendCallBack));
-    }
-
-    void Socket::recv(const RecvCallBack callBack){
+    void Socket::recv(const RecvCallBack& callBack){
         auto readCallBack = [this,callBack](const asio::error_code &err, std::size_t length){
             if(err){
                 m_ErrorCodeCallBack(err);
@@ -133,7 +85,11 @@ namespace NetWork{
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
     }
 
-    void Socket::recv(uint64_t size,const RecvCallBack callBack){
+    const Socket::ErrorCallBack& Socket::getErrorCodeCallBack() const{
+        return m_ErrorCodeCallBack;
+    }
+
+    void Socket::recv(uint64_t size,const RecvCallBack& callBack){
         auto readCallBack = [this,size,callBack](const asio::error_code &err, std::size_t length){
             if(err){
                 m_ErrorCodeCallBack(err);
@@ -160,16 +116,60 @@ namespace NetWork{
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));
     }
 
-    const Socket::ErrorCallBack& Socket::getErrorCodeCallBack() const{
-        return m_ErrorCodeCallBack;
-    }
-
-    void Socket::setErrorCodeCallBack(const ErrorCallBack errorCallBack){
+    void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
         m_ErrorCodeCallBack = std::move(errorCallBack);
     }
 
-    void Socket::setHeartBeatCallBack(const HeartBeatCallBack heartBeatCallBack){
+    void Socket::setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack){
         m_HeartBeatCallBack = std::move(heartBeatCallBack);
+    }
+
+    void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
+        auto sendCallBack = [this,callback](const asio::error_code &err, std::size_t /*length*/){
+            m_Working = false;
+            if(err){
+                m_ErrorCodeCallBack(err);
+                return;
+            }
+            if(callback)
+                callback();
+        };
+        std::lock_guard<std::mutex> locker(m_Mutex);
+        if(!m_Socket->is_open()){
+            return;
+        }
+        m_Working = true;
+    #ifdef OPENSSL
+        if(m_SslStream){
+            asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
+            return;
+        }
+    #endif
+        asio::async_write(*m_Socket,asio::const_buffer(data,length),std::move(sendCallBack));
+    }
+
+    void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
+        auto sendCallBack = [this,stream,callback](const asio::error_code &err, std::size_t /*length*/){
+            m_Working = false;
+            if(err){
+                m_ErrorCodeCallBack(err);
+                return;
+            }
+            if(callback)
+                callback();
+        };
+        std::lock_guard<std::mutex> locker(m_Mutex);
+        if(!m_Socket->is_open()){
+            return;
+        }
+        m_Working = true;
+    #ifdef OPENSSL
+        if(m_SslStream){
+            asio::async_write(*m_SslStream,*stream,std::move(sendCallBack));
+            return;
+        }
+    #endif
+        asio::async_write(*m_Socket,*stream,std::move(sendCallBack));
     }
 }
 }

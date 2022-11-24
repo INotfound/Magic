@@ -7,8 +7,6 @@
 #include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/Thread.h"
 
-#include <utility>
-
 namespace Magic{
     static thread_local std::string g_ThreadName = "UNKNOWN";
 

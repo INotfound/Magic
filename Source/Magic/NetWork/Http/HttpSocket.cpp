@@ -62,12 +62,12 @@ namespace Http{
         return m_ResponseParser->getData();
     }
 
-    void HttpSocket::recvRequest(const HttpRecvBack callback){
+    void HttpSocket::recvRequest(const HttpRecvBack& callback){
         m_RecvRequestCallBack = std::move(callback);
         this->requestParser();
     }
 
-    void HttpSocket::recvResponse(const HttpRecvBack callback){
+    void HttpSocket::recvResponse(const HttpRecvBack& callback){
         m_RecvResponseCallBack = std::move(callback);
         this->responseParser();
     }

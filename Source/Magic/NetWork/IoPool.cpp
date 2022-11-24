@@ -4,7 +4,6 @@
  * @LastEditTime: 2020-09-30 21:19:07
  */
 #include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/Thread.h"
 #include "Magic/NetWork/IoPool.h"
 
 namespace Magic{

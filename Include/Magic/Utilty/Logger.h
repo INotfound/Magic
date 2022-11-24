@@ -139,7 +139,7 @@ namespace Magic{
         /**
          * @brief 虚析构函数
          */
-        virtual ~ILogAppender() {};
+        virtual ~ILogAppender() =default;;
         /**
          * @brief 日志输出函数
          * @param level 日志级别
@@ -159,7 +159,7 @@ namespace Magic{
          * @brief 构造函数
          * @param name 日志名称
          */
-        Logger(const Safe<Config>& configuration);
+        explicit Logger(const Safe<Config>& configuration);
         /**
          * @brief 外部模式
          */
