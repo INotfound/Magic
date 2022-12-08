@@ -17,7 +17,7 @@ namespace Http{
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
         ,m_Death(false)
-        ,m_StreamBufferSize(1024 * 1024)
+        ,m_StreamBufferSize(1048576)
         ,m_TotalTransferLength(0)
         ,m_CurrentTransferLength(0){
         m_MultiPart = std::make_shared<MultiPart>();
@@ -221,7 +221,8 @@ namespace Http{
                 this->multiPartParser();
             }else{
                 /// Max Request Size == 5MB
-                if(m_TotalLength > 0 && m_TotalLength < 1024 * 1024 * 5){
+                constexpr uint32_t maxRequestSize = 1024 * 1024 * 5;
+                if(m_TotalLength > 0 && m_TotalLength < maxRequestSize){
                     m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
                         std::string body;
                         auto& request = m_RequestParser->getData();

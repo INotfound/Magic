@@ -21,10 +21,6 @@
         SRWLOCK lock;
     }WinRWLock;
 
-    typedef HANDLE               sem_t;
-    typedef HANDLE               mutex_t;
-    typedef WinRWLock            rwlock_t;
-    typedef CRITICAL_SECTION     spinlock_t;
     #define IS_FILE(Path)        _access(Path,0)
 #endif
 
@@ -33,12 +29,7 @@
     #include <unistd.h>
     #include <pthread.h>
     #include <sys/time.h>
-    #include <semaphore.h>
     #include <sys/syscall.h>
 
-    typedef sem_t                sem_t;
-    typedef pthread_mutex_t      mutex_t;
-    typedef pthread_rwlock_t     rwlock_t;
-    typedef pthread_spinlock_t   spinlock_t;
     #define IS_FILE(Path)        access(Path,0)
 #endif
