@@ -1,5 +1,5 @@
 
-#line 1 "uri_parser.rl"
+/* #line 1 "uri_parser.rl" */
 #include <sstream>
 #include "Magic/NetWork/Http/Uri.h"
 
@@ -7,7 +7,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     
-#line 11 "uri_parser.rl.cpp"
+/* #line 11 "uri_parser.rl.c" */
 static const int uri_parser_start = 451;
 static const int uri_parser_first_final = 451;
 static const int uri_parser_error = 0;
@@ -15,7 +15,7 @@ static const int uri_parser_error = 0;
 static const int uri_parser_en_main = 451;
 
 
-#line 131 "uri_parser.rl"
+/* #line 131 "uri_parser.rl" */
 
     Uri::Uri(const std::string& uri)
         :m_Error(false)
@@ -88,17 +88,17 @@ static const int uri_parser_en_main = 451;
         int cs = 0;
         const char* mark = 0;
         
-#line 92 "uri_parser.rl.cpp"
+/* #line 92 "uri_parser.rl.c" */
 	{
 	cs = uri_parser_start;
 	}
 
-#line 203 "uri_parser.rl"
+/* #line 203 "uri_parser.rl" */
         const char *p = uri.c_str();
         const char *pe = p + uri.size();
         const char* eof = pe;
         
-#line 102 "uri_parser.rl.cpp"
+/* #line 102 "uri_parser.rl.c" */
 	{
 	if ( p == pe )
 		goto _test_eof;
@@ -161,135 +161,135 @@ st0:
 cs = 0;
 	goto _out;
 tr467:
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
-#line 103 "uri_parser.rl"
+/* #line 103 "uri_parser.rl" */
 	{
             //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setQuery(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr469:
-#line 103 "uri_parser.rl"
+/* #line 103 "uri_parser.rl" */
 	{
             //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setQuery(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr474:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st453;
 tr485:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st453;
 tr489:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr493:
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr548:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr559:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr563:
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr566:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 tr570:
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st453;
 st453:
 	if ( ++p == pe )
 		goto _test_eof453;
 case 453:
-#line 293 "uri_parser.rl.cpp"
+/* #line 293 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 37: goto tr463;
 		case 60: goto st0;
@@ -310,14 +310,14 @@ case 453:
 		goto st0;
 	goto tr462;
 tr462:
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
 	goto st454;
 st454:
 	if ( ++p == pe )
 		goto _test_eof454;
 case 454:
-#line 321 "uri_parser.rl.cpp"
+/* #line 321 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 37: goto st1;
 		case 60: goto st0;
@@ -338,14 +338,14 @@ case 454:
 		goto st0;
 	goto st454;
 tr463:
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
 	goto st1;
 st1:
 	if ( ++p == pe )
 		goto _test_eof1;
 case 1:
-#line 349 "uri_parser.rl.cpp"
+/* #line 349 "uri_parser.rl.c" */
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st2;
@@ -395,48 +395,48 @@ case 4:
 		goto st452;
 	goto st0;
 tr476:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st455;
 tr486:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st455;
 tr490:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st455;
 tr494:
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st455;
 st455:
 	if ( ++p == pe )
 		goto _test_eof455;
 case 455:
-#line 440 "uri_parser.rl.cpp"
+/* #line 440 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto st453;
@@ -483,117 +483,117 @@ case 6:
 		goto st455;
 	goto st0;
 tr482:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st456;
 tr488:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st456;
 tr492:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 tr496:
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 tr556:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 tr562:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 tr565:
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 tr569:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 tr573:
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st456;
 st456:
 	if ( ++p == pe )
 		goto _test_eof456;
 case 456:
-#line 597 "uri_parser.rl.cpp"
+/* #line 597 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto tr467;
@@ -613,14 +613,14 @@ case 456:
 		goto st0;
 	goto tr466;
 tr466:
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
 	goto st457;
 st457:
 	if ( ++p == pe )
 		goto _test_eof457;
 case 457:
-#line 624 "uri_parser.rl.cpp"
+/* #line 624 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto tr469;
@@ -640,14 +640,14 @@ case 457:
 		goto st0;
 	goto st457;
 tr468:
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
 	goto st7;
 st7:
 	if ( ++p == pe )
 		goto _test_eof7;
 case 7:
-#line 651 "uri_parser.rl.cpp"
+/* #line 651 "uri_parser.rl.c" */
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st8;
@@ -729,14 +729,14 @@ case 459:
 		goto tr480;
 	goto st0;
 tr472:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st9;
 st9:
 	if ( ++p == pe )
 		goto _test_eof9;
 case 9:
-#line 740 "uri_parser.rl.cpp"
+/* #line 740 "uri_parser.rl.c" */
 	if ( 48 <= (*p) && (*p) <= 52 )
 		goto st10;
 	goto st0;
@@ -861,19 +861,19 @@ case 460:
 	}
 	goto st0;
 tr507:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st461;
 tr487:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
@@ -882,7 +882,7 @@ st461:
 	if ( ++p == pe )
 		goto _test_eof461;
 case 461:
-#line 886 "uri_parser.rl.cpp"
+/* #line 886 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 35: goto tr489;
 		case 47: goto tr490;
@@ -892,14 +892,14 @@ case 461:
 		goto tr491;
 	goto st0;
 tr491:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st462;
 st462:
 	if ( ++p == pe )
 		goto _test_eof462;
 case 462:
-#line 903 "uri_parser.rl.cpp"
+/* #line 903 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 35: goto tr493;
 		case 47: goto tr494;
@@ -1038,14 +1038,14 @@ case 30:
 		goto st15;
 	goto st0;
 tr473:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st467;
 st467:
 	if ( ++p == pe )
 		goto _test_eof467;
 case 467:
-#line 1049 "uri_parser.rl.cpp"
+/* #line 1049 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -1068,14 +1068,14 @@ case 467:
 		goto st467;
 	goto st0;
 tr475:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st31;
 st31:
 	if ( ++p == pe )
 		goto _test_eof31;
 case 31:
-#line 1079 "uri_parser.rl.cpp"
+/* #line 1079 "uri_parser.rl.c" */
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st32;
@@ -1099,19 +1099,19 @@ case 32:
 		goto st467;
 	goto st0;
 tr481:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st468;
 tr499:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
@@ -1120,7 +1120,7 @@ st468:
 	if ( ++p == pe )
 		goto _test_eof468;
 case 468:
-#line 1124 "uri_parser.rl.cpp"
+/* #line 1124 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st33;
 		case 35: goto tr489;
@@ -1198,30 +1198,30 @@ case 35:
 		goto st33;
 	goto st0;
 tr38:
-#line 37 "uri_parser.rl"
+/* #line 37 "uri_parser.rl" */
 	{
             if(mark){
                 this->setUser(std::string(mark, p - mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st469;
 tr483:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 37 "uri_parser.rl"
+/* #line 37 "uri_parser.rl" */
 	{
             if(mark){
                 this->setUser(std::string(mark, p - mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st469;
 st469:
 	if ( ++p == pe )
 		goto _test_eof469;
 case 469:
-#line 1225 "uri_parser.rl.cpp"
+/* #line 1225 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 2: goto tr472;
 		case 33: goto tr501;
@@ -1252,14 +1252,14 @@ case 469:
 		goto tr506;
 	goto st0;
 tr501:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st470;
 st470:
 	if ( ++p == pe )
 		goto _test_eof470;
 case 470:
-#line 1263 "uri_parser.rl.cpp"
+/* #line 1263 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1281,14 +1281,14 @@ case 470:
 		goto st470;
 	goto st0;
 tr502:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st36;
 st36:
 	if ( ++p == pe )
 		goto _test_eof36;
 case 36:
-#line 1292 "uri_parser.rl.cpp"
+/* #line 1292 "uri_parser.rl.c" */
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st37;
@@ -1312,14 +1312,14 @@ case 37:
 		goto st470;
 	goto st0;
 tr503:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st471;
 st471:
 	if ( ++p == pe )
 		goto _test_eof471;
 case 471:
-#line 1323 "uri_parser.rl.cpp"
+/* #line 1323 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1719,14 +1719,14 @@ case 484:
 		goto st470;
 	goto st0;
 tr504:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st485;
 st485:
 	if ( ++p == pe )
 		goto _test_eof485;
 case 485:
-#line 1730 "uri_parser.rl.cpp"
+/* #line 1730 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1753,14 +1753,14 @@ case 485:
 		goto st486;
 	goto st0;
 tr506:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st486;
 st486:
 	if ( ++p == pe )
 		goto _test_eof486;
 case 486:
-#line 1764 "uri_parser.rl.cpp"
+/* #line 1764 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1787,14 +1787,14 @@ case 486:
 		goto st471;
 	goto st0;
 tr505:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st487;
 st487:
 	if ( ++p == pe )
 		goto _test_eof487;
 case 487:
-#line 1798 "uri_parser.rl.cpp"
+/* #line 1798 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st470;
 		case 35: goto tr485;
@@ -1853,14 +1853,14 @@ case 488:
 		goto st470;
 	goto st0;
 tr484:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st38;
 st38:
 	if ( ++p == pe )
 		goto _test_eof38;
 case 38:
-#line 1864 "uri_parser.rl.cpp"
+/* #line 1864 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 58: goto st146;
 		case 118: goto st225;
@@ -4700,14 +4700,14 @@ case 228:
 		goto st228;
 	goto st0;
 tr500:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st489;
 st489:
 	if ( ++p == pe )
 		goto _test_eof489;
 case 489:
-#line 4711 "uri_parser.rl.cpp"
+/* #line 4711 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st33;
 		case 35: goto tr493;
@@ -4735,14 +4735,14 @@ case 489:
 		goto st33;
 	goto st0;
 tr477:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st490;
 st490:
 	if ( ++p == pe )
 		goto _test_eof490;
 case 490:
-#line 4746 "uri_parser.rl.cpp"
+/* #line 4746 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5156,14 +5156,14 @@ case 503:
 		goto st467;
 	goto st0;
 tr478:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st504;
 st504:
 	if ( ++p == pe )
 		goto _test_eof504;
 case 504:
-#line 5167 "uri_parser.rl.cpp"
+/* #line 5167 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5191,14 +5191,14 @@ case 504:
 		goto st505;
 	goto st0;
 tr480:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st505;
 st505:
 	if ( ++p == pe )
 		goto _test_eof505;
 case 505:
-#line 5202 "uri_parser.rl.cpp"
+/* #line 5202 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5226,14 +5226,14 @@ case 505:
 		goto st490;
 	goto st0;
 tr479:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st506;
 st506:
 	if ( ++p == pe )
 		goto _test_eof506;
 case 506:
-#line 5237 "uri_parser.rl.cpp"
+/* #line 5237 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st467;
 		case 35: goto tr485;
@@ -5294,14 +5294,14 @@ case 507:
 		goto st467;
 	goto st0;
 tr461:
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
 	goto st508;
 st508:
 	if ( ++p == pe )
 		goto _test_eof508;
 case 508:
-#line 5305 "uri_parser.rl.cpp"
+/* #line 5305 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto st453;
@@ -5334,17 +5334,17 @@ case 508:
 		goto st508;
 	goto st452;
 tr543:
-#line 22 "uri_parser.rl"
+/* #line 22 "uri_parser.rl" */
 	{
             this->setScheme(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st509;
 st509:
 	if ( ++p == pe )
 		goto _test_eof509;
 case 509:
-#line 5348 "uri_parser.rl.cpp"
+/* #line 5348 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto st453;
@@ -5424,14 +5424,14 @@ case 511:
 		goto tr554;
 	goto st0;
 tr546:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st229;
 st229:
 	if ( ++p == pe )
 		goto _test_eof229;
 case 229:
-#line 5435 "uri_parser.rl.cpp"
+/* #line 5435 "uri_parser.rl.c" */
 	if ( 48 <= (*p) && (*p) <= 52 )
 		goto st230;
 	goto st0;
@@ -5556,52 +5556,52 @@ case 512:
 	}
 	goto st0;
 tr550:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st513;
 tr567:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st513;
 tr560:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st513;
 tr571:
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st513;
 st513:
 	if ( ++p == pe )
 		goto _test_eof513;
 case 513:
-#line 5605 "uri_parser.rl.cpp"
+/* #line 5605 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 34: goto st0;
 		case 35: goto tr563;
@@ -5648,19 +5648,19 @@ case 244:
 		goto st513;
 	goto st0;
 tr584:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st514;
 tr561:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
@@ -5669,7 +5669,7 @@ st514:
 	if ( ++p == pe )
 		goto _test_eof514;
 case 514:
-#line 5673 "uri_parser.rl.cpp"
+/* #line 5673 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 35: goto tr566;
 		case 47: goto tr567;
@@ -5679,14 +5679,14 @@ case 514:
 		goto tr568;
 	goto st0;
 tr568:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st515;
 st515:
 	if ( ++p == pe )
 		goto _test_eof515;
 case 515:
-#line 5690 "uri_parser.rl.cpp"
+/* #line 5690 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 35: goto tr570;
 		case 47: goto tr571;
@@ -5825,14 +5825,14 @@ case 252:
 		goto st235;
 	goto st0;
 tr547:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st520;
 st520:
 	if ( ++p == pe )
 		goto _test_eof520;
 case 520:
-#line 5836 "uri_parser.rl.cpp"
+/* #line 5836 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -5855,14 +5855,14 @@ case 520:
 		goto st520;
 	goto st0;
 tr549:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st253;
 st253:
 	if ( ++p == pe )
 		goto _test_eof253;
 case 253:
-#line 5866 "uri_parser.rl.cpp"
+/* #line 5866 "uri_parser.rl.c" */
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st254;
@@ -5886,19 +5886,19 @@ case 254:
 		goto st520;
 	goto st0;
 tr555:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	goto st521;
 tr576:
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
@@ -5907,7 +5907,7 @@ st521:
 	if ( ++p == pe )
 		goto _test_eof521;
 case 521:
-#line 5911 "uri_parser.rl.cpp"
+/* #line 5911 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st255;
 		case 35: goto tr566;
@@ -5985,30 +5985,30 @@ case 257:
 		goto st255;
 	goto st0;
 tr263:
-#line 37 "uri_parser.rl"
+/* #line 37 "uri_parser.rl" */
 	{
             if(mark){
                 this->setUser(std::string(mark, p - mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st522;
 tr557:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 37 "uri_parser.rl"
+/* #line 37 "uri_parser.rl" */
 	{
             if(mark){
                 this->setUser(std::string(mark, p - mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	goto st522;
 st522:
 	if ( ++p == pe )
 		goto _test_eof522;
 case 522:
-#line 6012 "uri_parser.rl.cpp"
+/* #line 6012 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 2: goto tr546;
 		case 33: goto tr578;
@@ -6039,14 +6039,14 @@ case 522:
 		goto tr583;
 	goto st0;
 tr578:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st523;
 st523:
 	if ( ++p == pe )
 		goto _test_eof523;
 case 523:
-#line 6050 "uri_parser.rl.cpp"
+/* #line 6050 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6068,14 +6068,14 @@ case 523:
 		goto st523;
 	goto st0;
 tr579:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st258;
 st258:
 	if ( ++p == pe )
 		goto _test_eof258;
 case 258:
-#line 6079 "uri_parser.rl.cpp"
+/* #line 6079 "uri_parser.rl.c" */
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
 			goto st259;
@@ -6099,14 +6099,14 @@ case 259:
 		goto st523;
 	goto st0;
 tr580:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st524;
 st524:
 	if ( ++p == pe )
 		goto _test_eof524;
 case 524:
-#line 6110 "uri_parser.rl.cpp"
+/* #line 6110 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6506,14 +6506,14 @@ case 537:
 		goto st523;
 	goto st0;
 tr581:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st538;
 st538:
 	if ( ++p == pe )
 		goto _test_eof538;
 case 538:
-#line 6517 "uri_parser.rl.cpp"
+/* #line 6517 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6540,14 +6540,14 @@ case 538:
 		goto st539;
 	goto st0;
 tr583:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st539;
 st539:
 	if ( ++p == pe )
 		goto _test_eof539;
 case 539:
-#line 6551 "uri_parser.rl.cpp"
+/* #line 6551 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6574,14 +6574,14 @@ case 539:
 		goto st524;
 	goto st0;
 tr582:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st540;
 st540:
 	if ( ++p == pe )
 		goto _test_eof540;
 case 540:
-#line 6585 "uri_parser.rl.cpp"
+/* #line 6585 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st523;
 		case 35: goto tr559;
@@ -6640,14 +6640,14 @@ case 541:
 		goto st523;
 	goto st0;
 tr558:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st260;
 st260:
 	if ( ++p == pe )
 		goto _test_eof260;
 case 260:
-#line 6651 "uri_parser.rl.cpp"
+/* #line 6651 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 58: goto st368;
 		case 118: goto st447;
@@ -9487,14 +9487,14 @@ case 450:
 		goto st450;
 	goto st0;
 tr577:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st542;
 st542:
 	if ( ++p == pe )
 		goto _test_eof542;
 case 542:
-#line 9498 "uri_parser.rl.cpp"
+/* #line 9498 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st255;
 		case 35: goto tr570;
@@ -9522,14 +9522,14 @@ case 542:
 		goto st255;
 	goto st0;
 tr551:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st543;
 st543:
 	if ( ++p == pe )
 		goto _test_eof543;
 case 543:
-#line 9533 "uri_parser.rl.cpp"
+/* #line 9533 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -9943,14 +9943,14 @@ case 556:
 		goto st520;
 	goto st0;
 tr552:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st557;
 st557:
 	if ( ++p == pe )
 		goto _test_eof557;
 case 557:
-#line 9954 "uri_parser.rl.cpp"
+/* #line 9954 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -9978,14 +9978,14 @@ case 557:
 		goto st558;
 	goto st0;
 tr554:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st558;
 st558:
 	if ( ++p == pe )
 		goto _test_eof558;
 case 558:
-#line 9989 "uri_parser.rl.cpp"
+/* #line 9989 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -10013,14 +10013,14 @@ case 558:
 		goto st543;
 	goto st0;
 tr553:
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 	goto st559;
 st559:
 	if ( ++p == pe )
 		goto _test_eof559;
 case 559:
-#line 10024 "uri_parser.rl.cpp"
+/* #line 10024 "uri_parser.rl.c" */
 	switch( (*p) ) {
 		case 33: goto st520;
 		case 35: goto tr559;
@@ -10647,12 +10647,12 @@ case 560:
 	switch ( cs ) {
 	case 462: 
 	case 489: 
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 460: 
@@ -10698,127 +10698,127 @@ case 560:
 	case 505: 
 	case 506: 
 	case 507: 
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	break;
 	case 513: 
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 457: 
-#line 103 "uri_parser.rl"
+/* #line 103 "uri_parser.rl" */
 	{
             //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setQuery(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 454: 
-#line 109 "uri_parser.rl"
+/* #line 109 "uri_parser.rl" */
 	{
             //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setFragment(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 456: 
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
-#line 103 "uri_parser.rl"
+/* #line 103 "uri_parser.rl" */
 	{
             //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setQuery(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 453: 
-#line 18 "uri_parser.rl"
+/* #line 18 "uri_parser.rl" */
 	{ mark = p; }
-#line 109 "uri_parser.rl"
+/* #line 109 "uri_parser.rl" */
 	{
             //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setFragment(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 461: 
 	case 468: 
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 459: 
 	case 469: 
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
 	break;
 	case 514: 
 	case 521: 
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 511: 
 	case 522: 
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 515: 
 	case 542: 
-#line 30 "uri_parser.rl"
+/* #line 30 "uri_parser.rl" */
 	{
             if (p != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
 	case 512: 
@@ -10864,28 +10864,28 @@ case 560:
 	case 558: 
 	case 559: 
 	case 560: 
-#line 44 "uri_parser.rl"
+/* #line 44 "uri_parser.rl" */
 	{
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, p - mark));
             }
         }
-#line 19 "uri_parser.rl"
+/* #line 19 "uri_parser.rl" */
 	{ mark = p; }
-#line 78 "uri_parser.rl"
+/* #line 78 "uri_parser.rl" */
 	{
             this->setPath(std::string(mark, p - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 	break;
-#line 10882 "uri_parser.rl.cpp"
+/* #line 10882 "uri_parser.rl.c" */
 	}
 	}
 
 	_out: {}
 	}
 
-#line 207 "uri_parser.rl"
+/* #line 207 "uri_parser.rl" */
         if(cs == uri_parser_error){
             return false; //error
         } else if(cs >= uri_parser_first_final){

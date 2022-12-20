@@ -103,7 +103,7 @@ int main(){
             {
                 "Id":"logger",
                 "InvokeFunctions":{
-                    "externMode":[]                         //调用Id: logger 对象的externMode函数  
+                    "externMode":[]                         // 调用Id: logger 对象的externMode函数  
                 }
             },
             {

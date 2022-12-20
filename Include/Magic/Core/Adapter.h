@@ -12,15 +12,6 @@
     #include <io.h>
     #undef DELETE
 
-    typedef struct{
-        enum class RW {
-            Read,
-            Wirte
-        };
-        RW flag;
-        SRWLOCK lock;
-    }WinRWLock;
-
     #define IS_FILE(Path)        _access(Path,0)
 #endif
 

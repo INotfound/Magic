@@ -21,7 +21,7 @@ namespace Http{
         action save_scheme
         {
             this->setScheme(std::string(mark, fpc - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 
         scheme = (alpha (alpha | digit | "+" | "-" | ".")*) >marku %save_scheme;
@@ -31,18 +31,18 @@ namespace Http{
             if (fpc != mark){
                 this->setPort(atoi(mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
         action save_userinfo
         {
             if(mark){
                 this->setUser(std::string(mark, fpc - mark));
             }
-            mark = NULL;
+            mark = nullptr;
         }
         action save_host
         {
-            if (mark != NULL){
+            if (mark != nullptr){
                 this->setHost(std::string(mark, fpc - mark));
             }
         }
@@ -71,13 +71,13 @@ namespace Http{
 
         action save_segment
         {
-            mark = NULL;
+            mark = nullptr;
         }
 
         action save_path
         {
             this->setPath(std::string(mark, fpc - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 
 
@@ -101,15 +101,13 @@ namespace Http{
 
         action save_query
         {
-            //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setQuery(std::string(mark, fpc - mark));
-            mark = NULL;
+            mark = nullptr;
         }
         action save_fragment
         {
-            //std::cout << std::string(mark, fpc - mark) << std::endl;
             this->setFragment(std::string(mark, fpc - mark));
-            mark = NULL;
+            mark = nullptr;
         }
 
         query = (pchar | "/" | "?")* >marku %save_query;

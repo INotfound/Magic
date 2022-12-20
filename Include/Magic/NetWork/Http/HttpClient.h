@@ -18,14 +18,38 @@ namespace Http{
     public:
         ~HttpClient();
 
+        /**
+         * @brief HttpClient
+         * @param url 地址
+         * @param timeOutMs 超时时间,默认1000毫秒
+         */
         explicit HttpClient(const std::string& url,uint64_t timeOutMs = 1000);
 
+        /**
+         * @brief 执行Http请求处理
+         * @param request 请求头对象
+         */
         void execute(const Safe<HttpRequest>& request);
 
+        /**
+         * @brief 超时函数
+         * @param callback 回调函数
+         * @return HttpClient 对象
+         */
         ObjectWrapper<HttpClient> onTimeOut(const std::function<void()>& callback);
 
+        /**
+         * @brief 错误函数
+         * @param callBack 回调函数
+         * @return HttpClient 对象
+         */
         ObjectWrapper<HttpClient> onError(const std::function<void(const asio::error_code&)>& callBack);
 
+        /**
+         * @brief 响应函数
+         * @param callback 回调函数
+         * @return HttpClient 对象
+         */
         ObjectWrapper<HttpClient> onResponse(const std::function<void(const Safe<HttpResponse>&)>& callback);
 
     private:

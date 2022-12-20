@@ -59,7 +59,6 @@ namespace DataBase{
     public:
         explicit ConnectionPool(const Safe<Magic::Config>& configuration)
             :m_Count(configuration->at("DataBase.Connection.Count",2)){
-            m_IdleEntity.reserve(m_Count);
         }
 
         /**

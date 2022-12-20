@@ -142,6 +142,7 @@ int main(int /*argc*/,char** /*argv*/){
     }catch (std::exception& ec){
         std::cout << ec.what() << std::endl;
     }
+
     std::getchar();
     return 0;
 }

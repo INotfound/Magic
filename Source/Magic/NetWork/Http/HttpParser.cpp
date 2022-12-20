@@ -106,14 +106,15 @@ namespace Http{
     }
 
     uint64_t HttpRequestParser::getContentLength(){
-        std::string length;
-        length = m_Data->getHeader("Content-Length");
-        try{
-            if(!length.empty()){
-                m_Data->setContentLength(StringAs<uint64_t>(length,10));
-            }
-        }catch(...){
+        std::string length = m_Data->getHeader("Content-Length");
+        if(length.empty()){
             m_Data->setContentLength(0);
+        }else{
+            try{
+                m_Data->setContentLength(StringAs<uint64_t>(length,10));
+            }catch(...){
+                m_Data->setContentLength(0);
+            }
         }
         return m_Data->getContentLength();
     }
@@ -162,7 +163,7 @@ namespace Http{
         //HttpResponseParser *parser = static_cast<HttpResponseParser*>(data);
     }
 
-    void OnResponseHeaderOne(void* /*data*/,const char* /*at*/,size_t /*length*/){
+    void OnResponseHeaderDone(void* /*data*/,const char* /*at*/,size_t /*length*/){
     }
 
     void OnResponseHttpField(void* data,const char* field,size_t flen,const char* value,size_t vlen){
@@ -186,7 +187,7 @@ namespace Http{
         m_Parser->last_chunk = OnResponseLastChunk;
         m_Parser->chunk_size = OnResponseChunkSize;
         m_Parser->http_field = OnResponseHttpField;
-        m_Parser->header_done = OnResponseHeaderOne;
+        m_Parser->header_done = OnResponseHeaderDone;
         m_Parser->data = this;
     }
 
@@ -209,22 +210,17 @@ namespace Http{
     }
 
     uint32_t HttpResponseParser::getContentLength(){
-        std::string length;
-        try{
-            length = m_Data->getHeader("Content-Length");
-            if(length.empty()){
-                length = m_Data->getHeader("content-length");
-                if(!length.empty()){
-                    return StringAs<uint64_t>(length,10);
-                }else{
-                    return 0;
-                }
-            }else{
-                return StringAs<uint64_t>(length,10);
+        std::string length = m_Data->getHeader("Content-Length");
+        if(length.empty()){
+            m_Data->setContentLength(0);
+        }else{
+            try{
+                m_Data->setContentLength(StringAs<uint64_t>(length,10));
+            }catch(...){
+                m_Data->setContentLength(0);
             }
-        }catch(...){
-            return 0;
         }
+        return m_Data->getContentLength();
     }
 
     const Safe<HttpResponse>& HttpResponseParser::getData(){

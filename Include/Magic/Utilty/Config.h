@@ -170,7 +170,7 @@ namespace Magic{
 
     class InIConfigFormatter:public IConfigFormatter{
     public:
-        ~InIConfigFormatter() = default;
+        ~InIConfigFormatter() override = default;
 
         void write(std::ostream& os,ConfigMap& KeyValue) override;
 

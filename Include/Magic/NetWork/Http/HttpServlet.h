@@ -62,15 +62,35 @@ namespace Http{
     public:
         virtual ~IHttpServlet();
 
+        /**
+         * @brief 添加路由处理函数
+         * @param path 需要处理的路由路径
+         * @param memberFunc 处理路由的成员函数
+         */
         template<typename T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
         void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc);
 
+        /**
+         * @brief 添加路由处理函数
+         * @param path 需要处理的路由路径
+         * @param memberFunc 处理路由的成员函数
+         */
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
         void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc,Args ...args);
 
+        /**
+         * @brief 添加路由模糊匹配处理函数
+         * @param path 需要处理的路由正则路径
+         * @param memberFunc 处理路由的成员函数
+         */
         template<typename T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
         void addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc);
 
+        /**
+         * @brief 添加路由模糊匹配处理函数
+         * @param path 需要处理的路由正则路径
+         * @param memberFunc 处理路由的成员函数
+         */
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
         void addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc,Args ...args);
 
@@ -82,60 +102,62 @@ namespace Http{
      * @brief HttpServlet分配器类
      */
     class HttpServletDispatch:public std::enable_shared_from_this<HttpServletDispatch>{
-        /// Path RouteHandle(RouteHandle) Before(AspectHandle) After(AspectHandle)
+        /// Path | RouteHandle(RouteHandle) | Before(AspectHandle) | After(AspectHandle)
         using RouteMaps = std::unordered_map<std::string,std::tuple<RouteHandle,std::deque<AspectHandle>,std::deque<AspectHandle>>>;
     public:
         /**
          * @brief 处理函数
-         * @param request Http请求对象
-         * @param response Http响应对象
-         * @return: 返回True则成功，返回False则失败
+         * @param httpSocket Http连接对象
          */
         void handle(const Safe<HttpSocket>& httpSocket);
 
         /**
          * @brief 添加Servlet对象函数
-         * @param path Servlet的路径
-         * @param servlet Servlet对象
+         * @param servlet 控制器
          */
         void setHttpServlet(const Safe<IHttpServlet>& servlet);
 
         /**
          * @brief 添加路由
-         * @param path Url 子路径
-         * @param type 路由类型
+         * @param path Url子路径
+         * @param routeType 路由类型
          * @param handle 处理函数
          */
         template<typename T,typename = typename std::enable_if<std::is_same<decltype(FunctionChecker(T())),decltype(FunctionChecker(RouteHandle()))>::value>::type>
         void addRoute(const std::string& path,HttpRouteType routeType,T handle);
 
+        /**
+         * @brief 添加路由
+         * @param path Url子路径
+         * @param routeType 路由类型
+         * @param handle 处理函数
+         * @param args 多个Aspect处理对象
+         */
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_same<decltype(FunctionChecker(T())),decltype(FunctionChecker(RouteHandle()))>::value>::type>
         void addRoute(const std::string& path,HttpRouteType routeType,T handle,Args ...args);
 
         /**
          * @brief 添加全局的切片
-         * @param aspect  需要添加的全局切片
+         * @param aspect Aspect处理对象
          */
         template<typename T,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value || HasAfter<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type>
         void addGlobalAspect(const T& aspect);
 
+        /**
+         * @brief 添加全局的切片
+         * @param aspect Aspect处理对象
+         * @param args 多个Aspect处理对象
+         */
         template<typename T,typename ...Args,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value || HasAfter<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type>
         void addGlobalAspect(const T& aspect,Args ...args);
 
     private:
-        /**
-         * @param aspect  需要添加的全局切片
-         */
         template<typename T,typename = typename std::enable_if<HasAfter<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type>
         void addGlobalAspectAfter(const T& aspect);
 
         template<typename T,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type>
         void addGlobalAspectBefore(const T& aspect);
 
-        /**
-         * @param iter 路由迭代器
-         * @param aspect  需要添加的切片
-         */
         template<typename T,typename = typename std::enable_if<HasBefore<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value || HasAfter<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type>
         void addAspect(const RouteMaps::iterator& iter,const T& aspect);
 
@@ -160,7 +182,7 @@ namespace Http{
 
         template<typename T>
         void addAspectBefore(const RouteMaps::iterator&,const T&,typename std::enable_if<!HasBefore<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type* = nullptr);
-
+        ////////////////////
     private:
         std::mutex m_Mutex;
         RouteMaps m_MatchRoutes;
@@ -309,6 +331,7 @@ namespace Http{
     template<typename T>
     void HttpServletDispatch::addAspectBefore(const RouteMaps::iterator&,const T&,typename std::enable_if<!HasBefore<typename Safe_Traits<T>::Type,bool (Safe_Traits<T>::Type::*)(const Safe<HttpSocket>&)>::value>::type*){
     }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }
 }
 }

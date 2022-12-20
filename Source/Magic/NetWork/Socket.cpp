@@ -36,10 +36,6 @@ namespace NetWork{
         return m_Working;
     }
 
-    void Socket::setHeartBeatTime(uint64_t ms){
-        m_HeartBeatMs = ms;
-    }
-
     void Socket::runHeartBeat(const Safe<void>& life){
         auto self = this->shared_from_this();
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self,life](){

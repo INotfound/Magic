@@ -38,20 +38,20 @@ namespace Http{
         void runHeartBeat();
 
         /**
-        * @brief 设置临时目录路径
-        * @param dirPath 目录路径
+        * @brief 设置临时文件目录路径
+        * @param dirPath 临时文件目录路径
         */
         void setDirectory(const std::string& dirPath);
 
         /**
          * 获取Http请求
-         * @return HttpRequest
+         * @return HttpRequest对象
          */
         const Safe<HttpRequest>& getRequest() const;
 
         /**
          * 获取Http响应
-         * @return HttpResponse
+         * @return HttpResponse对象
          */
         const Safe<HttpResponse>& getResponse() const;
 

@@ -25,13 +25,13 @@ namespace NetWork{
     public:
         /// 数据流缓存
         typedef std::vector<char> StreamBuffer;
-        /// 错误回调方法
+        /// 发送回调方法
         typedef std::function<void()> SendCallBack;
         /// 数据接收方法
         typedef std::function<void(StreamBuffer&)> RecvCallBack;
         /// 错误回调方法
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
-        /// 超时回调方法
+        /// 心跳回调方法
         typedef std::function<void(const Safe<Socket>&)> HeartBeatCallBack;
 
         /**
@@ -42,8 +42,8 @@ namespace NetWork{
         /**
          * @brief 构造函数
          * @param heartBeatMs Socket心跳检测时间(毫秒)
-         * @param bufferSize 缓存大小
-         * @param context Asio的处理上下文
+         * @param bufferSize 数据接收缓冲区大小
+         * @param context Asio的上下文
          */
         Socket(uint64_t heartBeatMs,uint64_t bufferSize,asio::io_context& context);
 
@@ -54,48 +54,47 @@ namespace NetWork{
 
         /**
          * @brief 是否是正在工作
-         * @return
+         * @return true 工作中 false 未工作
          */
         bool isWorking() const;
 
         /**
-         * @brief
-         * @param ms
-         */
-        void setHeartBeatTime(uint64_t ms);
-
-        /**
          * @brief 运行Socket心跳
+         * @param life 需要被"保活"的对象
+         * @see setHeartBeatCallBack 函数
+         * @note 调用该函数后会定时调用 HeartBeatCallBack 回调函数,每调用一次都会延长 life 生命周期
          */
         void runHeartBeat(const Safe<void>& life);
 
         /**
          * @brief 获取Socket的实体函数
-         * @return: 返回Socket实体
+         * @return: 返回Socket实体对象
          */
         const Safe<asio::ip::tcp::socket>& getEntity();
     #ifdef OPENSSL
         /**
          * @brief 获取SslStream的实体函数
-         * @return: 返回SslStream实体
+         * @return: 返回SslStream实体对象
+         * @note 编译环境中存在 SSL 库才会有该函数
          */
         const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& getSslEntity();
         /**
          * @brief 启用SSL功能
          * @param sslStream ssl流对象
+         * @note 编译环境中存在 SSL 库才会有该函数
          */
         void enableSsl(const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& sslStream);
     #endif
         /**
          * @brief 接收数据函数
          * @param callBack 接收数据回调函数
-         * @warning 回调函数不会保证生命周期,需要注意！
+         * @warning 该函数不保证生命周期,需要注意！
          */
         void recv(const RecvCallBack& callBack);
 
         /**
          * @brief 获取错误处理函数
-         * @return
+         * @return 获取错误回调函数对象
          */
         const ErrorCallBack& getErrorCodeCallBack() const;
 
@@ -103,7 +102,7 @@ namespace NetWork{
          * @brief 接收数据函数
          * @param size 指定接收大小
          * @param callBack 接收数据回调函数
-         * @warning 回调函数不会保证生命周期,需要注意！
+         * @warning 该函数不保证生命周期,需要注意！
          */
         void recv(uint64_t size,const RecvCallBack& callBack);
 
@@ -122,9 +121,9 @@ namespace NetWork{
         /**
          * @brief 发送数据函数
          * @param data 二进制或文本数据
-         * @param length 长度
+         * @param length 发送数据的长度
          * @param callback 发送完成后响应函数
-         * @warning 回调函数不会保证生命周期,需要注意！
+         * @warning 该函数不保证生命周期,需要注意！
          */
         void send(const char* data,uint64_t length,const SendCallBack& callback = nullptr);
 
@@ -132,7 +131,7 @@ namespace NetWork{
          * @brief 发送数据函数
          * @param stream Asio流式缓存数据
          * @param callback 发送完成后响应函数
-         * @warning 回调函数不会保证生命周期,需要注意！
+         * @warning 该函数不保证生命周期,需要注意！
          */
         void send(const Safe<asio::streambuf>& stream,const SendCallBack& callback = nullptr);
 

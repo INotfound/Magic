@@ -4,16 +4,25 @@
 #include <Magic/Core/Container.h>
 
 namespace Magic{
+    /**
+     * @brief IoC 应用容器
+     * @note 容器会随着整个程序周期运行,根据配置来初始化对应的模块
+     */
     class Application:public std::enable_shared_from_this<Application>{
     public:
+        /**
+         * @brief Application
+         */
         ~Application();
-
+        /**
+         * @brief Application
+         */
         Application();
 
         /**
          * @brief 配置IoC容器
-         * @return 返回 Ioc 容器
-         * @note 该函数在外部实现
+         * @return 返回 IoC 容器对象
+         * @note 该函数在外部头文件中实现
          */
         const Safe<Container>& initialize(const std::function<void(const Safe<Container>&)>& configure = nullptr);
 

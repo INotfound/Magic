@@ -12,10 +12,11 @@
 #include "Magic/Utilty/Trace.h"
 #include "Magic/NetWork/TcpClient.h"
 #include "Magic/NetWork/Http/HttpClient.h"
+#include "Magic/Core/Except.h"
 
 using namespace Magic::NetWork::Http;
 
-#define leak
+//#define leak
 
 #ifdef leak
 std::atomic_int newNum(0);
@@ -65,9 +66,9 @@ public:
 //           httpSocket->sendResponse(response);
 //        });
 //        httpClient->execute(httpRequest);
-
-            response->setStatus(HttpStatus::OK);
-            httpSocket->sendResponse(response);
+        throw Magic::Failure("data sell");
+        response->setStatus(HttpStatus::OK);
+        httpSocket->sendResponse(response);
     }
 };
 
@@ -144,6 +145,11 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/2",&ResourceServlet::handle1,m_Container->resolve<Aop>(),m_Container->resolve<AopEx>());
 
     m_Container->resolve<Magic::NetWork::Http::HttpServletDispatch>()->addGlobalAspect(m_Container->resolve<AopGlobal>(),m_Container->resolve<AopGlobalEx>());
+
+    MAGIC_DEBUG() << "1";
+    MAGIC_ERROR() << "2";
+    MAGIC_FATAL() << "3";
+    MAGIC_WARN() << "4";
 
     m_Container->resolveAll();
     return m_Container;

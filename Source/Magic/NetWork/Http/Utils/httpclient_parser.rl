@@ -62,7 +62,7 @@
     action start_value { MARK(mark, fpc); }
 
     action write_content_len { 
-        parser->content_len = strtol(PTR_TO(mark), NULL, 10);
+        parser->content_len = strtol(PTR_TO(mark), nullptr, 10);
     }
 
     action write_connection_close {
@@ -70,36 +70,36 @@
     }
 
     action write_value { 
-        if(parser->http_field != NULL){
+        if(parser->http_field != nullptr){
             parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, fpc));
         }
     }
 
     action reason_phrase { 
-        if(parser->reason_phrase != NULL)
+        if(parser->reason_phrase != nullptr)
             parser->reason_phrase(parser->data, PTR_TO(mark), LEN(mark, fpc));
     }
 
     action status_code { 
-        parser->status = strtol(PTR_TO(mark), NULL, 10);
+        parser->status = strtol(PTR_TO(mark), nullptr, 10);
 
-        if(parser->status_code != NULL)
+        if(parser->status_code != nullptr)
             parser->status_code(parser->data, PTR_TO(mark), LEN(mark, fpc));
     }
 
     action http_version {	
-        if(parser->http_version != NULL)
+        if(parser->http_version != nullptr)
             parser->http_version(parser->data, PTR_TO(mark), LEN(mark, fpc));
     }
 
     action chunk_size {
         parser->chunked = 1;
-        parser->content_len = strtol(PTR_TO(mark), NULL, 16);
+        parser->content_len = strtol(PTR_TO(mark), nullptr, 16);
         parser->chunks_done = parser->content_len <= 0;
 
         if(parser->chunks_done && parser->last_chunk){
             parser->last_chunk(parser->data, PTR_TO(mark), LEN(mark, fpc));
-        } else if(parser->chunk_size != NULL){
+        } else if(parser->chunk_size != nullptr){
             parser->chunk_size(parser->data, PTR_TO(mark), LEN(mark, fpc));
         } // else skip it
     }
@@ -110,7 +110,7 @@
 
     action done { 
         parser->body_start = fpc - buffer + 1; 
-        if(parser->header_done != NULL)
+        if(parser->header_done != nullptr)
             parser->header_done(parser->data, fpc + 1, pe - fpc - 1);
         fbreak;
     }

@@ -26,9 +26,9 @@ namespace Http{
         ~WebSocket();
 
         /**
-         * @brief 构建实体
-         * @param mask 是否使用掩码,客户端置为 true 否则置为 false
-         * @param socket Tcp Socket实体
+         * @brief WebSocket
+         * @param mask 是否使用掩码,客户端置为 true|否则置为 false
+         * @param socket Socket实体
          */
         WebSocket(bool mask,const Safe<Socket>& socket);
 

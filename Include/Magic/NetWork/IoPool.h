@@ -30,16 +30,18 @@ namespace NetWork{
 
         /**
          * @brief 网络Io池等待完成函数
+         * @note 该函数在IoC配置后Class Application析构中默认调用.
          */
         void wait();
 
         /**
-         * @brief 网络Io池暂停函数
+         * @brief 网络Io池终止函数
          */
         void stop();
 
         /**
          * @brief 外部模式
+         * @warning IoC容器中配置文件中默认调用,非IoC环境请手动调用.
          */
         void externMode();
 

@@ -38,7 +38,7 @@
 #include <ctype.h>
 #include <string.h>
 //#include <dbg.h>
-#include "Magic/Http/Util/http11_parser.h"
+#include "Magic/NetWork//Http/Utils/http11_parser.h"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
@@ -61,39 +61,39 @@
   action start_value { MARK(mark, fpc); }
 
   action write_value {
-    if(parser->http_field != NULL){
+    if(parser->http_field != nullptr){
       parser->http_field(parser->data, PTR_TO(field_start), parser->field_len, PTR_TO(mark), LEN(mark, fpc));
     }
   }
 
   action request_method { 
-    if(parser->request_method != NULL) 
+    if(parser->request_method != nullptr) 
       parser->request_method(parser->data, PTR_TO(mark), LEN(mark, fpc));
   }
 
   action request_uri { 
-    if(parser->request_uri != NULL)
+    if(parser->request_uri != nullptr)
       parser->request_uri(parser->data, PTR_TO(mark), LEN(mark, fpc));
   }
 
   action fragment {
-    if(parser->fragment != NULL)
+    if(parser->fragment != nullptr)
       parser->fragment(parser->data, PTR_TO(mark), LEN(mark, fpc));
   }
 
   action start_query {MARK(query_start, fpc); }
   action query_string { 
-    if(parser->query_string != NULL)
+    if(parser->query_string != nullptr)
       parser->query_string(parser->data, PTR_TO(query_start), LEN(query_start, fpc));
   }
 
   action http_version {	
-    if(parser->http_version != NULL)
+    if(parser->http_version != nullptr)
       parser->http_version(parser->data, PTR_TO(mark), LEN(mark, fpc));
   }
 
   action request_path {
-    if(parser->request_path != NULL)
+    if(parser->request_path != nullptr)
       parser->request_path(parser->data, PTR_TO(mark), LEN(mark,fpc));
   }
 
@@ -105,7 +105,7 @@
       } else {
         parser->body_start = fpc - buffer + 1;
 
-        if(parser->header_done != NULL){
+        if(parser->header_done != nullptr){
           parser->header_done(parser->data, fpc + 1, pe - fpc - 1);
         }
       }
