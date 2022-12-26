@@ -162,15 +162,17 @@ void Generator(std::ostream& stream){
                 stream << "        m_Container->registerType<";
             }else{
                 stream << "        m_Container->registerTypeEx<"
+                    << "::"
                     << val.Interface 
                     << ",";
             }
-            stream << val.Class;
+            stream << "::" << val.Class;
 
             for(auto& deps : val.Dependencies){
                 if(!deps.empty()){
                     stream << ","
                            << "Safe<"
+                           << "::"
                            << deps
                            << ">";
                 }
@@ -178,7 +180,7 @@ void Generator(std::ostream& stream){
             stream << ">()";
             for(auto& fps : val.FunctionPropertys){
                 stream << ".registerProperty(&";
-                stream << val.Class << "::";
+                stream << "::" << val.Class << "::";
                 stream << fps
                        << ")";
             }
@@ -211,9 +213,9 @@ void Generator(std::ostream& stream){
                        << val.Id << " = "
                        << "m_Container->resolve<";
                 if(CallerIter.Interface.empty()){
-                    stream << CallerIter.Class;
+                    stream << "::" << CallerIter.Class;
                 }else{
-                    stream << CallerIter.Interface << ','  << CallerIter.Class;
+                    stream << "::" << CallerIter.Interface << ','  <<  "::" << CallerIter.Class;
                 }
                 stream << ">();"
                        << LF
@@ -235,9 +237,9 @@ void Generator(std::ostream& stream){
                        << val.Id << " = "
                        << "m_Container->resolve<";
                 if(CallerIter.Interface.empty()){
-                    stream << CallerIter.Class;
+                    stream << "::" << CallerIter.Class;
                 }else{
-                    stream << CallerIter.Interface << ','  << CallerIter.Class;
+                    stream << "::" << CallerIter.Interface << ','  << "::" << CallerIter.Class;
                 }
                 stream << ">();"
                        << LF;
@@ -262,7 +264,7 @@ void Generator(std::ostream& stream){
                         if(iter == g_RegisteredMap.end()){
                             stream << fas;
                         }else{
-                            stream << "m_Container->resolve<" << iter->Class << ">()";
+                            stream << "m_Container->resolve<" << "::" << iter->Class << ">()";
                         }
                     }
                     stream << ");" << LF;
