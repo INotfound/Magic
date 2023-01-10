@@ -17,7 +17,7 @@ namespace Http{
     /**
      * @brief Http请求头解析类
      */
-    class HttpRequestParser{
+    class HttpRequestParser:public Noncopyable{
     public:
         /**
          * @brief 构造函数
@@ -76,7 +76,7 @@ namespace Http{
     /**
      * @brief Http响应头解析类
      */
-    class HttpResponseParser{
+    class HttpResponseParser:public Noncopyable{
     public:
         /**
          * @brief 构造函数

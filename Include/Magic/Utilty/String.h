@@ -57,7 +57,6 @@ namespace Magic{
     template<typename T>
     T StringAs(const std::string&,uint8_t){
         throw Magic::Failure("Type Not Supported!");
-        return T();
     }
 
     /**

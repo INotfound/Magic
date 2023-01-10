@@ -16,7 +16,7 @@ namespace Magic{
     /**
      * @brief 任务接口类
      */
-    class ITaskNode{
+    class ITaskNode:public Noncopyable{
     public:
         /**
          * @brief 析构虚函数
@@ -52,7 +52,7 @@ namespace Magic{
     /**
      * @brief 时间轮
      */
-    class Wheel{
+    class Wheel:public Noncopyable{
     public:
         /// 任务列表
         typedef std::list<Safe<ITaskNode>> TaskList;
@@ -90,7 +90,7 @@ namespace Magic{
     /**
      * @brief 定时轮
      */
-    class TimingWheel:public std::enable_shared_from_this<TimingWheel>{
+    class TimingWheel:public Noncopyable,public std::enable_shared_from_this<TimingWheel>{
     public:
         /**
          * @brief 构造函数

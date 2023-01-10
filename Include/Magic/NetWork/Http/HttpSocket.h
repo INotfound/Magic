@@ -18,7 +18,7 @@ namespace Http{
     /**
      * @brief HttpSocket类
      */
-    class HttpSocket:public std::enable_shared_from_this<HttpSocket>{
+    class HttpSocket:public Noncopyable,public std::enable_shared_from_this<HttpSocket>{
     public:
         /// Http处理方法
         typedef std::function<void(const Safe<HttpSocket>&)> HttpRecvBack;

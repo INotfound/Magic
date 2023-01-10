@@ -16,7 +16,7 @@ namespace NetWork{
     /**
      * @brief TcpServer服务端类
      */
-    class TcpServer{
+    class TcpServer:public Noncopyable{
     public:
         /**
          * @brief 析构函数

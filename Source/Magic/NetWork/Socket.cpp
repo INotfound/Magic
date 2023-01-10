@@ -55,8 +55,14 @@ namespace NetWork{
         return m_SslStream;
     }
 
-    void Socket::enableSsl(const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& sslStream){
-        m_SslStream = sslStream;
+    void Socket::enableSsl(const std::string& keyPath,const std::string& certPath){
+        asio::ssl::context sslContext(asio::ssl::context::sslv23);
+        if(!keyPath.empty() && !certPath.empty()){
+            sslContext.set_options(asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use | asio::ssl::context::default_workarounds);
+            sslContext.use_certificate_chain_file(keyPath);
+            sslContext.use_private_key_file(certPath,asio::ssl::context::pem);
+        }
+        m_SslStream = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*m_Socket,sslContext);
     }
 #endif
 

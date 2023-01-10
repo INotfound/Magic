@@ -65,8 +65,7 @@ namespace Http{
         }
     #ifdef OPENSSL
         if(port == 443){
-            asio::ssl::context sslContext(asio::ssl::context::sslv23);
-            m_Socket->enableSsl(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*m_Socket->getEntity(),sslContext));
+            m_Socket->enableSsl();
         }
     #endif
         auto self = this->shared_from_this();

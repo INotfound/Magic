@@ -245,7 +245,7 @@ namespace Http{
     /**
      * @brief Http请求类
      */
-    class HttpRequest{
+    class HttpRequest:public Noncopyable{
     public:
         typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:
@@ -461,7 +461,7 @@ namespace Http{
     /**
      * @brief Http响应类
      */
-    class HttpResponse{
+    class HttpResponse:public Noncopyable{
     public:
         typedef std::map<std::string,std::string,CaseInsensitiveLess> KeyValue;
     public:

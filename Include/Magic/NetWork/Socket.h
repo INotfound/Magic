@@ -21,7 +21,7 @@ namespace NetWork{
     /**
      * @brief Socket类
      */
-    class Socket:public std::enable_shared_from_this<Socket>{
+    class Socket:public Noncopyable,public std::enable_shared_from_this<Socket>{
     public:
         /// 数据流缓存
         typedef std::vector<char> StreamBuffer;
@@ -80,10 +80,11 @@ namespace NetWork{
         const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& getSslEntity();
         /**
          * @brief 启用SSL功能
-         * @param sslStream ssl流对象
+         * @param keyPath 密钥路径
+         * @param certPath 证书路径
          * @note 编译环境中存在 SSL 库才会有该函数
          */
-        void enableSsl(const Safe<asio::ssl::stream<asio::ip::tcp::socket&>>& sslStream);
+        void enableSsl(const std::string& keyPath = "",const std::string& certPath = "");
     #endif
         /**
          * @brief 接收数据函数

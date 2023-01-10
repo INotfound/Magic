@@ -53,7 +53,7 @@ namespace Http{
     /**
      * @brief IHttpServlet类
      */
-    class IHttpServlet{
+    class IHttpServlet:public Noncopyable{
         friend class HttpServletDispatch;
 
     public:
@@ -101,7 +101,7 @@ namespace Http{
     /**
      * @brief HttpServlet分配器类
      */
-    class HttpServletDispatch:public std::enable_shared_from_this<HttpServletDispatch>{
+    class HttpServletDispatch:public Noncopyable,public std::enable_shared_from_this<HttpServletDispatch>{
         /// Path | RouteHandle(RouteHandle) | Before(AspectHandle) | After(AspectHandle)
         using RouteMaps = std::unordered_map<std::string,std::tuple<RouteHandle,std::deque<AspectHandle>,std::deque<AspectHandle>>>;
     public:

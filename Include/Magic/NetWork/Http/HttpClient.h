@@ -14,7 +14,7 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    class HttpClient:public std::enable_shared_from_this<HttpClient>{
+    class HttpClient:public Noncopyable,public std::enable_shared_from_this<HttpClient>{
     public:
         ~HttpClient();
 

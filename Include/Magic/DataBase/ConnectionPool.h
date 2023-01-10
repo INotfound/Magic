@@ -20,7 +20,7 @@ namespace DataBase{
     class ConnectionPool;
 
     template<typename T>
-    class Connection{
+    class Connection:public Noncopyable{
         friend class ConnectionPool<T>;
     public:
         ~Connection(){
@@ -54,7 +54,7 @@ namespace DataBase{
     };
 
     template<typename T>
-    class ConnectionPool:public std::enable_shared_from_this<ConnectionPool<T>>{
+    class ConnectionPool:public Noncopyable,public std::enable_shared_from_this<ConnectionPool<T>>{
         friend class Connection<T>;
     public:
         explicit ConnectionPool(const Safe<Magic::Config>& configuration)

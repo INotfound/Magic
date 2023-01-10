@@ -133,7 +133,7 @@ namespace Http{
         return g_HttpContentType.at(contentType).c_str();
     }
 
-    template<class Map>
+    template<typename Map>
     inline void Parse(const std::string& str,Map& map,const std::string& flag){
         uint64_t pos = 0;
         do{
@@ -150,7 +150,7 @@ namespace Http{
         }while(pos <= str.size());
     }
 
-    template<class Map>
+    template<typename Map>
     inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
         uint64_t pos = 0;
         do{

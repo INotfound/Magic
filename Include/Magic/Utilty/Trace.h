@@ -6,7 +6,7 @@
 #include "Magic/Core/Core.h"
 
 namespace Magic{
-    class TraceTimer{
+    class TraceTimer:public Noncopyable{
     public:
         ~TraceTimer();
 
@@ -17,7 +17,7 @@ namespace Magic{
         std::chrono::time_point<std::chrono::steady_clock> m_TimePoint;
     };
 
-    class ITraceAppender{
+    class ITraceAppender:public Noncopyable{
     public:
         virtual ~ITraceAppender();
 

@@ -15,7 +15,7 @@ namespace NetWork{
     /**
      * @brief 网络Io池类
      */
-    class IoPool:public std::enable_shared_from_this<IoPool>{
+    class IoPool:public Noncopyable,public std::enable_shared_from_this<IoPool>{
     public:
         /**
          * @brief 析构函数

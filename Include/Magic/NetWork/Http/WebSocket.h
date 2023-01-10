@@ -11,12 +11,10 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    class HttpSocket;
-
     /**
      * @brief WebSocket类
      */
-    class WebSocket:public std::enable_shared_from_this<WebSocket>{
+    class WebSocket:public Noncopyable,public std::enable_shared_from_this<WebSocket>{
         friend class HttpSocket;
 
     public:

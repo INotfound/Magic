@@ -11,7 +11,7 @@
 #include "Magic/Core/Except.h"
 
 namespace Magic{
-    class Container:public std::enable_shared_from_this<Container>{
+    class Container:public Noncopyable,public std::enable_shared_from_this<Container>{
         template<typename Return,typename... Args>
         using Function = Safe<Return>(Container::*)();
         template<typename Instance,typename... Args>

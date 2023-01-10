@@ -1,6 +1,8 @@
 #include <mutex>
+#include <random>
 #include "Magic/Utilty/Trace.h"
 #include "Magic/Utilty/Thread.h"
+#include "Magic/Utilty/String.h"
 
 namespace Magic{
     Safe<ITraceAppender> g_TraceAppender;
@@ -29,14 +31,10 @@ namespace Magic{
     ChromiumTraceAppender::ChromiumTraceAppender(const std::string& outFilePath)
         :m_UseSplit(false)
         ,m_FilePath(outFilePath){
-        m_FileStream.open(outFilePath,std::ios_base::out | std::ios_base::trunc);
-        if(m_FileStream.is_open()){
-            m_FileStream << "{\"otherData\":{},\"traceEvents\":[";
-            m_FileStream.flush();
-        }
     }
 
     void ChromiumTraceAppender::complete(){
+        std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_FileStream.is_open()){
             return;
         }
@@ -48,23 +46,36 @@ namespace Magic{
     void ChromiumTraceAppender::tracing(const std::string& funcName,uint64_t threadId,int64_t start,int64_t end){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_FileStream.is_open()){
-            return;
+            std::string filePath = m_FilePath;
+            filePath.append(".");
+            std::uniform_int_distribution<uint16_t> uniformIntDistribution;
+            std::default_random_engine randomEngine(std::chrono::steady_clock::now().time_since_epoch().count());
+            filePath.append(Magic::AsString(uniformIntDistribution(randomEngine)));
+            m_FileStream.open(filePath,std::ios_base::out | std::ios_base::trunc);
+            if(m_FileStream.is_open()){
+                m_FileStream << "{\"otherData\":{},\"traceEvents\":[";
+                m_FileStream.flush();
+                m_UseSplit = false;
+            }
         }
-        if(!m_UseSplit){
-            m_UseSplit = true;
-        }else{
-            m_FileStream << ",";
+
+        if(m_FileStream.is_open()){
+            if(!m_UseSplit){
+                m_UseSplit = true;
+            }else{
+                m_FileStream << ",";
+            }
+            m_FileStream << "{"
+                         << "\"cat\":\"function\","
+                         << "\"dur\":" << (end-start) << ","
+                         << "\"name\":\"" << funcName << "\","
+                         << "\"ph\":\"X\","
+                         << "\"pid\":0,"
+                         << "\"tid\":" << threadId << ","
+                         << "\"ts\":" << start
+                         << "}";
+            m_FileStream.flush();
         }
-        m_FileStream << "{"
-                     << "\"cat\":\"function\","
-                     << "\"dur\":" << (end-start) << ","
-                     << "\"name\":\"" << funcName << "\","
-                     << "\"ph\":\"X\","
-                     << "\"pid\":0,"
-                     << "\"tid\":" << threadId << ","
-                     << "\"ts\":" << start
-                     << "}";
-        m_FileStream.flush();
     }
 }
 

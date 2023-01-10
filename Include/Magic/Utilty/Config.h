@@ -15,7 +15,7 @@ namespace Magic{
     /**
      * @brief 配置项类
      */
-    class ConfigValue{
+    class ConfigValue:public Noncopyable{
     public:
         /**
          * @brief 构造函数
@@ -61,7 +61,7 @@ namespace Magic{
     /**
      * @brief 配置格式化接口类
      */
-    class IConfigFormatter{
+    class IConfigFormatter:public Noncopyable{
     public:
         virtual ~IConfigFormatter();
 
@@ -83,7 +83,7 @@ namespace Magic{
     /**
      * @brief 配置文件类
      */
-    class ConfigFile{
+    class ConfigFile:public Noncopyable{
     public:
         /**
          * @brief 析构函数
@@ -122,7 +122,7 @@ namespace Magic{
     /**
      * @brief 配置类
      */
-    class Config{
+    class Config:public Noncopyable{
     public:
         /**
          * @brief 析构函数

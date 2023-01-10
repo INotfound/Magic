@@ -12,7 +12,7 @@
 
 namespace Magic{
 namespace DataBase{
-    class MySql{
+    class MySql:public Noncopyable{
         friend class MySqlStmt;
 
     public:
@@ -31,7 +31,7 @@ namespace DataBase{
         std::mutex m_Mutex;
     };
 
-    class MySqlStmt{
+    class MySqlStmt:public Noncopyable{
     public:
         ~MySqlStmt();
 
@@ -108,7 +108,7 @@ namespace DataBase{
         std::string getBlob(uint32_t index);
 
     private:
-        class SqlResult{
+        class SqlResult:public Noncopyable{
         public:
             SqlResult();
 

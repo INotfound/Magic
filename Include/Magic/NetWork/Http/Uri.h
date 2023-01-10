@@ -44,7 +44,7 @@ namespace Http{
     /**
      * @brief Uri类
      */
-    class Uri{
+    class Uri:public Noncopyable{
     public:
         explicit Uri(const std::string& uri);
 

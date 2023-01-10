@@ -36,7 +36,7 @@ namespace Magic{
     /**
      * @brief 日志事件类
      */
-    class LogEvent{
+    class LogEvent:public Noncopyable{
     public:
         /**
          * @brief 构造函数
@@ -118,7 +118,7 @@ namespace Magic{
     /**
      * @brief 日志格式化项类
      */
-    class ILogFormatItem{
+    class ILogFormatItem:public Noncopyable{
     public:
         virtual ~ILogFormatItem();
 
@@ -128,7 +128,7 @@ namespace Magic{
     /**
      * @brief 日志格式化类
      */
-    class LogFormatter{
+    class LogFormatter:public Noncopyable{
     public:
         /**
          * @brief 构造函数
@@ -151,7 +151,7 @@ namespace Magic{
     /**
      * @brief 日志附加器类
      */
-    class ILogAppender{
+    class ILogAppender:public Noncopyable{
         friend class Logger;
 
     public:
@@ -174,9 +174,7 @@ namespace Magic{
     /**
      * @brief 日志器类
      */
-    class Logger:public std::enable_shared_from_this<Logger>{
-        friend class LoggerManager;
-
+    class Logger:public Noncopyable,public std::enable_shared_from_this<Logger>{
     public:
         /**
          * @brief 构造函数
@@ -237,7 +235,7 @@ namespace Magic{
     /**
      * @brief 日志包装器类
      */
-    class LogWrap{
+    class LogWrap:public Noncopyable{
     public:
         /**
          * @brief 析构函数

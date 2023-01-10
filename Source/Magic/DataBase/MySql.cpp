@@ -5,7 +5,7 @@
 #ifdef MYSQLDB
 namespace Magic{
 namespace DataBase{
-    class MySqlLibraryWrapper{
+    class MySqlLibraryWrapper:public Noncopyable{
     public:
         ~MySqlLibraryWrapper(){
             mysql_library_end();

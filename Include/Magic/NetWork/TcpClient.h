@@ -11,7 +11,7 @@
 
 namespace Magic{
 namespace NetWork{
-    class TcpClient{
+    class TcpClient:public Noncopyable{
     public:
         TcpClient(const std::string& ip,uint16_t port);
 

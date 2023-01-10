@@ -14,35 +14,35 @@ namespace Magic{
      * @param str 需要加密的字符串
      * @return: 返回加密后的字符串
      */
-    const char* MD5(const std::string& str);
+    std::string MD5(const std::string& str);
 
     /**
      * @brief SHA1
      * @param str 需要加密的字符串
      * @return: 返回加密后的字符串
      */
-    const char* SHA1(const std::string& str);
+    std::string SHA1(const std::string& str);
 
     /**
      * @brief MD5
      * @param str 需要加密的文件
      * @return: 返回文件加密后的十六进制字符串
      */
-    const char* MD5HexString(const std::string& str);
+    std::string StringToHexMD5(const std::string& str);
 
     /**
      * @brief SHA1
      * @param str 需要加密的文件
      * @return: 返回文件加密后的十六进制字符串
      */
-    const char* SHA1HexString(const std::string& str);
+    std::string StringToHexSHA1(const std::string& str);
 
     /**
      * @brief MD5
-     * @param str 需要加密的文件
+     * @param filePath 需要加密的文件
      * @return: 返回文件加密后的十六进制字符串
      */
-    const char* MD5FileHexString(const char* filename);
+    std::string FileToHexMD5String(const std::string& filePath);
 
     /**
      * @brief Base64

@@ -9,7 +9,7 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    class MultiPart{
+    class MultiPart:public Noncopyable{
     public:
         MultiPart();
 

@@ -28,11 +28,7 @@ namespace Http{
         Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,*m_IoPool->get());
     #ifdef OPENSSL
         if(m_EnableSsl){
-            asio::ssl::context sslContext(asio::ssl::context::sslv23);
-            sslContext.set_options(asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use | asio::ssl::context::default_workarounds);
-            sslContext.use_certificate_chain_file(m_CertFile);
-            sslContext.use_private_key_file(m_KeyFile,asio::ssl::context::pem);
-            socket->enableSsl(std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*socket->getEntity(),sslContext));
+            socket->enableSsl(m_KeyFile,m_CertFile);
         }
     #endif
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){

@@ -15,7 +15,7 @@ namespace Magic{
     /**
      * @brief 定时器类
      */
-    class Timer{
+    class Timer:public Noncopyable{
     public:
         ~Timer();
 

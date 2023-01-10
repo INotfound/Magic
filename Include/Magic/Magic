@@ -8,7 +8,7 @@ namespace Magic{
      * @brief IoC 应用容器
      * @note 容器会随着整个程序周期运行,根据配置来初始化对应的模块
      */
-    class Application:public std::enable_shared_from_this<Application>{
+    class Application:public Noncopyable,public std::enable_shared_from_this<Application>{
     public:
         /**
          * @brief Application

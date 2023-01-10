@@ -2,8 +2,9 @@
 #include <string>
 #include <stdexcept>
 #include <cstring>
+#include "Magic/Core/Core.h"
 
-class MultiPartParser {
+class MultiPartParser:public Noncopyable{
 public:
 	typedef void (*Callback)(const char *buffer, size_t start, size_t end, void *userData);
 private:
