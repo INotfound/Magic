@@ -15,18 +15,25 @@ include_directories(
     ${PROJECT_SOURCE_DIR}
     ${MAGIC}/ThirdParty/Asio/Include
     ${MAGIC}/ThirdParty/RapidJSON/Include
+    ${PROJECT_SOURCE_DIR}/../ThirdParty/GoogleTest/googletest/include
 )
 include(${MAGIC}/Magic.cmake)
 
+
+add_subdirectory(${PROJECT_SOURCE_DIR}/../ThirdParty/GoogleTest ${PROJECT_BINARY_DIR}/GoogleTest)
+
 ### TEST ###
-add_executable(Test main.cpp)
-target_link_libraries(Test Magic ${MAGIC_DEPEND_LIBRARY})
-
-message(${MAGIC_DEPEND_LIBRARY})
-
-add_executable(HttpClient HttpClient.cpp)
-target_link_libraries(HttpClient Magic ${MAGIC_DEPEND_LIBRARY})
-
-add_executable(WebServer WebServer.cpp)
-target_link_libraries(WebServer Magic ${MAGIC_DEPEND_LIBRARY})
+set(TestSrc
+    main.cpp
+    UnitString.cpp
+    UnitCrypto.cpp
+)
+add_executable(Test ${TestSrc})
+target_link_libraries(Test gtest Magic ${MAGIC_DEPEND_LIBRARY})
 ### TEST ###
+
+add_executable(TestHttpClient HttpClient.cpp)
+target_link_libraries(TestHttpClient Magic ${MAGIC_DEPEND_LIBRARY})
+
+add_executable(TestWebServer WebServer.cpp)
+target_link_libraries(TestWebServer Magic ${MAGIC_DEPEND_LIBRARY})

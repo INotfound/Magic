@@ -95,47 +95,6 @@ namespace Magic{
         return std::string(hexBuffer,41);
     }
 
-    std::string FileToHexMD5String(const std::string& filePath){
-        if(filePath.empty()){
-            return std::string();
-        }
-    #ifdef OPENSSL
-
-        std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.c_str(),"rb"),[](std::FILE* pointer){
-            if(pointer != nullptr){
-                std::fclose(pointer);
-            }
-        });
-
-        if(file == nullptr){
-            return std::string();
-        }
-
-        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
-        constexpr const uint32_t bufferSize = 1024*1024;
-
-        std::unique_ptr<uint8_t,void (*)(uint8_t*)> buffer(new uint8_t[bufferSize],[](uint8_t* pointer){
-            if(pointer != nullptr){
-                delete[] pointer;
-            }
-        });
-
-        uint64_t len = 0;
-        char hexBuffer[33] = {0};
-
-        MD5_CTX m_Md5;
-        MD5_Init(&m_Md5);
-        while((len = std::fread(buffer.get(),1,bufferSize,file.get())))
-            MD5_Update(&m_Md5,buffer.get(),len);
-        MD5_Final(digest,&m_Md5);
-
-        HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
-    #else
-        MAGIC_ERROR() << "Requires SSL Support.";
-    #endif
-        return std::string(hexBuffer,33);
-    }
-
     std::string Base64Decode(const std::string& src){
         std::string result;
         result.resize(src.size() * 3 / 4);
@@ -232,5 +191,46 @@ namespace Magic{
             ret.append(padding,'=');
         }
         return ret;
+    }
+
+    std::string FileToHexMD5String(const std::string& filePath){
+        if(filePath.empty()){
+            return std::string();
+        }
+        #ifdef OPENSSL
+
+        std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.c_str(),"rb"),[](std::FILE* pointer){
+            if(pointer != nullptr){
+                std::fclose(pointer);
+            }
+        });
+
+        if(file == nullptr){
+            return std::string();
+        }
+
+        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
+        constexpr const uint32_t bufferSize = 1024*1024;
+
+        std::unique_ptr<uint8_t,void (*)(uint8_t*)> buffer(new uint8_t[bufferSize],[](uint8_t* pointer){
+            if(pointer != nullptr){
+                delete[] pointer;
+            }
+        });
+
+        uint64_t len = 0;
+        char hexBuffer[33] = {0};
+
+        MD5_CTX m_Md5;
+        MD5_Init(&m_Md5);
+        while((len = std::fread(buffer.get(),1,bufferSize,file.get())))
+            MD5_Update(&m_Md5,buffer.get(),len);
+        MD5_Final(digest,&m_Md5);
+
+        HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
+        #else
+        MAGIC_ERROR() << "Requires SSL Support.";
+        #endif
+        return std::string(hexBuffer,33);
     }
 }

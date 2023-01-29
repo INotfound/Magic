@@ -1,0 +1,4 @@
+[submodule "ThirdParty/GoogleTest"]
+	path = ThirdParty/GoogleTest
+	url = https://github.com/google/googletest
+	branch = v1.12.x

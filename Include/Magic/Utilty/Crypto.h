@@ -38,13 +38,6 @@ namespace Magic{
     std::string StringToHexSHA1(const std::string& str);
 
     /**
-     * @brief MD5
-     * @param filePath 需要加密的文件
-     * @return: 返回文件加密后的十六进制字符串
-     */
-    std::string FileToHexMD5String(const std::string& filePath);
-
-    /**
      * @brief Base64
      * @param str 需要解码的字符串
      * @return: 返回解码后的字符串
@@ -57,4 +50,11 @@ namespace Magic{
      * @return: 返回编码后的字符串
      */
     std::string Base64Encode(const std::string& src);
+
+    /**
+     * @brief MD5
+     * @param filePath 需要加密的文件
+     * @return: 返回文件加密后的十六进制字符串
+     */
+    std::string FileToHexMD5String(const std::string& filePath);
 }

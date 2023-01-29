@@ -24,13 +24,8 @@ namespace Magic{
     }
 
     template<typename T>
-    T StringAs(const std::string& value){
-        std::stringstream formatStream;
-        formatStream.clear();
-        T temp;
-        formatStream << value;
-        formatStream >> temp;
-        return temp;
+    T StringAs(const std::string&){
+        throw Magic::Failure("Type Not Supported!");
     }
 
     /**
@@ -63,6 +58,22 @@ namespace Magic{
      * @warning Use Exception!
      */
     template<>
+    inline int8_t StringAs<int8_t>(const std::string& value,uint8_t base){
+        return static_cast<int8_t>(std::stoi(value,nullptr,base));
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline int16_t StringAs<int16_t>(const std::string& value,uint8_t base){
+        return static_cast<int16_t>(std::stoi(value,nullptr,base));
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
     inline int32_t StringAs<int32_t>(const std::string& value,uint8_t base){
         return std::stoi(value,nullptr,base);
     }
@@ -73,6 +84,22 @@ namespace Magic{
     template<>
     inline int64_t StringAs<int64_t>(const std::string& value,uint8_t base){
         return std::stol(value,nullptr,base);
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline uint8_t StringAs<uint8_t>(const std::string& value,uint8_t base){
+        return static_cast<uint16_t>(std::stoul(value,nullptr,base));
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline uint16_t StringAs<uint16_t>(const std::string& value,uint8_t base){
+        return static_cast<uint16_t>(std::stoul(value,nullptr,base));
     }
 
     /**
@@ -116,7 +143,7 @@ namespace Magic{
 
     inline std::string ToUpper(const std::string& string){
         std::string newString;
-        std::transform(string.begin(),string.end(),std::back_inserter(newString),::tolower);
+        std::transform(string.begin(),string.end(),std::back_inserter(newString),::toupper);
         return newString;
     }
 
