@@ -1,13 +1,25 @@
+#include <sstream>
 #include "gtest/gtest.h"
 #include "Magic/Utilty/String.h"
 
 TEST(MagicStringTest,StringAsInt){
+    EXPECT_EQ(Magic::StringAs<int8_t>("144",8),100);
+    EXPECT_EQ(Magic::StringAs<int16_t>("144",8),100);
+    EXPECT_EQ(Magic::StringAs<int32_t>("144",8),100);
+    EXPECT_EQ(Magic::StringAs<int64_t>("144",8),100);
+
+
     EXPECT_EQ(Magic::StringAs<int8_t>("100",10),100);
     EXPECT_EQ(Magic::StringAs<int16_t>("100",10),100);
     EXPECT_EQ(Magic::StringAs<int32_t>("100",10),100);
     EXPECT_EQ(Magic::StringAs<int64_t>("100",10),100);
 
-    EXPECT_NE(Magic::StringAs<int8_t>("10000",10),100);
+    EXPECT_EQ(Magic::StringAs<int8_t>("64",16),100);
+    EXPECT_EQ(Magic::StringAs<int16_t>("64",16),100);
+    EXPECT_EQ(Magic::StringAs<int32_t>("64",16),100);
+    EXPECT_EQ(Magic::StringAs<int64_t>("64",16),100);
+
+    EXPECT_NE(Magic::StringAs<int8_t>("1",10),100);
 
     EXPECT_GT(Magic::StringAs<int8_t>("100.1",10),99);
     EXPECT_LT(Magic::StringAs<int8_t>("100.1",10),101);
@@ -21,12 +33,13 @@ TEST(MagicStringTest,StringAsInt){
     EXPECT_GT(Magic::StringAs<int32_t>("100.1",10),99);
     EXPECT_LT(Magic::StringAs<int32_t>("100.1",10),101);
     EXPECT_EQ(Magic::StringAs<int32_t>("100.1",10),100);
+    EXPECT_EQ(Magic::StringAs<int32_t>("100000000.1",10),100000000);
 
 
     EXPECT_GT(Magic::StringAs<int64_t>("100.1",10),99);
     EXPECT_LT(Magic::StringAs<int64_t>("100.1",10),101);
     EXPECT_EQ(Magic::StringAs<int64_t>("100.1",10),100);
-
+    EXPECT_EQ(Magic::StringAs<int64_t>("10000000000.1",10),10000000000);
 
 }
 

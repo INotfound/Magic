@@ -11,6 +11,7 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
+#include <type_traits>
 #include "Magic/Core/Except.h"
 
 namespace Magic{
@@ -23,99 +24,18 @@ namespace Magic{
         return formatStream.str();
     }
 
-    template<typename T>
-    T StringAs(const std::string&){
-        throw Magic::Failure("Type Not Supported!");
-    }
-
     /**
      * @warning Use Exception!
      */
-    template<>
-    inline float StringAs<float>(const std::string& value){
-        return std::stof(value);
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline double StringAs<double>(const std::string& value){
-        return std::stod(value);
-    }
-
-    template<>
-    inline std::string StringAs<std::string>(const std::string& value){
-        return value;
-    }
-
-    template<typename T>
-    T StringAs(const std::string&,uint8_t){
-        throw Magic::Failure("Type Not Supported!");
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline int8_t StringAs<int8_t>(const std::string& value,uint8_t base){
-        return static_cast<int8_t>(std::stoi(value,nullptr,base));
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline int16_t StringAs<int16_t>(const std::string& value,uint8_t base){
-        return static_cast<int16_t>(std::stoi(value,nullptr,base));
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline int32_t StringAs<int32_t>(const std::string& value,uint8_t base){
-        return std::stoi(value,nullptr,base);
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline int64_t StringAs<int64_t>(const std::string& value,uint8_t base){
-        return std::stol(value,nullptr,base);
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline uint8_t StringAs<uint8_t>(const std::string& value,uint8_t base){
-        return static_cast<uint16_t>(std::stoul(value,nullptr,base));
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline uint16_t StringAs<uint16_t>(const std::string& value,uint8_t base){
-        return static_cast<uint16_t>(std::stoul(value,nullptr,base));
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline uint32_t StringAs<uint32_t>(const std::string& value,uint8_t base){
-        return static_cast<uint32_t>(std::stoul(value,nullptr,base));
-    }
-
-    /**
-     * @warning Use Exception!
-     */
-    template<>
-    inline uint64_t StringAs<uint64_t>(const std::string& value,uint8_t base){
-        return static_cast<uint64_t>(std::stoul(value,nullptr,base));
+    template<typename T,typename = typename std::enable_if<std::is_same<T,std::string>::value || std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
+    inline T StringAs(const std::string& value){
+        T newValue = {};
+        std::istringstream stringStream(value);
+        stringStream >> std::dec >> newValue;
+        if(stringStream.fail()){
+            throw std::invalid_argument(value);
+        }
+        return newValue;
     }
 
     template<>
@@ -126,6 +46,125 @@ namespace Magic{
         if(tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
             isOk = false;
         return isOk;
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline float StringAs<float>(const std::string& value){
+        float newValue = {};
+        std::istringstream stringStream(value);
+        stringStream >> newValue;
+        if(stringStream.fail()){
+            throw std::invalid_argument(value);
+        }
+        return newValue;
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline double StringAs<double>(const std::string& value){
+        double newValue = {};
+        std::istringstream stringStream(value);
+        stringStream >> newValue;
+        if(stringStream.fail()){
+            throw std::invalid_argument(value);
+        }
+        return newValue;
+    }
+
+    template<>
+    inline std::string StringAs<std::string>(const std::string& value){
+        return value;
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<typename T,typename = typename std::enable_if<std::is_same<T,std::string>::value || std::is_integral<T>::value>::type>
+    inline T StringAs(const std::string& value,uint8_t base){
+        T newValue = {};
+        std::istringstream stringStream(value);
+        switch(base){
+            case 8:
+                stringStream >> std::oct >> newValue;
+                break;
+            case 10:
+                stringStream >> std::dec >> newValue;
+                break;
+            case 16:
+                stringStream >> std::hex >> newValue;
+                break;
+            default:
+                stringStream >> std::dec >> newValue;
+                break;
+        }
+        if(stringStream.fail()){
+            throw std::invalid_argument(value);
+        }
+        return newValue;
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline int8_t StringAs<int8_t>(const std::string& value,uint8_t base){
+        int16_t newValue = {};
+        std::istringstream stringStream(value);
+        switch(base){
+            case 8:
+                stringStream >> std::oct >> newValue;
+                break;
+            case 10:
+                stringStream >> std::dec >> newValue;
+                break;
+            case 16:
+                stringStream >> std::hex >> newValue;
+                break;
+            default:
+                stringStream >> std::dec >> newValue;
+                break;
+        }
+        if(stringStream.fail() || (newValue > 0xFF)){
+            throw std::invalid_argument(value);
+        }
+        return static_cast<int8_t>(newValue);
+    }
+
+    template<>
+    inline std::string StringAs<std::string>(const std::string& value,uint8_t){
+        return value;
+    }
+
+    /**
+     * @warning Use Exception!
+     */
+    template<>
+    inline uint8_t StringAs<uint8_t>(const std::string& value,uint8_t base){
+        uint16_t newValue = {};
+        std::istringstream stringStream(value);
+        switch(base){
+            case 8:
+                stringStream >> std::oct >> newValue;
+                break;
+            case 10:
+                stringStream >> std::dec >> newValue;
+                break;
+            case 16:
+                stringStream >> std::hex >> newValue;
+                break;
+            default:
+                stringStream >> std::dec >> newValue;
+                break;
+        }
+        if(stringStream.fail() || (newValue > 0xFF)){
+            throw std::invalid_argument(value);
+        }
+        return static_cast<uint8_t>(newValue);
     }
 
     inline std::string TimeToGMTString(std::time_t tt){
