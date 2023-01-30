@@ -54,7 +54,6 @@ namespace Magic{
             m_FileStream.open(filePath,std::ios_base::out | std::ios_base::trunc);
             if(m_FileStream.is_open()){
                 m_FileStream << "{\"otherData\":{},\"traceEvents\":[";
-                m_FileStream.flush();
                 m_UseSplit = false;
             }
         }

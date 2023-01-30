@@ -12,6 +12,14 @@
 #include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/Crypto.h"
 
+#ifndef SHA_DIGEST_LENGTH
+    #define SHA_DIGEST_LENGTH 1
+#endif
+
+#ifndef MD5_DIGEST_LENGTH
+    #define MD5_DIGEST_LENGTH 1
+#endif
+
 namespace Magic{
     void HexStringFromData(const void* data,uint32_t len,char* outPut){
         const auto* buf = (const unsigned char*)data;
@@ -197,8 +205,8 @@ namespace Magic{
         if(filePath.empty()){
             return std::string();
         }
-        #ifdef OPENSSL
-
+        char hexBuffer[33] = {0};
+    #ifdef OPENSSL
         std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.c_str(),"rb"),[](std::FILE* pointer){
             if(pointer != nullptr){
                 std::fclose(pointer);
@@ -218,19 +226,18 @@ namespace Magic{
             }
         });
 
-        uint64_t len = 0;
-        char hexBuffer[33] = {0};
 
         MD5_CTX m_Md5;
         MD5_Init(&m_Md5);
+        uint64_t len = 0;
         while((len = std::fread(buffer.get(),1,bufferSize,file.get())))
             MD5_Update(&m_Md5,buffer.get(),len);
         MD5_Final(digest,&m_Md5);
 
         HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
-        #else
+    #else
         MAGIC_ERROR() << "Requires SSL Support.";
-        #endif
+    #endif
         return std::string(hexBuffer,33);
     }
 }

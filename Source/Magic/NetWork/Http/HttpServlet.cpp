@@ -4,7 +4,7 @@
  * @LastEditTime: 2021-02-01 22:24:51
  */
 #include <regex>
-
+#include "Magic/Utilty/Trace.h"
 #include "Magic/Utilty/Logger.h"
 #include "Magic/NetWork/Http/HttpServlet.h"
 
@@ -33,6 +33,9 @@ namespace Http{
             auto exactlyIter = m_NormalRoutes.find(httpPath);
             auto exactlyEnd = m_NormalRoutes.end();
             if(exactlyIter != exactlyEnd){
+            #ifdef TRACE
+                TraceTimer traceTimer(httpPath);
+            #endif
                 /// Global Before
                 for(const auto& func : m_AspectBefores){
                     if(!func(httpSocket))
@@ -66,6 +69,9 @@ namespace Http{
             for(;matchIter != matchEnd;matchIter++){
                 reg.assign(matchIter->first);
                 if(std::regex_match(httpPath,reg)){
+                #ifdef TRACE
+                    TraceTimer traceTimer(httpPath);
+                #endif
                     /// Global Before
                     for(const auto& func : m_AspectBefores){
                         if(!func(httpSocket))

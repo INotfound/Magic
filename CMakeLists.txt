@@ -38,6 +38,10 @@ set(BINARY
 add_executable(Gen Tool/Generator.cpp)
 add_executable(Create Tool/Create.cpp)
 
+if(Trace STREQUAL ON)
+    add_definitions(-DTRACE)
+endif()
+
 if(Analysis STREQUAL ON)
     if(DEFINED MAGIC_CLANG_INCLUDE AND DEFINED MAGIC_CLANG_LIBRARY)
         set(BINARY ${BINARY} Analysis)

@@ -26,6 +26,9 @@ namespace Magic{
         virtual void tracing(const std::string& funcName,uint64_t threadId,int64_t start,int64_t end) = 0;
     };
 
+    /**
+     * @brief Use Browser ://tracing
+     */
     class ChromiumTraceAppender:public ITraceAppender{
     public:
         ~ChromiumTraceAppender() override;
@@ -46,8 +49,8 @@ namespace Magic{
     extern Safe<ITraceAppender> g_TraceAppender;
 }
 
-#ifndef PERFORMANCE
-#define MAGIC_TRACE_PERFORMANCE(funcName)
+#ifndef TRACE
+#define MAGIC_TRACE_FUNCTION(funcName)
 #else
-#define MAGIC_TRACE_PERFORMANCE(funcName) Magic::TraceTimer traceTimer_##funcName(funcName)
+#define MAGIC_TRACE_FUNCTION(funcName) Magic::TraceTimer traceTimer_##funcName(funcName)
 #endif
