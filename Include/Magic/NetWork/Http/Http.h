@@ -126,26 +126,27 @@ namespace Http{
         XX(TEXT_CSS,                    "css",      "text/css; charset=utf-8")                  \
         XX(TEXT_XML,                    "xml",      "text/xml; charset=utf-8")                  \
         XX(TEXT_XSL,                    "xsl",      "text/xsl; charset=utf-8")                  \
-        XX(TEXT_PLAIN,                  "txt",      "text/plain; charset=utf-8")                \
         XX(TEXT_HTML,                   "html",     "text/html; charset=utf-8")                 \
+        XX(TEXT_PLAIN,                  "txt",      "text/plain; charset=utf-8")                \
         XX(IMAGE_PNG,                   "png",      "image/png")                                \
-        XX(IMAGE_JPG,                   "jpeg",     "image/jpeg")                               \
+        XX(IMAGE_JPG,                   "jpg",      "image/jpeg")                               \
+        XX(IMAGE_JPEG,                  "jpeg",     "image/jpeg")                               \
         XX(IMAGE_GIF,                   "gif",      "image/gif")                                \
-        XX(IMAGE_XICON,                 "ico",      "image/icon")                               \
         XX(IMAGE_BMP,                   "bmp",      "image/bmp")                                \
-        XX(IMAGE_ICNS,                  "icns",     "image/icns")                               \
+        XX(IMAGE_WEBP,                  "webp",     "image/webp")                               \
+        XX(IMAGE_XICON,                 "ico",      "image/icon")                               \
         XX(IMAGE_SVG_XML,               "svg",      "image/svg+xml")                            \
-        XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
-        XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
         XX(APPLICATION_WASM,            "wasm",     "application/wasm")                         \
-        XX(APPLICATION_FORM,            "",         "application/x-www-form-urlencoded")        \
         XX(APPLICATION_FONT_WOFF,       "woff",     "application/font-woff")                    \
         XX(APPLICATION_FONT_WOFF2,      "woff2",    "application/font-woff2")                   \
-        XX(APPLICATION_JAVASCRIPT,      "js",       "application/javascript; charset=utf-8")    \
         XX(APPLICATION_OCTET_STREAM,    "",         "application/octet-stream")                 \
-        XX(APPLICATION_VND_MS_FONTOBJ,  "eot",      "application/vnd.ms-fontobject")            \
         XX(APPLICATION_FONT_TRUETYPE,   "ttf",      "application/x-font-truetype")              \
         XX(APPLICATION_FONT_OPENTYPE,   "otf",      "application/x-font-opentype")              \
+        XX(APPLICATION_VND_MS_FONTOBJ,  "eot",      "application/vnd.ms-fontobject")            \
+        XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
+        XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
+        XX(APPLICATION_FORM,            "",         "application/x-www-form-urlencoded")        \
+        XX(APPLICATION_JAVASCRIPT,      "js",       "application/javascript; charset=utf-8")    \
 
     /**
      * @brief HttpMethod
