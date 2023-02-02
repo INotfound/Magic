@@ -27,6 +27,7 @@ set(TestSrc
     main.cpp
     UnitString.cpp
     UnitCrypto.cpp
+    UnitCompress.cpp
 )
 add_executable(Test ${TestSrc})
 target_link_libraries(Test gtest Magic ${MAGIC_DEPEND_LIBRARY})

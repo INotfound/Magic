@@ -10,24 +10,25 @@ include(Magic.cmake)
 include_directories(
     Include
     ThirdParty/Asio/Include
+    ThirdParty/Brotli/c/include
     ThirdParty/RapidJSON/Include
 )
 
+if(NOT Sanitize)
+    set(Analysis OFF)
+else()
+    set(ENABLE_SANITIZER ${Sanitize})
+endif()
+
+set(BROTLI_DISABLE_TESTS ON)
+# PARENT_SCOPE Exporting Variables
+add_subdirectory(ThirdParty/Brotli)
 file(GLOB_RECURSE HEADERS Include/Magic/*.h)
 file(GLOB_RECURSE SOURCES Source/Magic/*.cpp)
 
 set(BINARY Magic)
 add_library(Magic ${HEADERS} ${SOURCES})
-target_link_libraries(Magic ${MAGIC_DEPEND_LIBRARY})
-if(Sanitize STREQUAL Leak)
-    set(Analysis OFF)
-elseif(Sanitize STREQUAL Thread)
-    set(Analysis OFF)
-elseif(Sanitize STREQUAL Address)
-    set(Analysis OFF)
-elseif(Sanitize STREQUAL Undefined)
-    set(Analysis OFF)
-endif()
+target_link_libraries(Magic ${MAGIC_DEPEND_LIBRARY} ${BROTLI_STATIC_LIBS})
 
 set(BINARY
     Gen

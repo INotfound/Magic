@@ -170,12 +170,8 @@ namespace Http{
         }
         response->setVersion(request->getVersion());
         response->setKeepAlive(request->getKeepAlive());
-    #ifdef ZLIB
-        const std::string& acceptEncoding = request->getHeader("Accept-Encoding");
-        if(acceptEncoding.find("gzip") != std::string::npos){
-            response->setHeader("Content-Encoding","gzip");
-        }
-    #endif
+        response->setHeader("Content-Encoding",request->getHeader("Accept-Encoding"));
+
         if(m_RecvRequestCallBack)
             m_RecvRequestCallBack(this->shared_from_this());
 

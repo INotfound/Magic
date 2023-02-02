@@ -6,8 +6,8 @@
 #include <cstring>
 #include <algorithm>
 
-#include "Magic/Utilty/Gzip.h"
 #include "Magic/Utilty/String.h"
+#include "Magic/Utilty/Compress.h"
 #include "Magic/NetWork/Http/Http.h"
 
 namespace Magic{
@@ -518,20 +518,27 @@ namespace Http{
         }
 
         bool hasBody = !m_Body.empty();
-    #ifdef ZLIB
-        bool hasContentEncoding = false;
-    #endif
+
         auto contentEncodingIter = m_Headers.find("Content-Encoding");
 
         if(contentEncodingIter != m_Headers.end()){
+            if(hasBody && contentEncodingIter->second.find("br") != std::string::npos){
+                std::string compressData;
+                contentEncodingIter->second = "br";
+                Magic::BrotliEncoder(m_Body,compressData);
+                m_Body.swap(compressData);
+            }
         #ifdef ZLIB
-            if(contentEncodingIter->second.find("gzip") != std::string::npos){
-                hasContentEncoding = true;
-            }else{
-                m_Headers.erase(contentEncodingIter);
+            else if(hasBody && contentEncodingIter->second.find("gzip") != std::string::npos){
+                std::string compressData;
+                contentEncodingIter->second = "gzip";
+                Magic::GZipEncoder(m_Body,compressData);
+                m_Body.swap(compressData);
             }
         #else
-            m_Headers.erase(contentEncodingIter);
+            else{
+                m_Headers.erase(contentEncodingIter);
+            }
         #endif
         }
 
@@ -545,20 +552,8 @@ namespace Http{
         }
 
         if(hasBody){
-        #ifdef ZLIB
-            if(hasContentEncoding){
-                std::string compressData;
-                Magic::GzipCompress(m_Body,compressData);
-                os  << "Content-Length: " << compressData.size() << "\r\n\r\n"
-                    << compressData;
-            }else{
-                os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
-                    << m_Body;
-            }
-        #else
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
                 << m_Body;
-        #endif
         }else{
             if(m_ContentLength != 0){
                 os << "Content-Length: " << m_ContentLength << "\r\n";
