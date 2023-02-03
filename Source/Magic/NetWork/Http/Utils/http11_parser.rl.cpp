@@ -59,7 +59,7 @@ static const int http_parser_start = 1;
 static const int http_parser_first_final = 348;
 static const int http_parser_error = 0;
 
-static const int http_parser_en_main = 1;
+//static const int http_parser_en_main = 1;
 
 
 /* #line 261 "http11_parser.rl" */

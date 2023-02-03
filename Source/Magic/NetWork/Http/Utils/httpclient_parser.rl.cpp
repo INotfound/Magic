@@ -61,7 +61,7 @@ static const int httpclient_parser_start = 1;
 static const int httpclient_parser_first_final = 120;
 static const int httpclient_parser_error = 0;
 
-static const int httpclient_parser_en_main = 1;
+//static const int httpclient_parser_en_main = 1;
 
 
 /* #line 161 "httpclient_parser.rl" */
