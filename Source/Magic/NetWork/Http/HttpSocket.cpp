@@ -116,10 +116,17 @@ namespace Http{
                     m_TotalTransferLength = totalLength;
                     httpResponse->setStatus(HttpStatus::OK);
                     httpResponse->setContentLength(m_TotalTransferLength);
-                    httpResponse->setHeader("Accept-Ranges","bytes");
-                    stream << httpResponse;
-                    m_Socket->send(streamBuffer);
-                    this->transferFileStream();
+                    if(httpResponse->getContentType() < HttpContentType::APPLICATION_OCTET_STREAM){
+                        httpResponse->setBody(std::string(std::istreambuf_iterator<char>(m_FileStream),std::istreambuf_iterator<char>()));
+                        stream << httpResponse;
+                        m_FileStream.close();
+                        m_Socket->send(streamBuffer);
+                    }else{
+                        httpResponse->setHeader("Accept-Ranges","bytes");
+                        stream << httpResponse;
+                        m_Socket->send(streamBuffer);
+                        this->transferFileStream();
+                    }
                 }
             }else{
                 httpResponse->setStatus(HttpStatus::NOT_FOUND);

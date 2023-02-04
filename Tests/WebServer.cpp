@@ -54,6 +54,13 @@ public:
         });
     }
 
+    void handle2(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
+        auto& response = httpSocket->getResponse();
+        response->setStatus(HttpStatus::OK);
+        response->setResource("log.json");
+        httpSocket->sendResponse(response);
+    }
+
     void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         auto& response = httpSocket->getResponse();
 //        auto httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
@@ -143,6 +150,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/",&ResourceServlet::handle1);
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/1",&ResourceServlet::handle1,m_Container->resolve<Aop>());
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/2",&ResourceServlet::handle1,m_Container->resolve<Aop>(),m_Container->resolve<AopEx>());
+    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/3",&ResourceServlet::handle2);
 
     m_Container->resolve<Magic::NetWork::Http::HttpServletDispatch>()->addGlobalAspect(m_Container->resolve<AopGlobal>(),m_Container->resolve<AopGlobalEx>());
 

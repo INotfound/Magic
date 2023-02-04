@@ -19,8 +19,8 @@ namespace Http{
         #undef XX
     };
 
-    static const std::map<std::string,std::string,CaseInsensitiveLess> g_HttpContent = {
-        #define XX(name,extName,desc){extName,desc},
+    static const std::map<std::string,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
+        #define XX(name,extName,desc){extName,HttpContentType::name},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
@@ -115,18 +115,18 @@ namespace Http{
         return result;
     }
 
-    const char* FileTypeToHttpContentType(const std::string& fileName){
+    HttpContentType FileTypeToHttpContentType(const std::string& fileName){
         std::string extName;
         auto pos = fileName.rfind('.');
         if(pos != std::string::npos){
             extName = fileName.substr(pos + 1);
-            std::transform(extName.begin(),extName.end(),extName.begin(),tolower);
+            std::transform(extName.begin(),extName.end(),extName.begin(),::toupper);
             auto iter = g_HttpContent.find(extName);
             if(iter != g_HttpContent.end()){
-                return iter->second.c_str();
+                return iter->second;
             }
         }
-        return "application/octet-stream";
+        return HttpContentType::APPLICATION_OCTET_STREAM;
     }
 
     const char* HttpContentTypeToString(const HttpContentType& contentType){
@@ -396,7 +396,7 @@ namespace Http{
         ,m_Version(version)
         ,m_Status(HttpStatus::OK)
         ,m_ContentLength(0)
-        ,m_ContentType(HttpContentType::TEXT_HTML){
+        ,m_ContentType(HttpContentType::TEXT_PLAIN){
     }
 
     bool HttpResponse::isRange() const{
@@ -488,6 +488,10 @@ namespace Http{
 
     const std::string& HttpResponse::getResource() const{
         return m_Resource;
+    }
+
+    HttpContentType HttpResponse::getContentType() const{
+        return m_ContentType;
     }
 
     const std::string& HttpResponse::getHeader(const std::string& key){

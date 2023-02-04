@@ -128,6 +128,11 @@ namespace Http{
         XX(TEXT_XSL,                    "xsl",      "text/xsl; charset=utf-8")                  \
         XX(TEXT_HTML,                   "html",     "text/html; charset=utf-8")                 \
         XX(TEXT_PLAIN,                  "txt",      "text/plain; charset=utf-8")                \
+        XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
+        XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
+        XX(APPLICATION_FORM,            "",         "application/x-www-form-urlencoded")        \
+        XX(APPLICATION_JAVASCRIPT,      "js",       "application/javascript; charset=utf-8")    \
+        XX(APPLICATION_OCTET_STREAM,    "",         "application/octet-stream")                 \
         XX(IMAGE_PNG,                   "png",      "image/png")                                \
         XX(IMAGE_JPG,                   "jpg",      "image/jpeg")                               \
         XX(IMAGE_JPEG,                  "jpeg",     "image/jpeg")                               \
@@ -139,14 +144,9 @@ namespace Http{
         XX(APPLICATION_WASM,            "wasm",     "application/wasm")                         \
         XX(APPLICATION_FONT_WOFF,       "woff",     "application/font-woff")                    \
         XX(APPLICATION_FONT_WOFF2,      "woff2",    "application/font-woff2")                   \
-        XX(APPLICATION_OCTET_STREAM,    "",         "application/octet-stream")                 \
         XX(APPLICATION_FONT_TRUETYPE,   "ttf",      "application/x-font-truetype")              \
         XX(APPLICATION_FONT_OPENTYPE,   "otf",      "application/x-font-opentype")              \
         XX(APPLICATION_VND_MS_FONTOBJ,  "eot",      "application/vnd.ms-fontobject")            \
-        XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
-        XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
-        XX(APPLICATION_FORM,            "",         "application/x-www-form-urlencoded")        \
-        XX(APPLICATION_JAVASCRIPT,      "js",       "application/javascript; charset=utf-8")    \
 
     /**
      * @brief HttpMethod
@@ -227,16 +227,9 @@ namespace Http{
     /**
      * @brief 将FileType转换成HttpContentType
      * @param fileName 需要转换的文件名称
-     * @return: 返回String类型的HttpContentType
+     * @return: 返回ttpContentType
      */
-    const char* FileTypeToHttpContentType(const std::string& fileName);
-
-    /**
-     * @brief 将HttpContent转换成返回HttpContentType
-     * @param contentType 需要转换的HttpContentType
-     * @return: 返回String类型的HttpContentType
-     */
-    const char* HttpContentTypeToString(const HttpContentType& contentType);
+    HttpContentType FileTypeToHttpContentType(const std::string& fileName);
 
     class CaseInsensitiveLess{
     public:
@@ -550,6 +543,12 @@ namespace Http{
          * @return: 返回资源路径
          */
         const std::string& getResource() const;
+
+        /**
+         * @brief 获取正文类型
+         * @return 返回正文类型
+         */
+        HttpContentType getContentType() const;
 
         /**
          * @brief 获取Http头键值对函数
