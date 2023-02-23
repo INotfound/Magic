@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "Magic/Core/Core.h"
-#include "Magic/Core/Except.h"
 
 namespace Magic{
     class Container:public Noncopyable,public std::enable_shared_from_this<Container>{

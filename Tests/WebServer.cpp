@@ -53,6 +53,19 @@ public:
             MAGIC_DEBUG() << "disconnected";
         });
     }
+    void handle3(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
+        std::ifstream fileSteam;
+        auto& response = httpSocket->getResponse();
+        fileSteam.open("log.json",std::ios::in|std::ios::binary);
+        if(fileSteam.is_open()){
+            response->setStatus(HttpStatus::OK);
+            response->setBody(std::string(std::istreambuf_iterator<char>(fileSteam),std::istreambuf_iterator<char>()));
+        }else{
+            response->setStatus(HttpStatus::NOT_FOUND);
+        };
+
+        httpSocket->sendResponse(response);
+    }
 
     void handle2(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         auto& response = httpSocket->getResponse();
@@ -151,6 +164,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/1",&ResourceServlet::handle1,m_Container->resolve<Aop>());
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/2",&ResourceServlet::handle1,m_Container->resolve<Aop>(),m_Container->resolve<AopEx>());
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/3",&ResourceServlet::handle2);
+    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/4",&ResourceServlet::handle3);
 
     m_Container->resolve<Magic::NetWork::Http::HttpServletDispatch>()->addGlobalAspect(m_Container->resolve<AopGlobal>(),m_Container->resolve<AopGlobalEx>());
 

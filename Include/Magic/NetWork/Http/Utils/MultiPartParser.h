@@ -4,7 +4,7 @@
 #include <cstring>
 #include "Magic/Core/Core.h"
 
-class MultiPartParser:public Noncopyable{
+class MultiPartParser:public Magic::Noncopyable{
 public:
 	typedef void (*Callback)(const char *buffer, size_t start, size_t end, void *userData);
 private:

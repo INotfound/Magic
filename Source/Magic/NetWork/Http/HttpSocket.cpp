@@ -3,6 +3,7 @@
  * @Date: 2020-03-12 20:41:54
  * @LastEditTime: 2021-02-01 22:29:25
  */
+#include "Magic/Core/Core.h"
 #include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/Crypto.h"
 #include "Magic/NetWork/Http/HttpSocket.h"
@@ -149,8 +150,7 @@ namespace Http{
         }else{
             std::string wsKey = request->getHeader("Sec-WebSocket-Key");
             if(wsKey.empty()){
-                MAGIC_WARN() << "Upgrade WebSocket Failed: Missing Parameters.";
-                return m_WebSocket;
+                throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters.");
             }
             wsKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
             response->setHeader("Upgrade","websocket")

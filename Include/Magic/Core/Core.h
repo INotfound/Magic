@@ -18,84 +18,95 @@
 #include <type_traits>
 #include <unordered_map>
 
+#include "Except.h"
+
 #ifndef Safe
     #define Safe std::shared_ptr
 #endif
 
-class Noncopyable{
-public:
-    Noncopyable() = default;
+namespace Magic{
 
-    ~Noncopyable() = default;
+    class Noncopyable{
+    public:
+        Noncopyable() = default;
 
-    Noncopyable(const Noncopyable&) = delete;
+        ~Noncopyable() = default;
 
-    Noncopyable& operator=(const Noncopyable&) = delete;
-};
+        Noncopyable(const Noncopyable&) = delete;
 
-template<typename T>
-class ObjectWrapper{
-public:
-    explicit ObjectWrapper(T* self)
-        :m_Inner(self){
+        Noncopyable& operator=(const Noncopyable&) = delete;
+    };
+
+    template<typename T>
+    class ObjectWrapper{
+    public:
+        explicit ObjectWrapper(T* self)
+            :m_Inner(self){
+        }
+
+        T& operator*() const{
+            if(!m_Inner)
+                throw Failure("Access Null Pointer.");
+            return *m_Inner;
+        }
+
+        T* operator->() const{
+            if(!m_Inner)
+                throw Failure("Access Null Pointer.");
+            return m_Inner;
+        }
+
+    private:
+        T* m_Inner = nullptr;
+    };
+
+    template<typename T>
+    class SingletonPtr:public Noncopyable{
+    public:
+        static const Safe<T>& GetInstance(){
+            static Safe<T> v(std::make_shared<T>());
+            return v;
+        }
+    };
+
+    template<typename T,class M,typename = typename std::enable_if<std::is_base_of<T,M>::value>::type>
+    class SingletonPtrEx:public Noncopyable{
+    public:
+        static const Safe<T>& GetInstance(){
+            static Safe<T> v(std::make_shared<M>());
+            return v;
+        }
+    };
+
+    template<typename T>
+    const void* CompiletimeIId(){
+        return reinterpret_cast<const void*>(&CompiletimeIId<T>);
     }
 
-    T& operator*() const{
-        return *m_Inner;
-    }
+    template<typename T>
+    struct Safe_Traits{
+        typedef T Type;
+    };
 
-    T* operator->() const{
-        return m_Inner;
-    }
+    template<typename T>
+    struct Safe_Traits<Safe<T>>{
+        typedef T Type;
+    };
 
-private:
-    T* m_Inner;
-};
+    template<typename T>
+    struct Safe_Traits<const Safe<T>>{
+        typedef T Type;
+    };
 
-template<typename T>
-class SingletonPtr:public Noncopyable{
-public:
-    static const Safe<T>& GetInstance(){
-        static Safe<T> v(std::make_shared<T>());
-        return v;
-    }
-};
+    template<typename T>
+    struct Safe_Traits<const Safe<T>&>{
+        typedef T Type;
+    };
 
-template<typename T,class M,typename = typename std::enable_if<std::is_base_of<T,M>::value>::type>
-class SingletonPtrEx:public Noncopyable{
-public:
-    static const Safe<T>& GetInstance(){
-        static Safe<T> v(std::make_shared<M>());
-        return v;
-    }
-};
-
-template<typename T>
-const void* CompiletimeIId(){
-    return reinterpret_cast<const void*>(&CompiletimeIId<T>);
+    template<typename T>
+    struct Safe_Traits<const Safe<T>&&>{
+        typedef T Type;
+    };
 }
 
-template<typename T>
-struct Safe_Traits{
-    typedef T Type;
-};
 
-template<typename T>
-struct Safe_Traits<Safe<T>>{
-    typedef T Type;
-};
-
-template<typename T>
-struct Safe_Traits<const Safe<T>>{
-    typedef T Type;
-};
-
-template<typename T>
-struct Safe_Traits<const Safe<T>&>{
-    typedef T Type;
-};
-
-template<typename T>
-struct Safe_Traits<const Safe<T>&&>{
-    typedef T Type;
-};

@@ -22,7 +22,7 @@ namespace Magic{
         }
         if(!m_CallBack){
             MAGIC_ERROR() << "Thread-CallBack Is Null";
-            throw Magic::Failure("Thread CallBack Is NullPtr");
+            throw Failure("Thread CallBack Is NullPtr");
         }
         m_Thread = std::make_shared<std::thread>(&Thread::run,this);
     }
