@@ -52,13 +52,13 @@ namespace Magic{
         return true;
     }
 
-    bool GZipEncoder(const std::string& data,std::string& compressedData,int level){
+    bool GZipEncoder(const std::string& data,std::string& compressedData){
         unsigned char out[CHUNK];
         z_stream strm;
         strm.zalloc = Z_NULL;
         strm.zfree = Z_NULL;
         strm.opaque = Z_NULL;
-        if(deflateInit2(&strm,level,Z_DEFLATED,windowBits | GZIP_ENCODING,8,Z_DEFAULT_STRATEGY) != Z_OK){
+        if(deflateInit2(&strm,-1,Z_DEFLATED,windowBits | GZIP_ENCODING,8,Z_DEFAULT_STRATEGY) != Z_OK){
             return false;
         }
         strm.next_in = (unsigned char*)data.data();
@@ -108,6 +108,7 @@ namespace Magic{
             if(pointer)
                 BrotliEncoderDestroyInstance(pointer);
         });
+        BrotliEncoderSetParameter(instance.get(),BrotliEncoderParameter::BROTLI_PARAM_QUALITY,BROTLI_MIN_QUALITY);
         size_t available_in = data.length(), available_out = buffer.size();
         const auto* next_in = reinterpret_cast<const unsigned char *>(data.c_str());
         uint8_t *next_out = buffer.data();

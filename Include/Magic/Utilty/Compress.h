@@ -19,7 +19,7 @@ namespace Magic{
      * @param level - the gzip compress level -1 = default, 0 = no compression, 1= worst/fastest compression, 9 = best/slowest compression
      * @return - true on success, false on failure
      */
-    bool GZipEncoder(const std::string& data,std::string& compressedData,int level = -1);
+    bool GZipEncoder(const std::string& data,std::string& compressedData);
 #endif
 
     bool BrotliDecoder(const std::string& compressedData,std::string& data);
