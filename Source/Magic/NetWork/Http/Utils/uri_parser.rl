@@ -198,7 +198,7 @@ namespace Http{
         int cs = 0;
         const char* mark = 0;
         %% write init;
-        const char *p = uri.c_str();
+        const char *p = uri.data();
         const char *pe = p + uri.size();
         const char* eof = pe;
         %% write exec;

@@ -29,7 +29,7 @@ namespace Magic{
         }
 
         strm.avail_in = (uInt)compressedData.length();
-        strm.next_in = (unsigned char*)compressedData.c_str();
+        strm.next_in = (unsigned char*)compressedData.data();
         do{
             strm.avail_out = CHUNK;
             strm.next_out = out;
@@ -61,7 +61,7 @@ namespace Magic{
         if(deflateInit2(&strm,level,Z_DEFLATED,windowBits | GZIP_ENCODING,8,Z_DEFAULT_STRATEGY) != Z_OK){
             return false;
         }
-        strm.next_in = (unsigned char*)data.c_str();
+        strm.next_in = (unsigned char*)data.data();
         strm.avail_in = (uInt)data.length();
         do{
             int have;

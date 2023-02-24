@@ -106,7 +106,7 @@ namespace Http{
     }
 
     uint64_t HttpRequestParser::getContentLength(){
-        std::string length = m_Data->getHeader("Content-Length");
+        const std::string& length = m_Data->getHeader("Content-Length");
         if(length.empty()){
             m_Data->setContentLength(0);
         }else{
@@ -210,7 +210,7 @@ namespace Http{
     }
 
     uint32_t HttpResponseParser::getContentLength(){
-        std::string length = m_Data->getHeader("Content-Length");
+        const std::string& length = m_Data->getHeader("Content-Length");
         if(length.empty()){
             m_Data->setContentLength(0);
         }else{

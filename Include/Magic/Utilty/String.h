@@ -244,4 +244,11 @@ namespace Magic{
         }
         return newString;
     }
+
+    class CaseInsensitiveLess{
+    public:
+        bool operator()(const std::string& lhs,const std::string& rhs) const{
+            return StringCompareNoCase(lhs,rhs) < 0;
+        }
+    };
 }

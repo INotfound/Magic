@@ -6,7 +6,6 @@
 #include <cstring>
 #include <algorithm>
 
-#include "Magic/Utilty/String.h"
 #include "Magic/Utilty/Compress.h"
 #include "Magic/NetWork/Http/Http.h"
 
@@ -103,7 +102,7 @@ namespace Http{
             auto& chr = value[i];
             if(chr == '%' && i + 2 < value.size()){
                 auto hex = value.substr(i + 1,2);
-                auto decoded_chr = static_cast<char>(std::strtol(hex.c_str(),nullptr,16));
+                auto decoded_chr = static_cast<char>(std::strtol(hex.data(),nullptr,16));
                 result += decoded_chr;
                 i += 2;
             }else if(chr == '+')
@@ -130,7 +129,7 @@ namespace Http{
     }
 
     const char* HttpContentTypeToString(const HttpContentType& contentType){
-        return g_HttpContentType.at(contentType).c_str();
+        return g_HttpContentType.at(contentType).data();
     }
 
     template<typename Map>
@@ -165,10 +164,6 @@ namespace Http{
                 break;
             map.emplace(Trim(subString.substr(0,key)),Trim(subString.substr(key + 1)));
         }while(pos <= str.size());
-    }
-
-    bool CaseInsensitiveLess::operator()(const std::string& lhs,const std::string& rhs) const{
-        return StringCompareNoCase(lhs,rhs) < 0;
     }
 
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)

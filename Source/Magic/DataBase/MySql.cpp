@@ -68,7 +68,7 @@ namespace DataBase{
         if(mysql_ping(&m_MySql) != 0){
             this->printError();
         }
-        if(mysql_real_query(&m_MySql,sql.c_str(),sql.size()) == 0){
+        if(mysql_real_query(&m_MySql,sql.data(),sql.size()) == 0){
             return true;
         }
         return false;
@@ -83,7 +83,7 @@ namespace DataBase{
         char value = 1;
         mysql_options(&m_MySql,MYSQL_OPT_RECONNECT,&value);
         mysql_options(&m_MySql,MYSQL_SET_CHARSET_NAME,"utf8mb4");
-        if(!mysql_real_connect(&m_MySql,ip.c_str(),user.c_str(),password.c_str(),dataBase.c_str(),port,0,0)){
+        if(!mysql_real_connect(&m_MySql,ip.data(),user.data(),password.data(),dataBase.data(),port,0,0)){
             this->printError();
             return false;
         }
@@ -204,7 +204,7 @@ namespace DataBase{
             this->printError();
             return false;
         }
-        if(mysql_stmt_prepare(m_Stmt,sql.c_str(),sql.size()) == 0){
+        if(mysql_stmt_prepare(m_Stmt,sql.data(),sql.size()) == 0){
             uint32_t count = mysql_stmt_param_count(m_Stmt);
             m_MySqlModifyBinds.resize(count);
             std::memset(m_MySqlModifyBinds.data(),0,sizeof(MYSQL_BIND) * count);
@@ -281,7 +281,7 @@ namespace DataBase{
     }
 
     void MySqlStmt::bind(uint32_t index,const std::string& value){
-        BIND_COPY(MYSQL_TYPE_STRING,value.c_str(),value.size());
+        BIND_COPY(MYSQL_TYPE_STRING,value.data(),value.size());
     }
 
     void MySqlStmt::bindTime(uint32_t index,const std::time_t value){
@@ -289,7 +289,7 @@ namespace DataBase{
     }
 
     void MySqlStmt::bindBlob(uint32_t index,const std::string& value){
-        BIND_COPY(MYSQL_TYPE_BLOB,value.c_str(),value.size());
+        BIND_COPY(MYSQL_TYPE_BLOB,value.data(),value.size());
     }
 
     void MySqlStmt::bindBlob(uint32_t index,const void* value,uint64_t size){

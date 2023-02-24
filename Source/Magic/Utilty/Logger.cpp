@@ -81,7 +81,7 @@ namespace Magic{
     class MessageFormatItem:public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
-            os << event->getContent().c_str();
+            os << event->getContent().data();
         }
     };
 
@@ -170,7 +170,7 @@ namespace Magic{
     class ThreadNameFormatItem:public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
-            os << event->getThreadName().c_str();
+            os << event->getThreadName().data();
         }
     };
 
@@ -181,7 +181,7 @@ namespace Magic{
         }
 
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& /*event*/) override{
-            os << this->m_String.c_str();
+            os << this->m_String.data();
         }
 
     private:

@@ -22,7 +22,7 @@ void MultiPartParser::reset(){
     delete[] lookbehind;
     state = ERROR;
     boundary.clear();
-    boundaryData = boundary.c_str();
+    boundaryData = boundary.data();
     boundarySize = 0;
     lookbehind = nullptr;
     lookbehindSize = 0;
@@ -185,7 +185,7 @@ size_t MultiPartParser::feed(const char *buffer, size_t len){
 void MultiPartParser::setBoundary(const std::string &boundary){
     reset();
     this->boundary = "\r\n--" + boundary;
-    boundaryData = this->boundary.c_str();
+    boundaryData = this->boundary.data();
     boundarySize = this->boundary.size();
     indexBoundary();
     lookbehind = new char[boundarySize + 8];

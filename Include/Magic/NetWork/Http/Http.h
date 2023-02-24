@@ -9,6 +9,7 @@
 #include <ostream>
 
 #include "Magic/Core/Core.h"
+#include "Magic/Utilty/String.h"
 
 namespace Magic{
 namespace NetWork{
@@ -230,12 +231,6 @@ namespace Http{
      * @return: 返回ttpContentType
      */
     HttpContentType FileTypeToHttpContentType(const std::string& fileName);
-
-    class CaseInsensitiveLess{
-    public:
-        bool operator()(const std::string&,const std::string&) const;
-    };
-
     /**
      * @brief Http请求类
      */

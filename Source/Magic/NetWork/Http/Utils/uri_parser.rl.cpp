@@ -94,7 +94,7 @@ static const int uri_parser_error = 0;
 	}
 
 /* #line 203 "uri_parser.rl" */
-        const char *p = uri.c_str();
+        const char *p = uri.data();
         const char *pe = p + uri.size();
         const char* eof = pe;
         

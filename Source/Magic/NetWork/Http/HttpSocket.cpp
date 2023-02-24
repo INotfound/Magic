@@ -88,7 +88,7 @@ namespace Http{
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
         if(httpResponse->hasResource()){
-            std::string filePath = httpResponse->getResource();
+            const std::string& filePath = httpResponse->getResource();
             m_FileStream.open(filePath,std::ios::in | std::ios::binary);
             if(m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;

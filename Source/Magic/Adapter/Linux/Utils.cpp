@@ -34,7 +34,7 @@ namespace Magic{
     }
 
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src){
-        return strcasecmp(dest.c_str(),src.c_str());
+        return strcasecmp(dest.data(),src.c_str());
     }
 }
 #endif

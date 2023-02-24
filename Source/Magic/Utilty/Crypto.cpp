@@ -107,7 +107,7 @@ namespace Magic{
         std::string result;
         result.resize(src.size() * 3 / 4);
         char* writeBuf = &result[0];
-        const char* ptr = src.c_str();
+        const char* ptr = src.data();
         const char* end = ptr + src.size();
         while(ptr < end){
             int i = 0;
@@ -207,7 +207,7 @@ namespace Magic{
         }
         char hexBuffer[33] = {0};
     #ifdef OPENSSL
-        std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.c_str(),"rb"),[](std::FILE* pointer){
+        std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.data(),"rb"),[](std::FILE* pointer){
             if(pointer != nullptr){
                 std::fclose(pointer);
             }
