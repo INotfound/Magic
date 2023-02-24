@@ -83,7 +83,7 @@ namespace Magic{
             return;
         }
         m_IsChange = false;
-        std::remove(m_ConfigFile->getPath().c_str());
+        std::remove(m_ConfigFile->getPath().data());
         m_ConfigFile->write(m_ConfigMap);
     }
 

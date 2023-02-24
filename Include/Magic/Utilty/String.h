@@ -194,6 +194,8 @@ namespace Magic{
         return str;
     }
 
+    int32_t StringCompareCase(const std::string& dest,const std::string& src);
+
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
 
     inline std::vector<std::string> Split(const std::string& str,const std::string& delim){
@@ -222,7 +224,7 @@ namespace Magic{
         localtime_r(&ts,&nowTime);
     #endif
         char buf[64] = {0};
-        std::strftime(buf,sizeof(buf),format.c_str(),&nowTime);
+        std::strftime(buf,sizeof(buf),format.data(),&nowTime);
         return buf;
     }
 
@@ -245,10 +247,18 @@ namespace Magic{
         return newString;
     }
 
+    class CaseResponsiveLess{
+    public:
+        bool operator()(const std::string& lhs,const std::string& rhs) const{
+            return StringCompareCase(lhs,rhs) < 0;
+        }
+    };
+
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string& lhs,const std::string& rhs) const{
             return StringCompareNoCase(lhs,rhs) < 0;
         }
     };
+
 }

@@ -36,8 +36,12 @@ namespace Magic{
         return GetCurrentThreadId();
     }
 
+    int32_t StringCompareCase(const std::string& dest,const std::string& src){
+        return strcmp(dest.data(),src.data());
+    }
+
     int32_t StringCompareNoCase(const std::string& dest,const std::string& src){
-        return stricmp(dest.data(),src.c_str());
+        return stricmp(dest.data(),src.data());
     }
 }
 #endif

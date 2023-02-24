@@ -46,7 +46,7 @@ namespace Http{
 
     HttpMethod StringToHttpMethod(const std::string& str){
         #define XX(num,name,string) \
-            if(strcmp(#name,str.c_str()) == 0){ \
+            if(strcmp(#name,str.data()) == 0){ \
                 return HttpMethod::name; \
             }
             HTTP_METHOD_MAP(XX);

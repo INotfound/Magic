@@ -160,7 +160,7 @@ namespace Magic{
             }
         }
 
-        result.resize(writeBuf - result.c_str());
+        result.resize(writeBuf - result.data());
         return result;
     }
 

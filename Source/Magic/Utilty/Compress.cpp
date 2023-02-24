@@ -88,7 +88,7 @@ namespace Magic{
                 BrotliDecoderDestroyInstance(pointer);
         });
         size_t available_in = compressedData.length(), available_out = buffer.size();
-        const auto *next_in = reinterpret_cast<const uint8_t *>(compressedData.c_str());
+        const auto *next_in = reinterpret_cast<const uint8_t *>(compressedData.data());
         uint8_t *next_out = buffer.data();
         do{
             result = BrotliDecoderDecompressStream(
@@ -110,7 +110,7 @@ namespace Magic{
         });
         BrotliEncoderSetParameter(instance.get(),BrotliEncoderParameter::BROTLI_PARAM_QUALITY,BROTLI_MIN_QUALITY);
         size_t available_in = data.length(), available_out = buffer.size();
-        const auto* next_in = reinterpret_cast<const unsigned char *>(data.c_str());
+        const auto* next_in = reinterpret_cast<const unsigned char *>(data.data());
         uint8_t *next_out = buffer.data();
         bool isFinished = false;
         do{

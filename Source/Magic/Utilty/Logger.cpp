@@ -131,7 +131,7 @@ namespace Magic{
 
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             auto time_secounds = static_cast<std::time_t>(event->getTime());
-            os << TimeToString(time_secounds,m_FormatString.c_str());
+            os << TimeToString(time_secounds,m_FormatString.data());
         }
 
     private:
