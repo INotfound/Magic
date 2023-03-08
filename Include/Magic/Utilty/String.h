@@ -215,7 +215,6 @@ namespace Magic{
         return elems;
     }
 
-
     inline std::string TimeToString(std::time_t ts,const std::string& format = "%Y-%m-%d %H:%M:%S"){
         struct tm nowTime;
     #if defined(_WIN32) || defined(_WIN64)

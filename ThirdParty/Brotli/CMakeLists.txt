@@ -170,9 +170,9 @@ else()
 endif()
 
 set(BROTLI_STATIC_LIBS brotlicommon-static brotlidec-static brotlienc-static PARENT_SCOPE)
-add_library(brotlicommon-static STATIC ${BROTLI_COMMON_C})
-add_library(brotlidec-static STATIC ${BROTLI_DEC_C})
-add_library(brotlienc-static STATIC ${BROTLI_ENC_C})
+add_library(brotlicommon-static OBJECT ${BROTLI_COMMON_C})
+add_library(brotlidec-static OBJECT ${BROTLI_DEC_C})
+add_library(brotlienc-static OBJECT ${BROTLI_ENC_C})
 
 # Older CMake versions does not understand INCLUDE_DIRECTORIES property.
 include_directories(${BROTLI_INCLUDE_DIRS})

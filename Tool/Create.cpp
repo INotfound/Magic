@@ -18,7 +18,6 @@
 #endif
 
 std::string g_LF = "\n";
-std::string g_MagicPath;
 
 std::string g_Module = R"Template({
     "Configurations":{
@@ -115,8 +114,6 @@ void OutPutCMakeFile(const std::string& name){
             << "project(${PROJECT_NAME})" << g_LF << g_LF
             << "set(CMAKE_CXX_STANDARD 11)" << g_LF
             << "set(CMAKE_EXPORT_COMPILE_COMMANDS ON)" << g_LF << g_LF
-            << "#Please Add The Directory Path Of The Magic Library." << g_LF
-            << "set(MAGIC " << g_MagicPath << ")" << g_LF << g_LF
             << "if(NOT DEFINED MAGIC)" << g_LF
             << "    message(FATAL_ERROR \"Please Add The Directory Path Of The Magic Library!!!\")" << g_LF
             << "endif()" << g_LF << g_LF
@@ -130,14 +127,21 @@ void OutPutCMakeFile(const std::string& name){
             << "set(MODULES" << g_LF
             << "    ${MAGIC}/Modules/Magic.json" << g_LF
             << ")" << g_LF << g_LF
+            << "set(EXCLUDE_DIR ${PROJECT_BINARY_DIR})" << g_LF
             << "file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/Include)" << g_LF
-            << "file(GLOB_RECURSE SOURCES ${PROJECT_SOURCE_DIR}/*.cpp)" << g_LF << g_LF
+            << "file(GLOB_RECURSE SOURCE_FILES ${PROJECT_SOURCE_DIR}/*.cpp)" << g_LF
+            << "foreach(TMP_PATH ${SOURCE_FILES})" << g_LF
+            << "    string(FIND ${TMP_PATH} ${EXCLUDE_DIR} EXCLUDE_DIR_FOUND)" << g_LF
+            << "    if(NOT ${EXCLUDE_DIR_FOUND} EQUAL -1)" << g_LF
+            << "        list(REMOVE_ITEM SOURCE_FILES ${TMP_PATH})" << g_LF
+            << "    endif()" << g_LF
+            << "endforeach(TMP_PATH)" << g_LF << g_LF
             << "add_custom_command(" << g_LF
             << "    OUTPUT ${PROJECT_NAME}.h" << g_LF
             << "    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Include" << g_LF
             << "    COMMAND ${MAGIC}/Bin/Gen ${MODULES} ${PROJECT_NAME}" << g_LF
             << ")" << g_LF << g_LF
-            << "add_executable(${PROJECT_NAME} ${PROJECT_NAME}.h ${SOURCES})" << g_LF
+            << "add_executable(${PROJECT_NAME} ${PROJECT_NAME}.h ${SOURCE_FILES})" << g_LF
             << "target_link_libraries(${PROJECT_NAME} Magic ${MAGIC_DEPEND_LIBRARY})";
     ostream.flush();
     ostream.close();
@@ -145,21 +149,14 @@ void OutPutCMakeFile(const std::string& name){
 
 
 int main(int argc, char** argv){
-    if(argc < 3){
-        std::printf("Plase Input Project Name And Magic Library Path.\n");
-        std::printf("\tParam: [1]: Project Name [2]: Magic Library Path.\n");
-        return EXIT_FAILURE;
-    }
-
-    g_MagicPath = argv[2];
-    std::string path = g_MagicPath;
-    path += "/Magic.cmake";
-    if(IS_FILE(path.c_str()) != 0){
-        std::printf("Magic Library Path Error!\n");
+    if(argc < 2){
+        std::printf("Plase Input Project Name.\n");
+        std::printf("\tParam: Project Name.\n");
         return EXIT_FAILURE;
     }
     OutPutMainCpp(argv[1]);
     OutPutCMakeFile(argv[1]);
     OutPutModuleFile(argv[1]);
+    std::printf("Succeed! Specify The -DMAGIC=/{YourPath}/Magic Parameter To Build The Project\n");
     return EXIT_SUCCESS;
 }

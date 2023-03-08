@@ -54,6 +54,9 @@ else()
         endif()
     endif()
 endif()
+
+set(CMAKE_C_FLAGS ${CMAKE_CXX_FLAGS})
+
 # Platform
 if(WIN32)
     #WIN32 Library

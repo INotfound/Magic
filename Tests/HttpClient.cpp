@@ -62,12 +62,12 @@ int main(int /*argc*/,char** /*argv*/){
         Safe<Magic::Application> application = std::make_shared<Magic::Application>();
         application->initialize();
 
-        auto function1 = [](){};
-        auto funciont2 = [function1](){};
-        auto funciont3 = [function1,funciont2](){};
-        std::function<void()> function4 = [function1,funciont2,funciont3](){};
-
-        MAGIC_DEBUG() << "Size: "  << sizeof(function1)<< " " << sizeof(funciont2) << " " << sizeof(funciont3) << " " << sizeof(function4) << sizeof(std::function<void()>);
+//        auto function1 = [](){};
+//        auto funciont2 = [function1](){};
+//        auto funciont3 = [function1,funciont2](){};
+//        std::function<void()> function4 = [function1,funciont2,funciont3](){};
+//
+//        MAGIC_DEBUG() << "Size: "  << sizeof(function1)<< " " << sizeof(funciont2) << " " << sizeof(funciont3) << " " << sizeof(function4) << sizeof(std::function<void()>);
 
         std::printf("\n_______________________________________________________________\n");
         Safe<Magic::NetWork::Http::HttpRequest> httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();

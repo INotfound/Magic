@@ -24,7 +24,7 @@ namespace DataBase{
     public:
         ~Connection(){
             if(m_Entity){
-                m_Pool->restore(m_Entity);
+                m_Pool->restore(std::move(m_Entity));
             }
         }
 
@@ -37,12 +37,12 @@ namespace DataBase{
             return false;
         }
 
-        const Safe<T>& operator*() const{
-            return m_Entity;
+        T& operator*() const{
+            return *m_Entity;
         }
 
     private:
-        Connection(const Safe<T>& entity,const Safe<ConnectionPool<T>>& pool)
+        Connection(const Safe<T>&& entity,const Safe<ConnectionPool<T>>& pool)
             :m_Entity(entity)
             ,m_Pool(pool){
         }
@@ -68,14 +68,20 @@ namespace DataBase{
         Connection<T> getConnection(){
             std::lock_guard<std::mutex> locker(m_Mutex);
             if(m_IdleEntity.empty()){
+                Safe<T> connection;
+                if(m_CreateFunction)
+                    connection = m_CreateFunction();
+                if(connection)
+                    return Connection<T>(std::move(connection),this->shared_from_this());
                 throw Failure("Connection Pool No Idle Entity!");
             }
             Safe<T> entity = m_IdleEntity.front();
             m_IdleEntity.pop_front();
-            return Connection<T>(entity,this->shared_from_this());;
+            return Connection<T>(std::move(entity),this->shared_from_this());;
         }
 
         void initialize(const std::function<const Safe<T>(void)>& initFunc){
+            std::lock_guard<std::mutex> locker(m_Mutex);
             m_CreateFunction = std::move(initFunc);
             for(uint32_t i = 0;i < m_Count;i++){
                 const Safe<T> connection = m_CreateFunction();
@@ -86,9 +92,9 @@ namespace DataBase{
         }
 
     private:
-        void restore(const Safe<T>& entity){
+        void restore(const Safe<T>&& entity){
             std::lock_guard<std::mutex> locker(m_Mutex);
-            m_IdleEntity.push_back(entity);
+            m_IdleEntity.emplace_back(entity);
         }
 
     private:
