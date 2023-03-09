@@ -110,16 +110,34 @@ void ParseInitialize(const rapidjson::Value::Array& array){
                     std::printf("[Err]: Initialize Json[InvokeFunctions] Missing Fields:%d !!!\n",__LINE__);
                     std::exit(1);
                 }
-                std::vector<std::string> arguments;
-                auto argumentArray = fas.value.GetArray();
-                for(auto& arg : argumentArray){
-                    std::string argString = arg.GetString();
-                    arguments.push_back(argString);
-                }
-                initializeObj.InvokeFunctions.emplace_back(fas.name.GetString(),arguments);
-            }
 
+                std::vector<std::string> arguments;
+                auto argumentsArray = fas.value.GetArray();
+
+                if(argumentsArray.Empty()){
+                    initializeObj.InvokeFunctions.emplace_back(fas.name.GetString(),arguments);
+                }else{
+                    for(auto& multi : argumentsArray){
+                        if(multi.IsArray()){
+                            auto argumentArray = multi.GetArray();
+                            for(auto& arg : argumentArray){
+                                std::string argString = arg.GetString();
+                                arguments.push_back(argString);
+                            }
+                            initializeObj.InvokeFunctions.emplace_back(fas.name.GetString(),arguments);
+                            arguments.clear();
+                        }else{
+                            std::string argString = multi.GetString();
+                            arguments.push_back(argString);
+                        }
+                    }
+                    if(!arguments.empty()){
+                        initializeObj.InvokeFunctions.emplace_back(fas.name.GetString(),arguments);
+                    }
+                }
+            }
         }
+
         if(initializeObj.Id.empty() && (initializeObj.InvokeFunctions.empty() || initializeObj.CalleeFunctions.empty())){
             std::printf("[Err]: Initialize Json[Id && (InvokeFunctions || CalleeFunctions)] Is Empty:%d !!!\n",__LINE__);
             std::exit(1);
