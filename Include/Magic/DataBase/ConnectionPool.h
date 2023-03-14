@@ -7,7 +7,6 @@
 
 #include "Magic/Core/Core.h"
 #include "Magic/Utilty/Config.h"
-#include "Magic/Utilty/Logger.h"
 #include "Magic/Utilty/TimingWheel.h"
 
 namespace Magic{

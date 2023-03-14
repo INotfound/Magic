@@ -626,7 +626,6 @@ namespace Http{
 
     ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string& key,const std::string& val,std::time_t expired,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
         std::string result;
-        result.reserve(256);
         result.append(key);
         result.append("=");
         result.append(val);

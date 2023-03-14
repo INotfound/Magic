@@ -33,6 +33,7 @@ namespace Magic{
             c = (c > 9) ? c + 'a' - 10 : c + '0';
             outPut[j++] = c;
         }
+        outPut[j] = '\0';
     }
 
     std::string MD5(const std::string& str){
@@ -48,7 +49,7 @@ namespace Magic{
     #else
         MAGIC_ERROR() << "Requires SSL Support.";
     #endif
-        return std::string(reinterpret_cast<char*>(digest),MD5_DIGEST_LENGTH + 1);
+        return std::string(reinterpret_cast<char*>(digest),MD5_DIGEST_LENGTH);
     }
 
     std::string SHA1(const std::string& str){
@@ -64,14 +65,14 @@ namespace Magic{
     #else
         MAGIC_ERROR() << "Requires SSL Support.";
     #endif
-        return std::string(reinterpret_cast<char*>(digest),SHA_DIGEST_LENGTH + 1);
+        return std::string(reinterpret_cast<char*>(digest),SHA_DIGEST_LENGTH);
     }
 
     std::string StringToHexMD5(const std::string& str){
         if(str.empty()){
             return std::string();
         }
-        char hexBuffer[33] = {0};
+        char hexBuffer[33] = {'\0'};
     #ifdef OPENSSL
         MD5_CTX m_Md5;
         MD5_Init(&m_Md5);
@@ -82,14 +83,14 @@ namespace Magic{
     #else
         MAGIC_ERROR() << "Requires SSL Support.";
     #endif
-        return std::string(hexBuffer,33);
+        return std::string(hexBuffer,32);
     }
 
     std::string StringToHexSHA1(const std::string& str){
         if(str.empty()){
             return std::string();
         }
-        char hexBuffer[41] = {0};
+        char hexBuffer[42] = {'\0'};
     #ifdef OPENSSL
         SHA_CTX m_Sha1;
         SHA1_Init(&m_Sha1);

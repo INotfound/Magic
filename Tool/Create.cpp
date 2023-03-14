@@ -141,7 +141,7 @@ void OutPutCMakeFile(const std::string& name){
             << "    WORKING_DIRECTORY ${PROJECT_BINARY_DIR}/Include" << g_LF
             << "    COMMAND ${MAGIC}/Bin/Gen ${MODULES} ${PROJECT_NAME}" << g_LF
             << ")" << g_LF << g_LF
-            << "add_executable(${PROJECT_NAME} ${PROJECT_NAME}.h ${SOURCE_FILES})" << g_LF
+            << "add_executable(${PROJECT_NAME} ${SOURCE_FILES} ${PROJECT_NAME}.h)" << g_LF
             << "target_link_libraries(${PROJECT_NAME} Magic ${MAGIC_DEPEND_LIBRARY})";
     ostream.flush();
     ostream.close();
