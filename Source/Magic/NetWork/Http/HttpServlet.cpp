@@ -44,14 +44,14 @@ namespace Http{
                 const auto& aspectAfters = std::get<2>(exactlyIter->second);
                 const auto& aspectBefores = std::get<1>(exactlyIter->second);
                 /// Before
-                for(const auto& func : aspectAfters){
+                for(const auto& func : aspectBefores){
                     if(!func(httpSocket))
                         return;
                 }
                 /// Handle
                 std::get<0>(exactlyIter->second)(httpSocket);
                 /// After
-                for(const auto& func : aspectBefores){
+                for(const auto& func : aspectAfters){
                     if(!func(httpSocket))
                         return;
                 }
@@ -80,14 +80,14 @@ namespace Http{
                     const auto& aspectAfters = std::get<2>(matchIter->second);
                     const auto& aspectBefores = std::get<1>(matchIter->second);
                     /// Before
-                    for(const auto& func : aspectAfters){
+                    for(const auto& func : aspectBefores){
                         if(!func(httpSocket))
                             return;
                     }
                     /// Handle
                     std::get<0>(matchIter->second)(httpSocket);
                     /// After
-                    for(const auto& func : aspectBefores){
+                    for(const auto& func : aspectAfters){
                         if(!func(httpSocket))
                             return;
                     }

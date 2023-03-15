@@ -86,7 +86,8 @@ public:
 //           httpSocket->sendResponse(response);
 //        });
 //        httpClient->execute(httpRequest);
-        throw Magic::Failure("data sell");
+//        throw Magic::Failure("data sell");
+
         response->setStatus(HttpStatus::OK);
         httpSocket->sendResponse(response);
     }
