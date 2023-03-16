@@ -215,8 +215,8 @@ if(BROTLI_PARENT_DIRECTORY)
 endif()
 
 # Build the brotli executable
-add_executable(brotli ${BROTLI_CLI_C})
-target_link_libraries(brotli ${BROTLI_LIBRARIES_STATIC})
+#add_executable(brotli ${BROTLI_CLI_C})
+#target_link_libraries(brotli ${BROTLI_LIBRARIES_STATIC})
 
 # Installation
 if(NOT BROTLI_EMSCRIPTEN)
