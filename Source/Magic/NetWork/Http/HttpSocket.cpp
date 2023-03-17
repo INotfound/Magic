@@ -150,7 +150,7 @@ namespace Http{
         }else{
             std::string wsKey = request->getHeader("Sec-WebSocket-Key");
             if(wsKey.empty()){
-                throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters.");
+                throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters!");
             }
             wsKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
             response->setHeader("Upgrade","websocket")

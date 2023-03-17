@@ -46,13 +46,13 @@ namespace Magic{
 
         T& operator*() const{
             if(!m_Inner)
-                throw Failure("Access Null Pointer.");
+                throw Failure("Access Null Pointer!");
             return *m_Inner;
         }
 
         T* operator->() const{
             if(!m_Inner)
-                throw Failure("Access Null Pointer.");
+                throw Failure("Access Null Pointer!");
             return m_Inner;
         }
 

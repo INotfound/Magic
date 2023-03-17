@@ -534,11 +534,11 @@ namespace Http{
                 Magic::GZipEncoder(m_Body,compressData);
                 m_Body.swap(compressData);
             }
-        #else
+        #endif
             else{
                 m_Headers.erase(contentEncodingIter);
             }
-        #endif
+
         }
 
         /// Headers

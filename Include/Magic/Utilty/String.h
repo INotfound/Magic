@@ -33,7 +33,7 @@ namespace Magic{
         std::istringstream stringStream(value);
         stringStream >> std::dec >> newValue;
         if(stringStream.fail()){
-            throw std::invalid_argument(value);
+            throw Failure("Invalid Argument!");
         }
         return newValue;
     }
@@ -57,7 +57,7 @@ namespace Magic{
         std::istringstream stringStream(value);
         stringStream >> newValue;
         if(stringStream.fail()){
-            throw std::invalid_argument(value);
+            throw Failure("Invalid Argument!");
         }
         return newValue;
     }
@@ -71,7 +71,7 @@ namespace Magic{
         std::istringstream stringStream(value);
         stringStream >> newValue;
         if(stringStream.fail()){
-            throw std::invalid_argument(value);
+            throw Failure("Invalid Argument!");
         }
         return newValue;
     }
@@ -103,7 +103,7 @@ namespace Magic{
                 break;
         }
         if(stringStream.fail()){
-            throw std::invalid_argument(value);
+            throw Failure("Invalid Argument!");
         }
         return newValue;
     }
@@ -130,7 +130,7 @@ namespace Magic{
                 break;
         }
         if(stringStream.fail() || (newValue > 0xFF)){
-            throw std::invalid_argument(value);
+            throw Failure("Invalid Argument!");
         }
         return static_cast<int8_t>(newValue);
     }
@@ -162,7 +162,7 @@ namespace Magic{
                 break;
         }
         if(stringStream.fail() || (newValue > 0xFF)){
-            throw std::invalid_argument(value);
+            throw Failure("Invalid Argument!");
         }
         return static_cast<uint8_t>(newValue);
     }
