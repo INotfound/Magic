@@ -14,7 +14,7 @@ namespace Http{
 
     std::string GenerateHtml(const std::string& status,const std::string& title,const std::string& message){
         std::stringstream html;
-        html << "<html><head><title>"
+        html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
              << status
              << "</title></head><body><center><h1>"
              << title
@@ -102,13 +102,12 @@ namespace Http{
         }catch(const std::exception& ec){
             const auto& response = httpSocket->getResponse();
             response->setStatus(HttpStatus::INTERNAL_SERVER_ERROR);
-            response->setBody(GenerateHtml("500 Internal Server Error","Exception",ec.what()));
+            response->setBody(GenerateHtml(HttpStatusToString(HttpStatus::INTERNAL_SERVER_ERROR),"Exception",ec.what()));
             httpSocket->sendResponse(response);
             return;
         }
         const auto& response = httpSocket->getResponse();
         response->setStatus(HttpStatus::NOT_FOUND);
-        response->setBody(GenerateHtml("404 Not Found","404 Not Found",""));
         httpSocket->sendResponse(response);
 
     }

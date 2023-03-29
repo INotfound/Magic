@@ -166,6 +166,16 @@ namespace Http{
         }while(pos <= str.size());
     }
 
+    inline std::string GenerateHtml(const std::string& status,const std::string& title){
+        std::stringstream html;
+        html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
+             << status
+             << "</title></head><body><center><h1>"
+             << title
+             << "</h1></center><hr><center>Magic/2.0.0</center></body></html>";
+        return html.str();
+    }
+
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
@@ -518,6 +528,11 @@ namespace Http{
 
         bool hasBody = !m_Body.empty();
 
+        if(m_Status > HttpStatus::OK){
+            hasBody = true;
+            m_Body = GenerateHtml(HttpStatusToString(m_Status),HttpStatusToString(m_Status));
+        }
+
         auto contentEncodingIter = m_Headers.find("Content-Encoding");
 
         if(contentEncodingIter != m_Headers.end()){
@@ -554,10 +569,7 @@ namespace Http{
             os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
                 << m_Body;
         }else{
-            if(m_ContentLength != 0){
-                os << "Content-Length: " << m_ContentLength << "\r\n";
-            }
-            os << "\r\n";
+            os << "Content-Length: " << m_ContentLength << "\r\n\r\n";
         }
         return os;
     }
