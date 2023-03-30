@@ -528,7 +528,7 @@ namespace Http{
 
         bool hasBody = !m_Body.empty();
 
-        if(m_Status > HttpStatus::OK){
+        if(!hasBody && m_Status > HttpStatus::OK){
             hasBody = true;
             m_Body = GenerateHtml(HttpStatusToString(m_Status),HttpStatusToString(m_Status));
         }
