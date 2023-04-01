@@ -33,14 +33,13 @@ namespace Magic{
             c = (c > 9) ? c + 'a' - 10 : c + '0';
             outPut[j++] = c;
         }
-        outPut[j] = '\0';
     }
 
     std::string MD5(const std::string& str){
         if(str.empty()){
             return std::string();
         }
-        uint8_t digest[MD5_DIGEST_LENGTH + 1] = {0};
+        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
     #ifdef OPENSSL
         MD5_CTX m_Md5;
         MD5_Init(&m_Md5);
@@ -56,7 +55,7 @@ namespace Magic{
         if(str.empty()){
             return std::string();
         }
-        uint8_t digest[SHA_DIGEST_LENGTH + 1] = {0};
+        uint8_t digest[SHA_DIGEST_LENGTH] = {0};
     #ifdef OPENSSL
         SHA_CTX m_Sha1;
         SHA1_Init(&m_Sha1);
@@ -72,7 +71,7 @@ namespace Magic{
         if(str.empty()){
             return std::string();
         }
-        char hexBuffer[33] = {'\0'};
+        char hexBuffer[32] = {0};
     #ifdef OPENSSL
         MD5_CTX m_Md5;
         MD5_Init(&m_Md5);
@@ -90,7 +89,7 @@ namespace Magic{
         if(str.empty()){
             return std::string();
         }
-        char hexBuffer[42] = {'\0'};
+        char hexBuffer[41] = {0};
     #ifdef OPENSSL
         SHA_CTX m_Sha1;
         SHA1_Init(&m_Sha1);
