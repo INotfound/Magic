@@ -11,6 +11,8 @@ namespace NetWork{
 namespace Http{
     class MultiPart:public Noncopyable{
     public:
+        ~MultiPart();
+
         MultiPart();
 
         explicit MultiPart(const std::string& boundary);
@@ -57,7 +59,6 @@ namespace Http{
         static void End(const char* buffer,size_t start,size_t end,void* userData);
 
     private:
-        bool m_IsFile;
         std::string m_FilePath;
         std::string m_Directory;
         std::string m_ParamName;
