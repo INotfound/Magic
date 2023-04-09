@@ -205,7 +205,7 @@ namespace Magic{
         if(filePath.empty()){
             return std::string();
         }
-        char hexBuffer[33] = {0};
+        char hexBuffer[32] = {0};
     #ifdef OPENSSL
         std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.data(),"rb"),[](std::FILE* pointer){
             if(pointer != nullptr){
@@ -238,6 +238,6 @@ namespace Magic{
     #else
         MAGIC_ERROR() << "Requires SSL Support.";
     #endif
-        return std::string(hexBuffer,33);
+        return std::string(hexBuffer,32);
     }
 }
