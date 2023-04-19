@@ -100,6 +100,7 @@ namespace Http{
                 }
             }
         }catch(const std::exception& ec){
+            MAGIC_WARN() << ec.what();
             const auto& response = httpSocket->getResponse();
             response->setStatus(HttpStatus::INTERNAL_SERVER_ERROR);
             response->setBody(GenerateHtml(HttpStatusToString(HttpStatus::INTERNAL_SERVER_ERROR),"Exception",ec.what()));

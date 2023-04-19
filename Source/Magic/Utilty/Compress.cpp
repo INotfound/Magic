@@ -82,44 +82,46 @@ namespace Magic{
 
     bool BrotliDecoder(const std::string& compressedData,std::string& data){
         BrotliDecoderResult result;
-        std::array<uint8_t, 2048> buffer;
+        uint32_t bufferSize = 2048;
+        std::unique_ptr<uint8_t,void(*)(const uint8_t*)> buffer(new uint8_t[bufferSize],[](const uint8_t* pointer){if(pointer){delete []pointer;}});
         std::unique_ptr<BrotliDecoderState,void (*)(BrotliDecoderState*)> instance(BrotliDecoderCreateInstance(nullptr,nullptr,nullptr),[](BrotliDecoderState* pointer){
             if(pointer)
                 BrotliDecoderDestroyInstance(pointer);
         });
-        size_t available_in = compressedData.length(), available_out = buffer.size();
+        size_t available_in = compressedData.length(), available_out = bufferSize;
         const auto *next_in = reinterpret_cast<const uint8_t *>(compressedData.data());
-        uint8_t *next_out = buffer.data();
+        uint8_t *next_out = buffer.get();
         do{
             result = BrotliDecoderDecompressStream(
                 instance.get(),
                 &available_in, &next_in, &available_out, &next_out, nullptr);
-            data.append(reinterpret_cast<const char *>(buffer.data()), buffer.size() - available_out);
-            available_out = buffer.size();
-            next_out = buffer.data();
+            data.append(reinterpret_cast<const char *>(buffer.get()), bufferSize - available_out);
+            available_out = bufferSize;
+            next_out = buffer.get();
         } while (!(available_in == 0 && result == BROTLI_DECODER_RESULT_SUCCESS));
 
         return result == BROTLI_DECODER_RESULT_SUCCESS;
     }
 
     bool BrotliEncoder(const std::string& data,std::string& compressedData){
-        std::array<uint8_t, 2048> buffer;
+        uint32_t bufferSize = 2048;
+        std::unique_ptr<uint8_t,void(*)(const uint8_t*)> buffer(new uint8_t[bufferSize],[](const uint8_t* pointer){if(pointer){delete []pointer;}});
         std::unique_ptr<BrotliEncoderState,void (*)(BrotliEncoderState*)> instance(BrotliEncoderCreateInstance(nullptr,nullptr,nullptr),[](BrotliEncoderState* pointer){
             if(pointer)
                 BrotliEncoderDestroyInstance(pointer);
         });
         BrotliEncoderSetParameter(instance.get(),BrotliEncoderParameter::BROTLI_PARAM_QUALITY,BROTLI_MIN_QUALITY);
-        size_t available_in = data.length(), available_out = buffer.size();
+        size_t available_in = data.length(), available_out = bufferSize;
         const auto* next_in = reinterpret_cast<const unsigned char *>(data.data());
-        uint8_t *next_out = buffer.data();
+        uint8_t *next_out = buffer.get();
         bool isFinished = false;
         do{
             BrotliEncoderCompressStream(
                 instance.get(), BROTLI_OPERATION_FINISH,
                 &available_in, &next_in, &available_out, &next_out, nullptr);
-            compressedData.append(reinterpret_cast<const char *>(buffer.data()), buffer.size() - available_out);
-            available_out = buffer.size();
-            next_out = buffer.data();
+            compressedData.append(reinterpret_cast<const char *>(buffer.get()), bufferSize - available_out);
+            available_out = bufferSize;
+            next_out = buffer.get();
             isFinished = BrotliEncoderIsFinished(instance.get());
         } while (!(available_in == 0 && isFinished));
         return isFinished;

@@ -427,6 +427,7 @@ namespace Magic{
         }
         this->m_Formatter->format(std::cout,level,event);
         std::cout << "\033[0m";
+        std::cout.flush();
     }
 #endif
 

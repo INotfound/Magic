@@ -528,7 +528,7 @@ namespace Http{
 
         bool hasBody = !m_Body.empty();
 
-        if(!hasBody && m_Status > HttpStatus::OK){
+        if(!hasBody && m_Resource.empty() && m_Status > HttpStatus::OK){
             hasBody = true;
             m_Body = GenerateHtml(HttpStatusToString(m_Status),HttpStatusToString(m_Status));
         }
@@ -627,7 +627,7 @@ namespace Http{
         value.append(AsString<uint64_t>(stop));
         value.append("/");
         value.append(AsString<uint64_t>(totalLength));
-        m_Headers.emplace("Content-Range",value);
+        m_Headers["Content-Range"] = value;
         return ObjectWrapper<HttpResponse>(this);
     }
 
