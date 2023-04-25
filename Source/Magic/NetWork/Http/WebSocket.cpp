@@ -22,7 +22,8 @@ namespace Http{
     WebSocket::~WebSocket() = default;
 
     WebSocket::WebSocket(bool mask,const Safe<Socket>& socket)
-        :m_Mask(mask)
+        :m_Fin(false)
+        ,m_Mask(mask)
         ,m_OpCode(0x0)
         ,m_Socket(socket)
         ,m_Death(false){

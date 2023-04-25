@@ -131,7 +131,7 @@ namespace Magic{
 
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             auto time_secounds = static_cast<std::time_t>(event->getTime());
-            os << TimeToString(time_secounds,m_FormatString.data());
+            os << TimeToString(time_secounds,m_FormatString);
         }
 
     private:
@@ -258,7 +258,7 @@ namespace Magic{
 
         static std::map<std::string,std::function<Safe<ILogFormatItem>(const std::string&)>> formatItem{
         #define Item(str,type) \
-           {#str,[](const std::string&){ return Safe<ILogFormatItem>(new type); }}
+           {#str,[](const std::string&){ return Safe<ILogFormatItem>(new (type)); }}
         #define ItemEx(str,type) \
            {#str,[](const std::string& fmt){ return Safe<ILogFormatItem>(new type(fmt)); }}
             Item(T,TabFormatItem),                //T:Tab

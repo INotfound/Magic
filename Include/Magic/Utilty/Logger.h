@@ -290,7 +290,7 @@ namespace Magic{
 
 
 #define  MAGIC_LOG_LEVEL(logger,level)                                \
-            if(level >= logger->getLevel())                           \
+            if((level) >= (logger)->getLevel())                           \
                 Magic::LogWrap(                                       \
                     level,                                            \
                     Safe<Magic::LogEvent>(                            \
@@ -300,7 +300,7 @@ namespace Magic{
                             Magic::GetCurrentTimeMS(),                \
                             Magic::GetThreadId(),                     \
                             __FILE__,                                 \
-                            logger->getLogName(),                     \
+                            (logger)->getLogName(),                     \
                             Magic::Thread::GetName())),               \
                     logger                                            \
                 ).get()

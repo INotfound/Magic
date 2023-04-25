@@ -153,7 +153,7 @@ namespace Http{
      * @brief HttpMethod
      */
     enum class HttpMethod{
-        #define XX(num,name,string) name = num,
+        #define XX(num,name,string) name = (num),
             HTTP_METHOD_MAP(XX)
         #undef XX
         INVALID_METHOD = 255
@@ -162,7 +162,7 @@ namespace Http{
      * @brief HttpStatus
      */
     enum class HttpStatus{
-        #define XX(code,name,desc) name = code,
+        #define XX(code,name,desc) name = (code),
             HTTP_STATUS_MAP(XX)
         #undef XX
         INVALID_METHOD = 255

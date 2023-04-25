@@ -42,7 +42,7 @@ namespace Magic{
          * @brief 获取线程Id函数
          * @return: 返回线程Id,若返回-1,即线程未初始化
          */
-        int64_t getId();
+        int64_t getId() const;
 
         /**
          * @brief 获取线程名称

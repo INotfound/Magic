@@ -36,7 +36,7 @@ namespace Magic{
             m_Thread->detach();
     }
 
-    int64_t Thread::getId(){
+    int64_t Thread::getId() const{
         return m_Id;
     }
 

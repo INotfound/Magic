@@ -221,7 +221,7 @@ void MultiPartParser::callback(Callback cb, const char *buffer, size_t start,siz
     if (start != UNMARKED && start == end && !allowEmpty){
         return;
     }
-    if (cb != NULL){
+    if (cb != nullptr){
         cb(buffer, start, end, userData);
     }
 }
