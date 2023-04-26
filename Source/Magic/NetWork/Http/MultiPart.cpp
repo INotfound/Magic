@@ -12,7 +12,8 @@ namespace Http{
     }
 
     MultiPart::MultiPart(const std::string& boundary)
-        :m_Parser(boundary){
+        :m_Boundary(boundary)
+        ,m_Parser(boundary){
         setParserCallBacks();
     }
 
@@ -48,6 +49,7 @@ namespace Http{
     }
 
     void MultiPart::setBoundary(const std::string& boundary){
+        m_Boundary = boundary;
         m_Parser.setBoundary(boundary);
     }
 
@@ -135,7 +137,7 @@ namespace Http{
         /// TODO: PartBegin
         std::string fileName = self->getFileName();
         if(!fileName.empty()){
-            self->m_FilePath = self->m_Directory + '/' + fileName;
+            self->m_FilePath = self->m_Directory + '/' + self->m_Boundary + fileName.substr(fileName.rfind('.'));
             self->m_FileStream.open(self->m_FilePath,std::ios::binary);
         }
 
