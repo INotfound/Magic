@@ -21,7 +21,7 @@ namespace Magic{
             m_Name = "UNKNOWN";
         }
         if(!m_CallBack){
-            throw Failure("Thread CallBack Is NullPtr!");
+            throw Failure("Thread CallBack Is NullPtr");
         }
         m_Thread = std::make_shared<std::thread>(&Thread::run,this);
     }

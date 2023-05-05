@@ -46,7 +46,7 @@ namespace Magic{
         MD5_Update(&m_Md5,str.data(),str.size());
         MD5_Final(digest,&m_Md5);
     #else
-        MAGIC_ERROR() << "Requires SSL Support.";
+        throw Failure("Requires SSL Support");
     #endif
         return std::string(reinterpret_cast<char*>(digest),MD5_DIGEST_LENGTH);
     }
@@ -62,7 +62,7 @@ namespace Magic{
         SHA1_Update(&m_Sha1,str.data(),str.size());
         SHA1_Final(digest,&m_Sha1);
     #else
-        MAGIC_ERROR() << "Requires SSL Support.";
+        throw Failure("Requires SSL Support");
     #endif
         return std::string(reinterpret_cast<char*>(digest),SHA_DIGEST_LENGTH);
     }
@@ -80,7 +80,7 @@ namespace Magic{
         MD5_Final(digest,&m_Md5);
         HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
     #else
-        MAGIC_ERROR() << "Requires SSL Support.";
+        throw Failure("Requires SSL Support");
     #endif
         return std::string(hexBuffer,32);
     }
@@ -98,7 +98,7 @@ namespace Magic{
         SHA1_Final(digest,&m_Sha1);
         HexStringFromData(digest,SHA_DIGEST_LENGTH,hexBuffer);
     #else
-        MAGIC_ERROR() << "Requires SSL Support.";
+        throw Failure("Requires SSL Support");
     #endif
         return std::string(hexBuffer,41);
     }
@@ -236,7 +236,7 @@ namespace Magic{
 
         HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
     #else
-        MAGIC_ERROR() << "Requires SSL Support.";
+        throw Failure("Requires SSL Support");
     #endif
         return std::string(hexBuffer,32);
     }

@@ -16,7 +16,11 @@ namespace Http{
         :m_Url(url)
         ,m_Death(false)
         ,m_Finish(false){
-        m_IOService = g_IoPool->get();
+        if(g_IoPool){
+            m_IOService = g_IoPool->get();
+        }else{
+            throw Failure("HttpClient Cannot Be Created Because IoPool Not Call ExternMode");
+        }
         m_Socket = std::make_shared<Socket>(timeOutMs,4096,*m_IOService);
         m_Socket->setHeartBeatCallBack([this](const Safe<Socket>& socket){
             if(m_Death){

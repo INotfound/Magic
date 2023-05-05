@@ -1,7 +1,7 @@
 /*
  * @Author: INotFound
  * @Date: 2020-09-12 16:23:53
- * @LastEditTime: 2020-09-30 21:29:32
+ * @LastEditTime: 2023-05-02 15:21:32
  */
 #pragma once
 
@@ -167,13 +167,6 @@ namespace Magic{
         return static_cast<uint8_t>(newValue);
     }
 
-    inline std::string TimeToGMTString(std::time_t tt){
-        struct tm* GMTime = gmtime(&tt);
-        char buff[512] = {0};
-        std::strftime(buff,sizeof(buff),"%a, %d %b %Y %H:%M:%S %Z",GMTime);
-        return buff;
-    }
-
     inline std::string ToLower(const std::string& string){
         std::string newString;
         std::transform(string.begin(),string.end(),std::back_inserter(newString),::tolower);
@@ -215,6 +208,13 @@ namespace Magic{
         return elems;
     }
 
+    inline std::string SubString(const std::string& str,uint64_t index,const std::string& delim){
+        uint64_t pos = str.find(delim,index);
+        if(pos == std::string::npos)
+            return str.substr(index,str.size() - index);;
+        return str.substr(index,pos - index);
+    }
+
     inline std::string TimeToString(std::time_t ts,const std::string& format = "%Y-%m-%d %H:%M:%S"){
         struct tm nowTime;
     #if defined(_WIN32) || defined(_WIN64)
@@ -222,16 +222,9 @@ namespace Magic{
     #else
         localtime_r(&ts,&nowTime);
     #endif
-        char buf[64] = {0};
+        char buf[512] = {0};
         std::strftime(buf,sizeof(buf),format.data(),&nowTime);
         return buf;
-    }
-
-    inline std::string SubString(const std::string& str,uint64_t index,const std::string& delim){
-        uint64_t pos = str.find(delim,index);
-        if(pos == std::string::npos)
-            return str.substr(index,str.size() - index);;
-        return str.substr(index,pos - index);
     }
 
     inline std::string Replace(const std::string& string,const std::string& oldStr,const std::string& newStr){

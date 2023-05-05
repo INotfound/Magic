@@ -37,7 +37,7 @@ namespace NetWork{
 
     void TcpServer::accept(){
         if(!m_IoPool)
-            throw std::logic_error("IoPool Is Nullptr!!!");
+            throw Failure("IoPool Is Nullptr");
         Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,*m_IoPool->get());
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
             if(err){

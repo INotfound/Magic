@@ -42,8 +42,11 @@ namespace NetWork{
             if(self->getEntity() && self->m_HeartBeatCallBack)
                 self->m_HeartBeatCallBack(self);
         });
-        if(g_TimingWheel)
+        if(g_TimingWheel){
             g_TimingWheel->addTask(m_HeartBeatMs,taskNode);
+        }else{
+            throw Failure("Heartbeat Detection Not Working Because IoPool Not Call ExternMode");
+        }
     }
 
     const Safe<asio::ip::tcp::socket>& Socket::getEntity(){

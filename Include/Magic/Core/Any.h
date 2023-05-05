@@ -110,7 +110,7 @@ namespace std{
     template<typename T>
     T& any_cast(const any& other){
         if(!other.Is<T>()){
-            std::printf("Can not cast %s to %s",typeid(T).name(),other.m_TypeIndex.name());
+            std::printf("Can Not Cast %s To %s",typeid(T).name(),other.m_TypeIndex.name());
             throw std::bad_cast();
         }
         auto type = dynamic_cast<any::Type<T>*> (other.m_Pointer.get());

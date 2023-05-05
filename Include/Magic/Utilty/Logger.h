@@ -290,7 +290,7 @@ namespace Magic{
 
 
 #define  MAGIC_LOG_LEVEL(logger,level)                                \
-            if((level) >= (logger)->getLevel())                           \
+            if((logger) && (level) >= (logger)->getLevel())           \
                 Magic::LogWrap(                                       \
                     level,                                            \
                     Safe<Magic::LogEvent>(                            \

@@ -651,7 +651,7 @@ namespace Http{
         }
         if(expired > 0){
             result.append("; Expires=");
-            result.append(TimeToGMTString(expired));
+            result.append(TimeToString(expired,"%a, %d %b %Y %H:%M:%S %Z"));
         }
         if(httpOnly){
             result.append("; HttpOnly");
