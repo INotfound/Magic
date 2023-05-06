@@ -80,15 +80,19 @@ TEST(MagicStringTest,TrimString){
 
 TEST(MagicStringTest,SubString){
     std::string spaceString = "Hello World!";
-    EXPECT_STREQ(Magic::SubString(spaceString,0," ").data(),"Hello");
+    auto newString = Magic::SubString(spaceString,0," ");
+    EXPECT_STREQ(std::string(newString.data(),newString.size()).data(),"Hello");
 }
 
 TEST(MagicStringTest,SplitString){
     std::string spaceString = "Hello World INotFound!";
     auto vec = Magic::Split(spaceString," ");
-    EXPECT_STREQ(vec.at(0).data(),"Hello");
-    EXPECT_STREQ(vec.at(1).data(),"World");
-    EXPECT_STREQ(vec.at(2).data(),"INotFound!");
+    auto oneString = vec.at(0);
+    auto twoString = vec.at(1);
+    auto threeString = vec.at(2);
+    EXPECT_STREQ(std::string(oneString.data(),oneString.size()).data(),"Hello");
+    EXPECT_STREQ(std::string(twoString.data(),twoString.size()).data(),"World");
+    EXPECT_STREQ(std::string(threeString.data(),threeString.size()).data(),"INotFound!");
 }
 
 TEST(MagicStringTest,TimeString){
@@ -98,6 +102,6 @@ TEST(MagicStringTest,TimeString){
 
 TEST(MagicStringTest,ReplaceString){
     std::string spaceString = "Hello World INotFound!";
-    EXPECT_STREQ(Magic::Replace(spaceString," World","").c_str(),"Hello INotFound!");
-    EXPECT_STREQ(Magic::Replace(spaceString,"Hello World","Welcome").c_str(),"Welcome INotFound!");
+    EXPECT_STREQ(Magic::Replace(spaceString," World","").data(),"Hello INotFound!");
+    EXPECT_STREQ(Magic::Replace(spaceString,"Hello World","Welcome").data(),"Welcome INotFound!");
 }

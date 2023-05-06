@@ -239,9 +239,10 @@ namespace Magic{
     }
 
     inline std::string Replace(const std::string_view& string,const std::string_view& oldStr,const std::string_view& newStr){
+        std::string oldString(oldStr.data(),oldStr.size());
         std::string newString = std::string(string.data(),string.size());
         for(std::string::size_type pos = 0;pos != std::string::npos;pos += newStr.length()){
-            if((pos = newString.find(oldStr.data(),oldStr.size(),pos)) != std::string::npos){
+            if((pos = newString.find(oldString,pos)) != std::string::npos){
                 newString.replace(pos,oldStr.size(),newStr.data(),newStr.size());
             }else{
                 return newString;
@@ -253,11 +254,11 @@ namespace Magic{
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string& lhs,const std::string& rhs) const{
-            return lhs.compare(rhs) < 0;
+            return StringCompareNoCase(lhs,rhs);
         }
 
         bool operator()(const std::string_view& lhs,const std::string_view& rhs) const{
-            return lhs.compare(rhs) < 0;
+            return StringCompareNoCase(lhs,rhs);
         }
     };
 
