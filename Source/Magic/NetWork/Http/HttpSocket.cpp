@@ -51,10 +51,6 @@ namespace Http{
         m_Socket->runHeartBeat(this->shared_from_this());
     }
 
-    void HttpSocket::setDirectory(const std::string& dirPath){
-        m_MultiPart->setDirectory(dirPath);
-    }
-
     const Safe<HttpRequest>& HttpSocket::getRequest() const{
         return m_RequestParser->getData();
     }
@@ -73,6 +69,10 @@ namespace Http{
         this->responseParser();
     }
 
+    void HttpSocket::setDirectory(const std::string_view& dirPath){
+        m_MultiPart->setDirectory(dirPath);
+    }
+
     void HttpSocket::sendRequest(const Safe<HttpRequest>& httpRequest){
         if(!m_Socket)
             return;
@@ -88,8 +88,8 @@ namespace Http{
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
         if(httpResponse->hasResource()){
-            const std::string& filePath = httpResponse->getResource();
-            m_FileStream.open(filePath,std::ios::in | std::ios::binary);
+            std::string_view filePath = httpResponse->getResource();
+            m_FileStream.open(std::string(filePath.data(),filePath.size()),std::ios::in | std::ios::binary);
             if(m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
@@ -148,15 +148,16 @@ namespace Http{
                    ->setHeader("Sec-WebSocket-Key","SU5vdEZvdW5kCg==");
             this->sendRequest(request);
         }else{
-            std::string wsKey = request->getHeader("Sec-WebSocket-Key");
+            std::string_view wsKey = request->getHeader("Sec-WebSocket-Key");
             if(wsKey.empty()){
                 throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters");
             }
-            wsKey += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+            std::string key(wsKey.data(),wsKey.size());
+            key += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
             response->setHeader("Upgrade","websocket")
                     ->setHeader("Connection","Upgrade")
                     ->setStatus(HttpStatus::SWITCHING_PROTOCOLS)
-                    ->setHeader("Sec-WebSocket-Accept",Base64Encode(SHA1(wsKey)));
+                    ->setHeader("Sec-WebSocket-Accept",Base64Encode(SHA1(key)));
             this->sendResponse(response);
         }
         Safe<Socket> socket = std::move(m_Socket);
@@ -216,7 +217,7 @@ namespace Http{
             m_CurrentLength = 0;
             auto& request = m_RequestParser->getData();
             m_TotalLength = m_RequestParser->getContentLength();
-            const std::string& value = request->getHeader("Content-Type");
+            std::string_view value = request->getHeader("Content-Type");
             auto pos = value.find("boundary=");
             if(pos != std::string::npos){
                 pos += 9;
@@ -227,11 +228,8 @@ namespace Http{
                 constexpr uint32_t maxRequestSize = 1024 * 1024 * 5;
                 if(m_TotalLength > 0 && m_TotalLength < maxRequestSize){
                     m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
-                        std::string body;
                         auto& request = m_RequestParser->getData();
-                        body.reserve(data.size());
-                        body.append(data.begin(),data.end());
-                        request->setBody(body);
+                        request->setBody(std::string_view(data.data(),data.size()));
                         data.clear();
                         this->handleRequest();
                     });
@@ -262,11 +260,8 @@ namespace Http{
             uint64_t contentLength = m_ResponseParser->getContentLength();
             if(contentLength > 0){
                 m_Socket->recv(contentLength - data.size(),[this,self](Socket::StreamBuffer& data){
-                    std::string body;
                     auto& response = m_ResponseParser->getData();
-                    body.reserve(data.size());
-                    body.append(data.begin(),data.end());
-                    response->setBody(body);
+                    response->setBody(std::string_view(data.data(),data.size()));
                     data.clear();
                     this->handleResponse();
                 });

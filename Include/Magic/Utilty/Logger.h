@@ -48,7 +48,7 @@ namespace Magic{
          * @param LogName 日志器名称
          * @param threadName 线程名称
          */
-        LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t threadId,const std::string& file,const std::string& LogName,const std::string& threadName);
+        LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t threadId,const std::string_view& file,const std::string_view& LogName,const std::string_view& threadName);
 
         /**
          * @brief 获取行数
@@ -84,19 +84,19 @@ namespace Magic{
          * @brief 获取文件名称
          * @return: 返回文件名称
          */
-        const std::string& getFile() const;
+        std::string_view getFile() const;
 
         /**
          * @brief 获取日志器名称
          * @return: 返回日志器名称
          */
-        const std::string& getLogName() const;
+        std::string_view getLogName() const;
 
         /**
          * @brief 获取线程名称
          * @return: 返回线程名称
          */
-        const std::string& getThreadName() const;
+        std::string_view getThreadName() const;
 
         /**
          * @brief 获取输出流
@@ -134,7 +134,7 @@ namespace Magic{
          * @brief 构造函数
          * @param pattern 格式化字符串
          */
-        explicit LogFormatter(const std::string& pattern);
+        explicit LogFormatter(const std::string_view& pattern);
 
         /**
          * @brief 格式化函数
@@ -203,13 +203,13 @@ namespace Magic{
          * @brief 设置日志名称函数
          * @return: 返回日志名称
          */
-        const std::string& getLogName() const;
+        std::string_view getLogName() const;
 
         /**
          * @brief 设置日志格式化器函数
          * @param level 日志级别
          */
-        void setFormatter(const std::string& pattern);
+        void setFormatter(const std::string_view& pattern);
 
         /**
          * @brief 日志输出函数

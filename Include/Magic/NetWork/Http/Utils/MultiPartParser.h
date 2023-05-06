@@ -1,7 +1,5 @@
 #pragma once
-#include <string>
-#include <stdexcept>
-#include <cstring>
+
 #include "Magic/Core/Core.h"
 
 class MultiPartParser :public Magic::Noncopyable{
@@ -42,7 +40,7 @@ public:
 
     MultiPartParser();
 
-    explicit MultiPartParser(const std::string &boundary);
+    explicit MultiPartParser(const std::string_view& sv);
 
     ~MultiPartParser();
 
@@ -58,7 +56,7 @@ public:
 
     size_t feed(const char *buffer, size_t len);
 
-    void setBoundary(const std::string &boundary);
+    void setBoundary(const std::string_view& sv);
 private:
 	void resetCallbacks();
 	

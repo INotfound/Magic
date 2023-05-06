@@ -12,7 +12,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
 
-    std::string GenerateHtml(const std::string& status,const std::string& title,const std::string& message){
+    std::string GenerateHtml(const std::string_view& status,const std::string_view& title,const std::string_view& message){
         std::stringstream html;
         html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
              << status
@@ -28,9 +28,9 @@ namespace Http{
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
         std::lock_guard<std::mutex> locker(m_Mutex);
-        const auto& httpPath = httpSocket->getRequest()->getPath();
+        std::string_view httpPath = httpSocket->getRequest()->getPath();
         try{
-            auto exactlyIter = m_NormalRoutes.find(httpPath);
+            auto exactlyIter = m_NormalRoutes.find(std::string(httpPath.data(),httpPath.size()));
             auto exactlyEnd = m_NormalRoutes.end();
             if(exactlyIter != exactlyEnd){
             #ifdef TRACE
@@ -68,7 +68,7 @@ namespace Http{
             std::regex reg;
             for(;matchIter != matchEnd;matchIter++){
                 reg.assign(matchIter->first);
-                if(std::regex_match(httpPath,reg)){
+                if(std::regex_match(httpPath.begin(),httpPath.end(),reg)){
                 #ifdef TRACE
                     TraceTimer traceTimer(httpPath);
                 #endif

@@ -58,12 +58,12 @@ namespace NetWork{
         return m_SslStream;
     }
 
-    void Socket::enableSsl(const std::string& keyPath,const std::string& certPath){
+    void Socket::enableSsl(const std::string_view& keyPath,const std::string_view& certPath){
         asio::ssl::context sslContext(asio::ssl::context::sslv23);
         if(!keyPath.empty() && !certPath.empty()){
             sslContext.set_options(asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use | asio::ssl::context::default_workarounds);
-            sslContext.use_certificate_chain_file(keyPath);
-            sslContext.use_private_key_file(certPath,asio::ssl::context::pem);
+            sslContext.use_certificate_chain_file(std::string(keyPath.data(),keyPath.size()));
+            sslContext.use_private_key_file(std::string(certPath.data(),certPath.size()),asio::ssl::context::pem);
         }
         m_SslStream = std::make_shared<asio::ssl::stream<asio::ip::tcp::socket&>>(*m_Socket,sslContext);
     }

@@ -1,8 +1,6 @@
-# Android Compile Native API 24 Support Is Required.
 cmake_minimum_required(VERSION 3.0)
 
 project(Magic)
-set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(Magic.cmake)

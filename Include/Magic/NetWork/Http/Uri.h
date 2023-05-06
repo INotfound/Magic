@@ -46,47 +46,45 @@ namespace Http{
      */
     class Uri:public Noncopyable{
     public:
-        explicit Uri(const std::string& uri);
+        explicit Uri(const std::string_view& uri);
 
         bool hasError() const;
 
         uint32_t getPort() const;
 
-        const std::string& getUser() const;
+        std::string_view getUser() const;
 
-        const std::string& getHost() const;
+        std::string_view getHost() const;
 
-        const std::string& getPath() const;
+        std::string_view getPath() const;
 
-        const std::string& getQuery() const;
+        std::string_view getQuery() const;
 
-        const std::string& getScheme() const;
+        std::string_view getScheme() const;
 
-        const std::string& getFragment() const;
+        std::string_view getFragment() const;
 
         void setPort(uint32_t val);
 
-        void setHost(const std::string& val);
+        void setHost(const std::string_view& val);
 
-        void setPath(const std::string& val);
+        void setPath(const std::string_view& val);
 
-        void setUser(const std::string& val);
+        void setUser(const std::string_view& val);
 
-        void setQuery(const std::string& val);
+        void setQuery(const std::string_view& val);
 
-        void setScheme(const std::string& val);
+        void setScheme(const std::string_view& val);
 
-        void setFragment(const std::string& val);
+        void setFragment(const std::string_view& val);
 
     private:
-        bool execute(const std::string& uri);
+        bool execute(const std::string_view& uri);
 
     private:
         bool m_Error;
         /// 端口
         uint32_t m_Port;
-        /// scheme
-        std::string m_Scheme;
         /// 用户信息
         std::string m_User;
         /// host
@@ -95,6 +93,8 @@ namespace Http{
         std::string m_Path;
         /// 查询参数
         std::string m_Query;
+        /// scheme
+        std::string m_Scheme;
         /// fragment
         std::string m_Fragment;
 

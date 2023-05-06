@@ -17,17 +17,17 @@ namespace Http{
 
     void OnRequestPath(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setPath(std::string(at,length));
+        parser->getData()->setPath(std::string_view(at,length));
     }
 
     void OnRequestQuery(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setQuery(std::string(at,length));
+        parser->getData()->setQuery(std::string_view(at,length));
     }
 
-    void OnRequestMethod(void* data,const char* at,size_t /*length*/){
+    void OnRequestMethod(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        HttpMethod method = CharsToHttpMethod(at);
+        HttpMethod method = StringToHttpMethod(std::string_view(at,length));
         if(method == HttpMethod::INVALID_METHOD){
             parser->setError(true);
             return;
@@ -52,7 +52,7 @@ namespace Http{
 
     void OnRequestFragment(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setFragment(std::string(at,length));
+        parser->getData()->setFragment(std::string_view(at,length));
     }
 
     void OnRequestHeaderDone(void* /*data*/,const char* /*at*/,size_t /*length*/){
@@ -66,7 +66,7 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        parser->getData()->setHeader(std::string(field,flen),std::string(value,vlen));
+        parser->getData()->setHeader(std::string_view(field,flen),std::string_view(value,vlen));
     }
 
     HttpRequestParser::HttpRequestParser()
@@ -106,7 +106,7 @@ namespace Http{
     }
 
     uint64_t HttpRequestParser::getContentLength(){
-        const std::string& length = m_Data->getHeader("Content-Length");
+        std::string_view length = m_Data->getHeader("Content-Length");
         if(length.empty()){
             m_Data->setContentLength(0);
         }else{
@@ -131,7 +131,7 @@ namespace Http{
 
     void OnResponseReason(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpResponseParser*>(data);
-        parser->getData()->setReason(std::string(at,length));
+        parser->getData()->setReason(std::string_view(at,length));
     }
 
     void OnResponseStatus(void* data,const char* at,size_t /*length*/){
@@ -173,7 +173,7 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        parser->getData()->setHeader(std::string(field,flen),std::string(value,vlen));
+        parser->getData()->setHeader(std::string_view(field,flen),std::string_view(value,vlen));
     }
 
     HttpResponseParser::HttpResponseParser()
@@ -210,7 +210,7 @@ namespace Http{
     }
 
     uint32_t HttpResponseParser::getContentLength(){
-        const std::string& length = m_Data->getHeader("Content-Length");
+        std::string_view length = m_Data->getHeader("Content-Length");
         if(length.empty()){
             m_Data->setContentLength(0);
         }else{

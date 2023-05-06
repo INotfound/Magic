@@ -22,9 +22,9 @@ namespace DataBase{
 
         void printError();
 
-        bool execute(const std::string& sql);
+        bool execute(const std::string_view& sql);
 
-        bool connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string& password,uint16_t port);
+        bool connnetDB(const std::string_view& dataBase,const std::string_view& ip,const std::string_view& user,const std::string_view& password,uint16_t port);
 
     private:
         MYSQL m_MySql;
@@ -49,7 +49,7 @@ namespace DataBase{
 
         void bindNull(uint32_t index);
 
-        bool prepare(const std::string& sql);
+        bool prepare(const std::string_view& sql);
 
         void bind(uint32_t index,const float value);
 
@@ -71,11 +71,11 @@ namespace DataBase{
 
         void bind(uint32_t index,const uint64_t value);
 
-        void bind(uint32_t index,const std::string& value);
-
         void bindTime(uint32_t index,const std::time_t value);
 
-        void bindBlob(uint32_t index,const std::string& value);
+        void bind(uint32_t index,const std::string_view& value);
+
+        void bindBlob(uint32_t index,const std::string_view& value);
 
         void bindBlob(uint32_t index,const void* value,uint64_t size);
 
@@ -108,7 +108,7 @@ namespace DataBase{
         std::string getBlob(uint32_t index);
 
     private:
-        class SqlResult:public Noncopyable{
+        class SqlResult{
         public:
             SqlResult();
 

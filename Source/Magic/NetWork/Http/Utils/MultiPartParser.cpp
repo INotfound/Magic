@@ -8,10 +8,10 @@ MultiPartParser::MultiPartParser(){
     reset();
 }
 
-MultiPartParser::MultiPartParser(const std::string &boundary){
+MultiPartParser::MultiPartParser(const std::string_view& sv){
     lookbehind = nullptr;
     resetCallbacks();
-    setBoundary(boundary);
+    setBoundary(sv);
 }
 
 MultiPartParser::~MultiPartParser(){
@@ -182,9 +182,10 @@ size_t MultiPartParser::feed(const char *buffer, size_t len){
     return len;
 }
 
-void MultiPartParser::setBoundary(const std::string &boundary){
+void MultiPartParser::setBoundary(const std::string_view& sv){
     reset();
-    this->boundary = "\r\n--" + boundary;
+    this->boundary = "\r\n--";
+    boundary.append(sv.data(),sv.size());
     boundaryData = this->boundary.data();
     boundarySize = this->boundary.size();
     indexBoundary();

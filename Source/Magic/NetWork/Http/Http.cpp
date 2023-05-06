@@ -12,69 +12,63 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    static const char* g_MethodString[]{
+    static const std::string_view g_MethodString[]{
         #define XX(num,name,string) #name,
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
 
-    static const std::map<std::string,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
+    static const std::map<std::string_view,HttpMethod,CaseInsensitiveLess> g_HttpMethod = {
+        #define XX(num,name,string) {#string,HttpMethod::name},
+            HTTP_METHOD_MAP(XX)
+        #undef XX
+    };
+
+    static const std::map<std::string_view,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
         #define XX(name,extName,desc){extName,HttpContentType::name},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    static const std::map<HttpContentType,std::string> g_HttpContentType = {
+    static const std::map<HttpContentType,std::string_view> g_HttpContentType = {
         #define XX(name,extName,desc){HttpContentType::name,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    bool IsUrlEncode(const std::string& str){
+    bool IsUrlEncode(const std::string_view& str){
         return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
     }
 
-    HttpMethod CharsToHttpMethod(const char* str){
-        #define XX(num,name,string) \
-            if(strncmp(#string,str,strlen(#string)) == 0){ \
-                return HttpMethod::name; \
-            }
-            HTTP_METHOD_MAP(XX);
-        #undef XX
+    HttpMethod StringToHttpMethod(const std::string_view& str){
+        auto iter = g_HttpMethod.find(str);
+        if(iter != g_HttpMethod.end()){
+            return iter->second;
+        }
         return HttpMethod::INVALID_METHOD;
     }
 
-    HttpMethod StringToHttpMethod(const std::string& str){
-        #define XX(num,name,string) \
-            if(strcmp(#name,str.data()) == 0){ \
-                return HttpMethod::name; \
-            }
-            HTTP_METHOD_MAP(XX);
-        #undef XX
-        return HttpMethod::INVALID_METHOD;
-    }
-
-    const char* HttpMethodToString(const HttpMethod& method){
+    std::string_view HttpMethodToString(const HttpMethod& method){
         auto index = static_cast<uint64_t>(method);
         if(index >= (sizeof(g_MethodString) / sizeof(g_MethodString[0]))){
-            return "<unknown>";
+            return std::string_view("<unknown>");
         }
         return g_MethodString[index];
     }
 
-    const char* HttpStatusToString(const HttpStatus& status){
+    std::string_view HttpStatusToString(const HttpStatus& status){
         switch(status){
         #define XX(code,name,desc)  \
             case HttpStatus::name : \
-                return #desc;
+                return std::string_view(#desc);
             HTTP_STATUS_MAP(XX)
         #undef XX
             default:
-                return "<unknown>";
+                return std::string_view("<unknown>");
         }
     }
 
-    std::string UrlEncode(const std::string& value) noexcept{
+    std::string UrlEncode(const std::string_view& value) noexcept{
         static auto hex_chars = "0123456789ABCDEF";
 
         std::string result;
@@ -94,7 +88,7 @@ namespace Http{
 		return result;
 	}
 
-    std::string UrlDecode(const std::string& value) noexcept{
+    std::string UrlDecode(const std::string_view& value) noexcept{
         std::string result;
         result.reserve(value.size() / 3 + (value.size() % 3)); // Minimum size of result
 
@@ -114,12 +108,12 @@ namespace Http{
         return result;
     }
 
-    HttpContentType FileTypeToHttpContentType(const std::string& fileName){
+    HttpContentType FileTypeToHttpContentType(const std::string_view& fileName){
         std::string extName;
         auto pos = fileName.rfind('.');
         if(pos != std::string::npos){
-            extName = fileName.substr(pos + 1);
-            std::transform(extName.begin(),extName.end(),extName.begin(),::toupper);
+            std::string_view sv = fileName.substr(pos + 1);
+            std::transform(sv.begin(),sv.end(),extName.begin(),::toupper);
             auto iter = g_HttpContent.find(extName);
             if(iter != g_HttpContent.end()){
                 return iter->second;
@@ -133,28 +127,30 @@ namespace Http{
     }
 
     template<typename Map>
-    inline void Parse(const std::string& str,Map& map,const std::string& flag){
+    inline void Parse(const std::string_view& str,Map& map,const std::string_view& flag){
         uint64_t pos = 0;
         do{
-            uint64_t key = 0;
-            std::string subString(SubString(str,pos,flag));
+            uint64_t idx = 0;
+            std::string_view subString = SubString(str,pos,flag);
             if(IsUrlEncode(subString)){
                 subString = UrlDecode(subString);
             }
             pos += static_cast<uint64_t>(subString.size() + 1);
-            key = subString.find('=');
-            if(key == std::string::npos)
+            idx = subString.find('=');
+            if(idx == std::string::npos)
                 break;
-            map.emplace(subString.substr(0,key),subString.substr(key + 1));
+            std::string_view keySV = subString.substr(0,idx);
+            std::string_view valueSV = subString.substr(idx + 1);
+            map.emplace(std::string(keySV.data(),keySV.size()),std::string(valueSV.data(),valueSV.size()));
         }while(pos <= str.size());
     }
 
     template<typename Map>
-    inline void ParseCookies(const std::string& str,Map& map,const std::string& flag){
+    inline void ParseCookies(const std::string_view& str,Map& map,const std::string_view& flag){
         uint64_t pos = 0;
         do{
             uint64_t key = 0;
-            std::string subString(SubString(str,pos,flag));
+            std::string_view subString = SubString(str,pos,flag);
             if(IsUrlEncode(subString)){
                 subString = UrlDecode(subString);
             }
@@ -166,7 +162,7 @@ namespace Http{
         }while(pos <= str.size());
     }
 
-    inline std::string GenerateHtml(const std::string& status,const std::string& title){
+    inline std::string GenerateHtml(const std::string_view& status,const std::string_view& title){
         std::stringstream html;
         html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
              << status
@@ -240,21 +236,21 @@ namespace Http{
         return m_ContentLength;
     }
 
-    const std::string& HttpRequest::getPath() const{
+    std::string_view HttpRequest::getPath() const{
         return m_UrlPath;
     }
 
-    const std::string& HttpRequest::getBody() const{
+    std::string_view HttpRequest::getBody() const{
         return m_Body;
     }
 
-    const std::string& HttpRequest::getQuery() const{
+    std::string_view HttpRequest::getQuery() const{
         return m_Query;
     }
 
-    const std::string& HttpRequest::getCookie(const std::string& key){
+    std::string_view HttpRequest::getCookie(const std::string_view& key){
         if(!m_Cookies.empty()){
-            auto value = m_Cookies.find(key);
+            auto value = m_Cookies.find(std::string(key.data(),key.size()));
             if(value == m_Cookies.end()){
                 return g_EmptyString;
             }
@@ -264,35 +260,35 @@ namespace Http{
         if(iter == m_Headers.end())
             return g_EmptyString;
         ParseCookies(iter->second,m_Cookies,";");
-        auto value = m_Cookies.find(key);
+        auto value = m_Cookies.find(std::string(key.data(),key.size()));
         if(value == m_Cookies.end()){
             return g_EmptyString;
         }
         return value->second;
     }
 
-    const std::string& HttpRequest::getParam(const std::string& key) const{
-        auto iter = m_Params.find(key);
+    std::string_view HttpRequest::getParam(const std::string_view& key) const{
+        auto iter = m_Params.find(std::string(key.data(),key.size()));
         if(iter == m_Params.end()){
             return g_EmptyString;
         }
         return iter->second;
     }
 
-    const std::string& HttpRequest::getHeader(const std::string& key) const{
-        auto iter = m_Headers.find(key);
+    std::string_view HttpRequest::getHeader(const std::string_view& key) const{
+        auto iter = m_Headers.find(std::string(key.data(),key.size()));
         if(iter == m_Headers.end()){
             return g_EmptyString;
         }
         return iter->second;
     }
 
-    void HttpRequest::delParam(const std::string& key){
-        m_Params.erase(key);
+    void HttpRequest::delParam(const std::string_view& key){
+        m_Params.erase(std::string(key.data(),key.size()));
     }
 
-    void HttpRequest::delHeader(const std::string& key){
-        m_Headers.erase(key);
+    void HttpRequest::delHeader(const std::string_view& key){
+        m_Headers.erase(std::string(key.data(),key.size()));
     }
 
     std::ostream& HttpRequest::toStream(std::ostream& os){
@@ -342,28 +338,8 @@ namespace Http{
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setBody(const std::string& body){
-        auto contentType = m_Headers.find("Content-Type");
-        if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded") == 0){
-            Parse(body,m_Params,"&");
-        }
-        m_Body = body;
-        return ObjectWrapper<HttpRequest>(this);
-    }
-
     ObjectWrapper<HttpRequest> HttpRequest::setContentLength(uint64_t length){
         m_ContentLength = length;
-        return ObjectWrapper<HttpRequest>(this);
-    }
-
-    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const std::string& query){
-        Parse(query,m_Params,"&");
-        m_Query = query;
-        return ObjectWrapper<HttpRequest>(this);
-    }
-
-    ObjectWrapper<HttpRequest> HttpRequest::setPath(const std::string& urlPath){
-        m_UrlPath = urlPath;
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -376,23 +352,43 @@ namespace Http{
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const std::string& fragment){
-        m_Fragment = fragment;
+    ObjectWrapper<HttpRequest> HttpRequest::setBody(const std::string_view& body){
+        auto contentType = m_Headers.find("Content-Type");
+        if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded") == 0){
+            Parse(body,m_Params,"&");
+        }
+        m_Body = std::string(body.data(),body.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setParam(const std::string& key,const std::string& value){
-        m_Params.emplace(key,value);
+    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const std::string_view& query){
+        Parse(query,m_Params,"&");
+        m_Query = std::string(query.data(),query.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const std::string& key,const std::string& value){
-        m_Headers.emplace(key,value);
+    ObjectWrapper<HttpRequest> HttpRequest::setPath(const std::string_view& urlPath){
+        m_UrlPath = std::string(urlPath.data(),urlPath.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const std::string& key,const std::string& value){
-        m_Cookies.emplace(key,value);
+    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const std::string_view& fragment){
+        m_Fragment = std::string(fragment.data(),fragment.size());
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setParam(const std::string_view& key,const std::string_view& value){
+        m_Params.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const std::string_view& key,const std::string_view& value){
+        m_Headers.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const std::string_view& key,const std::string_view& value){
+        m_Cookies.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -408,12 +404,12 @@ namespace Http{
         return m_Headers.find("Content-Range") != m_Headers.end();
     }
 
-    bool HttpResponse::hasResource() const{
-        return !m_Resource.empty();
-    }
-
     HttpResponse::KeyValue& HttpResponse::getHeaders(){
         return m_Headers;
+    }
+
+    bool HttpResponse::hasResource() const{
+        return !m_Resource.empty();
     }
 
     bool HttpResponse::getKeepAlive() const{
@@ -462,12 +458,12 @@ namespace Http{
         return 0;
     }
 
-    uint64_t HttpResponse::getContentLength() const{
-        return m_ContentLength;
+    std::string_view HttpResponse::getBody() const{
+        return m_Body;
     }
 
-    const std::string& HttpResponse::getBody() const{
-        return m_Body;
+    uint64_t HttpResponse::getContentLength() const{
+        return m_ContentLength;
     }
 
     uint64_t HttpResponse::getRangeTotalLength() const{
@@ -487,11 +483,11 @@ namespace Http{
         return 0;
     }
 
-    const std::string& HttpResponse::getReason() const{
+    std::string_view HttpResponse::getReason() const{
         return m_Reason;
     }
 
-    const std::string& HttpResponse::getResource() const{
+    std::string_view HttpResponse::getResource() const{
         return m_Resource;
     }
 
@@ -499,16 +495,16 @@ namespace Http{
         return m_ContentType;
     }
 
-    const std::string& HttpResponse::getHeader(const std::string& key){
-        auto iter = m_Headers.find(key);
+    void HttpResponse::delHeader(const std::string_view& key){
+        m_Headers.erase(std::string(key.data(),key.size()));
+    }
+
+    std::string_view HttpResponse::getHeader(const std::string_view& key){
+        auto iter = m_Headers.find(std::string(key.data(),key.size()));
         if(iter == m_Headers.end()){
             return g_EmptyString;
         }
         return iter->second;
-    }
-
-    void HttpResponse::delHeader(const std::string& key){
-        m_Headers.erase(key);
     }
 
     std::ostream& HttpResponse::toStream(std::ostream& os){
@@ -589,28 +585,28 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setBody(const std::string& body){
-        m_Body = body;
-        return ObjectWrapper<HttpResponse>(this);
-    }
-
     ObjectWrapper<HttpResponse> HttpResponse::setContentLength(uint64_t length){
         m_ContentLength = length;
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setReason(const std::string& reason){
-        m_Reason = reason;
+    ObjectWrapper<HttpResponse> HttpResponse::setBody(const std::string_view& body){
+        m_Body = std::string(body.data(),body.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setResource(const std::string& filePath){
-        m_Resource = filePath;
+    ObjectWrapper<HttpResponse> HttpResponse::setReason(const std::string_view& reason){
+        m_Reason = std::string(reason.data(),reason.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const std::string& contentType){
-        m_Headers["Content-Type"] = contentType;
+    ObjectWrapper<HttpResponse> HttpResponse::setResource(const std::string_view& filePath){
+        m_Resource = std::string(filePath.data(),filePath.size());
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const std::string_view& contentType){
+        m_Headers.emplace("Content-Type",std::string(contentType.data(),contentType.size()));
         return ObjectWrapper<HttpResponse>(this);
     }
 
@@ -631,23 +627,23 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const std::string& key,const std::string& value){
-        m_Headers.emplace(key,value);
+    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const std::string_view& key,const std::string_view& value){
+        m_Headers.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string& key,const std::string& val,std::time_t expired,const std::string& path,const std::string& domain,bool httpOnly,bool secure){
+    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string_view& key,const std::string_view& val,std::time_t expired,const std::string_view& path,const std::string_view& domain,bool httpOnly,bool secure){
         std::string result;
-        result.append(key);
+        result.append(key.data(),key.size());
         result.append("=");
-        result.append(val);
+        result.append(val.data(),val.size());
         if(!path.empty()){
             result.append("; Path=");
-            result.append(path);
+            result.append(path.data(),path.size());
         }
         if(!domain.empty()){
             result.append("; Domain=");
-            result.append(domain);
+            result.append(domain.data(),domain.size());
         }
         if(expired > 0){
             result.append("; Expires=");

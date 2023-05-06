@@ -19,7 +19,7 @@ namespace Http{
 
     public:
         typedef std::function<void(const Safe<WebSocket>&)> DisconnectedCallBack;
-        typedef std::function<void(const Safe<WebSocket>&,const std::string&)> RecvCallBack;
+        typedef std::function<void(const Safe<WebSocket>&,const std::string_view&)> RecvCallBack;
     public:
         ~WebSocket();
 
@@ -29,18 +29,6 @@ namespace Http{
          * @param socket Socket实体
          */
         WebSocket(bool mask,const Safe<Socket>& socket);
-
-        /**
-         * @brief 发送文本消息
-         * @param message 文本消息
-         */
-        void sendTextMessage(const std::string& message);
-
-        /**
-         * @brief 发送二进制消息
-         * @param message 二进制消息
-         */
-        void sendBinaryMessage(const std::string& message);
 
         /**
          * @brief 接收文本消息
@@ -53,6 +41,18 @@ namespace Http{
          * @param callBack 接收二进制消息回调函数
          */
         void recvBinaryMessage(const RecvCallBack& callBack);
+
+        /**
+         * @brief 发送文本消息
+         * @param message 文本消息
+         */
+        void sendTextMessage(const std::string_view& message);
+
+        /**
+         * @brief 发送二进制消息
+         * @param message 二进制消息
+         */
+        void sendBinaryMessage(const std::string_view& message);
 
         /**
          * @brief 连接断开
@@ -77,7 +77,7 @@ namespace Http{
          * @param opCode 操作码
          * @param rawData 原始数据
          */
-        void sendEncodePackage(uint8_t opCode,const std::string& rawData);
+        void sendEncodePackage(uint8_t opCode,const std::string_view& rawData);
 
         /**
          * @brief 解析数据体

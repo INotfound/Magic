@@ -23,7 +23,7 @@ namespace Magic{
          * @param value 值名称
          * @param comment 注释
          */
-        ConfigValue(const std::string& name,const std::string& value,const std::string& comment = "");
+        ConfigValue(const std::string_view& name,const std::string_view& value,const std::string_view& comment = "");
 
         /**
          * @brief 是否是注释函数
@@ -35,19 +35,19 @@ namespace Magic{
          * @brief 获取配置项名称函数
          * @return: 返回配置项名称
          */
-        const std::string& getName() const;
+        std::string_view getName() const;
 
         /**
          * @brief 获取配置项值函数
          * @return: 返回配置项值
          */
-        const std::string& getValue() const;
+        std::string_view getValue() const;
 
         /**
          * @brief 获取配置项注释函数
          * @return: 返回配置项注释
          */
-        const std::string& getComment() const;
+        std::string_view getComment() const;
 
     private:
         bool m_IsComment;
@@ -77,7 +77,7 @@ namespace Magic{
          * @param content 配置文件正文
          * @param keyValue 配置文件键值对容器
          */
-        virtual void parse(const std::string& content,ConfigMap& keyValue) = 0;
+        virtual void parse(const std::string_view& content,ConfigMap& keyValue) = 0;
     };
 
     /**
@@ -100,7 +100,7 @@ namespace Magic{
          * @brief 获取配置文件路径函数
          * @return: 返回配置文件路径
          */
-        const std::string& getPath() const;
+        std::string_view getPath() const;
 
         /**
          * @brief 读取配置文件项函数
@@ -143,7 +143,7 @@ namespace Magic{
          * @return: 返回配置项值
          */
         template<typename T>
-        T at(const std::string& defaultName,const T& defaultValue,const std::string& defaultComment = "");
+        T at(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment = "");
 
         /**
          * @brief 修改配置项值函数
@@ -153,7 +153,7 @@ namespace Magic{
          * @return: 返回配置项值
          */
         template<typename T>
-        T revise(const std::string& defaultName,const T& defaultValue,const std::string& defaultComment = "");
+        T revise(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment = "");
 
     private:
         /**
@@ -174,13 +174,14 @@ namespace Magic{
 
         void write(std::ostream& os,ConfigMap& KeyValue) override;
 
-        void parse(const std::string& content,ConfigMap& keyValue) override;
+        void parse(const std::string_view& content,ConfigMap& keyValue) override;
     };
 
     template<typename T>
-    T Config::at(const std::string& defaultName,const T& defaultValue,const std::string& defaultComment){
+    T Config::at(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment){
         std::lock_guard<std::mutex> locker(m_Mutex);
-        auto iter = m_ConfigMap.find(defaultName);
+        std::string key(defaultName.data(),defaultName.size());
+        auto iter = m_ConfigMap.find(key);
         if(iter != m_ConfigMap.end()){
             try{
                 return StringAs<T>(iter->second->getValue());
@@ -189,17 +190,17 @@ namespace Magic{
             }
         }
         m_IsChange = true;
-        m_ConfigMap[defaultName] = std::make_shared<ConfigValue>(defaultName,AsString<T>(defaultValue),defaultComment);
+        m_ConfigMap[key] = std::make_shared<ConfigValue>(defaultName,AsString<T>(defaultValue),defaultComment);
         this->update();
         return defaultValue;
     }
 
     template<typename T>
-    T Config::revise(const std::string& defaultName,const T& defaultValue,const std::string& defaultComment){
+    T Config::revise(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment){
         std::lock_guard<std::mutex> locker(m_Mutex);
         m_IsChange = true;
-        m_ConfigMap[defaultName].reset();
-        m_ConfigMap[defaultName] = std::make_shared<ConfigValue>(defaultName,AsString<T>(defaultValue),defaultComment);
+        std::string key(defaultName.data(),defaultName.size());
+        m_ConfigMap[key] = std::make_shared<ConfigValue>(defaultName,AsString<T>(defaultValue),defaultComment);
         this->update();
         return defaultValue;
     }

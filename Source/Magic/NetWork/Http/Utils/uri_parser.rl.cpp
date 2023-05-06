@@ -17,7 +17,7 @@ static const int uri_parser_error = 0;
 
 /* #line 131 "uri_parser.rl" */
 
-    Uri::Uri(const std::string& uri)
+    Uri::Uri(const std::string_view& uri)
         :m_Error(false)
         ,m_Port(0){
         m_Error = !this->execute(uri);
@@ -41,50 +41,53 @@ static const int uri_parser_error = 0;
         return m_Port;
     }
 
-    const std::string& Uri::getUser() const{ 
+    std::string_view Uri::getUser() const{
         return m_User;
     }
-    const std::string& Uri::getHost() const{
+    std::string_view Uri::getHost() const{
         return m_Host;
     }
 
-    const std::string& Uri::getPath() const{
+    std::string_view Uri::getPath() const{
         static std::string s_default_path = "/";
         return m_Path.empty() ? s_default_path : m_Path;
     }
-    const std::string& Uri::getQuery() const{ 
+
+    std::string_view Uri::getQuery() const{
         return m_Query;
     }
-    const std::string& Uri::getScheme() const{ 
+
+    std::string_view Uri::getScheme() const{
         return m_Scheme;
     }
-    const std::string& Uri::getFragment() const{
+
+    std::string_view Uri::getFragment() const{
         return m_Fragment;
     }
 
     void Uri::setPort(uint32_t val){ 
         m_Port = val;
     }
-    void Uri::setHost(const std::string& val){
-        m_Host = val;
+    void Uri::setHost(const std::string_view& val){
+        m_Host = std::string(val.data(),val.size());
     }
-    void Uri::setPath(const std::string& val){
-        m_Path = val;
+    void Uri::setPath(const std::string_view& val){
+        m_Path = std::string(val.data(),val.size());
     }
-    void Uri::setUser(const std::string& val){
-        m_User = val;
+    void Uri::setUser(const std::string_view& val){
+        m_User = std::string(val.data(),val.size());
     }
-    void Uri::setQuery(const std::string& val){
-        m_Query = val;
+    void Uri::setQuery(const std::string_view& val){
+        m_Query = std::string(val.data(),val.size());
     }
-    void Uri::setScheme(const std::string& val){
-        m_Scheme = val;
+    void Uri::setScheme(const std::string_view& val){
+        m_Scheme = std::string(val.data(),val.size());
     }
-    void Uri::setFragment(const std::string& val){
-        m_Fragment = val;
+    void Uri::setFragment(const std::string_view& val){
+        m_Fragment = std::string(val.data(),val.size());
     }
 
-    bool Uri::execute(const std::string& uri){
+    bool Uri::execute(const std::string_view& uri){
         int cs = 0;
         const char* mark = 0;
         
@@ -165,16 +168,16 @@ tr467:
 	{ mark = p; }
 /* #line 103 "uri_parser.rl" */
 	{
-            //std::cout << std::string(mark, fpc - mark) << std::endl;
-            this->setQuery(std::string(mark, p - mark));
+            //std::cout << std::string_view(mark, fpc - mark) << std::endl;
+            this->setQuery(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
 tr469:
 /* #line 103 "uri_parser.rl" */
 	{
-            //std::cout << std::string(mark, fpc - mark) << std::endl;
-            this->setQuery(std::string(mark, p - mark));
+            //std::cout << std::string_view(mark, fpc - mark) << std::endl;
+            this->setQuery(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
@@ -184,7 +187,7 @@ tr474:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 	goto st453;
@@ -192,7 +195,7 @@ tr485:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 	goto st453;
@@ -222,12 +225,12 @@ tr548:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 /* #line 78 "uri_parser.rl" */
 	{
-            this->setPath(std::string(mark, p - mark));
+            this->setPath(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
@@ -235,21 +238,21 @@ tr559:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 /* #line 19 "uri_parser.rl" */
 	{ mark = p; }
 /* #line 78 "uri_parser.rl" */
 	{
-            this->setPath(std::string(mark, p - mark));
+            this->setPath(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
 tr563:
 /* #line 78 "uri_parser.rl" */
 	{
-            this->setPath(std::string(mark, p - mark));
+            this->setPath(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
@@ -265,7 +268,7 @@ tr566:
         }
 /* #line 78 "uri_parser.rl" */
 	{
-            this->setPath(std::string(mark, p - mark));
+            this->setPath(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
@@ -281,7 +284,7 @@ tr570:
 	{ mark = p; }
 /* #line 78 "uri_parser.rl" */
 	{
-            this->setPath(std::string(mark, p - mark));
+            this->setPath(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st453;
@@ -400,7 +403,7 @@ tr476:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 	goto st455;
@@ -408,7 +411,7 @@ tr486:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 	goto st455;
@@ -488,7 +491,7 @@ tr482:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 	goto st456;
@@ -496,7 +499,7 @@ tr488:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 	goto st456;
@@ -526,12 +529,12 @@ tr556:
 /* #line 44 "uri_parser.rl" */
 	{
             if (mark != nullptr){
-                this->setHost(std::string(mark, p - mark));
+                this->setHost(std::string_view(mark, p - mark));
             }
         }
 /* #line 78 "uri_parser.rl" */
 	{
-            this->setPath(std::string(mark, p - mark));
+            this->setPath(std::string_view(mark, p - mark));
             mark = nullptr;
         }
 	goto st456;

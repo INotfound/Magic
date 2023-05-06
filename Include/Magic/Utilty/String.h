@@ -27,10 +27,10 @@ namespace Magic{
     /**
      * @warning Use Exception!
      */
-    template<typename T,typename = typename std::enable_if<std::is_same<T,std::string>::value || std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
-    inline T StringAs(const std::string& value){
+    template<typename T,typename = typename std::enable_if<std::is_same<T,std::string>::value || std::is_same<T,std::string_view>::value || std::is_integral<T>::value || std::is_floating_point<T>::value>::type>
+    inline T StringAs(const std::string_view& value){
         T newValue = {};
-        std::istringstream stringStream(value);
+        std::istringstream stringStream(std::string(value.data(),value.size()));
         stringStream >> std::dec >> newValue;
         if(stringStream.fail()){
             throw Failure("Invalid Argument!");
@@ -39,11 +39,11 @@ namespace Magic{
     }
 
     template<>
-    inline bool StringAs<bool>(const std::string& value){
+    inline bool StringAs<bool>(const std::string_view& value){
         bool isOk = true;
         std::string tValue;
         std::transform(value.begin(),value.end(),std::back_inserter(tValue),::toupper);
-        if(tValue == std::string("FALSE") || tValue == std::string("NO") || tValue == std::string("0"))
+        if(tValue == "FALSE" || tValue == "NO" || tValue == "0")
             isOk = false;
         return isOk;
     }
@@ -52,9 +52,9 @@ namespace Magic{
      * @warning Use Exception!
      */
     template<>
-    inline float StringAs<float>(const std::string& value){
+    inline float StringAs<float>(const std::string_view& value){
         float newValue = {};
-        std::istringstream stringStream(value);
+        std::istringstream stringStream(std::string(value.data(),value.size()));
         stringStream >> newValue;
         if(stringStream.fail()){
             throw Failure("Invalid Argument!");
@@ -66,9 +66,9 @@ namespace Magic{
      * @warning Use Exception!
      */
     template<>
-    inline double StringAs<double>(const std::string& value){
+    inline double StringAs<double>(const std::string_view& value){
         double newValue = {};
-        std::istringstream stringStream(value);
+        std::istringstream stringStream(std::string(value.data(),value.size()));
         stringStream >> newValue;
         if(stringStream.fail()){
             throw Failure("Invalid Argument!");
@@ -77,17 +77,22 @@ namespace Magic{
     }
 
     template<>
-    inline std::string StringAs<std::string>(const std::string& value){
+    inline std::string StringAs<std::string>(const std::string_view& value){
+        return std::string(value.data(),value.size());
+    }
+
+    template<>
+    inline std::string_view StringAs<std::string_view>(const std::string_view& value){
         return value;
     }
 
     /**
      * @warning Use Exception!
      */
-    template<typename T,typename = typename std::enable_if<std::is_same<T,std::string>::value || std::is_integral<T>::value>::type>
-    inline T StringAs(const std::string& value,uint8_t base){
+    template<typename T,typename = typename std::enable_if<std::is_same<T,std::string>::value || std::is_same<T,std::string_view>::value || std::is_integral<T>::value>::type>
+    inline T StringAs(const std::string_view& value,uint8_t base){
         T newValue = {};
-        std::istringstream stringStream(value);
+        std::istringstream stringStream(std::string(value.data(),value.size()));
         switch(base){
             case 8:
                 stringStream >> std::oct >> newValue;
@@ -112,9 +117,9 @@ namespace Magic{
      * @warning Use Exception!
      */
     template<>
-    inline int8_t StringAs<int8_t>(const std::string& value,uint8_t base){
+    inline int8_t StringAs<int8_t>(const std::string_view& value,uint8_t base){
         int16_t newValue = {};
-        std::istringstream stringStream(value);
+        std::istringstream stringStream(std::string(value.data(),value.size()));
         switch(base){
             case 8:
                 stringStream >> std::oct >> newValue;
@@ -136,7 +141,12 @@ namespace Magic{
     }
 
     template<>
-    inline std::string StringAs<std::string>(const std::string& value,uint8_t){
+    inline std::string StringAs<std::string>(const std::string_view& value,uint8_t){
+        return std::string(value.data(),value.size());
+    }
+
+    template<>
+    inline std::string_view StringAs<std::string_view>(const std::string_view& value,uint8_t){
         return value;
     }
 
@@ -144,9 +154,9 @@ namespace Magic{
      * @warning Use Exception!
      */
     template<>
-    inline uint8_t StringAs<uint8_t>(const std::string& value,uint8_t base){
+    inline uint8_t StringAs<uint8_t>(const std::string_view& value,uint8_t base){
         uint16_t newValue = {};
-        std::istringstream stringStream(value);
+        std::istringstream stringStream(std::string(value.data(),value.size()));
         switch(base){
             case 8:
                 stringStream >> std::oct >> newValue;
@@ -167,35 +177,36 @@ namespace Magic{
         return static_cast<uint8_t>(newValue);
     }
 
-    inline std::string ToLower(const std::string& string){
+    inline std::string ToLower(const std::string_view& string){
         std::string newString;
         std::transform(string.begin(),string.end(),std::back_inserter(newString),::tolower);
         return newString;
     }
 
-    inline std::string ToUpper(const std::string& string){
+    inline std::string ToUpper(const std::string_view& string){
         std::string newString;
         std::transform(string.begin(),string.end(),std::back_inserter(newString),::toupper);
         return newString;
     }
 
-    inline std::string Trim(std::string str,const std::string& flag = " "){
+    inline std::string Trim(const std::string_view& str,const std::string_view& flag = " "){
+        std::string string(str.data(),str.size());
         if(str.empty())
-            return str;
-        str.erase(0,str.find_first_not_of(flag));
-        str.erase(str.find_last_not_of(flag) + 1);
-        return str;
+            return g_EmptyString;
+        string.erase(0,string.find_first_not_of(flag.data(),flag.size()));
+        string.erase(string.find_last_not_of(flag.data(),flag.size()) + 1);
+        return string;
     }
 
-    int32_t StringCompareCase(const std::string& dest,const std::string& src);
+    int32_t StringCompareCase(const std::string_view& dest,const std::string_view& src);
 
-    int32_t StringCompareNoCase(const std::string& dest,const std::string& src);
+    int32_t StringCompareNoCase(const std::string_view& dest,const std::string_view& src);
 
-    inline std::vector<std::string> Split(const std::string& str,const std::string& delim){
+    inline std::vector<std::string_view> Split(const std::string_view& str,const std::string_view& delim){
         std::size_t previous = 0;
         std::size_t current = str.find(delim);
-        std::vector<std::string> elems;
-        while(current != std::string::npos){
+        std::vector<std::string_view> elems;
+        while(current != std::string_view::npos){
             if(current > previous){
                 elems.push_back(str.substr(previous,current - previous));
             }
@@ -208,14 +219,14 @@ namespace Magic{
         return elems;
     }
 
-    inline std::string SubString(const std::string& str,uint64_t index,const std::string& delim){
+    inline std::string_view SubString(const std::string_view& str,uint64_t index,const std::string_view& delim){
         uint64_t pos = str.find(delim,index);
         if(pos == std::string::npos)
             return str.substr(index,str.size() - index);;
         return str.substr(index,pos - index);
     }
 
-    inline std::string TimeToString(std::time_t ts,const std::string& format = "%Y-%m-%d %H:%M:%S"){
+    inline std::string TimeToString(std::time_t ts,const std::string_view& format = "%Y-%m-%d %H:%M:%S"){
         struct tm nowTime;
     #if defined(_WIN32) || defined(_WIN64)
         localtime_s(&nowTime, &ts);
@@ -227,11 +238,11 @@ namespace Magic{
         return buf;
     }
 
-    inline std::string Replace(const std::string& string,const std::string& oldStr,const std::string& newStr){
-        std::string newString = string;
+    inline std::string Replace(const std::string_view& string,const std::string_view& oldStr,const std::string_view& newStr){
+        std::string newString = std::string(string.data(),string.size());
         for(std::string::size_type pos = 0;pos != std::string::npos;pos += newStr.length()){
-            if((pos = newString.find(oldStr,pos)) != std::string::npos){
-                newString.replace(pos,oldStr.length(),newStr);
+            if((pos = newString.find(oldStr.data(),oldStr.size(),pos)) != std::string::npos){
+                newString.replace(pos,oldStr.size(),newStr.data(),newStr.size());
             }else{
                 return newString;
             }
@@ -239,17 +250,14 @@ namespace Magic{
         return newString;
     }
 
-    class CaseResponsiveLess{
-    public:
-        bool operator()(const std::string& lhs,const std::string& rhs) const{
-            return StringCompareCase(lhs,rhs) < 0;
-        }
-    };
-
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string& lhs,const std::string& rhs) const{
-            return StringCompareNoCase(lhs,rhs) < 0;
+            return lhs.compare(rhs) < 0;
+        }
+
+        bool operator()(const std::string_view& lhs,const std::string_view& rhs) const{
+            return lhs.compare(rhs) < 0;
         }
     };
 

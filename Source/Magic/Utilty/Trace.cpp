@@ -17,8 +17,8 @@ namespace Magic{
         }
     }
 
-    TraceTimer::TraceTimer(const std::string& funcName)
-        :m_FunctionName(funcName){
+    TraceTimer::TraceTimer(const std::string_view& funcName)
+        :m_FunctionName(funcName.data(),funcName.size()){
         m_TimePoint = std::chrono::steady_clock::now();
     }
 
@@ -28,9 +28,9 @@ namespace Magic{
         this->complete();
     }
 
-    ChromiumTraceAppender::ChromiumTraceAppender(const std::string& outFilePath)
+    ChromiumTraceAppender::ChromiumTraceAppender(const std::string_view& outFilePath)
         :m_UseSplit(false)
-        ,m_FilePath(outFilePath){
+        ,m_FilePath(outFilePath.data(),outFilePath.size()){
     }
 
     void ChromiumTraceAppender::complete(){
@@ -43,7 +43,7 @@ namespace Magic{
         m_FileStream.close();
     }
 
-    void ChromiumTraceAppender::tracing(const std::string& funcName,uint64_t threadId,int64_t start,int64_t end){
+    void ChromiumTraceAppender::tracing(const std::string_view& funcName,uint64_t threadId,int64_t start,int64_t end){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_FileStream.is_open()){
             std::string filePath = m_FilePath;

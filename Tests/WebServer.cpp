@@ -13,6 +13,7 @@
 #include "Magic/NetWork/TcpClient.h"
 #include "Magic/NetWork/Http/HttpClient.h"
 #include "Magic/Core/Except.h"
+#include "Magic/Core/StringView.h"
 
 using namespace Magic::NetWork::Http;
 
@@ -45,7 +46,7 @@ public:
     void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         g_webSocket = httpSocket->upgradeWebSocket(httpSocket->getRequest(),httpSocket->getResponse());
         g_webSocket->sendTextMessage("xxxxxx");
-        g_webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string& msg){
+        g_webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string_view& msg){
             MAGIC_DEBUG() << msg;
             socket->sendTextMessage(msg);
         });
@@ -179,10 +180,20 @@ const Safe<Magic::Container>& Magic::Application::initialize(const std::function
     return m_Container;
 }
 
+
+void printff(const std::string& str){
+    std::cout << str << std::endl;
+}
+
+void pprintf(const std::string_view& view){
+    printff(view.data());
+}
+
+
 int main(int /*argc*/,char** /*argv*/){
+    std::cout << __cplusplus << std::endl;
     Safe<Magic::Application> application = std::make_shared<Magic::Application>();
     application->initialize([](const Safe<Magic::Container>& ioc){
-
     });
     return EXIT_SUCCESS;
 }

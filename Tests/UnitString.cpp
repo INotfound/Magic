@@ -80,15 +80,15 @@ TEST(MagicStringTest,TrimString){
 
 TEST(MagicStringTest,SubString){
     std::string spaceString = "Hello World!";
-    EXPECT_STREQ(Magic::SubString(spaceString,0," ").c_str(),"Hello");
+    EXPECT_STREQ(Magic::SubString(spaceString,0," ").data(),"Hello");
 }
 
 TEST(MagicStringTest,SplitString){
     std::string spaceString = "Hello World INotFound!";
     auto vec = Magic::Split(spaceString," ");
-    EXPECT_STREQ(vec.at(0).c_str(),"Hello");
-    EXPECT_STREQ(vec.at(1).c_str(),"World");
-    EXPECT_STREQ(vec.at(2).c_str(),"INotFound!");
+    EXPECT_STREQ(vec.at(0).data(),"Hello");
+    EXPECT_STREQ(vec.at(1).data(),"World");
+    EXPECT_STREQ(vec.at(2).data(),"INotFound!");
 }
 
 TEST(MagicStringTest,TimeString){

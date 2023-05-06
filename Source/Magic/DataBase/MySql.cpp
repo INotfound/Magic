@@ -63,7 +63,7 @@ namespace DataBase{
         MAGIC_ERROR() << mysql_error(&m_MySql);
     }
 
-    bool MySql::execute(const std::string& sql){
+    bool MySql::execute(const std::string_view& sql){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&m_MySql) != 0){
             this->printError();
@@ -74,7 +74,7 @@ namespace DataBase{
         return false;
     }
 
-    bool MySql::connnetDB(const std::string& dataBase,const std::string& ip,const std::string& user,const std::string& password,uint16_t port){
+    bool MySql::connnetDB(const std::string_view& dataBase,const std::string_view& ip,const std::string_view& user,const std::string_view& password,uint16_t port){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!mysql_init(&m_MySql)){
             this->printError();
@@ -194,7 +194,7 @@ namespace DataBase{
         MAGIC_WARN() << mysql_stmt_error(m_Stmt);
     }
 
-    bool MySqlStmt::prepare(const std::string& sql){
+    bool MySqlStmt::prepare(const std::string_view& sql){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&this->m_MySql->m_MySql) != 0){
             this->printError();
@@ -280,7 +280,7 @@ namespace DataBase{
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
 
-    void MySqlStmt::bind(uint32_t index,const std::string& value){
+    void MySqlStmt::bind(uint32_t index,const std::string_view& value){
         BIND_COPY(MYSQL_TYPE_STRING,value.data(),value.size());
     }
 
@@ -288,7 +288,7 @@ namespace DataBase{
         bind(index,TimeToString(value));
     }
 
-    void MySqlStmt::bindBlob(uint32_t index,const std::string& value){
+    void MySqlStmt::bindBlob(uint32_t index,const std::string_view& value){
         BIND_COPY(MYSQL_TYPE_BLOB,value.data(),value.size());
     }
 

@@ -38,12 +38,6 @@ namespace Http{
         void runHeartBeat();
 
         /**
-        * @brief 设置临时文件目录路径
-        * @param dirPath 临时文件目录路径
-        */
-        void setDirectory(const std::string& dirPath);
-
-        /**
          * 获取Http请求
          * @return HttpRequest对象
          */
@@ -68,6 +62,12 @@ namespace Http{
          * @warning 回调函数同HttpSocket生命周期一直存在！
          */
         void recvResponse(const HttpRecvBack& callback);
+
+        /**
+        * @brief 设置临时文件目录路径
+        * @param dirPath 临时文件目录路径
+        */
+        void setDirectory(const std::string_view& dirPath);
 
         /**
          * @brief 接收请求头函数

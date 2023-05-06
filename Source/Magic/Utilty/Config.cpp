@@ -12,11 +12,11 @@
 namespace Magic{
     std::string g_ConfigPath = "./Magic.conf";
 
-    ConfigValue::ConfigValue(const std::string& name,const std::string& value,const std::string& comment)
+    ConfigValue::ConfigValue(const std::string_view& name,const std::string_view& value,const std::string_view& comment)
         :m_IsComment(false)
-        ,m_Name(name)
-        ,m_Value(value)
-        ,m_Comment(comment){
+        ,m_Name(name.data(),name.size())
+        ,m_Value(value.data(),value.size())
+        ,m_Comment(comment.data(),comment.size()){
         if(!m_Comment.empty())
             m_IsComment = true;
     }
@@ -25,15 +25,15 @@ namespace Magic{
         return m_IsComment;
     }
 
-    const std::string& ConfigValue::getName() const{
+    std::string_view ConfigValue::getName() const{
         return m_Name;
     }
 
-    const std::string& ConfigValue::getValue() const{
+    std::string_view ConfigValue::getValue() const{
         return m_Value;
     }
 
-    const std::string& ConfigValue::getComment() const{
+    std::string_view ConfigValue::getComment() const{
         return m_Comment;
     }
 
@@ -46,7 +46,7 @@ namespace Magic{
         ,m_Formatter(configFormatter){
     }
 
-    const std::string& ConfigFile::getPath() const{
+    std::string_view ConfigFile::getPath() const{
         return m_Path;
     }
 
@@ -100,7 +100,7 @@ namespace Magic{
         }
     }
 
-    void InIConfigFormatter::parse(const std::string& content,ConfigMap& keyValue){
+    void InIConfigFormatter::parse(const std::string_view& content,ConfigMap& keyValue){
         std::string valueString;
         std::string normalString;
         std::string commentString;

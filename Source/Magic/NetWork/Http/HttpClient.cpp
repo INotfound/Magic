@@ -12,8 +12,8 @@ namespace NetWork{
 namespace Http{
     HttpClient::~HttpClient() = default;
 
-    HttpClient::HttpClient(const std::string& url,uint64_t timeOutMs)
-        :m_Url(url)
+    HttpClient::HttpClient(const std::string_view& url,uint64_t timeOutMs)
+        :m_Url(url.data(),url.size())
         ,m_Death(false)
         ,m_Finish(false){
         if(g_IoPool){
@@ -44,10 +44,10 @@ namespace Http{
         }
 
         uint16_t port = uri.getPort();
-        const std::string& host = uri.getHost();
-        const std::string& path = uri.getPath();
-        const std::string& query = uri.getQuery();
-        const std::string& fragment = uri.getFragment();
+        std::string_view host = uri.getHost();
+        std::string_view path = uri.getPath();
+        std::string_view query = uri.getQuery();
+        std::string_view fragment = uri.getFragment();
 
         if(!path.empty())
             request->setPath(path);
@@ -60,7 +60,7 @@ namespace Http{
 
         asio::error_code errorCode;
         asio::ip::tcp::resolver resolver(*m_IOService);
-        auto results = resolver.resolve(host,AsString(port),errorCode);
+        auto results = resolver.resolve(std::string(host.data(),host.size()),AsString(port),errorCode);
         if(errorCode){
             auto& errorCallBack = m_Socket->getErrorCodeCallBack();
             if(errorCallBack)

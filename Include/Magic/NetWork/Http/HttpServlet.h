@@ -68,7 +68,7 @@ namespace Http{
          * @param memberFunc 处理路由的成员函数
          */
         template<typename T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
-        void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc);
+        void addRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc);
 
         /**
          * @brief 添加路由处理函数
@@ -76,7 +76,7 @@ namespace Http{
          * @param memberFunc 处理路由的成员函数
          */
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
-        void addRoute(const std::string& path,ClassMemberFunction<T> memberFunc,Args ...args);
+        void addRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc,Args ...args);
 
         /**
          * @brief 添加路由模糊匹配处理函数
@@ -84,7 +84,7 @@ namespace Http{
          * @param memberFunc 处理路由的成员函数
          */
         template<typename T,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
-        void addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc);
+        void addMatchRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc);
 
         /**
          * @brief 添加路由模糊匹配处理函数
@@ -92,7 +92,7 @@ namespace Http{
          * @param memberFunc 处理路由的成员函数
          */
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_base_of<IHttpServlet,T>::value>::type>
-        void addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc,Args ...args);
+        void addMatchRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc,Args ...args);
 
     private:
         Safe<HttpServletDispatch> m_ServletDispatch;
@@ -124,7 +124,7 @@ namespace Http{
          * @param handle 处理函数
          */
         template<typename T,typename = typename std::enable_if<std::is_same<decltype(FunctionChecker(T())),decltype(FunctionChecker(RouteHandle()))>::value>::type>
-        void addRoute(const std::string& path,HttpRouteType routeType,T handle);
+        void addRoute(const std::string_view& path,HttpRouteType routeType,T handle);
 
         /**
          * @brief 添加路由
@@ -134,7 +134,7 @@ namespace Http{
          * @param args 多个Aspect处理对象
          */
         template<typename T,typename ...Args,typename = typename std::enable_if<std::is_same<decltype(FunctionChecker(T())),decltype(FunctionChecker(RouteHandle()))>::value>::type>
-        void addRoute(const std::string& path,HttpRouteType routeType,T handle,Args ...args);
+        void addRoute(const std::string_view& path,HttpRouteType routeType,T handle,Args ...args);
 
         /**
          * @brief 添加全局的切片
@@ -192,7 +192,7 @@ namespace Http{
     };
 
     template<typename T,typename>
-    void IHttpServlet::addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc){
+    void IHttpServlet::addMatchRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc){
         if(m_ServletDispatch){
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
             m_ServletDispatch->addRoute(path,HttpRouteType::Match,handle);
@@ -200,7 +200,7 @@ namespace Http{
     }
 
     template<typename T,typename ...Args,typename>
-    void IHttpServlet::addMatchRoute(const std::string& path,ClassMemberFunction<T> memberFunc,Args ...args){
+    void IHttpServlet::addMatchRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc,Args ...args){
         if(m_ServletDispatch){
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
             m_ServletDispatch->addRoute(path,HttpRouteType::Match,handle,args...);
@@ -208,7 +208,7 @@ namespace Http{
     }
 
     template<typename T,typename>
-    void IHttpServlet::addRoute(const std::string& path,ClassMemberFunction<T> memberFunc){
+    void IHttpServlet::addRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc){
         if(m_ServletDispatch){
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
             m_ServletDispatch->addRoute(path,HttpRouteType::Normal,handle);
@@ -216,7 +216,7 @@ namespace Http{
     }
 
     template<typename T,typename ...Args,typename>
-    void IHttpServlet::addRoute(const std::string& path,IHttpServlet::ClassMemberFunction<T> memberFunc,Args... args){
+    void IHttpServlet::addRoute(const std::string_view& path,IHttpServlet::ClassMemberFunction<T> memberFunc,Args... args){
         if(m_ServletDispatch){
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
             m_ServletDispatch->addRoute(path,HttpRouteType::Normal,handle,args...);
@@ -224,34 +224,34 @@ namespace Http{
     }
 
     template<typename T,typename>
-    void HttpServletDispatch::addRoute(const std::string& path,HttpRouteType routeType,T handle){
+    void HttpServletDispatch::addRoute(const std::string_view& path,HttpRouteType routeType,T handle){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(routeType == HttpRouteType::Match){
-            auto iter = m_MatchRoutes.find(path);
+            auto iter = m_MatchRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_MatchRoutes.end()){
-                m_MatchRoutes.emplace(path,std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>()));
+                m_MatchRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>()));
             }
         }else if(routeType == HttpRouteType::Normal){
-            auto iter = m_NormalRoutes.find(path);
+            auto iter = m_NormalRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_NormalRoutes.end()){
-                m_NormalRoutes.emplace(path,std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>()));
+                m_NormalRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>()));
             }
         }
     }
 
     template<typename T,typename... Args,typename>
-    void HttpServletDispatch::addRoute(const std::string& path,HttpRouteType routeType,T handle,Args ...args){
+    void HttpServletDispatch::addRoute(const std::string_view& path,HttpRouteType routeType,T handle,Args ...args){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(routeType == HttpRouteType::Match){
-            auto iter = m_MatchRoutes.find(path);
+            auto iter = m_MatchRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_MatchRoutes.end()){
-                iter = m_MatchRoutes.emplace(path,std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
+                iter = m_MatchRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
             }
             this->addAspect(iter,args...);
         }else if(routeType == HttpRouteType::Normal){
-            auto iter = m_NormalRoutes.find(path);
+            auto iter = m_NormalRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_NormalRoutes.end()){
-                iter = m_NormalRoutes.emplace(path,std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
+                iter = m_NormalRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
             }
             this->addAspect(iter,args...);
         }
