@@ -6,12 +6,13 @@
 #if defined(_WIN32) || defined(_WIN64)
 
 #include "Magic/Core/Core.h"
-#include "Magic/Utilty/Timer.h"
-#include "Magic/Utilty/Thread.h"
-#include "Magic/Utilty/String.h"
-#include "Magic/Utilty/Logger.h"
+#include "Magic/Core/Adapter.h"
 
 namespace Magic{
+    uint64_t GetThreadId(){
+        return GetCurrentThreadId();
+    }
+
     uint64_t GetCurrentTimeMS(){
         SYSTEMTIME st;
         GetLocalTime(&st);
@@ -32,8 +33,13 @@ namespace Magic{
     #undef EPOCHFILETIME
     }
 
-    uint64_t GetThreadId(){
-        return GetCurrentThreadId();
+    bool IsFile(const std::string_view& path){
+        struct stat fileStat;
+        bool isOk = stat(path.data(),&fileStat) == 0;
+        if(isOk){
+            isOk = S_ISREG(fileStat.st_mode);
+        }
+        return isOk;
     }
 
     int32_t StringCompareCase(const std::string_view& dest,const std::string_view& src){

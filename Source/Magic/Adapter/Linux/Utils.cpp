@@ -13,10 +13,12 @@
 
 #include "Magic/Core/Core.h"
 #include "Magic/Core/Adapter.h"
-#include "Magic/Utilty/Timer.h"
-#include "Magic/Utilty/Logger.h"
 
 namespace Magic{
+    uint64_t GetThreadId(){
+        return syscall(SYS_gettid);
+    }
+
     uint64_t GetCurrentTimeMS(){
         struct timeval tv;
         gettimeofday(&tv,nullptr);
@@ -29,8 +31,13 @@ namespace Magic{
         return tv.tv_sec * 1000 * 1000ul + tv.tv_usec;
     }
 
-    uint64_t GetThreadId(){
-        return syscall(SYS_gettid);
+    bool IsFile(const std::string_view& path){
+        struct stat fileStat;
+        bool isOk = stat(path.data(),&fileStat) == 0;
+        if(isOk){
+            isOk = S_ISREG(fileStat.st_mode);
+        }
+        return isOk;
     }
 
     int32_t StringCompareCase(const std::string_view& dest,const std::string_view& src){

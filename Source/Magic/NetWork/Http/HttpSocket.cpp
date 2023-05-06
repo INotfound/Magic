@@ -90,7 +90,7 @@ namespace Http{
         if(httpResponse->hasResource()){
             std::string_view filePath = httpResponse->getResource();
             m_FileStream.open(std::string(filePath.data(),filePath.size()),std::ios::in | std::ios::binary);
-            if(m_FileStream.is_open()){
+            if(IsFile(filePath) && m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
                 uint64_t totalLength = m_FileStream.tellg();

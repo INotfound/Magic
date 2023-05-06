@@ -68,10 +68,4 @@ namespace Magic{
         Safe<std::thread> m_Thread;
         std::function<void()> m_CallBack;
     };
-
-    /**
-     * @brief 获取线程Id
-     * @return: 返回线程Id
-     */
-    uint64_t GetThreadId();
 }

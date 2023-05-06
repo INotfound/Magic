@@ -20,13 +20,13 @@
 
 #include "Magic/Core/Except.h"
 #include "Magic/Core/StringView.h"
+#include "Magic/Core/SystemUtils.h"
 
 #ifndef Safe
     #define Safe std::shared_ptr
 #endif
 
 namespace Magic{
-
     class Noncopyable{
     public:
         Noncopyable() = default;
