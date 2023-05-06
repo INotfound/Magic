@@ -193,8 +193,8 @@ namespace Magic{
         std::string string(str.data(),str.size());
         if(str.empty())
             return g_EmptyString;
-        string.erase(0,string.find_first_not_of(flag.data(),flag.size()));
-        string.erase(string.find_last_not_of(flag.data(),flag.size()) + 1);
+        string.erase(0,string.find_first_not_of(std::string(flag.data(),flag.size())));
+        string.erase(string.find_last_not_of(std::string(flag.data(),flag.size())) + 1);
         return string;
     }
 

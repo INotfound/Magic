@@ -137,9 +137,9 @@ namespace Http{
             idx = subString.find('=');
             if(idx == std::string::npos)
                 break;
-            std::string_view keySV = subString.substr(0,idx);
-            std::string_view valueSV = subString.substr(idx + 1);
-            map.emplace(std::string(keySV.data(),keySV.size()),std::string(valueSV.data(),valueSV.size()));
+            std::string_view svKey = subString.substr(0,idx);
+            std::string_view svValue = subString.substr(idx + 1);
+            map.emplace(std::string(svKey.data(),svKey.size()),std::string(svValue.data(),svValue.size()));
         }while(pos <= str.size());
     }
 
