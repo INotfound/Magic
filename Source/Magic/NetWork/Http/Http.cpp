@@ -109,12 +109,10 @@ namespace Http{
     }
 
     HttpContentType FileTypeToHttpContentType(const std::string_view& fileName){
-        std::string extName;
         auto pos = fileName.rfind('.');
-        if(pos != std::string::npos){
+        if(pos != std::string_view::npos){
             std::string_view sv = fileName.substr(pos + 1);
-            std::transform(sv.begin(),sv.end(),extName.begin(),::toupper);
-            auto iter = g_HttpContent.find(extName);
+            auto iter = g_HttpContent.find(sv);
             if(iter != g_HttpContent.end()){
                 return iter->second;
             }
