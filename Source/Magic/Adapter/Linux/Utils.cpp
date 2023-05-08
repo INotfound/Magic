@@ -35,13 +35,5 @@ namespace Magic{
         }
         return isOk;
     }
-
-    int32_t StringCompareCase(const std::string_view& dest,const std::string_view& src){
-        return strncmp(dest.data(),src.data(),std::min(dest.size(),src.size()));
-    }
-
-    int32_t StringCompareNoCase(const std::string_view& dest,const std::string_view& src){
-        return strncasecmp(dest.data(),src.data(),std::min(dest.size(),src.size()));
-    }
 }
 #endif

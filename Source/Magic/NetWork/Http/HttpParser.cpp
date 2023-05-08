@@ -26,8 +26,10 @@ namespace Http{
     }
 
     void OnRequestMethod(void* data,const char* at,size_t length){
+        char buffer[126] = {0};
         auto* parser = static_cast<HttpRequestParser*>(data);
-        HttpMethod method = StringToHttpMethod(std::string_view(at,length));
+        std::memcpy(buffer,at,std::min(static_cast<size_t>(125),length));
+        HttpMethod method = StringToHttpMethod(std::string_view(buffer,length));
         if(method == HttpMethod::INVALID_METHOD){
             parser->setError(true);
             return;

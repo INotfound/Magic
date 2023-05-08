@@ -105,3 +105,9 @@ TEST(MagicStringTest,ReplaceString){
     EXPECT_STREQ(Magic::Replace(spaceString," World","").data(),"Hello INotFound!");
     EXPECT_STREQ(Magic::Replace(spaceString,"Hello World","Welcome").data(),"Welcome INotFound!");
 }
+
+TEST(MagicStringTest,StringCompareCaseAndNoCase){
+    EXPECT_EQ(Magic::StringCompareCase("magic","magic"),true);
+    EXPECT_EQ(Magic::StringCompareCase("magic","Magic"),false);
+    EXPECT_EQ(Magic::StringCompareNoCase("magic","Magic"),true);
+}

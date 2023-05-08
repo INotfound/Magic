@@ -198,9 +198,23 @@ namespace Magic{
         return string;
     }
 
-    int32_t StringCompareCase(const std::string_view& dest,const std::string_view& src);
+    inline bool StringCompareCase(const std::string_view& dest,const std::string_view& src){
+        if(dest.size() != src.size()){
+            return false;
+        }
+        return dest.compare(src) == 0;
+    }
 
-    int32_t StringCompareNoCase(const std::string_view& dest,const std::string_view& src);
+    inline bool StringCompareNoCase(const std::string_view& dest,const std::string_view& src){
+        if(dest.size() != src.size()){
+            return false;
+        }
+        return std::lexicographical_compare(dest.begin(),dest.end(),src.begin(),src.end(),
+            [](std::string::value_type lc,std::string::value_type rc) {
+                return std::tolower(lc) < std::tolower(rc);
+            }
+        ) == false;
+    }
 
     inline std::vector<std::string_view> Split(const std::string_view& str,const std::string_view& delim){
         std::size_t previous = 0;
@@ -254,22 +268,38 @@ namespace Magic{
     class CaseResponsiveLess{
     public:
         bool operator()(const std::string& lhs,const std::string& rhs) const{
-            return StringCompareCase(lhs,rhs) < 0;
+            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.end(),
+                [](std::string::value_type lc,std::string::value_type rc) {
+                    return lc < rc;
+                }
+            );
         }
 
         bool operator()(const std::string_view& lhs,const std::string_view& rhs) const{
-            return StringCompareCase(lhs,rhs) < 0;
+            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.end(),
+                [](std::string_view::value_type lc,std::string_view::value_type rc) {
+                    return lc < rc;
+                }
+            );
         }
     };
 
     class CaseInsensitiveLess{
     public:
         bool operator()(const std::string& lhs,const std::string& rhs) const{
-            return StringCompareNoCase(lhs,rhs) < 0;
+            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.end(),
+                [](std::string::value_type lc,std::string::value_type rc) {
+                    return std::tolower(lc) < std::tolower(rc);
+                }
+            );
         }
 
         bool operator()(const std::string_view& lhs,const std::string_view& rhs) const{
-            return StringCompareNoCase(lhs,rhs) < 0;
+            return std::lexicographical_compare(lhs.begin(),lhs.end(),rhs.begin(),rhs.end(),
+                [](std::string_view::value_type lc,std::string_view::value_type rc) {
+                    return std::tolower(lc) < std::tolower(rc);
+                }
+            );
         }
     };
 
