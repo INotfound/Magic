@@ -31,13 +31,22 @@ namespace Http{
             socket->enableSsl(m_KeyFile,m_CertFile);
         }
     #endif
-        m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
+    const auto& entity = socket->getEntity();
+    #if __cplusplus >= 201402L
+        m_Acceptor->async_accept(*entity,[this,socket = std::move(socket)](const asio::error_code& err){
+    #else
+        m_Acceptor->async_accept(*entity,[this,socket](const asio::error_code& err){
+    #endif
             if(!err){
                 socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
             #ifdef OPENSSL
-                auto sslStream = socket->getSslEntity();
+                const auto& sslStream = socket->getSslEntity();
                 if(sslStream){
+                #if __cplusplus >= 201402L
+                    sslStream->async_handshake(asio::ssl::stream_base::server,[this,socket = std::move(const_cast<Safe<Socket>&>(socket))](const asio::error_code& err){
+                #else
                     sslStream->async_handshake(asio::ssl::stream_base::server,[this,socket](const asio::error_code& err){
+                #endif
                         if(err){
                             socket->close();
                             MAGIC_WARN() << err.message();

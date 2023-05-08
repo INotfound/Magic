@@ -41,11 +41,11 @@ namespace Magic{
     }
 
     int32_t StringCompareCase(const std::string_view& dest,const std::string_view& src){
-        return strcmp(dest.data(),src.data());
+        return strncmp(dest.data(),src.data(),std::min(dest.size(),src.size()));
     }
 
     int32_t StringCompareNoCase(const std::string_view& dest,const std::string_view& src){
-        return strcasecmp(dest.data(),src.data());
+        return strncasecmp(dest.data(),src.data(),std::min(dest.size(),src.size()));
     }
 }
 #endif

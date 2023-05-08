@@ -117,7 +117,7 @@ public:
     bool after(const Safe<HttpSocket>& httpSocket){ return true;};
 };
 
-const Safe<Magic::Container>& Magic::Application::initialize(const std::function<void(const Safe<Container>&)>& callback){
+const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(const Safe<Container>&)> callback){
     m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
     m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
     m_Container->registerTypeEx<Magic::IConfigFormatter,Magic::InIConfigFormatter>();

@@ -58,16 +58,16 @@ namespace Http{
         this->sendEncodePackage(0x2,message);
     }
 
-    void WebSocket::recvTextMessage(const RecvCallBack& callBack){
-        m_TextMessageCallBack = callBack;
+    void WebSocket::recvTextMessage(RecvCallBack callBack){
+        m_TextMessageCallBack = std::move(callBack);
     }
 
-    void WebSocket::recvBinaryMessage(const RecvCallBack& callBack){
-        m_BinaryMessageCallBack = callBack;
+    void WebSocket::recvBinaryMessage(RecvCallBack callBack){
+        m_BinaryMessageCallBack = std::move(callBack);
     }
 
-    void WebSocket::disconnectedCallBack(const DisconnectedCallBack& callBack){
-        m_DisconnectedCallBack = callBack;
+    void WebSocket::disconnectedCallBack(DisconnectedCallBack callBack){
+        m_DisconnectedCallBack = std::move(callBack);
     }
 
     void WebSocket::runAnalyse(){
@@ -78,7 +78,11 @@ namespace Http{
         if(!m_Socket)
             return;
         auto self = this->shared_from_this();
+    #if __cplusplus >= 201402L
+        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& streamBuffer){
+    #else
         m_Socket->recv([this,self](Socket::StreamBuffer& streamBuffer){
+    #endif
             if(streamBuffer.size() >= 2){
                 uint32_t offset = 2;
                 const uint8_t* data = reinterpret_cast<uint8_t*>(streamBuffer.data());

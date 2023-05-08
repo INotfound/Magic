@@ -18,7 +18,7 @@ namespace Http{
         #undef XX
     };
 
-    static const std::map<std::string_view,HttpMethod,CaseInsensitiveLess> g_HttpMethod = {
+    static const std::map<std::string_view,HttpMethod,CaseResponsiveLess> g_HttpMethod = {
         #define XX(num,name,string) {#string,HttpMethod::name},
             HTTP_METHOD_MAP(XX)
         #undef XX

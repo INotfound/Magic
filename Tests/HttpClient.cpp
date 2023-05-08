@@ -26,7 +26,7 @@ void operator delete(void* ptr)
     std::free(ptr);
 }
 #endif
-const Safe<Magic::Container>& Magic::Application::initialize(const std::function<void(const Safe<Container>&)>& callback){
+const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(const Safe<Container>&)> callback){
     m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
     m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
     m_Container->registerTypeEx<Magic::IConfigFormatter,Magic::InIConfigFormatter>();
@@ -77,7 +77,7 @@ int main(int /*argc*/,char** /*argv*/){
             MAGIC_WARN() << "Time Out";
         })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
             MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus()) << " " << response->getBody() << " end";
-        })->execute(httpRequest);
+        })->execute(std::move(httpRequest));
         
 #define looper
 #ifdef looper
@@ -90,7 +90,7 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_WARN() << "Time Out";
             })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-            })->execute(httpRequest);
+            })->execute(std::move(httpRequest));
         }
 
         for(auto i = 0; i < 10; i++){
@@ -101,7 +101,7 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_WARN() << "Time Out";
             })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-            })->execute(httpRequest);
+            })->execute(std::move(httpRequest));
         }
 
         for(auto i = 0; i < 10; i++){
@@ -112,7 +112,7 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_WARN() << "Time Out";
             })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-            })->execute(httpRequest);
+            })->execute(std::move(httpRequest));
         }
 
         for(auto i = 0; i < 10; i++){
@@ -123,7 +123,7 @@ int main(int /*argc*/,char** /*argv*/){
                 MAGIC_WARN() << "Time Out";
             })->onResponse([](const Safe<Magic::NetWork::Http::HttpResponse>& response){
                 MAGIC_DEBUG() << static_cast<uint32_t>(response->getStatus());
-            })->execute(httpRequest);
+            })->execute(std::move(httpRequest));
         }
 #endif
     }

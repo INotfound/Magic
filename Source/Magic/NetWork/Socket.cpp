@@ -36,9 +36,13 @@ namespace NetWork{
         return m_Working;
     }
 
-    void Socket::runHeartBeat(const Safe<void>& life){
+    void Socket::runHeartBeat(Safe<void> life){
         auto self = this->shared_from_this();
+    #if __cplusplus >= 201402L
+        Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self = std::move(self),life = std::move(life)](){
+    #else
         Safe<ITaskNode> taskNode = std::make_shared<FunctionTaskNode>([self,life](){
+    #endif
             if(self->getEntity() && self->m_HeartBeatCallBack)
                 self->m_HeartBeatCallBack(self);
         });
@@ -69,8 +73,12 @@ namespace NetWork{
     }
 #endif
 
-    void Socket::recv(const RecvCallBack& callBack){
+    void Socket::recv(RecvCallBack callBack){
+    #if __cplusplus >= 201402L
+        auto readCallBack = [this,callBack = std::move(callBack)](const asio::error_code& err,std::size_t length){
+    #else
         auto readCallBack = [this,callBack](const asio::error_code& err,std::size_t length){
+    #endif
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -92,12 +100,12 @@ namespace NetWork{
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(1),std::move(readCallBack));
     }
 
-    const Socket::ErrorCallBack& Socket::getErrorCodeCallBack() const{
-        return m_ErrorCodeCallBack;
-    }
-
-    void Socket::recv(uint64_t size,const RecvCallBack& callBack){
+    void Socket::recv(uint64_t size,RecvCallBack callBack){
+    #if __cplusplus >= 201402L
+        auto readCallBack = [this,size,callBack = std::move(callBack)](const asio::error_code& err,std::size_t length){
+    #else
         auto readCallBack = [this,size,callBack](const asio::error_code& err,std::size_t length){
+    #endif
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
@@ -123,23 +131,31 @@ namespace NetWork{
         asio::async_read(*m_Socket,asio::buffer(m_ByteBlock.get(),m_BufferSize),asio::transfer_at_least(size),std::move(readCallBack));
     }
 
-    void Socket::setErrorCodeCallBack(const ErrorCallBack& errorCallBack){
+    const Socket::ErrorCallBack& Socket::getErrorCodeCallBack() const{
+        return m_ErrorCodeCallBack;
+    }
+
+    void Socket::setErrorCodeCallBack(ErrorCallBack errorCallBack){
         m_ErrorCodeCallBack = std::move(errorCallBack);
     }
 
-    void Socket::setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack){
+    void Socket::setHeartBeatCallBack(HeartBeatCallBack heartBeatCallBack){
         m_HeartBeatCallBack = std::move(heartBeatCallBack);
     }
 
-    void Socket::send(const char* data,uint64_t length,const SendCallBack& callback){
-        auto sendCallBack = [this,callback](const asio::error_code& err,std::size_t /*length*/){
+    void Socket::send(const char* data,uint64_t length,SendCallBack callBack){
+    #if __cplusplus >= 201402L
+        auto sendCallBack = [this,callBack = std::move(callBack)](const asio::error_code& err,std::size_t /*length*/){
+    #else
+        auto sendCallBack = [this,callBack](const asio::error_code& err,std::size_t /*length*/){
+    #endif
             m_Working = false;
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            if(callback)
-                callback();
+            if(callBack)
+                callBack();
         };
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
@@ -155,15 +171,19 @@ namespace NetWork{
         asio::async_write(*m_Socket,asio::const_buffer(data,length),std::move(sendCallBack));
     }
 
-    void Socket::send(const Safe<asio::streambuf>& stream,const SendCallBack& callback){
-        auto sendCallBack = [this,stream,callback](const asio::error_code& err,std::size_t /*length*/){
+    void Socket::send(const Safe<asio::streambuf>& stream,SendCallBack callBack){
+    #if __cplusplus >= 201402L
+        auto sendCallBack = [this,stream,callBack = std::move(callBack)](const asio::error_code& err,std::size_t /*length*/){
+    #else
+        auto sendCallBack = [this,stream,callBack](const asio::error_code& err,std::size_t /*length*/){
+    #endif
             m_Working = false;
             if(err){
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            if(callback)
-                callback();
+            if(callBack)
+                callBack();
         };
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){

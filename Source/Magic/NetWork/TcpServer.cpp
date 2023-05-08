@@ -39,7 +39,12 @@ namespace NetWork{
         if(!m_IoPool)
             throw Failure("IoPool Is Nullptr");
         Safe<Socket> socket = std::make_shared<Socket>(m_TimeOutMs,4096,*m_IoPool->get());
+    #if __cplusplus >= 201402L
+        const auto& entity = socket->getEntity();
+        m_Acceptor->async_accept(*entity,[this,socket = std::move(socket)](const asio::error_code& err){
+    #else
         m_Acceptor->async_accept(*socket->getEntity(),[this,socket](const asio::error_code& err){
+    #endif
             if(err){
                 /// TODO: ...
                 MAGIC_WARN() << err.message();

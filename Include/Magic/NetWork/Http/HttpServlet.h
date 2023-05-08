@@ -194,32 +194,48 @@ namespace Http{
     template<typename T,typename>
     void IHttpServlet::addMatchRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc){
         if(m_ServletDispatch){
+        #if __cplusplus >= 201402L
+            RouteHandle handle = [this,memberFunc = std::move(memberFunc)](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
+        #else
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
-            m_ServletDispatch->addRoute(path,HttpRouteType::Match,handle);
+        #endif
+            m_ServletDispatch->addRoute(path,HttpRouteType::Match,std::move(handle));
         }
     }
 
     template<typename T,typename ...Args,typename>
     void IHttpServlet::addMatchRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc,Args ...args){
         if(m_ServletDispatch){
+        #if __cplusplus >= 201402L
+            RouteHandle handle = [this,memberFunc = std::move(memberFunc)](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
+        #else
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
-            m_ServletDispatch->addRoute(path,HttpRouteType::Match,handle,args...);
+        #endif
+            m_ServletDispatch->addRoute(path,HttpRouteType::Match,std::move(handle),args...);
         }
     }
 
     template<typename T,typename>
     void IHttpServlet::addRoute(const std::string_view& path,ClassMemberFunction<T> memberFunc){
         if(m_ServletDispatch){
+        #if __cplusplus >= 201402L
+            RouteHandle handle = [this,memberFunc = std::move(memberFunc)](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
+        #else
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
-            m_ServletDispatch->addRoute(path,HttpRouteType::Normal,handle);
+        #endif
+            m_ServletDispatch->addRoute(path,HttpRouteType::Normal,std::move(handle));
         }
     }
 
     template<typename T,typename ...Args,typename>
     void IHttpServlet::addRoute(const std::string_view& path,IHttpServlet::ClassMemberFunction<T> memberFunc,Args... args){
         if(m_ServletDispatch){
+        #if __cplusplus >= 201402L
+            RouteHandle handle = [this,memberFunc = std::move(memberFunc)](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
+        #else
             RouteHandle handle = [this,memberFunc](const Safe<HttpSocket>& httpSocket){ (reinterpret_cast<T*>(this)->*memberFunc)(httpSocket); };
-            m_ServletDispatch->addRoute(path,HttpRouteType::Normal,handle,args...);
+        #endif
+            m_ServletDispatch->addRoute(path,HttpRouteType::Normal,std::move(handle),args...);
         }
     }
 
@@ -229,12 +245,12 @@ namespace Http{
         if(routeType == HttpRouteType::Match){
             auto iter = m_MatchRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_MatchRoutes.end()){
-                m_MatchRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>()));
+                m_MatchRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(std::move(handle),std::deque<AspectHandle>(),std::deque<AspectHandle>()));
             }
         }else if(routeType == HttpRouteType::Normal){
             auto iter = m_NormalRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_NormalRoutes.end()){
-                m_NormalRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>()));
+                m_NormalRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(std::move(handle),std::deque<AspectHandle>(),std::deque<AspectHandle>()));
             }
         }
     }
@@ -245,13 +261,13 @@ namespace Http{
         if(routeType == HttpRouteType::Match){
             auto iter = m_MatchRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_MatchRoutes.end()){
-                iter = m_MatchRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
+                iter = m_MatchRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(std::move(handle),std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
             }
             this->addAspect(iter,args...);
         }else if(routeType == HttpRouteType::Normal){
             auto iter = m_NormalRoutes.find(std::string(path.data(),path.size()));
             if(iter == m_NormalRoutes.end()){
-                iter = m_NormalRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(handle,std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
+                iter = m_NormalRoutes.emplace(std::string(path.data(),path.size()),std::make_tuple(std::move(handle),std::deque<AspectHandle>(),std::deque<AspectHandle>())).first;
             }
             this->addAspect(iter,args...);
         }
@@ -277,14 +293,14 @@ namespace Http{
     void HttpServletDispatch::addGlobalAspectAfter(const T& aspect){
         std::lock_guard<std::mutex> locker(m_Mutex);
         AspectHandle handle = [aspect](const Safe<HttpSocket>& httpSocket){ return aspect->after(httpSocket); };
-        m_AspectAfters.push_front(handle);
+        m_AspectAfters.push_front(std::move(handle));
     }
 
     template<typename T,typename>
     void HttpServletDispatch::addGlobalAspectBefore(const T& aspect){
         std::lock_guard<std::mutex> locker(m_Mutex);
         AspectHandle handle = [aspect](const Safe<HttpSocket>& httpSocket){ return aspect->before(httpSocket); };
-        m_AspectBefores.push_back(handle);
+        m_AspectBefores.push_back(std::move(handle));
     }
 
     template<typename T,typename>
@@ -300,13 +316,13 @@ namespace Http{
     template<typename T,typename>
     void HttpServletDispatch::addAspectAfter(const RouteMaps::iterator& iter,const T& aspect){
         AspectHandle handle = [aspect](const Safe<HttpSocket>& httpSocket){ return aspect->after(httpSocket); };
-        std::get<2>(iter->second).push_front(handle);
+        std::get<2>(iter->second).push_front(std::move(handle));
     }
 
     template<typename T,typename>
     void HttpServletDispatch::addAspectBefore(const RouteMaps::iterator& iter,const T& aspect){
         AspectHandle handle = [aspect](const Safe<HttpSocket>& httpSocket){ return aspect->before(httpSocket); };
-        std::get<1>(iter->second).push_back(handle);
+        std::get<1>(iter->second).push_back(std::move(handle));
     }
 
     template<typename T,typename... Args,typename>

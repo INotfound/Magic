@@ -24,7 +24,7 @@ namespace Magic{
          * @return 返回 IoC 容器对象
          * @note 该函数在外部头文件中实现
          */
-        const Safe<Container>& initialize(const std::function<void(const Safe<Container>&)>& configure = nullptr);
+        const Safe<Container>& initialize(std::function<void(const Safe<Container>&)> configure = nullptr);
 
     private:
         Safe<Container> m_Container;

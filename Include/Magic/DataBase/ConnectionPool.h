@@ -79,7 +79,7 @@ namespace DataBase{
             return Connection<T>(std::move(entity),this->shared_from_this());;
         }
 
-        void initialize(const std::function<const Safe<T>(void)>& initFunc){
+        void initialize(std::function<const Safe<T>(void)> initFunc){
             std::lock_guard<std::mutex> locker(m_Mutex);
             m_CreateFunction = std::move(initFunc);
             for(uint32_t i = 0;i < m_Count;i++){

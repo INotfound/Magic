@@ -59,13 +59,13 @@ namespace Http{
         return m_ResponseParser->getData();
     }
 
-    void HttpSocket::recvRequest(const HttpRecvBack& callback){
-        m_RecvRequestCallBack = std::move(callback);
+    void HttpSocket::recvRequest(HttpRecvBack callBack){
+        m_RecvRequestCallBack = std::move(callBack);
         this->requestParser();
     }
 
-    void HttpSocket::recvResponse(const HttpRecvBack& callback){
-        m_RecvResponseCallBack = std::move(callback);
+    void HttpSocket::recvResponse(HttpRecvBack callBack){
+        m_RecvResponseCallBack = std::move(callBack);
         this->responseParser();
     }
 
@@ -202,7 +202,11 @@ namespace Http{
         if(!m_Socket)
             return;
         auto self = this->shared_from_this();
+    #if __cplusplus >= 201402L
+        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& data){
+    #else
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
+    #endif
             m_Death = false;
             uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
             if(m_RequestParser->hasError()){
@@ -227,7 +231,11 @@ namespace Http{
                 /// Max Request Size == 5MB
                 constexpr uint32_t maxRequestSize = 1024 * 1024 * 5;
                 if(m_TotalLength > 0 && m_TotalLength < maxRequestSize){
+                #if __cplusplus >= 201402L
+                    m_Socket->recv(m_TotalLength - data.size(),[this,self = std::move(const_cast<Safe<HttpSocket>&>(self))](Socket::StreamBuffer& data){
+                #else
                     m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
+                #endif
                         auto& request = m_RequestParser->getData();
                         request->setBody(std::string_view(data.data(),data.size()));
                         data.clear();
@@ -245,7 +253,11 @@ namespace Http{
         if(!m_Socket)
             return;
         auto self = this->shared_from_this();
+    #if __cplusplus >= 201402L
+        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& data){
+    #else
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
+    #endif
             m_Death = false;
             uint64_t nparse = m_ResponseParser->execute(data.data(),data.size());
             if(m_ResponseParser->hasError()){
@@ -259,7 +271,11 @@ namespace Http{
             }
             uint64_t contentLength = m_ResponseParser->getContentLength();
             if(contentLength > 0){
+            #if __cplusplus >= 201402L
+                m_Socket->recv(contentLength - data.size(),[this,self = std::move(const_cast<Safe<HttpSocket>&>(self))](Socket::StreamBuffer& data){
+            #else
                 m_Socket->recv(contentLength - data.size(),[this,self](Socket::StreamBuffer& data){
+            #endif
                     auto& response = m_ResponseParser->getData();
                     response->setBody(std::string_view(data.data(),data.size()));
                     data.clear();
@@ -276,7 +292,11 @@ namespace Http{
         if(!m_Socket)
             return;
         auto self = this->shared_from_this();
+    #if __cplusplus >= 201402L
+        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& data){
+    #else
         m_Socket->recv([this,self](Socket::StreamBuffer& data){
+    #endif
             size_t fed = 0;
             do{
                 size_t ret = m_MultiPart->feed(data.data() + fed,data.size() - fed);
@@ -309,7 +329,11 @@ namespace Http{
         auto length = m_FileStream.gcount();
         m_CurrentTransferLength += length;
         auto self = this->shared_from_this();
+    #if __cplusplus >= 201402L
+        m_Socket->send(m_StreamBuffer.get(),length,[this,self = std::move(self)](){
+    #else
         m_Socket->send(m_StreamBuffer.get(),length,[this,self](){
+    #endif
             this->transferFileStream();
         });
     }

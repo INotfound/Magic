@@ -34,13 +34,13 @@ namespace Http{
          * @brief 接收文本消息
          * @param callBack 接收文本消息回调函数
          */
-        void recvTextMessage(const RecvCallBack& callBack);
+        void recvTextMessage(RecvCallBack callBack);
 
         /**
          * @brief 接收二进制消息
          * @param callBack 接收二进制消息回调函数
          */
-        void recvBinaryMessage(const RecvCallBack& callBack);
+        void recvBinaryMessage(RecvCallBack callBack);
 
         /**
          * @brief 发送文本消息
@@ -59,7 +59,7 @@ namespace Http{
          * @param callBack 连接断开回调函数
          * @warning 该函数回调处于其他线程中,需进行线程同步的操作
          */
-        void disconnectedCallBack(const DisconnectedCallBack& callBack);
+        void disconnectedCallBack(DisconnectedCallBack callBack);
 
     private:
         /**

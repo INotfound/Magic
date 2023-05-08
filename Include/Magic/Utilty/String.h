@@ -251,14 +251,25 @@ namespace Magic{
         return newString;
     }
 
-    class CaseInsensitiveLess{
+    class CaseResponsiveLess{
     public:
         bool operator()(const std::string& lhs,const std::string& rhs) const{
-            return StringCompareNoCase(lhs,rhs);
+            return StringCompareCase(lhs,rhs) < 0;
         }
 
         bool operator()(const std::string_view& lhs,const std::string_view& rhs) const{
-            return StringCompareNoCase(lhs,rhs);
+            return StringCompareCase(lhs,rhs) < 0;
+        }
+    };
+
+    class CaseInsensitiveLess{
+    public:
+        bool operator()(const std::string& lhs,const std::string& rhs) const{
+            return StringCompareNoCase(lhs,rhs) < 0;
+        }
+
+        bool operator()(const std::string_view& lhs,const std::string_view& rhs) const{
+            return StringCompareNoCase(lhs,rhs) < 0;
         }
     };
 

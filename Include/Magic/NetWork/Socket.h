@@ -64,7 +64,7 @@ namespace NetWork{
          * @see setHeartBeatCallBack 函数
          * @note 调用该函数后会定时调用 HeartBeatCallBack 回调函数,每调用一次都会延长 life 生命周期
          */
-        void runHeartBeat(const Safe<void>& life);
+        void runHeartBeat(Safe<void> life);
 
         /**
          * @brief 获取Socket的实体函数
@@ -91,7 +91,15 @@ namespace NetWork{
          * @param callBack 接收数据回调函数
          * @warning 该函数不保证生命周期,需要注意！
          */
-        void recv(const RecvCallBack& callBack);
+        void recv(RecvCallBack callBack);
+
+        /**
+         * @brief 接收数据函数
+         * @param size 指定接收大小
+         * @param callBack 接收数据回调函数
+         * @warning 该函数不保证生命周期,需要注意！
+         */
+        void recv(uint64_t size,RecvCallBack callBack);
 
         /**
          * @brief 获取错误处理函数
@@ -100,24 +108,16 @@ namespace NetWork{
         const ErrorCallBack& getErrorCodeCallBack() const;
 
         /**
-         * @brief 接收数据函数
-         * @param size 指定接收大小
-         * @param callBack 接收数据回调函数
-         * @warning 该函数不保证生命周期,需要注意！
-         */
-        void recv(uint64_t size,const RecvCallBack& callBack);
-
-        /**
          * @brief 设置错误代码回调函数
          * @param errorCallBack 错误码回调函数
          */
-        void setErrorCodeCallBack(const ErrorCallBack& errorCallBack);
+        void setErrorCodeCallBack(ErrorCallBack errorCallBack);
 
         /**
          * @brief 设置超时回调函数
          * @param heartBeatCallBack 超时回调函数
          */
-        void setHeartBeatCallBack(const HeartBeatCallBack& heartBeatCallBack);
+        void setHeartBeatCallBack(HeartBeatCallBack heartBeatCallBack);
 
         /**
          * @brief 发送数据函数
@@ -126,7 +126,7 @@ namespace NetWork{
          * @param callback 发送完成后响应函数
          * @warning 该函数不保证生命周期,需要注意！
          */
-        void send(const char* data,uint64_t length,const SendCallBack& callback = nullptr);
+        void send(const char* data,uint64_t length,SendCallBack callBack = nullptr);
 
         /**
          * @brief 发送数据函数
@@ -134,7 +134,7 @@ namespace NetWork{
          * @param callback 发送完成后响应函数
          * @warning 该函数不保证生命周期,需要注意！
          */
-        void send(const Safe<asio::streambuf>& stream,const SendCallBack& callback = nullptr);
+        void send(const Safe<asio::streambuf>& stream,SendCallBack callBack = nullptr);
 
     private:
         std::mutex m_Mutex;

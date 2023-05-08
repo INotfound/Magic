@@ -17,11 +17,11 @@ namespace NetWork{
         m_Socket->close();
     }
 
-    void TcpClient::recv(const Socket::RecvCallBack& callBack){
+    void TcpClient::recv(Socket::RecvCallBack callBack){
         m_Socket->recv(callBack);
     }
 
-    void TcpClient::connect(const std::function<void()>& callback){
+    void TcpClient::connect(std::function<void()> callBack){
         asio::error_code errorCode;
         asio::ip::tcp::resolver resolver(m_IOService);
         auto results = resolver.resolve(m_IpAddress,AsString(m_Port),errorCode);
@@ -31,7 +31,11 @@ namespace NetWork{
                 errorCallBack(errorCode);
             return;
         }
-        m_Socket->getEntity()->async_connect(results->endpoint(),[this,callback](const asio::error_code& errorCode){
+    #if __cplusplus >= 201402L
+        m_Socket->getEntity()->async_connect(results->endpoint(),[this,callBack = std::move(callBack)](const asio::error_code& errorCode){
+    #else
+        m_Socket->getEntity()->async_connect(results->endpoint(),[this,callBack](const asio::error_code& errorCode){
+    #endif
             if(errorCode){
                 if(errorCode == asio::error::eof || errorCode == asio::error::operation_aborted)
                     return;
@@ -41,21 +45,21 @@ namespace NetWork{
                 return;
             }
             m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
-            if(callback)
-                callback();
+            if(callBack)
+                callBack();
         });
     }
 
-    void TcpClient::setErrorCodeCallBack(const Socket::ErrorCallBack& errorCallBack){
-        m_Socket->setErrorCodeCallBack(errorCallBack);
+    void TcpClient::setErrorCodeCallBack(Socket::ErrorCallBack errorCallBack){
+        m_Socket->setErrorCodeCallBack(std::move(errorCallBack));
     }
 
-    void TcpClient::send(const char* data,uint64_t length,const Socket::SendCallBack& callback){
-        m_Socket->send(data,length,callback);
+    void TcpClient::send(const char* data,uint64_t length,Socket::SendCallBack callBack){
+        m_Socket->send(data,length,std::move(callBack));
     }
 
-    void TcpClient::send(const Safe<asio::streambuf>& stream,const Socket::SendCallBack& callback){
-        m_Socket->send(stream,callback);
+    void TcpClient::send(const Safe<asio::streambuf>& stream,Socket::SendCallBack callBack){
+        m_Socket->send(stream,std::move(callBack));
     }
 
 }

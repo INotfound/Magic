@@ -171,7 +171,7 @@ void Generator(std::ostream& stream){
 
 
     stream << "    const Safe<Magic::Container>& Application::initialize"
-           << "(const std::function<void(const Safe<Magic::Container>&)>& configure){";
+           << "(std::function<void(const Safe<Magic::Container>&)> configure){";
     stream << LF;
 
     {   /// Registereds

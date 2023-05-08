@@ -29,28 +29,28 @@ namespace Http{
          * @brief 执行Http请求处理
          * @param request 请求头对象
          */
-        void execute(const Safe<HttpRequest>& request);
+        void execute(Safe<HttpRequest>&& request);
 
         /**
          * @brief 超时函数
-         * @param callback 回调函数
+         * @param callBack 回调函数
          * @return HttpClient 对象
          */
-        ObjectWrapper<HttpClient> onTimeOut(const std::function<void()>& callback);
+        ObjectWrapper<HttpClient> onTimeOut(std::function<void()> callBack);
 
         /**
          * @brief 错误函数
          * @param callBack 回调函数
          * @return HttpClient 对象
          */
-        ObjectWrapper<HttpClient> onError(const std::function<void(const asio::error_code&)>& callBack);
+        ObjectWrapper<HttpClient> onError(std::function<void(const asio::error_code&)> callBack);
 
         /**
          * @brief 响应函数
-         * @param callback 回调函数
+         * @param callBack 回调函数
          * @return HttpClient 对象
          */
-        ObjectWrapper<HttpClient> onResponse(const std::function<void(const Safe<HttpResponse>&)>& callback);
+        ObjectWrapper<HttpClient> onResponse(std::function<void(const Safe<HttpResponse>&)> callBack);
 
     private:
         std::string m_Url;

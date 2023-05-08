@@ -51,17 +51,17 @@ namespace Http{
 
         /**
          * @brief 接收请求头函数
-         * @param callback 接收回调函数
+         * @param callBack 接收回调函数
          * @warning 回调函数同HttpSocket生命周期一直存在！
          */
-        void recvRequest(const HttpRecvBack& callback);
+        void recvRequest(HttpRecvBack callBack);
 
         /**
          * @brief 接收响应头函数
-         * @param callback 接收回调函数
+         * @param callBack 接收回调函数
          * @warning 回调函数同HttpSocket生命周期一直存在！
          */
-        void recvResponse(const HttpRecvBack& callback);
+        void recvResponse(HttpRecvBack callBack);
 
         /**
         * @brief 设置临时文件目录路径

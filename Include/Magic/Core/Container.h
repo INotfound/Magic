@@ -46,7 +46,7 @@ namespace Magic{
             bool m_IsSingelton;
             Safe<void> m_Object;
             CreateFunc m_CreateFunc;
-            std::list<MemberFunc> m_MemberFuncs;
+            std::vector<MemberFunc> m_MemberFuncs;
         };
 
     public:
@@ -161,8 +161,8 @@ namespace Magic{
         }
 
         template<typename T = void,typename = typename std::enable_if<!std::is_void<T>::value>::type>
-        std::list<Safe<T>> resolveAll(){
-            std::list<Safe<T>> objectList;
+        std::vector<Safe<T>> resolveAll(){
+            std::vector<Safe<T>> objects;
             auto self = this->shared_from_this();
             auto iter = m_RegisteredType.find(CompiletimeIId<T>());
             if(iter != m_RegisteredType.end()){
@@ -173,10 +173,10 @@ namespace Magic{
                             registeredType.second.resolveMemberFunction(self);
                         }
                     }
-                    objectList.push_back(std::static_pointer_cast<T>(registeredType.second.m_Object));
+                    objects.push_back(std::static_pointer_cast<T>(registeredType.second.m_Object));
                 }
             }
-            return objectList;
+            return objects;
         }
 
     private:
