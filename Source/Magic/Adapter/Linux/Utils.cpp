@@ -5,11 +5,7 @@
  */
 #if defined(linux) || defined(__linux__)
 
-#include <vector>
-#include <string>
-#include <sstream>
-#include <iostream>
-#include <strings.h>
+#include <cstring>
 
 #include "Magic/Core/Core.h"
 #include "Magic/Core/Adapter.h"
