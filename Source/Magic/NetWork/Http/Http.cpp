@@ -129,17 +129,16 @@ namespace Http{
         uint64_t pos = 0;
         do{
             uint64_t idx = 0;
-            std::string_view subString = SubString(str,pos,flag);
-            if(IsUrlEncode(subString)){
-                subString = UrlDecode(subString);
+            std::string decodeString;
+            std::string_view encodeString = SubString(str,pos,flag);
+            if(IsUrlEncode(encodeString)){
+                decodeString = UrlDecode(encodeString);
             }
-            pos += static_cast<uint64_t>(subString.size() + 1);
-            idx = subString.find('=');
+            pos += static_cast<uint64_t>(decodeString.size() + 1);
+            idx = decodeString.find('=');
             if(idx == std::string::npos)
                 break;
-            std::string_view svKey = subString.substr(0,idx);
-            std::string_view svValue = subString.substr(idx + 1);
-            map.emplace(std::string(svKey.data(),svKey.size()),std::string(svValue.data(),svValue.size()));
+            map.emplace(decodeString.substr(0,idx),decodeString.substr(idx + 1));
         }while(pos <= str.size());
     }
 
@@ -148,15 +147,16 @@ namespace Http{
         uint64_t pos = 0;
         do{
             uint64_t key = 0;
-            std::string_view subString = SubString(str,pos,flag);
-            if(IsUrlEncode(subString)){
-                subString = UrlDecode(subString);
+            std::string decodeString;
+            std::string_view encodeString = SubString(str,pos,flag);
+            if(IsUrlEncode(encodeString)){
+                decodeString = UrlDecode(encodeString);
             }
-            pos += static_cast<uint64_t>(subString.size() + 1);
-            key = subString.find('=');
+            pos += static_cast<uint64_t>(decodeString.size() + 1);
+            key = decodeString.find('=');
             if(key == std::string::npos)
                 break;
-            map.emplace(Trim(subString.substr(0,key)),Trim(subString.substr(key + 1)));
+            map.emplace(Trim(decodeString.substr(0,key)),Trim(decodeString.substr(key + 1)));
         }while(pos <= str.size());
     }
 

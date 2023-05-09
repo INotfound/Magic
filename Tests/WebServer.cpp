@@ -77,6 +77,7 @@ public:
 
     void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         auto& response = httpSocket->getResponse();
+        std::cout << httpSocket->getRequest();
 //        auto httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
 //        auto httpClient = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/",10000);
 //        httpClient->onTimeOut([](){
