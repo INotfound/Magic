@@ -134,7 +134,7 @@ namespace Http{
             if(IsUrlEncode(encodeString)){
                 decodeString = UrlDecode(encodeString);
             }
-            pos += static_cast<uint64_t>(decodeString.size() + 1);
+            pos += static_cast<uint64_t>(encodeString.size() + 1);
             idx = decodeString.find('=');
             if(idx == std::string::npos)
                 break;
@@ -151,8 +151,10 @@ namespace Http{
             std::string_view encodeString = SubString(str,pos,flag);
             if(IsUrlEncode(encodeString)){
                 decodeString = UrlDecode(encodeString);
+            }else{
+                decodeString.assign(encodeString.data(),encodeString.size());
             }
-            pos += static_cast<uint64_t>(decodeString.size() + 1);
+            pos += static_cast<uint64_t>(encodeString.size() + 1);
             key = decodeString.find('=');
             if(key == std::string::npos)
                 break;
