@@ -188,14 +188,6 @@ namespace Http{
         ,m_ContentLength(0){
     }
 
-    HttpRequest::KeyValue& HttpRequest::atParams(){
-        return m_Params;
-    }
-
-    HttpRequest::KeyValue& HttpRequest::atHeaders(){
-        return m_Headers;
-    }
-
     bool HttpRequest::isRange() const{
         return m_Headers.find("Range") != m_Headers.end();
     }
@@ -299,7 +291,7 @@ namespace Http{
         m_Headers.erase(std::string(key.data(),key.size()));
     }
 
-    std::ostream& HttpRequest::toStream(std::ostream& os){
+    void HttpRequest::toStream(std::ostream& os){
         os  << HttpMethodToString(m_Method) << ' '
             << m_UrlPath
             << (m_Query.empty() ? "" : "?" + UrlEncode(m_Query))
@@ -328,7 +320,6 @@ namespace Http{
             }
             os << "\r\n";
         }
-        return os;
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setVersion(uint8_t ver){
@@ -410,10 +401,6 @@ namespace Http{
 
     bool HttpResponse::isRange() const{
         return m_Headers.find("Content-Range") != m_Headers.end();
-    }
-
-    HttpResponse::KeyValue& HttpResponse::getHeaders(){
-        return m_Headers;
     }
 
     bool HttpResponse::hasResource() const{
@@ -515,7 +502,7 @@ namespace Http{
         return iter->second;
     }
 
-    std::ostream& HttpResponse::toStream(std::ostream& os){
+    void HttpResponse::toStream(std::ostream& os){
         os  << "HTTP/"
             << static_cast<uint32_t>(m_Version >> 4)
             << '.'
@@ -557,7 +544,6 @@ namespace Http{
             else{
                 m_Headers.erase(contentEncodingIter);
             }
-
         }
 
         /// Headers
@@ -575,7 +561,6 @@ namespace Http{
         }else{
             os << "Content-Length: " << m_ContentLength << "\r\n\r\n";
         }
-        return os;
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setVersion(uint8_t ver){
@@ -665,14 +650,6 @@ namespace Http{
         }
         m_Cookies.push_back(result);
         return ObjectWrapper<HttpResponse>(this);
-    }
-
-    std::ostream& operator<<(std::ostream& os,const Safe<HttpRequest>& request){
-        return request->toStream(os);
-    }
-
-    std::ostream& operator<<(std::ostream& os,const Safe<HttpResponse>& response){
-        return response->toStream(os);
     }
 }
 }

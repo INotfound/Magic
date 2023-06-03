@@ -139,6 +139,14 @@ namespace Http{
         Safe<HttpRequestParser> m_RequestParser;
         Safe<HttpResponseParser> m_ResponseParser;
     };
+
+    inline void operator<<(const Safe<HttpSocket>& socket,const Safe<HttpRequest>& request){
+        socket->sendRequest(request);
+    }
+
+    inline void operator<<(const Safe<HttpSocket>& socket,const Safe<HttpResponse>& response){
+        socket->sendResponse(response);
+    }
 }
 }
 }

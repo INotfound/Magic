@@ -63,9 +63,9 @@ namespace Http{
                 return;
             }
 
-            auto matchIter = m_MatchRoutes.begin();
-            auto matchEnd = m_MatchRoutes.end();
             std::regex reg;
+            auto matchEnd = m_MatchRoutes.end();
+            auto matchIter = m_MatchRoutes.begin();
             for(;matchIter != matchEnd;matchIter++){
                 reg.assign(matchIter->first);
                 if(std::regex_match(httpPath.begin(),httpPath.end(),reg)){
@@ -102,15 +102,14 @@ namespace Http{
         }catch(const std::exception& ec){
             MAGIC_WARN() << ec.what();
             const auto& response = httpSocket->getResponse();
-            response->setStatus(HttpStatus::INTERNAL_SERVER_ERROR);
-            response->setBody(GenerateHtml(HttpStatusToString(HttpStatus::INTERNAL_SERVER_ERROR),"Exception",ec.what()));
-            httpSocket->sendResponse(response);
+            response->setStatus(HttpStatus::INTERNAL_SERVER_ERROR)
+                    ->setBody(GenerateHtml(HttpStatusToString(HttpStatus::INTERNAL_SERVER_ERROR),"Exception",ec.what()));
+            httpSocket << response;
             return;
         }
         const auto& response = httpSocket->getResponse();
         response->setStatus(HttpStatus::NOT_FOUND);
-        httpSocket->sendResponse(response);
-
+        httpSocket << response;
     }
 
     void HttpServletDispatch::setHttpServlet(const Safe<IHttpServlet>& servlet){

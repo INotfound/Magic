@@ -237,19 +237,6 @@ namespace Http{
          * @param version Http协议版本
          */
         explicit HttpRequest(bool keepAlive = true,uint8_t version = 0x11);
-
-        /**
-         * @brief 获取所有参数函数
-         * @return: 返回键值对容器
-         */
-        KeyValue& atParams();
-
-        /**
-         * @brief 获取所有Http头中的参数函数
-         * @return: 返回键值对容器
-         */
-        KeyValue& atHeaders();
-
         /**
          * @brief 是否Range切片
          * @return: 返回True则是，返回False则是否
@@ -332,6 +319,12 @@ namespace Http{
         std::string_view getHeader(const std::string_view& key) const;
 
         /**
+         * @brief 获取输出流函数
+         * @param os 输出流
+         */
+        void toStream(std::ostream& os);
+
+        /**
          * @brief 删除参数函数
          * @param key 指定的键
          */
@@ -342,13 +335,6 @@ namespace Http{
          * @param key 指定的键
          */
         void delHeader(const std::string_view& key);
-
-        /**
-         * @brief 获取输出流函数
-         * @param os 输出流
-         * @return: 返回输出流
-         */
-        std::ostream& toStream(std::ostream& os);
 
         /**
          * @brief 设置版本号函数
@@ -461,12 +447,6 @@ namespace Http{
         bool isRange() const;
 
         /**
-         * @brief 获取Http头键值对容器函数
-         * @return: 返回Http头键值对容器
-         */
-        KeyValue& getHeaders();
-
-        /**
          * @brief 是否拥有资源
          * @return: 返回True则是，返回False则是否
          */
@@ -554,9 +534,8 @@ namespace Http{
         /**
          * @brief 获取输出流函数
          * @param os 输出流
-         * @return: 返回输出流
          */
-        std::ostream& toStream(std::ostream& os);
+        void toStream(std::ostream& os);
 
         /**
          * @brief 设置版本号函数
@@ -652,9 +631,13 @@ namespace Http{
         std::vector<std::string> m_Cookies;
     };
 
-    std::ostream& operator<<(std::ostream& os,const Safe<HttpRequest>& request);
+    inline void operator<<(std::ostream& os,const Safe<HttpRequest>& request){
+        request->toStream(os);
+    }
 
-    std::ostream& operator<<(std::ostream& os,const Safe<HttpResponse>& response);
+    inline void operator<<(std::ostream& os,const Safe<HttpResponse>& response){
+        response->toStream(os);
+    }
 }
 }
 }
