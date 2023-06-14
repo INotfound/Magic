@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Magic/Core/Core.h>
-#include <Magic/Core/Container.h>
+#include "Magic/Core/Core.hpp"
+#include "Magic/Core/Container.hpp"
 
 namespace Magic{
     /**

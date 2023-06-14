@@ -8,8 +8,8 @@
 #include <sstream>
 #include <fstream>
 
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/String.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/String.hpp"
 
 namespace Magic{
     /**

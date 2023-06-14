@@ -1,8 +1,8 @@
 #include <mutex>
 #include <random>
-#include "Magic/Utilty/Trace.h"
-#include "Magic/Utilty/Thread.h"
-#include "Magic/Utilty/String.h"
+#include "Magic/Utilty/Trace.hpp"
+#include "Magic/Utilty/Thread.hpp"
+#include "Magic/Utilty/String.hpp"
 
 namespace Magic{
     Safe<ITraceAppender> g_TraceAppender;

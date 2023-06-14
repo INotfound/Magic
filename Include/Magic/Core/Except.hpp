@@ -8,7 +8,7 @@
 #include <string>
 #include <stdexcept>
 
-#include "Magic/Core/StringView.h"
+#include "Magic/Core/StringView.hpp"
 
 namespace Magic{
     class Failure:public std::runtime_error{

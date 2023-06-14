@@ -1,12 +1,12 @@
 /*
- * @File: Crypto.h
+ * @File: Crypto.hpp
  * @Author: INotFound
  * @Date: 2020-03-13 23:00:00
  * @LastEditTime: 2020-03-14 00:09:01
  */
 #pragma once
 
-#include "Magic/Core/Core.h"
+#include "Magic/Core/Core.hpp"
 
 namespace Magic{
     /**

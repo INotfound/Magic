@@ -3,8 +3,8 @@
 #include <map>
 #include <utility>
 #include <fstream>
-#include "Magic/Core/Core.h"
-#include "Magic/NetWork/Http/Utils/MultiPartParser.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/NetWork/Http/Utils/MultiPartParser.hpp"
 
 namespace Magic{
 namespace NetWork{

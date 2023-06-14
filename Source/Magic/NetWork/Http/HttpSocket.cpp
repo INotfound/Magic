@@ -3,10 +3,10 @@
  * @Date: 2020-03-12 20:41:54
  * @LastEditTime: 2021-02-01 22:29:25
  */
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/Crypto.h"
-#include "Magic/NetWork/Http/HttpSocket.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/Utilty/Crypto.hpp"
+#include "Magic/NetWork/Http/HttpSocket.hpp"
 
 namespace Magic{
 namespace NetWork{

@@ -3,8 +3,8 @@
  * @Date: 2020-03-04 23:43:46
  * @LastEditTime: 2020-09-30 21:19:07
  */
-#include "Magic/Utilty/Logger.h"
-#include "Magic/NetWork/IoPool.h"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/NetWork/IoPool.hpp"
 
 namespace Magic{
 namespace NetWork{

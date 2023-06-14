@@ -347,11 +347,7 @@ bool CheckConfiguration(const std::string& path){
     return true;
 }
 
-void OutPutCppFile(const std::string& path){
-    std::string headerFile(path);
-    headerFile += ".h";
-
-
+void OutPutCppFile(const std::string& headerFile){
     std::stringstream bufferStream;
     Generator(bufferStream);
     std::string gen = bufferStream.str();
@@ -371,7 +367,7 @@ void OutPutCppFile(const std::string& path){
     std::ofstream outStream;
     outStream.open(headerFile,std::ios::out);
     if(!outStream.is_open()){
-        std::printf("[Err]: File Generation Failed: %s\n",path.c_str());
+        std::printf("[Err]: File Generation Failed: %s\n",headerFile.c_str());
         std::exit(1);
     }
     outStream << gen;

@@ -6,8 +6,8 @@
 #include <cstring>
 #include <algorithm>
 
-#include "Magic/Utilty/Compress.h"
-#include "Magic/NetWork/Http/Http.h"
+#include "Magic/Utilty/Compress.hpp"
+#include "Magic/NetWork/Http/Http.hpp"
 
 namespace Magic{
 namespace NetWork{

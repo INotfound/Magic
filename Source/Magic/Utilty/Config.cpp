@@ -3,8 +3,8 @@
  * @Date: 2020-03-04 23:46:59
  * @LastEditTime: 2021-02-01 22:29:07
  */
-#include "Magic/Utilty/Config.h"
-#include "Magic/Utilty/Logger.h"
+#include "Magic/Utilty/Config.hpp"
+#include "Magic/Utilty/Logger.hpp"
 // #include "rapidjson/writer.h"
 // #include "rapidjson/document.h"
 // #include "rapidjson/stringbuffer.h"

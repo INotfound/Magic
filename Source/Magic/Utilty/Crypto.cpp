@@ -9,8 +9,8 @@
 #include <openssl/md5.h>
 #include <openssl/sha.h>
 #endif
-#include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/Crypto.h"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/Utilty/Crypto.hpp"
 
 #ifndef SHA_DIGEST_LENGTH
     #define SHA_DIGEST_LENGTH 1

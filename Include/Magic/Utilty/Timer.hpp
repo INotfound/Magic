@@ -8,8 +8,8 @@
 #include <functional>
 
 #include "asio.hpp"
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Thread.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Thread.hpp"
 
 namespace Magic{
     /**

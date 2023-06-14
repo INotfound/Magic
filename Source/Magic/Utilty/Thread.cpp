@@ -3,9 +3,9 @@
  * @Date: 2020-03-12 02:32:11
  * @LastEditTime: 2021-02-01 22:25:58
  */
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/Thread.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/Utilty/Thread.hpp"
 
 namespace Magic{
     static thread_local std::string g_ThreadName = "UNKNOWN";

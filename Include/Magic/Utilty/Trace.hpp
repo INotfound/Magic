@@ -3,7 +3,7 @@
 #include <mutex>
 #include <chrono>
 #include <fstream>
-#include "Magic/Core/Core.h"
+#include "Magic/Core/Core.hpp"
 
 namespace Magic{
     class TraceTimer:public Noncopyable{

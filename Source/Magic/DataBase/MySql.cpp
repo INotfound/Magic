@@ -1,6 +1,6 @@
 #include <cstring>
-#include "Magic/Utilty/Logger.h"
-#include "Magic/DataBase/MySql.h"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/DataBase/MySql.hpp"
 
 #ifdef MYSQLDB
 namespace Magic{

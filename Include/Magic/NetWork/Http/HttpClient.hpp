@@ -1,15 +1,15 @@
 /*
- * @File: TcpClient.h
+ * @File: TcpClient.hpp
  * @Author: INotFound
  * @Date: 2022-07-30 22:11:54
  * @LastEditTime: 2022-07-30 23:17:50
  */
 #pragma once
 
-#include "Magic/Core/Core.h"
-#include "Magic/NetWork/Http/Uri.h"
-#include "Magic/NetWork/Http/Http.h"
-#include "Magic/NetWork/Http/HttpSocket.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/NetWork/Http/Uri.hpp"
+#include "Magic/NetWork/Http/Http.hpp"
+#include "Magic/NetWork/Http/HttpSocket.hpp"
 
 namespace Magic{
 namespace NetWork{

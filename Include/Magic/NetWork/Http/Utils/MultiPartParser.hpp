@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Magic/Core/Core.h"
+#include "Magic/Core/Core.hpp"
 
 class MultiPartParser :public Magic::Noncopyable{
 public:

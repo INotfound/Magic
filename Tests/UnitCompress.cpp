@@ -1,5 +1,5 @@
 #include "gtest/gtest.h"
-#include "Magic/Utilty/Compress.h"
+#include "Magic/Utilty/Compress.hpp"
 
 TEST(MagicCompressTest,BrotliEncoderAndBrotliDecoder){
     for(auto i = 0;i < 1000;i++){

@@ -38,7 +38,7 @@
 #include <ctype.h>
 #include <string.h>
 //#include <dbg.h>
-#include "Magic/NetWork//Http/Utils/http11_parser.h"
+#include "Magic/NetWork//Http/Utils/http11_parser.hpp"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)

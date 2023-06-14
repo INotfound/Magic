@@ -1,7 +1,7 @@
 #ifndef http11_parser_h
 #define http11_parser_h
 
-#include "http11_common.h"
+#include "http11_common.hpp"
 
 typedef struct http_parser { 
   int cs;

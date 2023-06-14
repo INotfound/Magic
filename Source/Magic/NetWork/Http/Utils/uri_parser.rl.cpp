@@ -1,7 +1,7 @@
 
 /* #line 1 "uri_parser.rl" */
 #include <sstream>
-#include "Magic/NetWork/Http/Uri.h"
+#include "Magic/NetWork/Http/Uri.hpp"
 
 namespace Magic{
 namespace NetWork{

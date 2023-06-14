@@ -7,8 +7,8 @@
 
 #include <cstring>
 
-#include "Magic/Core/Core.h"
-#include "Magic/Core/Adapter.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Core/Adapter.hpp"
 
 namespace Magic{
     uint64_t GetThreadId(){

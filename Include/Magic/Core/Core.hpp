@@ -18,9 +18,9 @@
 #include <type_traits>
 #include <unordered_map>
 
-#include "Magic/Core/Except.h"
-#include "Magic/Core/StringView.h"
-#include "Magic/Core/SystemUtils.h"
+#include "Magic/Core/Except.hpp"
+#include "Magic/Core/StringView.hpp"
+#include "Magic/Core/SystemUtils.hpp"
 
 #ifndef Safe
     #define Safe std::shared_ptr

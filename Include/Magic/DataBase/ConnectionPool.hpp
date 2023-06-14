@@ -5,9 +5,9 @@
  */
 #pragma once
 
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Config.h"
-#include "Magic/Utilty/TimingWheel.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Config.hpp"
+#include "Magic/Utilty/TimingWheel.hpp"
 
 namespace Magic{
 namespace DataBase{

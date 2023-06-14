@@ -1,6 +1,6 @@
 #include <stdexcept>
 #include <cstring>
-#include "Magic/NetWork/Http/Utils/MultiPartParser.h"
+#include "Magic/NetWork/Http/Utils/MultiPartParser.hpp"
 
 MultiPartParser::MultiPartParser(){
     lookbehind = nullptr;

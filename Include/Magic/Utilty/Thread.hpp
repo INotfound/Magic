@@ -8,7 +8,7 @@
 #include <thread>
 #include <condition_variable>
 
-#include "Magic/Core/Core.h"
+#include "Magic/Core/Core.hpp"
 
 namespace Magic{
     /**

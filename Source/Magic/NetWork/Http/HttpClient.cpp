@@ -3,9 +3,9 @@
  * @Date: 2022-07-30 22:11:54
  * @LastEditTime: 2022-07-30 23:17:50
  */
-#include "Magic/Utilty/Logger.h"
-#include "Magic/NetWork/IoPool.h"
-#include "Magic/NetWork/Http/HttpClient.h"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/NetWork/IoPool.hpp"
+#include "Magic/NetWork/Http/HttpClient.hpp"
 
 namespace Magic{
 namespace NetWork{

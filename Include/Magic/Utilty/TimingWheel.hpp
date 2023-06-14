@@ -8,9 +8,9 @@
 #include <list>
 #include <vector>
 
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Timer.h"
-#include "Magic/Utilty/Config.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Timer.hpp"
+#include "Magic/Utilty/Config.hpp"
 
 namespace Magic{
     /**

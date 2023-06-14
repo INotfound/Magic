@@ -6,7 +6,7 @@
  */
 #include <chrono>
 
-#include "Magic/Utilty/Timer.h"
+#include "Magic/Utilty/Timer.hpp"
 
 namespace Magic{
     Timer::~Timer(){

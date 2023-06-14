@@ -1,4 +1,4 @@
-#include "Magic/NetWork/Http/MultiPart.h"
+#include "Magic/NetWork/Http/MultiPart.hpp"
 
 namespace Magic{
 namespace NetWork{

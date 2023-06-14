@@ -10,11 +10,11 @@
 #include <sstream>
 #include <fstream>
 
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Timer.h"
-#include "Magic/Utilty/Thread.h"
-#include "Magic/Utilty/Config.h"
-#include "Magic/Utilty/Thread.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Timer.hpp"
+#include "Magic/Utilty/Thread.hpp"
+#include "Magic/Utilty/Config.hpp"
+#include "Magic/Utilty/Thread.hpp"
 
 namespace Magic{
     /**

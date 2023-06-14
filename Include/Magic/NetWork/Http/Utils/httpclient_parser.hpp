@@ -35,7 +35,7 @@
 #ifndef httpclient_parser_h
 #define httpclient_parser_h
 
-#include "http11_common.h"
+#include "http11_common.hpp"
 
 typedef struct httpclient_parser { 
   int cs;

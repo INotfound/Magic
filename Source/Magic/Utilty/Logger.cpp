@@ -8,8 +8,8 @@
 #include <iomanip>
 #include <iostream>
 
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/Logger.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/Logger.hpp"
 
 namespace Magic{
     Safe<Magic::Logger> g_Logger;

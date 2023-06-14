@@ -1,12 +1,12 @@
 /*
- * @File: Uri.h
+ * @File: Uri.hpp
  * @Author: INotFound
  * @Date: 2020-03-15 17:24:20
  * @LastEditTime: 2021-01-18 05:54:03
  */
 #pragma once
 
-#include "Magic/Core/Core.h"
+#include "Magic/Core/Core.hpp"
 
 namespace Magic{
 namespace NetWork{

@@ -1,9 +1,9 @@
 #define _WIN32_WINNT 0x0601
 #include "Magic/Magic"
-#include "Magic/Utilty/Logger.h"
-#include "Magic/NetWork/IoPool.h"
-#include "Magic/NetWork/Http/Http.h"
-#include "Magic/NetWork/Http/HttpClient.h"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/NetWork/IoPool.hpp"
+#include "Magic/NetWork/Http/Http.hpp"
+#include "Magic/NetWork/Http/HttpClient.hpp"
 
 using namespace Magic::NetWork::Http;
 

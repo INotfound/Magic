@@ -4,28 +4,28 @@
             {
                 "Id":"ioPool",
                 "Class":"Magic::NetWork::IoPool",
-                "IncludePath": "Magic/NetWork/IoPool.h",
+                "IncludePath": "Magic/NetWork/IoPool.hpp",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"timingWheel",
                 "Class":"Magic::TimingWheel",
-                "IncludePath": "Magic/Utilty/TimingWheel.h",
+                "IncludePath": "Magic/Utilty/TimingWheel.hpp",
                 "Dependencies":["Magic::Config"],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"dispatch",
                 "Class":"Magic::NetWork::Http::HttpServletDispatch",
-                "IncludePath": "Magic/NetWork/Http/HttpServlet.h",
+                "IncludePath": "Magic/NetWork/Http/HttpServlet.hpp",
                 "Dependencies":[],
                 "FunctionPropertys":[]
             },
             {
                 "Id":"httpServer",
                 "Class":"Magic::NetWork::Http::HttpServer",
-                "IncludePath": "Magic/NetWork/Http/HttpServer.h",
+                "IncludePath": "Magic/NetWork/Http/HttpServer.hpp",
                 "Dependencies":["Magic::NetWork::IoPool","Magic::Config"],
                 "FunctionPropertys":["setServletDispatch"]
             }

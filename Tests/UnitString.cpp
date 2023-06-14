@@ -1,6 +1,6 @@
 #include <sstream>
 #include "gtest/gtest.h"
-#include "Magic/Utilty/String.h"
+#include "Magic/Utilty/String.hpp"
 
 TEST(MagicStringTest,StringAsInt){
     EXPECT_EQ(Magic::StringAs<int8_t>("144",8),100);

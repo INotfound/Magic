@@ -5,12 +5,12 @@
  */
 #pragma once
 
-#include "Magic/Core/Core.h"
-#include "Magic/NetWork/Socket.h"
-#include "Magic/NetWork/Http/Http.h"
-#include "Magic/NetWork/Http/MultiPart.h"
-#include "Magic/NetWork/Http/WebSocket.h"
-#include "Magic/NetWork/Http/HttpParser.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/NetWork/Socket.hpp"
+#include "Magic/NetWork/Http/Http.hpp"
+#include "Magic/NetWork/Http/MultiPart.hpp"
+#include "Magic/NetWork/Http/WebSocket.hpp"
+#include "Magic/NetWork/Http/HttpParser.hpp"
 
 namespace Magic{
 namespace NetWork{

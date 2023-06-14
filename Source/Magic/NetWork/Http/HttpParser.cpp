@@ -4,10 +4,10 @@
  * @LastEditTime: 2021-02-01 22:24:41
  */
 #include <cstring>
-#include "Magic/Utilty/String.h"
-#include "Magic/NetWork/Http/HttpParser.h"
-#include "Magic/NetWork/Http/Utils/http11_parser.h"
-#include "Magic/NetWork/Http/Utils/httpclient_parser.h"
+#include "Magic/Utilty/String.hpp"
+#include "Magic/NetWork/Http/HttpParser.hpp"
+#include "Magic/NetWork/Http/Utils/http11_parser.hpp"
+#include "Magic/NetWork/Http/Utils/httpclient_parser.hpp"
 
 namespace Magic{
 namespace NetWork{

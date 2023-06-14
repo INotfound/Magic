@@ -4,8 +4,8 @@
  * @LastEditTime: 2022-06-1 21:53:05
  */
 #include <random>
-#include "Magic/Utilty/Logger.h"
-#include "Magic/NetWork/Http/WebSocket.h"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/NetWork/Http/WebSocket.hpp"
 
 namespace Magic{
 namespace NetWork{

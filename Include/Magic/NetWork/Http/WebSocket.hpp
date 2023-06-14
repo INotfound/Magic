@@ -5,8 +5,8 @@
  */
 #pragma once
 
-#include "Magic/Core/Core.h"
-#include "Magic/NetWork/Socket.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/NetWork/Socket.hpp"
 
 namespace Magic{
 namespace NetWork{

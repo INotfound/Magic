@@ -4,7 +4,7 @@
 #include <memory>
 #include <brotli/encode.h>
 #include <brotli/decode.h>
-#include "Magic/Utilty/Compress.h"
+#include "Magic/Utilty/Compress.hpp"
 
 namespace Magic{
 #ifdef ZLIB

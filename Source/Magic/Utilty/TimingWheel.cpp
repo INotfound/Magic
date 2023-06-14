@@ -5,7 +5,7 @@
  */
 #include <utility>
 
-#include "Magic/Utilty/TimingWheel.h"
+#include "Magic/Utilty/TimingWheel.hpp"
 
 namespace Magic{
     Safe<TimingWheel> g_TimingWheel;

@@ -4,9 +4,9 @@
  * @LastEditTime: 2021-02-01 22:24:51
  */
 #include <regex>
-#include "Magic/Utilty/Trace.h"
-#include "Magic/Utilty/Logger.h"
-#include "Magic/NetWork/Http/HttpServlet.h"
+#include "Magic/Utilty/Trace.hpp"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/NetWork/Http/HttpServlet.hpp"
 
 namespace Magic{
 namespace NetWork{

@@ -1,6 +1,6 @@
 #include <fstream>
 #include "gtest/gtest.h"
-#include "Magic/Utilty/Crypto.h"
+#include "Magic/Utilty/Crypto.hpp"
 
 TEST(MagicCryptoTest,Base64Encode){
     EXPECT_STREQ(Magic::Base64Encode("HelloWorld").c_str(),"SGVsbG9Xb3JsZA==");

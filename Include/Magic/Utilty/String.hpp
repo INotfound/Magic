@@ -12,7 +12,7 @@
 #include <sstream>
 #include <algorithm>
 #include <type_traits>
-#include "Magic/Core/Core.h"
+#include "Magic/Core/Core.hpp"
 
 namespace Magic{
     static const std::string g_EmptyString;

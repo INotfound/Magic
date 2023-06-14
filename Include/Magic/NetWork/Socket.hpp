@@ -1,5 +1,5 @@
 /*
- * @File: Socket.h
+ * @File: Socket.hpp
  * @Author: INotFound
  * @Date: 2020-03-13 22:11:54
  * @LastEditTime: 2020-09-30 21:17:50
@@ -13,8 +13,8 @@
 #endif
 
 #include <atomic>
-#include "Magic/Core/Core.h"
-#include "Magic/Utilty/TimingWheel.h"
+#include "Magic/Core/Core.hpp"
+#include "Magic/Utilty/TimingWheel.hpp"
 
 namespace Magic{
 namespace NetWork{

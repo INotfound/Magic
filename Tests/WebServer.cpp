@@ -1,19 +1,19 @@
 #include "Magic/Magic"
-#include "Magic/Core/Container.h"
-#include "Magic/NetWork/Http/Uri.h"
-#include "Magic/NetWork/Http/Http.h"
-#include "Magic/NetWork/Http/HttpClient.h"
+#include "Magic/Core/Container.hpp"
+#include "Magic/NetWork/Http/Uri.hpp"
+#include "Magic/NetWork/Http/Http.hpp"
+#include "Magic/NetWork/Http/HttpClient.hpp"
 
-#include "Magic/NetWork/Http/HttpServer.h"
-#include "Magic/Utilty/Logger.h"
-#include "Magic/Utilty/TimingWheel.h"
-#include "Magic/DataBase/ConnectionPool.h"
-#include "Magic/Core/Adapter.h"
-#include "Magic/Utilty/Trace.h"
-#include "Magic/NetWork/TcpClient.h"
-#include "Magic/NetWork/Http/HttpClient.h"
-#include "Magic/Core/Except.h"
-#include "Magic/Core/StringView.h"
+#include "Magic/NetWork/Http/HttpServer.hpp"
+#include "Magic/Utilty/Logger.hpp"
+#include "Magic/Utilty/TimingWheel.hpp"
+#include "Magic/DataBase/ConnectionPool.hpp"
+#include "Magic/Core/Adapter.hpp"
+#include "Magic/Utilty/Trace.hpp"
+#include "Magic/NetWork/TcpClient.hpp"
+#include "Magic/NetWork/Http/HttpClient.hpp"
+#include "Magic/Core/Except.hpp"
+#include "Magic/Core/StringView.hpp"
 
 using namespace Magic::NetWork::Http;
 
@@ -90,7 +90,7 @@ public:
 //        httpClient->execute(httpRequest);
 //        throw Magic::Failure("data sell");
 
-        response->setStatus(HttpStatus::OK);
+        response->setStatus(HttpStatus::OK)->setBody("hello world");
         httpSocket->sendResponse(response);
     }
 };
@@ -162,6 +162,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(
     auto httpServer = m_Container->resolve<Magic::NetWork::Http::HttpServer>();
     httpServer->setServletDispatch(dispatch);
     httpServer->run();
+
 
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/",&ResourceServlet::handle1);
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/ws",&ResourceServlet::websocket);

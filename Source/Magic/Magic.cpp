@@ -1,5 +1,5 @@
 #include "Magic/Magic"
-#include "Magic/NetWork/IoPool.h"
+#include "Magic/NetWork/IoPool.hpp"
 
 namespace Magic{
     Application::~Application(){

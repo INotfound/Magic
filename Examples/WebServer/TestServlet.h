@@ -4,7 +4,7 @@
  * @LastEditTime: 2020-12-21 13:55:26
  */
 #pragma once
-#include <Magic/NetWork/Http/HttpServlet.h>
+#include <Magic/NetWork/Http/HttpServlet.hpp>
 
 namespace Web{
     using namespace Magic::NetWork::Http;

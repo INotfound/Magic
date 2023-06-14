@@ -41,7 +41,7 @@
 #include <string.h>
 #include <cerrno>
 //#include "dbg.h"
-#include "Magic/NetWork/Http/Utils/httpclient_parser.h"
+#include "Magic/NetWork/Http/Utils/httpclient_parser.hpp"
 
 #define LEN(AT, FPC) (FPC - buffer - parser->AT)
 #define MARK(M,FPC) (parser->M = (FPC) - buffer)
