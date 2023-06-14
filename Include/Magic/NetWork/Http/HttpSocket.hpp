@@ -67,7 +67,7 @@ namespace Http{
         * @brief 设置临时文件目录路径
         * @param dirPath 临时文件目录路径
         */
-        void setDirectory(const std::string_view& dirPath);
+        void setDirectory(const Magic::StringView& dirPath);
 
         /**
          * @brief 接收请求头函数

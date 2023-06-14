@@ -1,6 +1,7 @@
 #pragma once
 #if __cplusplus >= 201703L
 #include <string_view>
+namespace Magic{using StringView = std::string_view;}
 #else
 
 #include <string>
@@ -8,8 +9,8 @@
 #include <ostream>
 #include <exception>
 
-namespace std{
-    class string_view{
+namespace Magic{
+    class StringView{
     public:
         using value_type = char;
         using size_type = std::size_t;
@@ -18,17 +19,17 @@ namespace std{
         using const_reference = const char&;
         static constexpr size_type npos = size_type(-1);
     public:
-        constexpr string_view() noexcept :m_Data(nullptr),m_Size(0){}
+        constexpr StringView() noexcept :m_Data(nullptr),m_Size(0){}
 
-        string_view(const std::string& str) noexcept :m_Data(str.data()),m_Size(str.size()){}
+        StringView(const std::string& str) noexcept :m_Data(str.data()),m_Size(str.size()){}
 
-        constexpr string_view(const char* data,size_type size) noexcept :m_Data(data),m_Size(size){}
+        constexpr StringView(const char* data,size_type size) noexcept :m_Data(data),m_Size(size){}
 
-        string_view(const char* data) noexcept :m_Data(data),m_Size(std::char_traits<value_type>::length(data)){}
+        StringView(const char* data) noexcept :m_Data(data),m_Size(std::char_traits<value_type>::length(data)){}
 
-        constexpr string_view(const string_view&) noexcept = default;
+        constexpr StringView(const StringView&) noexcept = default;
 
-        string_view& operator=(const string_view&) noexcept = default;
+        StringView& operator=(const StringView&) noexcept = default;
 
         constexpr const_iterator end() const noexcept{
             return m_Data + m_Size;
@@ -62,17 +63,17 @@ namespace std{
             return m_Data;
         }
         constexpr const_reference at(size_type pos) const{
-            return pos >= m_Size ? throw std::out_of_range("string_view::at"),m_Data[0] : m_Data[pos];
+            return pos >= m_Size ? throw std::out_of_range("StringView::at"),m_Data[0] : m_Data[pos];
         }
 
     #if __cplusplus >= 201402L
         constexpr
     #endif
-        string_view substr(size_type pos,size_type n = npos) const{
+        StringView substr(size_type pos,size_type n = npos) const{
             if(pos > m_Size){
-                throw std::out_of_range("string_view::substr");
+                throw std::out_of_range("StringView::substr");
             }
-            return string_view(data() + pos,std::min(m_Size - pos,n));
+            return StringView(data() + pos,std::min(m_Size - pos,n));
         }
 
         constexpr const_reference operator[](size_type pos) const noexcept{
@@ -90,7 +91,7 @@ namespace std{
             return npos;
         }
 
-        size_type find(string_view sv,size_type pos = 0) const noexcept{
+        size_type find(StringView sv,size_type pos = 0) const noexcept{
             if (pos > m_Size){
                 return npos;
             }
@@ -112,7 +113,7 @@ namespace std{
             return npos;
         }
 
-        size_type rfind(string_view sv,size_type pos = npos) const noexcept{
+        size_type rfind(StringView sv,size_type pos = npos) const noexcept{
             if (m_Size < sv.size()){
                 return npos;
             }
@@ -132,10 +133,10 @@ namespace std{
         }
 
         size_type rfind(value_type c,size_type pos = npos) const noexcept{
-            return rfind(string_view(&c,1),pos);
+            return rfind(StringView(&c,1),pos);
         }
 
-        int compare(string_view x) const noexcept{
+        int compare(StringView x) const noexcept{
             const int cmp = std::char_traits<value_type>::compare(m_Data,x.data(),std::min(m_Size,x.size()));
             return cmp != 0 ? cmp : (m_Size == x.size() ? 0 : (m_Size < x.size() ? -1 : 1));
         }
@@ -144,19 +145,19 @@ namespace std{
         size_type m_Size;
     };
 
-    inline ostream& operator<<(ostream& os,const string_view& sv){
+    inline std::ostream& operator<<(std::ostream& os,const StringView& sv){
         os.write(sv.data(),sv.size());
         return os;
     }
 
-    inline bool operator==(const string_view& x,const string_view& y) noexcept{
+    inline bool operator==(const StringView& x,const StringView& y) noexcept{
         if(x.size() != y.size()){
             return false;
         }
         return x.compare(y) == 0;
     }
 
-    inline bool operator!=(const string_view& x,const string_view& y) noexcept{
+    inline bool operator!=(const StringView& x,const StringView& y) noexcept{
         if(x.size() != y.size()){
             return false;
         }

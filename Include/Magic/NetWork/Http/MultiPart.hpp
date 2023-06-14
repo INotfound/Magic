@@ -15,7 +15,7 @@ namespace Http{
 
         MultiPart();
 
-        explicit MultiPart(const std::string_view& boundary);
+        explicit MultiPart(const Magic::StringView& boundary);
 
         void reset();
 
@@ -29,9 +29,9 @@ namespace Http{
 
         size_t feed(const char* buffer,size_t len);
 
-        void setBoundary(const std::string_view& boundary);
+        void setBoundary(const Magic::StringView& boundary);
 
-        void setDirectory(const std::string_view& dirPath);
+        void setDirectory(const Magic::StringView& dirPath);
 
         const std::unordered_map<std::string,std::string>& getParamMap() const;
 

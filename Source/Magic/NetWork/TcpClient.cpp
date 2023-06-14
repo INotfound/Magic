@@ -3,7 +3,7 @@
 
 namespace Magic{
 namespace NetWork{
-    TcpClient::TcpClient(const std::string_view& ip,uint16_t port)
+    TcpClient::TcpClient(const Magic::StringView& ip,uint16_t port)
         :m_Port(port)
         ,m_IpAddress(ip.data(),ip.size()){
         m_Socket = std::make_shared<Socket>(1000,4096,m_IOService);

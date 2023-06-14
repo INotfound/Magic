@@ -20,7 +20,7 @@ namespace Http{
 
         action save_scheme
         {
-            this->setScheme(std::string_view(mark, fpc - mark));
+            this->setScheme(Magic::StringView(mark, fpc - mark));
             mark = nullptr;
         }
 
@@ -36,14 +36,14 @@ namespace Http{
         action save_userinfo
         {
             if(mark){
-                this->setUser(std::string_view(mark, fpc - mark));
+                this->setUser(Magic::StringView(mark, fpc - mark));
             }
             mark = nullptr;
         }
         action save_host
         {
             if (mark != nullptr){
-                this->setHost(std::string_view(mark, fpc - mark));
+                this->setHost(Magic::StringView(mark, fpc - mark));
             }
         }
 
@@ -76,7 +76,7 @@ namespace Http{
 
         action save_path
         {
-            this->setPath(std::string_view(mark, fpc - mark));
+            this->setPath(Magic::StringView(mark, fpc - mark));
             mark = nullptr;
         }
 
@@ -101,12 +101,12 @@ namespace Http{
 
         action save_query
         {
-            this->setQuery(std::string_view(mark, fpc - mark));
+            this->setQuery(Magic::StringView(mark, fpc - mark));
             mark = nullptr;
         }
         action save_fragment
         {
-            this->setFragment(std::string_view(mark, fpc - mark));
+            this->setFragment(Magic::StringView(mark, fpc - mark));
             mark = nullptr;
         }
 
@@ -127,7 +127,7 @@ namespace Http{
         main := URI_reference;
         write data;
     }%%
-    Uri::Uri(const std::string_view& uri)
+    Uri::Uri(const Magic::StringView& uri)
         :m_Error(false)
         ,m_Port(0){
         m_Error = !this->execute(uri);
@@ -151,50 +151,50 @@ namespace Http{
         return m_Port;
     }
 
-    std::string_view Uri::getUser() const{
+    Magic::StringView Uri::getUser() const{
         return m_User;
     }
-    std::string_view Uri::getHost() const{
+    Magic::StringView Uri::getHost() const{
         return m_Host;
     }
 
-    std::string_view Uri::getPath() const{
+    Magic::StringView Uri::getPath() const{
         static std::string s_default_path = "/";
         return m_Path.empty() ? s_default_path : m_Path;
     }
-    std::string_view Uri::getQuery() const{
+    Magic::StringView Uri::getQuery() const{
         return m_Query;
     }
-    std::string_view Uri::getScheme() const{
+    Magic::StringView Uri::getScheme() const{
         return m_Scheme;
     }
-    std::string_view Uri::getFragment() const{
+    Magic::StringView Uri::getFragment() const{
         return m_Fragment;
     }
 
     void Uri::setPort(uint32_t val){ 
         m_Port = val;
     }
-    void Uri::setHost(const std::string_view& val){
+    void Uri::setHost(const Magic::StringView& val){
         m_Host = std::string(val.data(),val.size());
     }
-    void Uri::setPath(const std::string_view& val){
+    void Uri::setPath(const Magic::StringView& val){
         m_Path = std::string(val.data(),val.size());
     }
-    void Uri::setUser(const std::string_view& val){
+    void Uri::setUser(const Magic::StringView& val){
         m_User = std::string(val.data(),val.size());
     }
-    void Uri::setQuery(const std::string_view& val){
+    void Uri::setQuery(const Magic::StringView& val){
         m_Query = std::string(val.data(),val.size());
     }
-    void Uri::setScheme(const std::string_view& val){
+    void Uri::setScheme(const Magic::StringView& val){
         m_Scheme = std::string(val.data(),val.size());
     }
-    void Uri::setFragment(const std::string_view& val){
+    void Uri::setFragment(const Magic::StringView& val){
         m_Fragment = std::string(val.data(),val.size());
     }
 
-    bool Uri::execute(const std::string_view& uri){
+    bool Uri::execute(const Magic::StringView& uri){
         int cs = 0;
         const char* mark = 0;
         %% write init;

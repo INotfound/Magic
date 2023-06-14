@@ -23,7 +23,7 @@ namespace Magic{
          * @param value 值名称
          * @param comment 注释
          */
-        ConfigValue(const std::string_view& name,const std::string_view& value,const std::string_view& comment = "");
+        ConfigValue(const Magic::StringView& name,const Magic::StringView& value,const Magic::StringView& comment = "");
 
         /**
          * @brief 是否是注释函数
@@ -35,19 +35,19 @@ namespace Magic{
          * @brief 获取配置项名称函数
          * @return: 返回配置项名称
          */
-        std::string_view getName() const;
+        Magic::StringView getName() const;
 
         /**
          * @brief 获取配置项值函数
          * @return: 返回配置项值
          */
-        std::string_view getValue() const;
+        Magic::StringView getValue() const;
 
         /**
          * @brief 获取配置项注释函数
          * @return: 返回配置项注释
          */
-        std::string_view getComment() const;
+        Magic::StringView getComment() const;
 
     private:
         bool m_IsComment;
@@ -77,7 +77,7 @@ namespace Magic{
          * @param content 配置文件正文
          * @param keyValue 配置文件键值对容器
          */
-        virtual void parse(const std::string_view& content,ConfigMap& keyValue) = 0;
+        virtual void parse(const Magic::StringView& content,ConfigMap& keyValue) = 0;
     };
 
     /**
@@ -100,7 +100,7 @@ namespace Magic{
          * @brief 获取配置文件路径函数
          * @return: 返回配置文件路径
          */
-        std::string_view getPath() const;
+        Magic::StringView getPath() const;
 
         /**
          * @brief 读取配置文件项函数
@@ -143,7 +143,7 @@ namespace Magic{
          * @return: 返回配置项值
          */
         template<typename T>
-        T at(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment = "");
+        T at(const Magic::StringView& defaultName,const T& defaultValue,const Magic::StringView& defaultComment = "");
 
         /**
          * @brief 修改配置项值函数
@@ -153,7 +153,7 @@ namespace Magic{
          * @return: 返回配置项值
          */
         template<typename T>
-        T revise(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment = "");
+        T revise(const Magic::StringView& defaultName,const T& defaultValue,const Magic::StringView& defaultComment = "");
 
     private:
         /**
@@ -174,11 +174,11 @@ namespace Magic{
 
         void write(std::ostream& os,ConfigMap& KeyValue) override;
 
-        void parse(const std::string_view& content,ConfigMap& keyValue) override;
+        void parse(const Magic::StringView& content,ConfigMap& keyValue) override;
     };
 
     template<typename T>
-    T Config::at(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment){
+    T Config::at(const Magic::StringView& defaultName,const T& defaultValue,const Magic::StringView& defaultComment){
         std::lock_guard<std::mutex> locker(m_Mutex);
         std::string key(defaultName.data(),defaultName.size());
         auto iter = m_ConfigMap.find(key);
@@ -196,7 +196,7 @@ namespace Magic{
     }
 
     template<typename T>
-    T Config::revise(const std::string_view& defaultName,const T& defaultValue,const std::string_view& defaultComment){
+    T Config::revise(const Magic::StringView& defaultName,const T& defaultValue,const Magic::StringView& defaultComment){
         std::lock_guard<std::mutex> locker(m_Mutex);
         m_IsChange = true;
         std::string key(defaultName.data(),defaultName.size());

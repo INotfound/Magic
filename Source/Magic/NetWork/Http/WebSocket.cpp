@@ -50,11 +50,11 @@ namespace Http{
         });
     }
 
-    void WebSocket::sendTextMessage(const std::string_view& message){
+    void WebSocket::sendTextMessage(const Magic::StringView& message){
         this->sendEncodePackage(0x1,message);
     }
 
-    void WebSocket::sendBinaryMessage(const std::string_view& message){
+    void WebSocket::sendBinaryMessage(const Magic::StringView& message){
         this->sendEncodePackage(0x2,message);
     }
 
@@ -132,7 +132,7 @@ namespace Http{
         });
     }
 
-    void WebSocket::sendEncodePackage(uint8_t opCode,const std::string_view& rawData){
+    void WebSocket::sendEncodePackage(uint8_t opCode,const Magic::StringView& rawData){
         char package[14] = {0};
         uint8_t packageLength = 0;
         uint64_t length = rawData.size();

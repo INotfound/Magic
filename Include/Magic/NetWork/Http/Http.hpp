@@ -181,49 +181,49 @@ namespace Http{
      * @param str 需要检查的字符串
      * @return: 返回True则是，返回False则是否
      */
-    bool IsUrlEncode(const std::string_view& str);
+    bool IsUrlEncode(const Magic::StringView& str);
 
     /**
      * @brief 将String转换成HttpMethod
      * @param str 需要转换的字符串
      * @return: 返回HttpMethod
      */
-    HttpMethod StringToHttpMethod(const std::string_view& str);
+    HttpMethod StringToHttpMethod(const Magic::StringView& str);
 
     /**
      * @brief 将HttpMethod转换成String
      * @param method 需要转换的HttpMethod
      * @return: 返回转换后的String
      */
-    std::string_view HttpMethodToString(const HttpMethod& method);
+    Magic::StringView HttpMethodToString(const HttpMethod& method);
 
     /**
      * @brief 将HttpStatus转换成String
      * @param status 需要转换的HttpStatus
      * @return: 返回转换后的String
      */
-    std::string_view HttpStatusToString(const HttpStatus& status);
+    Magic::StringView HttpStatusToString(const HttpStatus& status);
 
     /**
      * @brief 进行Url编码
      * @param value 需要编码的字符串
      * @return: 返回编码后的String
      */
-    std::string UrlEncode(const std::string_view& value) noexcept;
+    std::string UrlEncode(const Magic::StringView& value) noexcept;
 
     /**
      * @brief 进行Url解码
      * @param value 需要解码的字符串
      * @return: 返回解码的String
      */
-    std::string UrlDecode(const std::string_view& value) noexcept;
+    std::string UrlDecode(const Magic::StringView& value) noexcept;
 
     /**
      * @brief 将FileType转换成HttpContentType
      * @param fileName 需要转换的文件名称
      * @return: 返回ttpContentType
      */
-    HttpContentType FileTypeToHttpContentType(const std::string_view& fileName);
+    HttpContentType FileTypeToHttpContentType(const Magic::StringView& fileName);
     /**
      * @brief Http请求类
      */
@@ -283,40 +283,40 @@ namespace Http{
          * @brief 获取路径函数
          * @return: 返回路径字符串
          */
-        std::string_view getPath() const;
+        Magic::StringView getPath() const;
 
         /**
          * @brief 获取主体正文函数
          * @return: 返回主体正文字符串
          */
-        std::string_view getBody() const;
+        Magic::StringView getBody() const;
 
         /**
          * @brief 获取查询函数
          * @return: 返回查询字符串
          */
-        std::string_view getQuery() const;
+        Magic::StringView getQuery() const;
 
         /**
          * @brief 获取Cookie函数
          * @param key 指定的键
          * @return: 返回根据指定的键对应的值
          */
-        std::string_view getCookie(const std::string_view& key);
+        Magic::StringView getCookie(const Magic::StringView& key);
 
         /**
          * @brief 获取参数函数
          * @param key 指定的键
          * @return: 返回根据指定的键对应的值
          */
-        std::string_view getParam(const std::string_view& key) const;
+        Magic::StringView getParam(const Magic::StringView& key) const;
 
         /**
          * @brief 获取头参数函数
          * @param key 指定的键 不区分大小写
          * @return: 返回根据指定的键对应的值
          */
-        std::string_view getHeader(const std::string_view& key) const;
+        Magic::StringView getHeader(const Magic::StringView& key) const;
 
         /**
          * @brief 获取输出流函数
@@ -328,13 +328,13 @@ namespace Http{
          * @brief 删除参数函数
          * @param key 指定的键
          */
-        void delParam(const std::string_view& key);
+        void delParam(const Magic::StringView& key);
 
         /**
          * @brief 删除头参数函数
          * @param key 指定的键
          */
-        void delHeader(const std::string_view& key);
+        void delHeader(const Magic::StringView& key);
 
         /**
          * @brief 设置版本号函数
@@ -371,46 +371,46 @@ namespace Http{
          * @brief 设置主体正文函数
          * @param body 主体正文
          */
-        ObjectWrapper<HttpRequest> setBody(const std::string_view& body);
+        ObjectWrapper<HttpRequest> setBody(const Magic::StringView& body);
 
         /**
          * @brief 设置查询字符串函数
          * @param query 查询字符串
          */
-        ObjectWrapper<HttpRequest> setQuery(const std::string_view& query);
+        ObjectWrapper<HttpRequest> setQuery(const Magic::StringView& query);
 
         /**
          * @brief 设置Url路径函数
          * @param urlPath Url路径
          */
-        ObjectWrapper<HttpRequest> setPath(const std::string_view& urlPath);
+        ObjectWrapper<HttpRequest> setPath(const Magic::StringView& urlPath);
 
         /**
          * @brief 设置片段函数
          * @param fragment 片段
          */
-        ObjectWrapper<HttpRequest> setFragment(const std::string_view& fragment);
+        ObjectWrapper<HttpRequest> setFragment(const Magic::StringView& fragment);
 
         /**
          * @brief 设置参数函数
          * @param key 键
          * @param value 值
          */
-        ObjectWrapper<HttpRequest> setParam(const std::string_view& key,const std::string_view& value);
+        ObjectWrapper<HttpRequest> setParam(const Magic::StringView& key,const Magic::StringView& value);
 
         /**
          * @brief 设置Http头中的参数函数
          * @param key 键
          * @param value 值
          */
-        ObjectWrapper<HttpRequest> setHeader(const std::string_view& key,const std::string_view& value);
+        ObjectWrapper<HttpRequest> setHeader(const Magic::StringView& key,const Magic::StringView& value);
 
         /**
          * @brief 设置Cookie函数
          * @param key 键
          * @param value 值
          */
-        ObjectWrapper<HttpRequest> setCookie(const std::string_view& key,const std::string_view& value);
+        ObjectWrapper<HttpRequest> setCookie(const Magic::StringView& key,const Magic::StringView& value);
 
     private:
         bool m_KeepAlive;
@@ -492,7 +492,7 @@ namespace Http{
          * @brief 获取主体正文函数
          * @return: 返回主体正文
          */
-        std::string_view getBody() const;
+        Magic::StringView getBody() const;
 
         /**
          * @brief 获取切片总共长度函数
@@ -504,13 +504,13 @@ namespace Http{
          * @brief 获取响应解释函数
          * @return: 返回响应解释
          */
-        std::string_view getReason() const;
+        Magic::StringView getReason() const;
 
         /**
          * @brief 获取资源函数
          * @return: 返回资源路径
          */
-        std::string_view getResource() const;
+        Magic::StringView getResource() const;
 
         /**
          * @brief 获取正文类型
@@ -522,14 +522,14 @@ namespace Http{
          * @brief 删除Http头键值对函数
          * @param key 指定的键
          */
-        void delHeader(const std::string_view& key);
+        void delHeader(const Magic::StringView& key);
 
         /**
          * @brief 获取Http头键值对函数
          * @param key 指定的键
          * @return: 返回根据指定的键对应的值
          */
-        std::string_view getHeader(const std::string_view& key);
+        Magic::StringView getHeader(const Magic::StringView& key);
 
         /**
          * @brief 获取输出流函数
@@ -565,25 +565,25 @@ namespace Http{
          * @brief 设置主体正文函数
          * @param body 主体正文
          */
-        ObjectWrapper<HttpResponse> setBody(const std::string_view& body);
+        ObjectWrapper<HttpResponse> setBody(const Magic::StringView& body);
 
         /**
          * @brief 设置响应解释函数
          * @param reason 解释
          */
-        ObjectWrapper<HttpResponse> setReason(const std::string_view& reason);
+        ObjectWrapper<HttpResponse> setReason(const Magic::StringView& reason);
 
         /**
          * @brief 设置资源函数
          * @param filePath 资源路径
          */
-        ObjectWrapper<HttpResponse> setResource(const std::string_view& filePath);
+        ObjectWrapper<HttpResponse> setResource(const Magic::StringView& filePath);
 
         /**
          * @brief 设置正文类型函数
          * @param contentType 正文类型
          */
-        ObjectWrapper<HttpResponse> setContentType(const std::string_view& contentType);
+        ObjectWrapper<HttpResponse> setContentType(const Magic::StringView& contentType);
 
         /**
          * @brief 设置正文类型函数
@@ -604,7 +604,7 @@ namespace Http{
          * @param key 键
          * @param value 值
          */
-        ObjectWrapper<HttpResponse> setHeader(const std::string_view& key,const std::string_view& value);
+        ObjectWrapper<HttpResponse> setHeader(const Magic::StringView& key,const Magic::StringView& value);
 
         /**
          * @brief 设置Cookie函数
@@ -616,7 +616,7 @@ namespace Http{
          * @param httpOnly 是否HttpOnly
          * @param secure 是否Secure
          */
-        ObjectWrapper<HttpResponse> setCookie(const std::string_view& key,const std::string_view& val,std::time_t expired = 0,const std::string_view& path = "",const std::string_view& domain = "",bool httpOnly = true,bool secure = false);
+        ObjectWrapper<HttpResponse> setCookie(const Magic::StringView& key,const Magic::StringView& val,std::time_t expired = 0,const Magic::StringView& path = "",const Magic::StringView& domain = "",bool httpOnly = true,bool secure = false);
 
     private:
         bool m_KeepAlive;

@@ -12,35 +12,35 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    static const std::string_view g_MethodString[]{
+    static const Magic::StringView g_MethodString[]{
         #define XX(num,name,string) #name,
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
 
-    static const std::map<std::string_view,HttpMethod,CaseResponsiveLess> g_HttpMethod = {
+    static const std::map<Magic::StringView,HttpMethod,CaseResponsiveLess> g_HttpMethod = {
         #define XX(num,name,string) {#string,HttpMethod::name},
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
 
-    static const std::map<std::string_view,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
+    static const std::map<Magic::StringView,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
         #define XX(name,extName,desc){extName,HttpContentType::name},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    static const std::map<HttpContentType,std::string_view> g_HttpContentType = {
+    static const std::map<HttpContentType,Magic::StringView> g_HttpContentType = {
         #define XX(name,extName,desc){HttpContentType::name,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    bool IsUrlEncode(const std::string_view& str){
+    bool IsUrlEncode(const Magic::StringView& str){
         return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
     }
 
-    HttpMethod StringToHttpMethod(const std::string_view& str){
+    HttpMethod StringToHttpMethod(const Magic::StringView& str){
         auto iter = g_HttpMethod.find(str);
         if(iter != g_HttpMethod.end()){
             return iter->second;
@@ -48,27 +48,27 @@ namespace Http{
         return HttpMethod::INVALID_METHOD;
     }
 
-    std::string_view HttpMethodToString(const HttpMethod& method){
+    Magic::StringView HttpMethodToString(const HttpMethod& method){
         auto index = static_cast<uint64_t>(method);
         if(index >= (sizeof(g_MethodString) / sizeof(g_MethodString[0]))){
-            return std::string_view("<unknown>");
+            return Magic::StringView("<unknown>");
         }
         return g_MethodString[index];
     }
 
-    std::string_view HttpStatusToString(const HttpStatus& status){
+    Magic::StringView HttpStatusToString(const HttpStatus& status){
         switch(status){
         #define XX(code,name,desc)  \
             case HttpStatus::name : \
-                return std::string_view(#desc);
+                return Magic::StringView(#desc);
             HTTP_STATUS_MAP(XX)
         #undef XX
             default:
-                return std::string_view("<unknown>");
+                return Magic::StringView("<unknown>");
         }
     }
 
-    std::string UrlEncode(const std::string_view& value) noexcept{
+    std::string UrlEncode(const Magic::StringView& value) noexcept{
         static auto hex_chars = "0123456789ABCDEF";
 
         std::string result;
@@ -88,7 +88,7 @@ namespace Http{
 		return result;
 	}
 
-    std::string UrlDecode(const std::string_view& value) noexcept{
+    std::string UrlDecode(const Magic::StringView& value) noexcept{
         std::string result;
         result.reserve(value.size() / 3 + (value.size() % 3)); // Minimum size of result
 
@@ -108,10 +108,10 @@ namespace Http{
         return result;
     }
 
-    HttpContentType FileTypeToHttpContentType(const std::string_view& fileName){
+    HttpContentType FileTypeToHttpContentType(const Magic::StringView& fileName){
         auto pos = fileName.rfind('.');
-        if(pos != std::string_view::npos){
-            std::string_view sv = fileName.substr(pos + 1);
+        if(pos != Magic::StringView::npos){
+            Magic::StringView sv = fileName.substr(pos + 1);
             auto iter = g_HttpContent.find(sv);
             if(iter != g_HttpContent.end()){
                 return iter->second;
@@ -125,11 +125,11 @@ namespace Http{
     }
 
     template<typename Map>
-    inline void Parse(const std::string_view& str,Map& map,const std::string_view& flag){
+    inline void Parse(const Magic::StringView& str,Map& map,const Magic::StringView& flag){
         uint64_t pos = 0;
         do{
             uint64_t idx = 0;
-            std::string_view rawString = SubString(str,pos,flag);
+            Magic::StringView rawString = SubString(str,pos,flag);
             pos += static_cast<uint64_t>(rawString.size() + 1);
             if(IsUrlEncode(rawString)){
                 std::string decodeString = UrlDecode(rawString);
@@ -141,19 +141,19 @@ namespace Http{
                 idx = rawString.find('=');
                 if(idx == std::string::npos)
                     break;
-                std::string_view svKey = rawString.substr(0,idx);
-                std::string_view svValue = rawString.substr(idx + 1);
+                Magic::StringView svKey = rawString.substr(0,idx);
+                Magic::StringView svValue = rawString.substr(idx + 1);
                 map.emplace(std::string(svKey.data(),svKey.size()),std::string(svValue.data(),svValue.size()));
             }
         }while(pos <= str.size());
     }
 
     template<typename Map>
-    inline void ParseCookies(const std::string_view& str,Map& map,const std::string_view& flag){
+    inline void ParseCookies(const Magic::StringView& str,Map& map,const Magic::StringView& flag){
         uint64_t pos = 0;
         do{
             uint64_t key = 0;
-            std::string_view rawString = SubString(str,pos,flag);
+            Magic::StringView rawString = SubString(str,pos,flag);
             pos += static_cast<uint64_t>(rawString.size() + 1);
             if(IsUrlEncode(rawString)){
                 std::string decodeString = UrlDecode(rawString);
@@ -170,7 +170,7 @@ namespace Http{
         }while(pos <= str.size());
     }
 
-    inline std::string GenerateHtml(const std::string_view& status,const std::string_view& title){
+    inline std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title){
         std::stringstream html;
         html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
              << status
@@ -236,19 +236,19 @@ namespace Http{
         return m_ContentLength;
     }
 
-    std::string_view HttpRequest::getPath() const{
+    Magic::StringView HttpRequest::getPath() const{
         return m_UrlPath;
     }
 
-    std::string_view HttpRequest::getBody() const{
+    Magic::StringView HttpRequest::getBody() const{
         return m_Body;
     }
 
-    std::string_view HttpRequest::getQuery() const{
+    Magic::StringView HttpRequest::getQuery() const{
         return m_Query;
     }
 
-    std::string_view HttpRequest::getCookie(const std::string_view& key){
+    Magic::StringView HttpRequest::getCookie(const Magic::StringView& key){
         if(!m_Cookies.empty()){
             auto value = m_Cookies.find(std::string(key.data(),key.size()));
             if(value == m_Cookies.end()){
@@ -267,7 +267,7 @@ namespace Http{
         return value->second;
     }
 
-    std::string_view HttpRequest::getParam(const std::string_view& key) const{
+    Magic::StringView HttpRequest::getParam(const Magic::StringView& key) const{
         auto iter = m_Params.find(std::string(key.data(),key.size()));
         if(iter == m_Params.end()){
             return g_EmptyString;
@@ -275,7 +275,7 @@ namespace Http{
         return iter->second;
     }
 
-    std::string_view HttpRequest::getHeader(const std::string_view& key) const{
+    Magic::StringView HttpRequest::getHeader(const Magic::StringView& key) const{
         auto iter = m_Headers.find(std::string(key.data(),key.size()));
         if(iter == m_Headers.end()){
             return g_EmptyString;
@@ -283,11 +283,11 @@ namespace Http{
         return iter->second;
     }
 
-    void HttpRequest::delParam(const std::string_view& key){
+    void HttpRequest::delParam(const Magic::StringView& key){
         m_Params.erase(std::string(key.data(),key.size()));
     }
 
-    void HttpRequest::delHeader(const std::string_view& key){
+    void HttpRequest::delHeader(const Magic::StringView& key){
         m_Headers.erase(std::string(key.data(),key.size()));
     }
 
@@ -351,7 +351,7 @@ namespace Http{
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setBody(const std::string_view& body){
+    ObjectWrapper<HttpRequest> HttpRequest::setBody(const Magic::StringView& body){
         auto contentType = m_Headers.find("Content-Type");
         if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded")){
             Parse(body,m_Params,"&");
@@ -360,33 +360,33 @@ namespace Http{
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const std::string_view& query){
+    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const Magic::StringView& query){
         Parse(query,m_Params,"&");
         m_Query = std::string(query.data(),query.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setPath(const std::string_view& urlPath){
+    ObjectWrapper<HttpRequest> HttpRequest::setPath(const Magic::StringView& urlPath){
         m_UrlPath = std::string(urlPath.data(),urlPath.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const std::string_view& fragment){
+    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const Magic::StringView& fragment){
         m_Fragment = std::string(fragment.data(),fragment.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setParam(const std::string_view& key,const std::string_view& value){
+    ObjectWrapper<HttpRequest> HttpRequest::setParam(const Magic::StringView& key,const Magic::StringView& value){
         m_Params.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const std::string_view& key,const std::string_view& value){
+    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const Magic::StringView& key,const Magic::StringView& value){
         m_Headers.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const std::string_view& key,const std::string_view& value){
+    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const Magic::StringView& key,const Magic::StringView& value){
         m_Cookies.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
         return ObjectWrapper<HttpRequest>(this);
     }
@@ -453,7 +453,7 @@ namespace Http{
         return 0;
     }
 
-    std::string_view HttpResponse::getBody() const{
+    Magic::StringView HttpResponse::getBody() const{
         return m_Body;
     }
 
@@ -478,11 +478,11 @@ namespace Http{
         return 0;
     }
 
-    std::string_view HttpResponse::getReason() const{
+    Magic::StringView HttpResponse::getReason() const{
         return m_Reason;
     }
 
-    std::string_view HttpResponse::getResource() const{
+    Magic::StringView HttpResponse::getResource() const{
         return m_Resource;
     }
 
@@ -490,11 +490,11 @@ namespace Http{
         return m_ContentType;
     }
 
-    void HttpResponse::delHeader(const std::string_view& key){
+    void HttpResponse::delHeader(const Magic::StringView& key){
         m_Headers.erase(std::string(key.data(),key.size()));
     }
 
-    std::string_view HttpResponse::getHeader(const std::string_view& key){
+    Magic::StringView HttpResponse::getHeader(const Magic::StringView& key){
         auto iter = m_Headers.find(std::string(key.data(),key.size()));
         if(iter == m_Headers.end()){
             return g_EmptyString;
@@ -583,22 +583,22 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setBody(const std::string_view& body){
+    ObjectWrapper<HttpResponse> HttpResponse::setBody(const Magic::StringView& body){
         m_Body = std::string(body.data(),body.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setReason(const std::string_view& reason){
+    ObjectWrapper<HttpResponse> HttpResponse::setReason(const Magic::StringView& reason){
         m_Reason = std::string(reason.data(),reason.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setResource(const std::string_view& filePath){
+    ObjectWrapper<HttpResponse> HttpResponse::setResource(const Magic::StringView& filePath){
         m_Resource = std::string(filePath.data(),filePath.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const std::string_view& contentType){
+    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const Magic::StringView& contentType){
         m_Headers.emplace("Content-Type",std::string(contentType.data(),contentType.size()));
         return ObjectWrapper<HttpResponse>(this);
     }
@@ -620,12 +620,12 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const std::string_view& key,const std::string_view& value){
+    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const Magic::StringView& key,const Magic::StringView& value){
         m_Headers.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const std::string_view& key,const std::string_view& val,std::time_t expired,const std::string_view& path,const std::string_view& domain,bool httpOnly,bool secure){
+    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const Magic::StringView& key,const Magic::StringView& val,std::time_t expired,const Magic::StringView& path,const Magic::StringView& domain,bool httpOnly,bool secure){
         std::string result;
         result.append(key.data(),key.size());
         result.append("=");

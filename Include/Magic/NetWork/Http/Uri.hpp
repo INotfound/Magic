@@ -46,40 +46,40 @@ namespace Http{
      */
     class Uri:public Noncopyable{
     public:
-        explicit Uri(const std::string_view& uri);
+        explicit Uri(const Magic::StringView& uri);
 
         bool hasError() const;
 
         uint32_t getPort() const;
 
-        std::string_view getUser() const;
+        Magic::StringView getUser() const;
 
-        std::string_view getHost() const;
+        Magic::StringView getHost() const;
 
-        std::string_view getPath() const;
+        Magic::StringView getPath() const;
 
-        std::string_view getQuery() const;
+        Magic::StringView getQuery() const;
 
-        std::string_view getScheme() const;
+        Magic::StringView getScheme() const;
 
-        std::string_view getFragment() const;
+        Magic::StringView getFragment() const;
 
         void setPort(uint32_t val);
 
-        void setHost(const std::string_view& val);
+        void setHost(const Magic::StringView& val);
 
-        void setPath(const std::string_view& val);
+        void setPath(const Magic::StringView& val);
 
-        void setUser(const std::string_view& val);
+        void setUser(const Magic::StringView& val);
 
-        void setQuery(const std::string_view& val);
+        void setQuery(const Magic::StringView& val);
 
-        void setScheme(const std::string_view& val);
+        void setScheme(const Magic::StringView& val);
 
-        void setFragment(const std::string_view& val);
+        void setFragment(const Magic::StringView& val);
 
     private:
-        bool execute(const std::string_view& uri);
+        bool execute(const Magic::StringView& uri);
 
     private:
         bool m_Error;

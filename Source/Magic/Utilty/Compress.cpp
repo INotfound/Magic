@@ -13,7 +13,7 @@ namespace Magic{
     #define windowBits 15
     #define GZIP_ENCODING 16
 
-    bool GZipDecoder(const std::string_view& compressedData,std::string& data){
+    bool GZipDecoder(const Magic::StringView& compressedData,std::string& data){
         int ret;
         unsigned have;
         z_stream strm;
@@ -52,7 +52,7 @@ namespace Magic{
         return true;
     }
 
-    bool GZipEncoder(const std::string_view& data,std::string& compressedData){
+    bool GZipEncoder(const Magic::StringView& data,std::string& compressedData){
         unsigned char out[CHUNK];
         z_stream strm;
         strm.zalloc = Z_NULL;
@@ -80,7 +80,7 @@ namespace Magic{
     }
 #endif
 
-    bool BrotliDecoder(const std::string_view& compressedData,std::string& data){
+    bool BrotliDecoder(const Magic::StringView& compressedData,std::string& data){
         uint32_t bufferSize = 2048;
         BrotliDecoderResult result = BROTLI_DECODER_RESULT_ERROR;
         std::unique_ptr<uint8_t,void(*)(const uint8_t*)> buffer(new uint8_t[bufferSize],[](const uint8_t* pointer){delete []pointer;});
@@ -104,7 +104,7 @@ namespace Magic{
         return result == BROTLI_DECODER_RESULT_SUCCESS;
     }
 
-    bool BrotliEncoder(const std::string_view& data,std::string& compressedData){
+    bool BrotliEncoder(const Magic::StringView& data,std::string& compressedData){
         uint32_t bufferSize = 2048;
         std::unique_ptr<uint8_t,void(*)(const uint8_t*)> buffer(new uint8_t[bufferSize],[](const uint8_t* pointer){delete []pointer;});
         std::unique_ptr<BrotliEncoderState,void (*)(BrotliEncoderState*)> instance(BrotliEncoderCreateInstance(nullptr,nullptr,nullptr),[](BrotliEncoderState* pointer){

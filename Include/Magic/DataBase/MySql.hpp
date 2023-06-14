@@ -22,9 +22,9 @@ namespace DataBase{
 
         void printError();
 
-        bool execute(const std::string_view& sql);
+        bool execute(const Magic::StringView& sql);
 
-        bool connnetDB(const std::string_view& dataBase,const std::string_view& ip,const std::string_view& user,const std::string_view& password,uint16_t port);
+        bool connnetDB(const Magic::StringView& dataBase,const Magic::StringView& ip,const Magic::StringView& user,const Magic::StringView& password,uint16_t port);
 
     private:
         MYSQL m_MySql;
@@ -49,7 +49,7 @@ namespace DataBase{
 
         void bindNull(uint32_t index);
 
-        bool prepare(const std::string_view& sql);
+        bool prepare(const Magic::StringView& sql);
 
         void bind(uint32_t index,const float value);
 
@@ -73,9 +73,9 @@ namespace DataBase{
 
         void bindTime(uint32_t index,const std::time_t value);
 
-        void bind(uint32_t index,const std::string_view& value);
+        void bind(uint32_t index,const Magic::StringView& value);
 
-        void bindBlob(uint32_t index,const std::string_view& value);
+        void bindBlob(uint32_t index,const Magic::StringView& value);
 
         void bindBlob(uint32_t index,const void* value,uint64_t size);
 

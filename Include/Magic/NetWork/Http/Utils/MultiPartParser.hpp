@@ -40,7 +40,7 @@ public:
 
     MultiPartParser();
 
-    explicit MultiPartParser(const std::string_view& sv);
+    explicit MultiPartParser(const Magic::StringView& sv);
 
     ~MultiPartParser();
 
@@ -56,7 +56,7 @@ public:
 
     size_t feed(const char *buffer, size_t len);
 
-    void setBoundary(const std::string_view& sv);
+    void setBoundary(const Magic::StringView& sv);
 private:
 	void resetCallbacks();
 	

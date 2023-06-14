@@ -69,7 +69,7 @@ namespace Http{
         this->responseParser();
     }
 
-    void HttpSocket::setDirectory(const std::string_view& dirPath){
+    void HttpSocket::setDirectory(const Magic::StringView& dirPath){
         m_MultiPart->setDirectory(dirPath);
     }
 
@@ -88,7 +88,7 @@ namespace Http{
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
         if(httpResponse->hasResource()){
-            std::string_view filePath = httpResponse->getResource();
+            Magic::StringView filePath = httpResponse->getResource();
             m_FileStream.open(std::string(filePath.data(),filePath.size()),std::ios::in | std::ios::binary);
             if(IsFile(filePath) && m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
@@ -148,7 +148,7 @@ namespace Http{
                    ->setHeader("Sec-WebSocket-Key","SU5vdEZvdW5kCg==");
             this->sendRequest(request);
         }else{
-            std::string_view wsKey = request->getHeader("Sec-WebSocket-Key");
+            Magic::StringView wsKey = request->getHeader("Sec-WebSocket-Key");
             if(wsKey.empty()){
                 throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters");
             }
@@ -221,7 +221,7 @@ namespace Http{
             m_CurrentLength = 0;
             auto& request = m_RequestParser->getData();
             m_TotalLength = m_RequestParser->getContentLength();
-            std::string_view value = request->getHeader("Content-Type");
+            Magic::StringView value = request->getHeader("Content-Type");
             auto pos = value.find("boundary=");
             if(pos != std::string::npos){
                 pos += 9;
@@ -237,7 +237,7 @@ namespace Http{
                     m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
                 #endif
                         auto& request = m_RequestParser->getData();
-                        request->setBody(std::string_view(data.data(),data.size()));
+                        request->setBody(Magic::StringView(data.data(),data.size()));
                         data.clear();
                         this->handleRequest();
                     });
@@ -277,7 +277,7 @@ namespace Http{
                 m_Socket->recv(contentLength - data.size(),[this,self](Socket::StreamBuffer& data){
             #endif
                     auto& response = m_ResponseParser->getData();
-                    response->setBody(std::string_view(data.data(),data.size()));
+                    response->setBody(Magic::StringView(data.data(),data.size()));
                     data.clear();
                     this->handleResponse();
                 });

@@ -62,7 +62,7 @@ namespace NetWork{
         return m_SslStream;
     }
 
-    void Socket::enableSsl(const std::string_view& keyPath,const std::string_view& certPath){
+    void Socket::enableSsl(const Magic::StringView& keyPath,const Magic::StringView& certPath){
         asio::ssl::context sslContext(asio::ssl::context::sslv23);
         if(!keyPath.empty() && !certPath.empty()){
             sslContext.set_options(asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use | asio::ssl::context::default_workarounds);

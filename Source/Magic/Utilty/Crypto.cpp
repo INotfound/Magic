@@ -35,7 +35,7 @@ namespace Magic{
         }
     }
 
-    std::string MD5(const std::string_view& str){
+    std::string MD5(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
@@ -51,7 +51,7 @@ namespace Magic{
         return std::string(reinterpret_cast<char*>(digest),MD5_DIGEST_LENGTH);
     }
 
-    std::string SHA1(const std::string_view& str){
+    std::string SHA1(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
@@ -67,7 +67,7 @@ namespace Magic{
         return std::string(reinterpret_cast<char*>(digest),SHA_DIGEST_LENGTH);
     }
 
-    std::string StringToHexMD5(const std::string_view& str){
+    std::string StringToHexMD5(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
@@ -85,7 +85,7 @@ namespace Magic{
         return std::string(hexBuffer,32);
     }
 
-    std::string StringToHexSHA1(const std::string_view& str){
+    std::string StringToHexSHA1(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
@@ -103,7 +103,7 @@ namespace Magic{
         return std::string(hexBuffer,41);
     }
 
-    std::string Base64Decode(const std::string_view& src){
+    std::string Base64Decode(const Magic::StringView& src){
         std::string result;
         result.resize(src.size() * 3 / 4);
         char* writeBuf = &result[0];
@@ -164,7 +164,7 @@ namespace Magic{
         return result;
     }
 
-    std::string Base64Encode(const std::string_view& src){
+    std::string Base64Encode(const Magic::StringView& src){
         std::string ret;
         uint64_t len = src.size();
         const char* data = src.data();
@@ -201,7 +201,7 @@ namespace Magic{
         return ret;
     }
 
-    std::string FileToHexMD5String(const std::string_view& filePath){
+    std::string FileToHexMD5String(const Magic::StringView& filePath){
         if(filePath.empty()){
             return std::string();
         }

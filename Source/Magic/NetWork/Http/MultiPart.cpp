@@ -11,7 +11,7 @@ namespace Http{
         setParserCallBacks();
     }
 
-    MultiPart::MultiPart(const std::string_view& boundary)
+    MultiPart::MultiPart(const Magic::StringView& boundary)
         :m_Boundary(boundary.data(),boundary.size())
         ,m_Parser(boundary){
         setParserCallBacks();
@@ -48,12 +48,12 @@ namespace Http{
         return m_Parser.feed(buffer,len);
     }
 
-    void MultiPart::setBoundary(const std::string_view& boundary){
+    void MultiPart::setBoundary(const Magic::StringView& boundary){
         m_Boundary = std::string(boundary.data(),boundary.size());
         m_Parser.setBoundary(boundary);
     }
 
-    void MultiPart::setDirectory(const std::string_view& dirPath){
+    void MultiPart::setDirectory(const Magic::StringView& dirPath){
         m_Directory = std::string(dirPath.data(),dirPath.size());
     }
 

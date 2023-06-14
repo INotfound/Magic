@@ -12,7 +12,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
 
-    std::string GenerateHtml(const std::string_view& status,const std::string_view& title,const std::string_view& message){
+    std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title,const Magic::StringView& message){
         std::stringstream html;
         html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
              << status
@@ -28,7 +28,7 @@ namespace Http{
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
         std::lock_guard<std::mutex> locker(m_Mutex);
-        std::string_view httpPath = httpSocket->getRequest()->getPath();
+        Magic::StringView httpPath = httpSocket->getRequest()->getPath();
         try{
             auto exactlyIter = m_NormalRoutes.find(std::string(httpPath.data(),httpPath.size()));
             auto exactlyEnd = m_NormalRoutes.end();

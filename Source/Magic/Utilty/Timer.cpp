@@ -13,7 +13,7 @@ namespace Magic{
         m_Time->cancel();
     }
 
-    Timer::Timer(const std::string_view& name,uint32_t tickMs,std::function<void()> callBack)
+    Timer::Timer(const Magic::StringView& name,uint32_t tickMs,std::function<void()> callBack)
         :m_Name(name.data(),name.size())
         ,m_MilliSeconds(tickMs)
         ,m_CallBack(std::move(callBack))

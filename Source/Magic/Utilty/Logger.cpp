@@ -29,7 +29,7 @@ namespace Magic{
         return "<(Error)>";
     }
 
-    LogEvent::LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t threadId,const std::string_view& file,const std::string_view& logName,const std::string_view& threadName)
+    LogEvent::LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t threadId,const Magic::StringView& file,const Magic::StringView& logName,const Magic::StringView& threadName)
         :m_Line(line)
         ,m_Time(time)
         ,m_Elapse(elapse)
@@ -59,15 +59,15 @@ namespace Magic{
         return m_StringStream.str();
     }
 
-    std::string_view LogEvent::getFile() const{
+    Magic::StringView LogEvent::getFile() const{
         return m_File;
     }
 
-    std::string_view LogEvent::getLogName() const{
+    Magic::StringView LogEvent::getLogName() const{
         return m_LogName;
     }
 
-    std::string_view LogEvent::getThreadName() const{
+    Magic::StringView LogEvent::getThreadName() const{
         return m_ThreadName;
     }
 
@@ -122,7 +122,7 @@ namespace Magic{
 
     class DateTimeFormatItem:public ILogFormatItem{
     public:
-        explicit DateTimeFormatItem(const std::string_view& formatString = "%Y:%m:%d %H:%M:%S")
+        explicit DateTimeFormatItem(const Magic::StringView& formatString = "%Y:%m:%d %H:%M:%S")
             :m_FormatString(formatString.data(),formatString.size()){
             if(this->m_FormatString.empty()){
                 this->m_FormatString.append("%Y:%m:%d %H:%M:%S");
@@ -141,7 +141,7 @@ namespace Magic{
     class FilePathFormatItem:public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
-            std::string_view filePath = event->getFile();
+            Magic::StringView filePath = event->getFile();
             std::size_t pathPos = filePath.rfind('/');
             if(pathPos == std::string::npos){
                 pathPos = filePath.rfind('\\');
@@ -176,7 +176,7 @@ namespace Magic{
 
     class StringFormatItem:public ILogFormatItem{
     public:
-        explicit StringFormatItem(const std::string_view& str)
+        explicit StringFormatItem(const Magic::StringView& str)
             :m_String(str.data(),str.size()){
         }
 
@@ -189,14 +189,14 @@ namespace Magic{
     };
     //###############################*END*##################################
 
-    LogFormatter::LogFormatter(const std::string_view& pattern){
+    LogFormatter::LogFormatter(const Magic::StringView& pattern){
         //cmd fmt flag
         std::string normalString;
         std::vector<std::tuple<std::string,std::string,uint32_t>> vec;
         uint64_t length = pattern.size();
         for(uint32_t i = 0;i < length;i++){
-            std::string_view cmd;
-            std::string_view fmt;
+            Magic::StringView cmd;
+            Magic::StringView fmt;
             if(pattern.at(i) != '%'){
                 normalString.append(1,pattern.at(i));
                 continue;
@@ -254,11 +254,11 @@ namespace Magic{
             normalString.clear();
         }
 
-        static std::map<std::string,std::function<Safe<ILogFormatItem>(const std::string_view&)>> formatItem{
+        static std::map<std::string,std::function<Safe<ILogFormatItem>(const Magic::StringView&)>> formatItem{
         #define Item(str,type) \
-           {#str,[](const std::string_view&){ return Safe<ILogFormatItem>(new (type)); }}
+           {#str,[](const Magic::StringView&){ return Safe<ILogFormatItem>(new (type)); }}
         #define ItemEx(str,type) \
-           {#str,[](const std::string_view& fmt){ return Safe<ILogFormatItem>(new type(fmt)); }}
+           {#str,[](const Magic::StringView& fmt){ return Safe<ILogFormatItem>(new type(fmt)); }}
             Item(T,TabFormatItem),                //T:Tab
             Item(l,LineFormatItem),               //l:行数
             Item(p,LevelFormatItem),              //p:级别
@@ -317,11 +317,11 @@ namespace Magic{
         return this->m_Level;
     }
 
-    std::string_view Logger::getLogName() const{
+    Magic::StringView Logger::getLogName() const{
         return this->m_LogName;
     }
 
-    void Logger::setFormatter(const std::string_view& pattern){
+    void Logger::setFormatter(const Magic::StringView& pattern){
         std::lock_guard<std::mutex> locker(m_Mutex);
         this->m_Formatter = std::string(pattern.data(),pattern.size());
     }

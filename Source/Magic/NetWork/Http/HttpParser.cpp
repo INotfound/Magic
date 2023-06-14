@@ -17,19 +17,19 @@ namespace Http{
 
     void OnRequestPath(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setPath(std::string_view(at,length));
+        parser->getData()->setPath(Magic::StringView(at,length));
     }
 
     void OnRequestQuery(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setQuery(std::string_view(at,length));
+        parser->getData()->setQuery(Magic::StringView(at,length));
     }
 
     void OnRequestMethod(void* data,const char* at,size_t length){
         char buffer[126] = {0};
         auto* parser = static_cast<HttpRequestParser*>(data);
         std::memcpy(buffer,at,std::min(static_cast<size_t>(125),length));
-        HttpMethod method = StringToHttpMethod(std::string_view(buffer,length));
+        HttpMethod method = StringToHttpMethod(Magic::StringView(buffer,length));
         if(method == HttpMethod::INVALID_METHOD){
             parser->setError(true);
             return;
@@ -54,7 +54,7 @@ namespace Http{
 
     void OnRequestFragment(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpRequestParser*>(data);
-        parser->getData()->setFragment(std::string_view(at,length));
+        parser->getData()->setFragment(Magic::StringView(at,length));
     }
 
     void OnRequestHeaderDone(void* /*data*/,const char* /*at*/,size_t /*length*/){
@@ -68,7 +68,7 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        parser->getData()->setHeader(std::string_view(field,flen),std::string_view(value,vlen));
+        parser->getData()->setHeader(Magic::StringView(field,flen),Magic::StringView(value,vlen));
     }
 
     HttpRequestParser::HttpRequestParser()
@@ -108,7 +108,7 @@ namespace Http{
     }
 
     uint64_t HttpRequestParser::getContentLength(){
-        std::string_view length = m_Data->getHeader("Content-Length");
+        Magic::StringView length = m_Data->getHeader("Content-Length");
         if(length.empty()){
             m_Data->setContentLength(0);
         }else{
@@ -133,7 +133,7 @@ namespace Http{
 
     void OnResponseReason(void* data,const char* at,size_t length){
         auto* parser = static_cast<HttpResponseParser*>(data);
-        parser->getData()->setReason(std::string_view(at,length));
+        parser->getData()->setReason(Magic::StringView(at,length));
     }
 
     void OnResponseStatus(void* data,const char* at,size_t /*length*/){
@@ -175,7 +175,7 @@ namespace Http{
             parser->setError(true);
             return;
         }
-        parser->getData()->setHeader(std::string_view(field,flen),std::string_view(value,vlen));
+        parser->getData()->setHeader(Magic::StringView(field,flen),Magic::StringView(value,vlen));
     }
 
     HttpResponseParser::HttpResponseParser()
@@ -212,7 +212,7 @@ namespace Http{
     }
 
     uint32_t HttpResponseParser::getContentLength(){
-        std::string_view length = m_Data->getHeader("Content-Length");
+        Magic::StringView length = m_Data->getHeader("Content-Length");
         if(length.empty()){
             m_Data->setContentLength(0);
         }else{

@@ -13,7 +13,7 @@
 namespace Magic{
     class Failure:public std::runtime_error{
     public:
-        explicit Failure(const std::string_view& error)
+        explicit Failure(const Magic::StringView& error)
             :std::runtime_error(error.data()){
         }
     };

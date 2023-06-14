@@ -46,7 +46,7 @@ public:
     void websocket(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         g_webSocket = httpSocket->upgradeWebSocket(httpSocket->getRequest(),httpSocket->getResponse());
         g_webSocket->sendTextMessage("xxxxxx");
-        g_webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const std::string_view& msg){
+        g_webSocket->recvTextMessage([](const Safe<WebSocket>& socket,const Magic::StringView& msg){
             MAGIC_DEBUG() << msg;
             socket->sendTextMessage(msg);
         });
@@ -187,7 +187,7 @@ void printff(const std::string& str){
     std::cout << str << std::endl;
 }
 
-void pprintf(const std::string_view& view){
+void pprintf(const Magic::StringView& view){
     printff(view.data());
 }
 

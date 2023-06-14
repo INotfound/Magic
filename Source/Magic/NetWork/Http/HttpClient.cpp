@@ -12,7 +12,7 @@ namespace NetWork{
 namespace Http{
     HttpClient::~HttpClient() = default;
 
-    HttpClient::HttpClient(const std::string_view& url,uint64_t timeOutMs)
+    HttpClient::HttpClient(const Magic::StringView& url,uint64_t timeOutMs)
         :m_Url(url.data(),url.size())
         ,m_Death(false)
         ,m_Finish(false){
@@ -44,10 +44,10 @@ namespace Http{
         }
 
         uint16_t port = uri.getPort();
-        std::string_view host = uri.getHost();
-        std::string_view path = uri.getPath();
-        std::string_view query = uri.getQuery();
-        std::string_view fragment = uri.getFragment();
+        Magic::StringView host = uri.getHost();
+        Magic::StringView path = uri.getPath();
+        Magic::StringView query = uri.getQuery();
+        Magic::StringView fragment = uri.getFragment();
 
         if(!path.empty())
             request->setPath(path);

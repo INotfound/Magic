@@ -10,7 +10,7 @@ namespace Magic{
      * @param data - The Resulting Uncompressed Data (May Contain Binary Data)
      * @return - true On Success, false On Failure
      */
-    bool GZipDecoder(const std::string_view& compressedData,std::string& data);
+    bool GZipDecoder(const Magic::StringView& compressedData,std::string& data);
 
     /**
      * @brief GZip Compression
@@ -19,7 +19,7 @@ namespace Magic{
      * @param level - The Gzip Compress Level -1 = Default, 0 = No Compression, 1= Worst/Fastest Compression, 9 = Best/Slowest Compression
      * @return - true On Success, false On Failure
      */
-    bool GZipEncoder(const std::string_view& data,std::string& compressedData);
+    bool GZipEncoder(const Magic::StringView& data,std::string& compressedData);
 #endif
     /**
      * @brief Brotli Decompression
@@ -27,12 +27,12 @@ namespace Magic{
      * @param data - The Resulting Uncompressed Data (May Contain Binary Data)
      * @return - true On Success, false On Failure
      */
-    bool BrotliDecoder(const std::string_view& compressedData,std::string& data);
+    bool BrotliDecoder(const Magic::StringView& compressedData,std::string& data);
     /**
      * @brief Brotli Compression
      * @param data - The Data To Compress
      * @param compressedData - The Resulting Brotli Compressed Data
      * @return - true On Success, false On Failure
      */
-    bool BrotliEncoder(const std::string_view& data,std::string& compressedData);
+    bool BrotliEncoder(const Magic::StringView& data,std::string& compressedData);
 }

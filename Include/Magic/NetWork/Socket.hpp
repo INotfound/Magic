@@ -84,7 +84,7 @@ namespace NetWork{
          * @param certPath 证书路径
          * @note 编译环境中存在 SSL 库才会有该函数
          */
-        void enableSsl(const std::string_view& keyPath = "",const std::string_view& certPath = "");
+        void enableSsl(const Magic::StringView& keyPath = "",const Magic::StringView& certPath = "");
     #endif
         /**
          * @brief 接收数据函数
