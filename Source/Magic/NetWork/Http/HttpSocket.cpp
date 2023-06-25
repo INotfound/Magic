@@ -73,7 +73,7 @@ namespace Http{
         m_MultiPart->setDirectory(dirPath);
     }
 
-    void HttpSocket::sendRequest(const Safe<HttpRequest>& httpRequest){
+    void HttpSocket::sendRequest(HttpRequest& httpRequest){
         if(!m_Socket)
             return;
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
@@ -82,32 +82,32 @@ namespace Http{
         m_Socket->send(streamBuffer);
     }
 
-    void HttpSocket::sendResponse(const Safe<HttpResponse>& httpResponse){
+    void HttpSocket::sendResponse(HttpResponse& httpResponse){
         if(!m_Socket)
             return;
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
-        if(httpResponse->hasResource()){
-            Magic::StringView filePath = httpResponse->getResource();
+        if(httpResponse.hasResource()){
+            Magic::StringView filePath = httpResponse.getResource();
             m_FileStream.open(std::string(filePath.data(),filePath.size()),std::ios::in | std::ios::binary);
             if(IsFile(filePath) && m_FileStream.is_open()){
                 m_CurrentTransferLength = 0;
                 m_FileStream.seekg(0,std::ios::end);
                 uint64_t totalLength = m_FileStream.tellg();
-                httpResponse->setContentType(Http::FileTypeToHttpContentType(filePath));
+                httpResponse.setContentType(Http::FileTypeToHttpContentType(filePath));
                 m_StreamBuffer.reset(new char[m_StreamBufferSize],std::default_delete<char[]>());
-                if(httpResponse->isRange()){
-                    auto rangeStop = httpResponse->getRangeStop();
-                    auto rangeStart = httpResponse->getRangeStart();
+                if(httpResponse.isRange()){
+                    auto rangeStop = httpResponse.getRangeStop();
+                    auto rangeStart = httpResponse.getRangeStart();
                     m_FileStream.seekg(rangeStart,std::ios::beg);
-                    httpResponse->setStatus(HttpStatus::PARTIAL_CONTENT);
+                    httpResponse.setStatus(HttpStatus::PARTIAL_CONTENT);
                     if(rangeStop == 0){
                         m_TotalTransferLength = (totalLength - rangeStart);
                     }else{
                         m_TotalTransferLength = (rangeStop - rangeStart) + 1;
                     }
-                    httpResponse->setContentLength(m_TotalTransferLength);
-                    httpResponse->setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
+                    httpResponse.setContentLength(m_TotalTransferLength);
+                    httpResponse.setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
                     /// Send Response
                     stream << httpResponse;
                     m_Socket->send(streamBuffer);
@@ -115,22 +115,22 @@ namespace Http{
                 }else{
                     m_FileStream.seekg(0,std::ios::beg);
                     m_TotalTransferLength = totalLength;
-                    httpResponse->setStatus(HttpStatus::OK);
-                    httpResponse->setContentLength(m_TotalTransferLength);
-                    if(httpResponse->getContentType() < HttpContentType::APPLICATION_OCTET_STREAM){
-                        httpResponse->setBody(std::string(std::istreambuf_iterator<char>(m_FileStream),std::istreambuf_iterator<char>()));
+                    httpResponse.setStatus(HttpStatus::OK);
+                    httpResponse.setContentLength(m_TotalTransferLength);
+                    if(httpResponse.getContentType() < HttpContentType::APPLICATION_OCTET_STREAM){
+                        httpResponse.setBody(std::string(std::istreambuf_iterator<char>(m_FileStream),std::istreambuf_iterator<char>()));
                         stream << httpResponse;
                         m_FileStream.close();
                         m_Socket->send(streamBuffer);
                     }else{
-                        httpResponse->setHeader("Accept-Ranges","bytes");
+                        httpResponse.setHeader("Accept-Ranges","bytes");
                         stream << httpResponse;
                         m_Socket->send(streamBuffer);
                         this->transferFileStream();
                     }
                 }
             }else{
-                httpResponse->setStatus(HttpStatus::NOT_FOUND);
+                httpResponse.setStatus(HttpStatus::NOT_FOUND);
                 stream << httpResponse;
                 m_Socket->send(streamBuffer);
             }
@@ -138,6 +138,14 @@ namespace Http{
             stream << httpResponse;
             m_Socket->send(streamBuffer);
         }
+    }
+
+    void HttpSocket::sendRequest(const Safe<HttpRequest>& httpRequest){
+        this->sendRequest(*httpRequest);
+    }
+
+    void HttpSocket::sendResponse(const Safe<HttpResponse>& httpResponse){
+        this->sendResponse(*httpResponse);
     }
 
     const Safe<WebSocket>& HttpSocket::upgradeWebSocket(const Safe<HttpRequest>& request,const Safe<HttpResponse>& response,bool mask){

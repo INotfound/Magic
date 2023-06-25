@@ -631,6 +631,14 @@ namespace Http{
         std::vector<std::string> m_Cookies;
     };
 
+    inline void operator<<(std::ostream& os,HttpRequest& request){
+        request.toStream(os);
+    }
+
+    inline void operator<<(std::ostream& os,HttpResponse& response){
+        response.toStream(os);
+    }
+
     inline void operator<<(std::ostream& os,const Safe<HttpRequest>& request){
         request->toStream(os);
     }

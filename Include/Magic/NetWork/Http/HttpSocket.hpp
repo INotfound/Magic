@@ -73,6 +73,18 @@ namespace Http{
          * @brief 接收请求头函数
          * @param httpRequest 请求
          */
+        void sendRequest(HttpRequest& httpRequest);
+
+        /**
+         * @brief 发送响应函数
+         * @param httpResponse 响应
+         */
+        void sendResponse(HttpResponse& httpResponse);
+
+        /**
+         * @brief 接收请求头函数
+         * @param httpRequest 请求
+         */
         void sendRequest(const Safe<HttpRequest>& httpRequest);
 
         /**
@@ -141,11 +153,19 @@ namespace Http{
     };
 
     inline void operator<<(const Safe<HttpSocket>& socket,const Safe<HttpRequest>& request){
-        socket->sendRequest(request);
+        socket->sendRequest(*request);
     }
 
     inline void operator<<(const Safe<HttpSocket>& socket,const Safe<HttpResponse>& response){
-        socket->sendResponse(response);
+        socket->sendResponse(*response);
+    }
+
+    inline void operator<<(const Safe<HttpSocket>& socket,const ObjectWrapper<HttpRequest>& request){
+        socket->sendRequest(*request);
+    }
+
+    inline void operator<<(const Safe<HttpSocket>& socket,const ObjectWrapper<HttpResponse>& response){
+        socket->sendResponse(*response);
     }
 }
 }
