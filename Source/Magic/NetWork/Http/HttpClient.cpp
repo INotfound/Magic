@@ -1,7 +1,9 @@
 /*
- * @Author: INotFound
- * @Date: 2022-07-30 22:11:54
- * @LastEditTime: 2022-07-30 23:17:50
+ ******************************************************************************
+ * @Author         : INotfound
+ * @File           : HttpClient.cpp
+ * @Date           : 2023-07-03 18:32
+ ******************************************************************************
  */
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/NetWork/IoPool.hpp"

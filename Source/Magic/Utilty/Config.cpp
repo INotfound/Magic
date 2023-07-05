@@ -1,7 +1,9 @@
 /*
- * @Author: INotFound
- * @Date: 2020-03-04 23:46:59
- * @LastEditTime: 2021-02-01 22:29:07
+ ******************************************************************************
+ * @Author         : INotfound
+ * @File           : Config.cpp
+ * @Date           : 2023-07-03 18:33
+ ******************************************************************************
  */
 #include "Magic/Utilty/Config.hpp"
 #include "Magic/Utilty/Logger.hpp"

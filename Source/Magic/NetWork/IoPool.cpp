@@ -1,7 +1,9 @@
 /*
- * @Author: INotFound
- * @Date: 2020-03-04 23:43:46
- * @LastEditTime: 2020-09-30 21:19:07
+ ******************************************************************************
+ * @Author         : INotfound
+ * @File           : IoPool.cpp
+ * @Date           : 2023-07-03 18:33
+ ******************************************************************************
  */
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/NetWork/IoPool.hpp"

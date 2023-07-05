@@ -1,7 +1,9 @@
 /*
- * @Author: INotFound
- * @Date: 2020-03-13 22:22:28
- * @LastEditTime: 2020-09-30 21:18:59
+ ******************************************************************************
+ * @Author         : INotfound
+ * @File           : Socket.cpp
+ * @Date           : 2023-07-03 18:33
+ ******************************************************************************
  */
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/NetWork/Socket.hpp"

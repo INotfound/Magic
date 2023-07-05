@@ -1,3 +1,10 @@
+/*
+ ******************************************************************************
+ * @Author         : INotfound
+ * @File           : MySql.cpp
+ * @Date           : 2023-07-03 18:32
+ ******************************************************************************
+ */
 #include <cstring>
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/DataBase/MySql.hpp"

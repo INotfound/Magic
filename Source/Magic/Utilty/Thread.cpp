@@ -1,7 +1,9 @@
 /*
- * @Author: INotFound
- * @Date: 2020-03-12 02:32:11
- * @LastEditTime: 2021-02-01 22:25:58
+ ******************************************************************************
+ * @Author         : INotfound
+ * @File           : Thread.cpp
+ * @Date           : 2023-07-03 18:34
+ ******************************************************************************
  */
 #include "Magic/Core/Core.hpp"
 #include "Magic/Utilty/Logger.hpp"
