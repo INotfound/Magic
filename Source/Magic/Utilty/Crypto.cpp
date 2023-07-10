@@ -8,19 +8,12 @@
 #include <cstdio>
 #include <cstring>
 #ifdef OPENSSL
-#include <openssl/md5.h>
+#include <openssl/evp.h>
 #include <openssl/sha.h>
+#include <openssl/md5.h>
 #endif
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/Utilty/Crypto.hpp"
-
-#ifndef SHA_DIGEST_LENGTH
-    #define SHA_DIGEST_LENGTH 1
-#endif
-
-#ifndef MD5_DIGEST_LENGTH
-    #define MD5_DIGEST_LENGTH 1
-#endif
 
 namespace Magic{
     void HexStringFromData(const void* data,uint32_t len,char* outPut){
@@ -41,68 +34,88 @@ namespace Magic{
         if(str.empty()){
             return std::string();
         }
-        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
     #ifdef OPENSSL
-        MD5_CTX m_Md5;
-        MD5_Init(&m_Md5);
-        MD5_Update(&m_Md5,str.data(),str.size());
-        MD5_Final(digest,&m_Md5);
+        uint32_t len = 0;
+        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
+        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
+            if(pointer != nullptr){
+                EVP_MD_CTX_free(pointer);
+            }
+        });
+        EVP_DigestInit_ex(evpCtx.get(),EVP_md5(),nullptr);
+        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
+        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
+        return std::string(reinterpret_cast<char*>(digest),len);
     #else
         throw Failure("Requires SSL Support");
     #endif
-        return std::string(reinterpret_cast<char*>(digest),MD5_DIGEST_LENGTH);
     }
 
     std::string SHA1(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
-        uint8_t digest[SHA_DIGEST_LENGTH] = {0};
     #ifdef OPENSSL
-        SHA_CTX m_Sha1;
-        SHA1_Init(&m_Sha1);
-        SHA1_Update(&m_Sha1,str.data(),str.size());
-        SHA1_Final(digest,&m_Sha1);
+        uint32_t len = 0;
+        uint8_t digest[SHA_DIGEST_LENGTH] = {0};
+        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
+            if(pointer != nullptr){
+                EVP_MD_CTX_free(pointer);
+            }
+        });
+        EVP_DigestInit_ex(evpCtx.get(),EVP_sha1(),nullptr);
+        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
+        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
+        return std::string(reinterpret_cast<char*>(digest),len);
     #else
         throw Failure("Requires SSL Support");
     #endif
-        return std::string(reinterpret_cast<char*>(digest),SHA_DIGEST_LENGTH);
     }
 
     std::string StringToHexMD5(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
-        char hexBuffer[32] = {0};
     #ifdef OPENSSL
-        MD5_CTX m_Md5;
-        MD5_Init(&m_Md5);
+        uint32_t len = 0;
         uint8_t digest[MD5_DIGEST_LENGTH] = {0};
-        MD5_Update(&m_Md5,str.data(),str.size());
-        MD5_Final(digest,&m_Md5);
-        HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
+        char hexBuffer[MD5_DIGEST_LENGTH*2] = {0};
+        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
+            if(pointer != nullptr){
+                EVP_MD_CTX_free(pointer);
+            }
+        });
+        EVP_DigestInit_ex(evpCtx.get(),EVP_md5(),nullptr);
+        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
+        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
+        HexStringFromData(digest,len,hexBuffer);
+        return std::string(hexBuffer,len*2);
     #else
         throw Failure("Requires SSL Support");
     #endif
-        return std::string(hexBuffer,32);
     }
 
     std::string StringToHexSHA1(const Magic::StringView& str){
         if(str.empty()){
             return std::string();
         }
-        char hexBuffer[41] = {0};
     #ifdef OPENSSL
-        SHA_CTX m_Sha1;
-        SHA1_Init(&m_Sha1);
+        uint32_t len = 0;
         uint8_t digest[SHA_DIGEST_LENGTH] = {0};
-        SHA1_Update(&m_Sha1,str.data(),str.size());
-        SHA1_Final(digest,&m_Sha1);
-        HexStringFromData(digest,SHA_DIGEST_LENGTH,hexBuffer);
+        char hexBuffer[SHA_DIGEST_LENGTH*2] = {0};
+        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
+            if(pointer != nullptr){
+                EVP_MD_CTX_free(pointer);
+            }
+        });
+        EVP_DigestInit_ex(evpCtx.get(),EVP_sha1(),nullptr);
+        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
+        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
+        HexStringFromData(digest,len,hexBuffer);
+        return std::string(hexBuffer,len*2);
     #else
         throw Failure("Requires SSL Support");
     #endif
-        return std::string(hexBuffer,41);
     }
 
     std::string Base64Decode(const Magic::StringView& src){
@@ -207,7 +220,6 @@ namespace Magic{
         if(filePath.empty()){
             return std::string();
         }
-        char hexBuffer[32] = {0};
     #ifdef OPENSSL
         std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.data(),"rb"),[](std::FILE* pointer){
             if(pointer != nullptr){
@@ -219,27 +231,31 @@ namespace Magic{
             return std::string();
         }
 
+        uint32_t len = 0;
         uint8_t digest[MD5_DIGEST_LENGTH] = {0};
+        char hexBuffer[MD5_DIGEST_LENGTH*2] = {0};
         constexpr const uint32_t bufferSize = 1024*1024;
-
         std::unique_ptr<uint8_t,void (*)(uint8_t*)> buffer(new uint8_t[bufferSize],[](uint8_t* pointer){
             if(pointer != nullptr){
                 delete[] pointer;
             }
         });
 
+        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
+            if(pointer != nullptr){
+                EVP_MD_CTX_free(pointer);
+            }
+        });
 
-        MD5_CTX m_Md5;
-        MD5_Init(&m_Md5);
-        uint64_t len = 0;
-        while((len = std::fread(buffer.get(),1,bufferSize,file.get())))
-            MD5_Update(&m_Md5,buffer.get(),len);
-        MD5_Final(digest,&m_Md5);
-
-        HexStringFromData(digest,MD5_DIGEST_LENGTH,hexBuffer);
+        EVP_DigestInit_ex(evpCtx.get(),EVP_md5(),nullptr);
+        while((len = std::fread(buffer.get(),1,bufferSize,file.get()))){
+            EVP_DigestUpdate(evpCtx.get(),buffer.get(),len);
+        }
+        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
+        HexStringFromData(digest,len,hexBuffer);
+        return std::string(hexBuffer,len*2);
     #else
         throw Failure("Requires SSL Support");
     #endif
-        return std::string(hexBuffer,32);
     }
 }

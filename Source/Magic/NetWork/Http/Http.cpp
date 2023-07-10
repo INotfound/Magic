@@ -15,7 +15,7 @@ namespace Magic{
 namespace NetWork{
 namespace Http{
     static const Magic::StringView g_MethodString[]{
-        #define XX(num,name,string) #name,
+        #define XX(num,name,string) #string,
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
@@ -47,7 +47,7 @@ namespace Http{
         if(iter != g_HttpMethod.end()){
             return iter->second;
         }
-        return HttpMethod::INVALID_METHOD;
+        return HttpMethod::InvalidMethod;
     }
 
     Magic::StringView HttpMethodToString(const HttpMethod& method){
@@ -119,7 +119,7 @@ namespace Http{
                 return iter->second;
             }
         }
-        return HttpContentType::APPLICATION_OCTET_STREAM;
+        return HttpContentType::ApplicationOctetStream;
     }
 
     const char* HttpContentTypeToString(const HttpContentType& contentType){
@@ -185,7 +185,7 @@ namespace Http{
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
-        ,m_Method(HttpMethod::GET)
+        ,m_Method(HttpMethod::Get)
         ,m_UrlPath("/")
         ,m_ContentLength(0){
     }
@@ -396,9 +396,9 @@ namespace Http{
     HttpResponse::HttpResponse(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
-        ,m_Status(HttpStatus::OK)
+        ,m_Status(HttpStatus::Ok)
         ,m_ContentLength(0)
-        ,m_ContentType(HttpContentType::TEXT_PLAIN){
+        ,m_ContentType(HttpContentType::TextPlain){
     }
 
     bool HttpResponse::isRange() const{
@@ -521,7 +521,7 @@ namespace Http{
 
         bool hasBody = !m_Body.empty();
 
-        if(!hasBody && m_Resource.empty() && m_Status > HttpStatus::OK){
+        if(!hasBody && m_Resource.empty() && m_Status > HttpStatus::Ok){
             hasBody = true;
             m_Body = GenerateHtml(HttpStatusToString(m_Status),HttpStatusToString(m_Status));
         }

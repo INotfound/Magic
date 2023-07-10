@@ -59,10 +59,10 @@ public:
         auto& response = httpSocket->getResponse();
         fileSteam.open("log.json",std::ios::in|std::ios::binary);
         if(fileSteam.is_open()){
-            response->setStatus(HttpStatus::OK);
+            response->setStatus(HttpStatus::Ok);
             response->setBody(std::string(std::istreambuf_iterator<char>(fileSteam),std::istreambuf_iterator<char>()));
         }else{
-            response->setStatus(HttpStatus::NOT_FOUND);
+            response->setStatus(HttpStatus::NotFound);
         };
 
         httpSocket->sendResponse(response);
@@ -70,7 +70,7 @@ public:
 
     void handle2(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         auto& response = httpSocket->getResponse();
-        response->setStatus(HttpStatus::OK);
+        response->setStatus(HttpStatus::Ok);
         response->setResource("log.json");
         httpSocket->sendResponse(response);
     }
@@ -90,8 +90,8 @@ public:
 //        httpClient->execute(httpRequest);
 //        throw Magic::Failure("data sell");
 
-        response->setStatus(HttpStatus::OK)->setBody("hello world");
-        httpSocket->sendResponse(response);
+        httpSocket << response->setStatus(HttpStatus::Ok)
+                              ->setBody("hello world!");
     }
 };
 

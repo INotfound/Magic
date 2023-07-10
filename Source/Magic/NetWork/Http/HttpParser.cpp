@@ -32,7 +32,7 @@ namespace Http{
         auto* parser = static_cast<HttpRequestParser*>(data);
         std::memcpy(buffer,at,std::min(static_cast<size_t>(125),length));
         HttpMethod method = StringToHttpMethod(Magic::StringView(buffer,length));
-        if(method == HttpMethod::INVALID_METHOD){
+        if(method == HttpMethod::InvalidMethod){
             parser->setError(true);
             return;
         }

@@ -19,137 +19,137 @@ namespace Http{
     /* Request Methods */
     #undef DELETE
     #define HTTP_METHOD_MAP(XX)           \
-        XX(0,  DELETE,      DELETE)       \
-        XX(1,  GET,         GET)          \
-        XX(2,  HEAD,        HEAD)         \
-        XX(3,  POST,        POST)         \
-        XX(4,  PUT,         PUT)          \
+        XX(0,  Delete,      DELETE)       \
+        XX(1,  Get,         GET)          \
+        XX(2,  Head,        HEAD)         \
+        XX(3,  Post,        POST)         \
+        XX(4,  Put,         PUT)          \
         /* pathological */                \
-        XX(5,  CONNECT,     CONNECT)      \
-        XX(6,  OPTIONS,     OPTIONS)      \
-        XX(7,  TRACE,       TRACE)        \
+        XX(5,  Connect,     CONNECT)      \
+        XX(6,  Options,     OPTIONS)      \
+        XX(7,  Trace,       TRACE)        \
         /* WebDAV */                      \
-        XX(8,  COPY,        COPY)         \
-        XX(9,  LOCK,        LOCK)         \
-        XX(10, MKCOL,       MKCOL)        \
-        XX(11, MOVE,        MOVE)         \
-        XX(12, PROPFIND,    PROPFIND)     \
-        XX(13, PROPPATCH,   PROPPATCH)    \
-        XX(14, SEARCH,      SEARCH)       \
-        XX(15, UNLOCK,      UNLOCK)       \
-        XX(16, BIND,        BIND)         \
-        XX(17, REBIND,      REBIND)       \
-        XX(18, UNBIND,      UNBIND)       \
-        XX(19, ACL,         ACL)          \
+        XX(8,  Copy,        COPY)         \
+        XX(9,  Lock,        LOCK)         \
+        XX(10, MKCol,       MKCOL)        \
+        XX(11, Move,        MOVE)         \
+        XX(12, PropFind,    PROPFIND)     \
+        XX(13, PropPatch,   PROPPATCH)    \
+        XX(14, Search,      SEARCH)       \
+        XX(15, UnLock,      UNLOCK)       \
+        XX(16, Bind,        BIND)         \
+        XX(17, ReBind,      REBIND)       \
+        XX(18, UnBind,      UNBIND)       \
+        XX(19, Acl,         ACL)          \
         /* subversion */                  \
-        XX(20, REPORT,      REPORT)       \
-        XX(21, MKACTIVITY,  MKACTIVITY)   \
-        XX(22, CHECKOUT,    CHECKOUT)     \
-        XX(23, MERGE,       MERGE)        \
+        XX(20, RePort,      REPORT)       \
+        XX(21, MKActivity,  MKACTIVITY)   \
+        XX(22, CheckOut,    CHECKOUT)     \
+        XX(23, Merge,       MERGE)        \
         /* upnp */                        \
-        XX(24, MSEARCH,     M-SEARCH)     \
-        XX(25, NOTIFY,      NOTIFY)       \
-        XX(26, SUBSCRIBE,   SUBSCRIBE)    \
-        XX(27, UNSUBSCRIBE, UNSUBSCRIBE)  \
+        XX(24, MSearch,     M-SEARCH)     \
+        XX(25, Notify,      NOTIFY)       \
+        XX(26, SubScribe,   SUBSCRIBE)    \
+        XX(27, UnSubScribe, UNSUBSCRIBE)  \
         /* RFC-5789 */                    \
-        XX(28, PATCH,       PATCH)        \
-        XX(29, PURGE,       PURGE)        \
+        XX(28, Patch,       PATCH)        \
+        XX(29, Purge,       PURGE)        \
         /* CalDAV */                      \
-        XX(30, MKCALENDAR,  MKCALENDAR)   \
+        XX(30, MKCalendar,  MKCALENDAR)   \
         /* RFC-2068, section 19.6.1.2 */  \
-        XX(31, LINK,        LINK)         \
-        XX(32, UNLINK,      UNLINK)       \
+        XX(31, Link,        LINK)         \
+        XX(32, UnLink,      UNLINK)       \
         /* icecast */                     \
-        XX(33, SOURCE,      SOURCE)       \
+        XX(33, Source,      SOURCE)       \
 
     /* Status Codes */
     #define HTTP_STATUS_MAP(XX)                                                   \
-        XX(100, CONTINUE,                        Continue)                        \
-        XX(101, SWITCHING_PROTOCOLS,             Switching Protocols)             \
-        XX(102, PROCESSING,                      Processing)                      \
-        XX(200, OK,                              OK)                              \
-        XX(201, CREATED,                         Created)                         \
-        XX(202, ACCEPTED,                        Accepted)                        \
-        XX(203, NON_AUTHORITATIVE_INFORMATION,   Non-Authoritative Information)   \
-        XX(204, NO_CONTENT,                      No Content)                      \
-        XX(205, RESET_CONTENT,                   Reset Content)                   \
-        XX(206, PARTIAL_CONTENT,                 Partial Content)                 \
-        XX(207, MULTI_STATUS,                    Multi-Status)                    \
-        XX(208, ALREADY_REPORTED,                Already Reported)                \
-        XX(226, IM_USED,                         IM Used)                         \
-        XX(300, MULTIPLE_CHOICES,                Multiple Choices)                \
-        XX(301, MOVED_PERMANENTLY,               Moved Permanently)               \
-        XX(302, FOUND,                           Found)                           \
-        XX(303, SEE_OTHER,                       See Other)                       \
-        XX(304, NOT_MODIFIED,                    Not Modified)                    \
-        XX(305, USE_PROXY,                       Use Proxy)                       \
-        XX(307, TEMPORARY_REDIRECT,              Temporary Redirect)              \
-        XX(308, PERMANENT_REDIRECT,              Permanent Redirect)              \
-        XX(400, BAD_REQUEST,                     Bad Request)                     \
-        XX(401, UNAUTHORIZED,                    Unauthorized)                    \
-        XX(402, PAYMENT_REQUIRED,                Payment Required)                \
-        XX(403, FORBIDDEN,                       Forbidden)                       \
-        XX(404, NOT_FOUND,                       Not Found)                       \
-        XX(405, METHOD_NOT_ALLOWED,              Method Not Allowed)              \
-        XX(406, NOT_ACCEPTABLE,                  Not Acceptable)                  \
-        XX(407, PROXY_AUTHENTICATION_REQUIRED,   Proxy Authentication Required)   \
-        XX(408, REQUEST_TIMEOUT,                 Request Timeout)                 \
-        XX(409, CONFLICT,                        Conflict)                        \
-        XX(410, GONE,                            Gone)                            \
-        XX(411, LENGTH_REQUIRED,                 Length Required)                 \
-        XX(412, PRECONDITION_FAILED,             Precondition Failed)             \
-        XX(413, PAYLOAD_TOO_LARGE,               Payload Too Large)               \
-        XX(414, URI_TOO_LONG,                    URI Too Long)                    \
-        XX(415, UNSUPPORTED_MEDIA_TYPE,          Unsupported Media Type)          \
-        XX(416, RANGE_NOT_SATISFIABLE,           Range Not Satisfiable)           \
-        XX(417, EXPECTATION_FAILED,              Expectation Failed)              \
-        XX(421, MISDIRECTED_REQUEST,             Misdirected Request)             \
-        XX(422, UNPROCESSABLE_ENTITY,            Unprocessable Entity)            \
-        XX(423, LOCKED,                          Locked)                          \
-        XX(424, FAILED_DEPENDENCY,               Failed Dependency)               \
-        XX(426, UPGRADE_REQUIRED,                Upgrade Required)                \
-        XX(428, PRECONDITION_REQUIRED,           Precondition Required)           \
-        XX(429, TOO_MANY_REQUESTS,               Too Many Requests)               \
-        XX(431, REQUEST_HEADER_FIELDS_TOO_LARGE, Request Header Fields Too Large) \
-        XX(451, UNAVAILABLE_FOR_LEGAL_REASONS,   Unavailable For Legal Reasons)   \
-        XX(500, INTERNAL_SERVER_ERROR,           Internal Server Error)           \
-        XX(501, NOT_IMPLEMENTED,                 Not Implemented)                 \
-        XX(502, BAD_GATEWAY,                     Bad Gateway)                     \
-        XX(503, SERVICE_UNAVAILABLE,             Service Unavailable)             \
-        XX(504, GATEWAY_TIMEOUT,                 Gateway Timeout)                 \
-        XX(505, HTTP_VERSION_NOT_SUPPORTED,      HTTP Version Not Supported)      \
-        XX(506, VARIANT_ALSO_NEGOTIATES,         Variant Also Negotiates)         \
-        XX(507, INSUFFICIENT_STORAGE,            Insufficient Storage)            \
-        XX(508, LOOP_DETECTED,                   Loop Detected)                   \
-        XX(510, NOT_EXTENDED,                    Not Extended)                    \
-        XX(511, NETWORK_AUTHENTICATION_REQUIRED, Network Authentication Required) \
+        XX(100, Continue,                        Continue)                        \
+        XX(101, SwitchingProtocols,              Switching Protocols)             \
+        XX(102, Processing,                      Processing)                      \
+        XX(200, Ok,                              OK)                              \
+        XX(201, Created,                         Created)                         \
+        XX(202, Accepted,                        Accepted)                        \
+        XX(203, NonAuthoritativeInformation,     Non-Authoritative Information)   \
+        XX(204, NoContent,                       No Content)                      \
+        XX(205, ResetContent,                    Reset Content)                   \
+        XX(206, PartialContent,                  Partial Content)                 \
+        XX(207, MultiStatus,                     Multi-Status)                    \
+        XX(208, AlreadyReported,                 Already Reported)                \
+        XX(226, ImUsed,                          IM Used)                         \
+        XX(300, MultipleChoices,                 Multiple Choices)                \
+        XX(301, MovedPermanently,                Moved Permanently)               \
+        XX(302, Found,                           Found)                           \
+        XX(303, SeeOther,                        See Other)                       \
+        XX(304, NotModified,                     Not Modified)                    \
+        XX(305, UseProxy,                        Use Proxy)                       \
+        XX(307, TemporaryRedirect,               Temporary Redirect)              \
+        XX(308, PermanentRedirect,               Permanent Redirect)              \
+        XX(400, BadRequest,                      Bad Request)                     \
+        XX(401, UnAuthorized,                    Unauthorized)                    \
+        XX(402, PaymentRequired,                 Payment Required)                \
+        XX(403, ForBidden,                       Forbidden)                       \
+        XX(404, NotFound,                        Not Found)                       \
+        XX(405, MethodNotAllowed,                Method Not Allowed)              \
+        XX(406, NotAcceptable,                   Not Acceptable)                  \
+        XX(407, ProxyAuthenticationRequired,     Proxy Authentication Required)   \
+        XX(408, RequestTimeout,                  Request Timeout)                 \
+        XX(409, Conflict,                        Conflict)                        \
+        XX(410, Gone,                            Gone)                            \
+        XX(411, LengthRequired,                  Length Required)                 \
+        XX(412, PreConditionFailed,              Precondition Failed)             \
+        XX(413, PayloadTooLarge,                 Payload Too Large)               \
+        XX(414, UriTooLong,                      URI Too Long)                    \
+        XX(415, UnSupportedMediaType,            Unsupported Media Type)          \
+        XX(416, RangeNotSatisfiable,             Range Not Satisfiable)           \
+        XX(417, ExpectationFailed,               Expectation Failed)              \
+        XX(421, MisdirectedRequest,              Misdirected Request)             \
+        XX(422, UnProcessableEntity,             Unprocessable Entity)            \
+        XX(423, Locked,                          Locked)                          \
+        XX(424, FailedDependency,                Failed Dependency)               \
+        XX(426, UpgradeRequired,                 Upgrade Required)                \
+        XX(428, PreConditionRequired,            Precondition Required)           \
+        XX(429, TooManyRequests,                 Too Many Requests)               \
+        XX(431, RequestHeaderFieldsTooLarge,     Request Header Fields Too Large) \
+        XX(451, UnavailableForLegalReasons,      Unavailable For Legal Reasons)   \
+        XX(500, InternalServerError,             Internal Server Error)           \
+        XX(501, NotImplemented,                  Not Implemented)                 \
+        XX(502, BadGateWay,                      Bad Gateway)                     \
+        XX(503, ServiceUnAvailable,              Service Unavailable)             \
+        XX(504, GateWayTimeOut,                  Gateway Timeout)                 \
+        XX(505, HttpVersionNotSupported,         HTTP Version Not Supported)      \
+        XX(506, VariantAlsoNegotiates,           Variant Also Negotiates)         \
+        XX(507, InSufficientStorage,             Insufficient Storage)            \
+        XX(508, LoopDetected,                    Loop Detected)                   \
+        XX(510, NotExtended,                     Not Extended)                    \
+        XX(511, NetWorkAuthenticationRequired,   Network Authentication Required) \
 
     /* Content Type */
     #define HTTP_CONTENT_TYPE(XX)                                                               \
-        XX(TEXT_CSS,                    "css",      "text/css; charset=utf-8")                  \
-        XX(TEXT_XML,                    "xml",      "text/xml; charset=utf-8")                  \
-        XX(TEXT_XSL,                    "xsl",      "text/xsl; charset=utf-8")                  \
-        XX(TEXT_HTML,                   "html",     "text/html; charset=utf-8")                 \
-        XX(TEXT_PLAIN,                  "txt",      "text/plain; charset=utf-8")                \
-        XX(APPLICATION_XML,             "xml",      "application/xml; charset=utf-8")           \
-        XX(APPLICATION_JSON,            "json",     "application/json; charset=utf-8")          \
-        XX(APPLICATION_FORM,            "",         "application/x-www-form-urlencoded")        \
-        XX(APPLICATION_JAVASCRIPT,      "js",       "application/javascript; charset=utf-8")    \
-        XX(APPLICATION_OCTET_STREAM,    "",         "application/octet-stream")                 \
-        XX(IMAGE_PNG,                   "png",      "image/png")                                \
-        XX(IMAGE_JPG,                   "jpg",      "image/jpeg")                               \
-        XX(IMAGE_JPEG,                  "jpeg",     "image/jpeg")                               \
-        XX(IMAGE_GIF,                   "gif",      "image/gif")                                \
-        XX(IMAGE_BMP,                   "bmp",      "image/bmp")                                \
-        XX(IMAGE_WEBP,                  "webp",     "image/webp")                               \
-        XX(IMAGE_XICON,                 "ico",      "image/icon")                               \
-        XX(IMAGE_SVG_XML,               "svg",      "image/svg+xml")                            \
-        XX(APPLICATION_WASM,            "wasm",     "application/wasm")                         \
-        XX(APPLICATION_FONT_WOFF,       "woff",     "application/font-woff")                    \
-        XX(APPLICATION_FONT_WOFF2,      "woff2",    "application/font-woff2")                   \
-        XX(APPLICATION_FONT_TRUETYPE,   "ttf",      "application/x-font-truetype")              \
-        XX(APPLICATION_FONT_OPENTYPE,   "otf",      "application/x-font-opentype")              \
-        XX(APPLICATION_VND_MS_FONTOBJ,  "eot",      "application/vnd.ms-fontobject")            \
+        XX(TextCss,                    "css",      "text/css; charset=utf-8")                  \
+        XX(TextXml,                    "xml",      "text/xml; charset=utf-8")                  \
+        XX(TextXsl,                    "xsl",      "text/xsl; charset=utf-8")                  \
+        XX(TextHtml,                   "html",     "text/html; charset=utf-8")                 \
+        XX(TextPlain,                  "txt",      "text/plain; charset=utf-8")                \
+        XX(ApplicationXml,             "xml",      "application/xml; charset=utf-8")           \
+        XX(ApplicationJson,            "json",     "application/json; charset=utf-8")          \
+        XX(ApplicationForm,            "",         "application/x-www-form-urlencoded")        \
+        XX(ApplicationJavascript,      "js",       "application/javascript; charset=utf-8")    \
+        XX(ApplicationOctetStream,     "",         "application/octet-stream")                 \
+        XX(ImagePng,                   "png",      "image/png")                                \
+        XX(ImageJpg,                   "jpg",      "image/jpeg")                               \
+        XX(ImageJpeg,                  "jpeg",     "image/jpeg")                               \
+        XX(ImageGif,                   "gif",      "image/gif")                                \
+        XX(ImageBmp,                   "bmp",      "image/bmp")                                \
+        XX(ImageWebp,                  "webp",     "image/webp")                               \
+        XX(ImageXicon,                 "ico",      "image/icon")                               \
+        XX(ImageSvgXml,                "svg",      "image/svg+xml")                            \
+        XX(ApplicationWasm,            "wasm",     "application/wasm")                         \
+        XX(ApplicationFontWoff,        "woff",     "application/font-woff")                    \
+        XX(ApplicationFontWoff2,       "woff2",    "application/font-woff2")                   \
+        XX(ApplicationFontTrueType,    "ttf",      "application/x-font-truetype")              \
+        XX(ApplicationFontOpenType,    "otf",      "application/x-font-opentype")              \
+        XX(ApplicationVndMsFontObj,    "eot",      "application/vnd.ms-fontobject")            \
 
     /**
      * @brief HttpMethod
@@ -158,7 +158,7 @@ namespace Http{
         #define XX(num,name,string) name = (num),
             HTTP_METHOD_MAP(XX)
         #undef XX
-        INVALID_METHOD = 255
+        InvalidMethod = 255
     };
     /**
      * @brief HttpStatus
@@ -167,7 +167,7 @@ namespace Http{
         #define XX(code,name,desc) name = (code),
             HTTP_STATUS_MAP(XX)
         #undef XX
-        INVALID_METHOD = 255
+        InvalidMethod = 255
     };
     /**
      * @brief HttpContentType

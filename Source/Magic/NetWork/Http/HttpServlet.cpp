@@ -104,13 +104,13 @@ namespace Http{
         }catch(const std::exception& ec){
             MAGIC_WARN() << ec.what();
             const auto& response = httpSocket->getResponse();
-            response->setStatus(HttpStatus::INTERNAL_SERVER_ERROR)
-                    ->setBody(GenerateHtml(HttpStatusToString(HttpStatus::INTERNAL_SERVER_ERROR),"Exception",ec.what()));
+            response->setStatus(HttpStatus::InternalServerError)
+                    ->setBody(GenerateHtml(HttpStatusToString(HttpStatus::InternalServerError),"Exception",ec.what()));
             httpSocket << response;
             return;
         }
         const auto& response = httpSocket->getResponse();
-        response->setStatus(HttpStatus::NOT_FOUND);
+        response->setStatus(HttpStatus::NotFound);
         httpSocket << response;
     }
 

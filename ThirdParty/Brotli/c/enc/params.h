@@ -10,7 +10,8 @@
 #define BROTLI_ENC_PARAMS_H_
 
 #include <brotli/encode.h>
-#include "./encoder_dict.h"
+
+#include "encoder_dict.h"
 
 typedef struct BrotliHasherParams {
   int type;
@@ -40,7 +41,8 @@ typedef struct BrotliEncoderParams {
   BROTLI_BOOL large_window;
   BrotliHasherParams hasher;
   BrotliDistanceParams dist;
-  BrotliEncoderDictionary dictionary;
+  /* TODO(eustas): rename to BrotliShared... */
+  SharedEncoderDictionary dictionary;
 } BrotliEncoderParams;
 
 #endif  /* BROTLI_ENC_PARAMS_H_ */

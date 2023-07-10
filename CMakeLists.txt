@@ -25,8 +25,8 @@ file(GLOB_RECURSE HEADERS Include/Magic/*.h)
 file(GLOB_RECURSE SOURCES Source/Magic/*.cpp)
 
 set(BINARY Magic)
-add_library(Magic ${HEADERS} ${SOURCES})
-target_link_libraries(Magic ${BROTLI_STATIC_LIBS} ${MAGIC_DEPEND_LIBRARY})
+add_library(Magic STATIC ${HEADERS} ${SOURCES})
+target_link_libraries(Magic ${BROTLI_LIBRARIES} ${MAGIC_DEPEND_LIBRARY})
 
 set(BINARY
     Gen

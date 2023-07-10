@@ -102,7 +102,7 @@ namespace Http{
                     auto rangeStop = httpResponse.getRangeStop();
                     auto rangeStart = httpResponse.getRangeStart();
                     m_FileStream.seekg(rangeStart,std::ios::beg);
-                    httpResponse.setStatus(HttpStatus::PARTIAL_CONTENT);
+                    httpResponse.setStatus(HttpStatus::PartialContent);
                     if(rangeStop == 0){
                         m_TotalTransferLength = (totalLength - rangeStart);
                     }else{
@@ -117,9 +117,9 @@ namespace Http{
                 }else{
                     m_FileStream.seekg(0,std::ios::beg);
                     m_TotalTransferLength = totalLength;
-                    httpResponse.setStatus(HttpStatus::OK);
+                    httpResponse.setStatus(HttpStatus::Ok);
                     httpResponse.setContentLength(m_TotalTransferLength);
-                    if(httpResponse.getContentType() < HttpContentType::APPLICATION_OCTET_STREAM){
+                    if(httpResponse.getContentType() < HttpContentType::ApplicationOctetStream){
                         httpResponse.setBody(std::string(std::istreambuf_iterator<char>(m_FileStream),std::istreambuf_iterator<char>()));
                         stream << httpResponse;
                         m_FileStream.close();
@@ -132,7 +132,7 @@ namespace Http{
                     }
                 }
             }else{
-                httpResponse.setStatus(HttpStatus::NOT_FOUND);
+                httpResponse.setStatus(HttpStatus::NotFound);
                 stream << httpResponse;
                 m_Socket->send(streamBuffer);
             }
@@ -166,7 +166,7 @@ namespace Http{
             key += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
             response->setHeader("Upgrade","websocket")
                     ->setHeader("Connection","Upgrade")
-                    ->setStatus(HttpStatus::SWITCHING_PROTOCOLS)
+                    ->setStatus(HttpStatus::SwitchingProtocols)
                     ->setHeader("Sec-WebSocket-Accept",Base64Encode(SHA1(key)));
             this->sendResponse(response);
         }
