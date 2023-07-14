@@ -74,9 +74,8 @@ namespace Http{
             m_Socket->enableSsl();
         }
     #endif
-        auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->getEntity()->async_connect(results->endpoint(),[this,self = std::move(self),request = std::move(request)](const asio::error_code& errorCode){
+        m_Socket->getEntity()->async_connect(results->endpoint(),[this,self = this->shared_from_this(),request = std::move(request)](const asio::error_code& errorCode){
     #else
         m_Socket->getEntity()->async_connect(results->endpoint(),[this,self,request](const asio::error_code& errorCode){
     #endif
@@ -92,11 +91,7 @@ namespace Http{
             auto sslStream = m_Socket->getSslEntity();
             if(sslStream){
                 sslStream->set_verify_mode(asio::ssl::verify_none);
-            #if __cplusplus >= 201402L
-                sslStream->async_handshake(asio::ssl::stream_base::client,[this,self = std::move(const_cast<Safe<HttpClient>&>(self)),request = std::move(const_cast<Safe<HttpRequest>&>(request))](const asio::error_code& errorCode){
-            #else
                 sslStream->async_handshake(asio::ssl::stream_base::client,[this,self,request](const asio::error_code& errorCode){
-            #endif
                     if(errorCode){
                         auto& errorCallBack = m_Socket->getErrorCodeCallBack();
                         if(errorCallBack)
@@ -106,11 +101,7 @@ namespace Http{
                     m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
                     Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(m_Socket);
                     httpSocket->sendRequest(request);
-                #if __cplusplus >= 201402L
-                    httpSocket->recvResponse([this,self = std::move(const_cast<Safe<HttpClient>&>(self))](const Safe<HttpSocket>& socket){
-                #else
                     httpSocket->recvResponse([this,self](const Safe<HttpSocket>& socket){
-                #endif
                         m_Finish = true;
                         m_Socket->close();
                         m_ResponseCallBack(socket->getResponse());
@@ -122,18 +113,14 @@ namespace Http{
             m_Socket->getEntity()->set_option(asio::ip::tcp::no_delay(true));
             Safe<HttpSocket> httpSocket = std::make_shared<HttpSocket>(m_Socket);
             httpSocket->sendRequest(request);
-        #if __cplusplus >= 201402L
-            httpSocket->recvResponse([this,self = std::move(const_cast<Safe<HttpClient>&>(self))](const Safe<HttpSocket>& socket){
-        #else
             httpSocket->recvResponse([this,self](const Safe<HttpSocket>& socket){
-        #endif
                 m_Finish = true;
                 m_Socket->close();
                 if(m_ResponseCallBack)
                     m_ResponseCallBack(socket->getResponse());
             });
         });
-        m_Socket->runHeartBeat(self);
+        m_Socket->runHeartBeat(this->shared_from_this());
     }
 
     ObjectWrapper<HttpClient> HttpClient::onTimeOut(std::function<void()> callBack){
