@@ -9,6 +9,7 @@
 
 #include <ctime>
 #include <cctype>
+#include <stdint.h>
 #include <string>
 #include <vector>
 #include <sstream>
@@ -305,4 +306,16 @@ namespace Magic{
         }
     };
 
+    template<typename... Strings>
+    std::string StringCat(Strings... strings){
+        std::string result;
+        std::array<Magic::StringView,sizeof...(Strings)> array = {strings...};
+        result.resize(std::accumulate(array.cbegin(),array.cend(),0,[](uint64_t acc,const Magic::StringView& sv){
+            return acc + sv.size();
+        }));
+        std::accumulate(array.cbegin(),array.cend(),result.begin(),[](const std::string::iterator& dest,const Magic::StringView& src){
+            return std::copy(src.cbegin(),src.cend(),dest);
+        });
+        return result;
+    }
 }

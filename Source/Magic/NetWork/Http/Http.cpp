@@ -345,11 +345,10 @@ namespace Http{
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setRange(uint64_t start,uint64_t stop){
-        std::string value("bytes=");
-        value.append(AsString<uint64_t>(start));
-        value.append("-");
-        value += (stop == 0) ? "" : AsString<uint64_t>(stop);
-        m_Headers.emplace("Range",value);
+        m_Headers.emplace("Range",Magic::StringCat("bytes="
+                                                   ,AsString<uint64_t>(start)
+                                                   ,"-"
+                                                   ,(stop == 0) ? "" : AsString<uint64_t>(stop)));
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -612,13 +611,12 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setRange(uint64_t start,uint64_t stop,uint64_t totalLength){
-        std::string value("bytes ");
-        value.append(AsString<uint64_t>(start));
-        value.append("-");
-        value.append(AsString<uint64_t>(stop));
-        value.append("/");
-        value.append(AsString<uint64_t>(totalLength));
-        m_Headers["Content-Range"] = value;
+        m_Headers.emplace("Content-Range",Magic::StringCat("bytes "
+                                         ,AsString<uint64_t>(start)
+                                         ,"-"
+                                         ,AsString<uint64_t>(stop)
+                                         ,"/"
+                                         ,AsString<uint64_t>(totalLength)));
         return ObjectWrapper<HttpResponse>(this);
     }
 
@@ -628,10 +626,7 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setCookie(const Magic::StringView& key,const Magic::StringView& val,std::time_t expired,const Magic::StringView& path,const Magic::StringView& domain,bool httpOnly,bool secure){
-        std::string result;
-        result.append(key.data(),key.size());
-        result.append("=");
-        result.append(val.data(),val.size());
+        std::string result = Magic::StringCat(key,"=",val);
         if(!path.empty()){
             result.append("; Path=");
             result.append(path.data(),path.size());

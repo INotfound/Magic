@@ -1,5 +1,6 @@
-#include <stdexcept>
 #include <cstring>
+#include <stdexcept>
+#include "Magic/Utilty/String.hpp"
 #include "Magic/NetWork/Http/Utils/MultiPartParser.hpp"
 
 MultiPartParser::MultiPartParser(){
@@ -184,8 +185,7 @@ size_t MultiPartParser::feed(const char *buffer, size_t len){
 
 void MultiPartParser::setBoundary(const Magic::StringView& sv){
     reset();
-    this->boundary = "\r\n--";
-    boundary.append(sv.data(),sv.size());
+    this->boundary = Magic::StringCat("\r\n--",sv);
     boundaryData = this->boundary.data();
     boundarySize = this->boundary.size();
     indexBoundary();

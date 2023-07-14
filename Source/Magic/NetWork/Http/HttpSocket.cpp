@@ -162,8 +162,7 @@ namespace Http{
             if(wsKey.empty()){
                 throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters");
             }
-            std::string key(wsKey.data(),wsKey.size());
-            key += "258EAFA5-E914-47DA-95CA-C5AB0DC85B11";
+            std::string key = Magic::StringCat(wsKey,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
             response->setHeader("Upgrade","websocket")
                     ->setHeader("Connection","Upgrade")
                     ->setStatus(HttpStatus::SwitchingProtocols)

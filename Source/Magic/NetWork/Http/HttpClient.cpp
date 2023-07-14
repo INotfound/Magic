@@ -5,7 +5,6 @@
  * @Date           : 2023-07-03 18:32
  ******************************************************************************
  */
-#include "Magic/Utilty/Logger.hpp"
 #include "Magic/NetWork/IoPool.hpp"
 #include "Magic/NetWork/Http/HttpClient.hpp"
 
@@ -74,8 +73,9 @@ namespace Http{
             m_Socket->enableSsl();
         }
     #endif
+        auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->getEntity()->async_connect(results->endpoint(),[this,self = this->shared_from_this(),request = std::move(request)](const asio::error_code& errorCode){
+        m_Socket->getEntity()->async_connect(results->endpoint(),[this,self = std::move(self),request = std::move(request)](const asio::error_code& errorCode){
     #else
         m_Socket->getEntity()->async_connect(results->endpoint(),[this,self,request](const asio::error_code& errorCode){
     #endif

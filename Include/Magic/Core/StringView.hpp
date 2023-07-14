@@ -6,12 +6,12 @@
  ******************************************************************************
  */
 #pragma once
+#include <string>
+#include <numeric>
 #if __cplusplus >= 201703L
 #include <string_view>
 namespace Magic{using StringView = std::string_view;}
 #else
-
-#include <string>
 #include <cstring>
 #include <ostream>
 #include <exception>
@@ -173,4 +173,3 @@ namespace Magic{
 }
 
 #endif
-

@@ -1,9 +1,17 @@
-#define _WIN32_WINNT 0x0601
+#include "Magic/Core/StringView.hpp"
+#include <array>
+#include <cstdio>
+#include <future>
+#include <iterator>
+#include <string>
+#include <vector>
+#include <numeric>
 #include "Magic/Magic"
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/NetWork/IoPool.hpp"
 #include "Magic/NetWork/Http/Http.hpp"
 #include "Magic/NetWork/Http/HttpClient.hpp"
+#include "Magic/Utilty/String.hpp"
 
 using namespace Magic::NetWork::Http;
 
@@ -26,6 +34,7 @@ void operator delete(void* ptr)
     std::free(ptr);
 }
 #endif
+
 const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(const Safe<Container>&)> callback){
     m_Container->registerType<Magic::Config,Safe<Magic::ConfigFile>>();
     m_Container->registerType<Magic::ConfigFile,Safe<Magic::IConfigFormatter>>();
@@ -42,7 +51,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(
 
     auto logger = m_Container->resolve<Magic::Logger>();
     logger->externMode();
-    for(auto& v : m_Container->resolveAll<Magic::ILogAppender>()){
+    for(auto& v: m_Container->resolveAll<Magic::ILogAppender>()){
         logger->addILogAppender(v);
     }
 
@@ -58,6 +67,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(
 }
 
 int main(int /*argc*/,char** /*argv*/){
+    std::cout << Magic::StringCat("s",Magic::AsString(20)) << std::endl;
     {
         Safe<Magic::Application> application = std::make_shared<Magic::Application>();
         application->initialize();
