@@ -67,7 +67,6 @@ const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(
 }
 
 int main(int /*argc*/,char** /*argv*/){
-    std::cout << Magic::StringCat("s",Magic::AsString(20)) << std::endl;
     {
         Safe<Magic::Application> application = std::make_shared<Magic::Application>();
         application->initialize();

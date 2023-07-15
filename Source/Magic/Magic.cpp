@@ -7,6 +7,18 @@
  */
 #include "Magic/Magic"
 #include "Magic/NetWork/IoPool.hpp"
+#include "Magic/Core/StringView.hpp"
+
+static Magic::StringView g_Logo = R"(
+  _____ ______       ________      ________      ___      ________
+ |\   _ \  _   \    |\   __  \    |\   ____\    |\  \    |\   ____\
+ \ \  \\\__\ \  \   \ \  \|\  \   \ \  \___|    \ \  \   \ \  \___|
+  \ \  \\|__| \  \   \ \   __  \   \ \  \  ___   \ \  \   \ \  \
+   \ \  \    \ \  \   \ \  \ \  \   \ \  \|\  \   \ \  \   \ \  \____
+    \ \__\    \ \__\   \ \__\ \__\   \ \_______\   \ \__\   \ \_______\
+     \|__|     \|__|    \|__|\|__|    \|_______|    \|__|    \|_______|
+     @INotFound https://github.com/INotfound/Magic
+)";
 
 namespace Magic{
     Application::~Application(){
@@ -18,5 +30,7 @@ namespace Magic{
     Application::Application()
         :m_Container(std::make_shared<Container>()){
         Magic::Thread::SetName("Magic");
+        std::ios::sync_with_stdio(false);
+        std::cout << g_Logo.data() << std::endl;
     }
 }

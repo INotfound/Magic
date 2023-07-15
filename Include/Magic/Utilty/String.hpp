@@ -307,7 +307,7 @@ namespace Magic{
     };
 
     template<typename... Strings>
-    std::string StringCat(Strings... strings){
+    inline std::string StringCat(Strings... strings){
         std::string result;
         std::array<Magic::StringView,sizeof...(Strings)> array = {strings...};
         result.resize(std::accumulate(array.cbegin(),array.cend(),0,[](uint64_t acc,const Magic::StringView& sv){
