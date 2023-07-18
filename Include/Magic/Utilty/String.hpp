@@ -8,11 +8,12 @@
 #pragma once
 
 #include <ctime>
+#include <array>
 #include <cctype>
-#include <stdint.h>
 #include <string>
 #include <vector>
 #include <sstream>
+#include <stdint.h>
 #include <algorithm>
 #include <type_traits>
 #include "Magic/Core/Core.hpp"

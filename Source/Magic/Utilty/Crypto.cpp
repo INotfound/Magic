@@ -21,10 +21,10 @@ namespace Magic{
         size_t i,j;
         for(i = j = 0;i < len;++i){
             char c;
-            c = (buf[i] >> 4) & 0xf;
+            c = (buf[i] >> 4) & 0xF;
             c = (c > 9) ? c + 'a' - 10 : c + '0';
             outPut[j++] = c;
-            c = (buf[i] & 0xf);
+            c = (buf[i] & 0xF);
             c = (c > 9) ? c + 'a' - 10 : c + '0';
             outPut[j++] = c;
         }
