@@ -132,20 +132,18 @@ namespace Http{
         void multiPartParser();
 
         /**
-         * @brief 文件流数据传输函数
+         * @brief 数据流传输函数
          */
-        void transferFileStream();
+        void transferDataStream();
 
     private:
         Safe<Socket> m_Socket;
+        Safe<IStream> m_Stream;
         uint64_t m_TotalLength;
         uint64_t m_CurrentLength;
         std::atomic_bool m_Death;
-        Safe<char> m_StreamBuffer;
-        std::ifstream m_FileStream;
         Safe<WebSocket> m_WebSocket;
         Safe<MultiPart> m_MultiPart;
-        uint64_t m_StreamBufferSize;
         uint64_t m_TotalTransferLength;
         uint64_t m_CurrentTransferLength;
         HttpRecvBack m_RecvRequestCallBack;
@@ -169,6 +167,8 @@ namespace Http{
     inline void operator<<(const Safe<HttpSocket>& socket,const ObjectWrapper<HttpResponse>& response){
         socket->sendResponse(*response);
     }
+
+    std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title,const Magic::StringView& message);
 }
 }
 }

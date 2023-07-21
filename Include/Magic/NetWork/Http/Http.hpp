@@ -11,6 +11,7 @@
 #include <ostream>
 
 #include "Magic/Core/Core.hpp"
+#include "Magic/Core/Stream.hpp"
 #include "Magic/Utilty/String.hpp"
 
 namespace Magic{
@@ -246,6 +247,12 @@ namespace Http{
         bool isRange() const;
 
         /**
+         * @brief 是否拥有Body
+         * @return: 返回True则是，返回False则是否
+         */
+        bool hasBody() const;
+
+        /**
          * @brief 获取是否为长连接函数
          * @return: 返回True则是，返回False则是否
          */
@@ -376,6 +383,12 @@ namespace Http{
         ObjectWrapper<HttpRequest> setBody(const Magic::StringView& body);
 
         /**
+         * @brief 设置主体正文函数
+         * @param bodyStream 主体正文
+         */
+        ObjectWrapper<HttpRequest> setBody(const Safe<IStream>& bodyStream);
+
+        /**
          * @brief 设置查询字符串函数
          * @param query 查询字符串
          */
@@ -421,11 +434,11 @@ namespace Http{
         KeyValue m_Headers;
         KeyValue m_Cookies;
         HttpMethod m_Method;
-        std::string m_Body;
         std::string m_Query;
         std::string m_UrlPath;
         std::string m_Fragment;
         uint64_t m_ContentLength;
+        Safe<IStream> m_BodyStream;
     };
 
     /**
@@ -447,6 +460,12 @@ namespace Http{
          * @return: 返回True则是，返回False则是否
          */
         bool isRange() const;
+
+        /**
+         * @brief 是否拥有Body
+         * @return: 返回True则是，返回False则是否
+         */
+        bool hasBody() const;
 
         /**
          * @brief 是否拥有资源
@@ -570,6 +589,12 @@ namespace Http{
         ObjectWrapper<HttpResponse> setBody(const Magic::StringView& body);
 
         /**
+         * @brief 设置主体正文函数
+         * @param bodyStream 主体正文
+         */
+        ObjectWrapper<HttpResponse> setBody(const Safe<IStream>& bodyStream);
+
+        /**
          * @brief 设置响应解释函数
          * @param reason 解释
          */
@@ -624,11 +649,11 @@ namespace Http{
         bool m_KeepAlive;
         uint8_t m_Version;
         KeyValue m_Headers;
-        std::string m_Body;
         HttpStatus m_Status;
         std::string m_Reason;
         std::string m_Resource;
         uint64_t m_ContentLength;
+        Safe<IStream> m_BodyStream;
         HttpContentType m_ContentType;
         std::vector<std::string> m_Cookies;
     };

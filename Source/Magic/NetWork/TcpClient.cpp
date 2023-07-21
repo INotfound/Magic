@@ -61,8 +61,8 @@ namespace NetWork{
         m_Socket->setErrorCodeCallBack(std::move(errorCallBack));
     }
 
-    void TcpClient::send(const char* data,uint64_t length,Socket::SendCallBack callBack){
-        m_Socket->send(data,length,std::move(callBack));
+    void TcpClient::send(const IStream::BufferView& buffer,Socket::SendCallBack callBack){
+        m_Socket->send(buffer,std::move(callBack));
     }
 
     void TcpClient::send(const Safe<asio::streambuf>& stream,Socket::SendCallBack callBack){

@@ -8,6 +8,7 @@
 #include "Magic/Core/Core.hpp"
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/Utilty/Crypto.hpp"
+#include "Magic/Core/StringView.hpp"
 #include "Magic/NetWork/Http/HttpSocket.hpp"
 
 namespace Magic{
@@ -20,7 +21,6 @@ namespace Http{
         ,m_TotalLength(0)
         ,m_CurrentLength(0)
         ,m_Death(false)
-        ,m_StreamBufferSize(1048576)
         ,m_TotalTransferLength(0)
         ,m_CurrentTransferLength(0){
         m_MultiPart = std::make_shared<MultiPart>();
@@ -89,19 +89,17 @@ namespace Http{
             return;
         Safe<asio::streambuf> streamBuffer = std::make_shared<asio::streambuf>();
         std::ostream stream(streamBuffer.get());
+        m_CurrentTransferLength = 0;
         if(httpResponse.hasResource()){
             Magic::StringView filePath = httpResponse.getResource();
-            m_FileStream.open(std::string(filePath.data(),filePath.size()),std::ios::in | std::ios::binary);
-            if(IsFile(filePath) && m_FileStream.is_open()){
-                m_CurrentTransferLength = 0;
-                m_FileStream.seekg(0,std::ios::end);
-                uint64_t totalLength = m_FileStream.tellg();
+            Safe<FileStream> fileStream = std::make_shared<FileStream>(filePath);
+            if(IsFile(filePath) && fileStream->open(FileStream::OpenMode::Read)){
+                uint64_t totalLength = fileStream->size();
                 httpResponse.setContentType(Http::FileTypeToHttpContentType(filePath));
-                m_StreamBuffer.reset(new char[m_StreamBufferSize],std::default_delete<char[]>());
                 if(httpResponse.isRange()){
                     auto rangeStop = httpResponse.getRangeStop();
                     auto rangeStart = httpResponse.getRangeStart();
-                    m_FileStream.seekg(rangeStart,std::ios::beg);
+                    fileStream->seek(rangeStart);
                     httpResponse.setStatus(HttpStatus::PartialContent);
                     if(rangeStop == 0){
                         m_TotalTransferLength = (totalLength - rangeStart);
@@ -110,36 +108,37 @@ namespace Http{
                     }
                     httpResponse.setContentLength(m_TotalTransferLength);
                     httpResponse.setRange(rangeStart,rangeStart + m_TotalTransferLength - 1,totalLength);
-                    /// Send Response
-                    stream << httpResponse;
-                    m_Socket->send(streamBuffer);
-                    this->transferFileStream();
                 }else{
-                    m_FileStream.seekg(0,std::ios::beg);
                     m_TotalTransferLength = totalLength;
                     httpResponse.setStatus(HttpStatus::Ok);
+                    httpResponse.setHeader("Accept-Ranges","bytes");
                     httpResponse.setContentLength(m_TotalTransferLength);
-                    if(httpResponse.getContentType() < HttpContentType::ApplicationOctetStream){
-                        httpResponse.setBody(std::string(std::istreambuf_iterator<char>(m_FileStream),std::istreambuf_iterator<char>()));
-                        stream << httpResponse;
-                        m_FileStream.close();
-                        m_Socket->send(streamBuffer);
-                    }else{
-                        httpResponse.setHeader("Accept-Ranges","bytes");
-                        stream << httpResponse;
-                        m_Socket->send(streamBuffer);
-                        this->transferFileStream();
-                    }
+                }
+                if(httpResponse.getContentType() < HttpContentType::ApplicationOctetStream){
+                    httpResponse.setBody(fileStream);
+                }else{
+                    m_Stream = fileStream;
                 }
             }else{
+                httpResponse.setResource(Magic::StringView());
                 httpResponse.setStatus(HttpStatus::NotFound);
-                stream << httpResponse;
-                m_Socket->send(streamBuffer);
             }
+        }else{
+            if(!httpResponse.hasBody() && httpResponse.getStatus() > HttpStatus::Ok){
+                auto statusString = HttpStatusToString(httpResponse.getStatus());
+                httpResponse.setBody(GenerateHtml(statusString,statusString,""));
+            }
+        }
+
+        if(m_Stream){
+            stream << httpResponse;
+            m_Socket->send(streamBuffer);
+            this->transferDataStream();
         }else{
             stream << httpResponse;
             m_Socket->send(streamBuffer);
         }
+
     }
 
     void HttpSocket::sendRequest(const Safe<HttpRequest>& httpRequest){
@@ -212,17 +211,17 @@ namespace Http{
             return;
         auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& data){
+        m_Socket->recv([this,self = std::move(self)](DataStream& dataStream){
     #else
-        m_Socket->recv([this,self](Socket::StreamBuffer& data){
+        m_Socket->recv([this,self](DataStream& dataStream){
     #endif
             m_Death = false;
-            uint64_t nparse = m_RequestParser->execute(data.data(),data.size());
+            uint64_t nparse = m_RequestParser->execute(dataStream.data(),dataStream.size());
             if(m_RequestParser->hasError()){
                 return;
             }
-            uint64_t m_Offset = data.size() - nparse;
-            data.resize(m_Offset);
+            uint64_t m_Offset = dataStream.size() - nparse;
+            dataStream.resize(m_Offset);
             if(!m_RequestParser->isFinished()){
                 this->requestParser();
                 return;
@@ -241,17 +240,17 @@ namespace Http{
                 constexpr uint32_t maxRequestSize = 1024 * 1024 * 5;
                 if(m_TotalLength > 0 && m_TotalLength < maxRequestSize){
                 #if __cplusplus >= 201402L
-                    m_Socket->recv(m_TotalLength - data.size(),[this,self = std::move(const_cast<Safe<HttpSocket>&>(self))](Socket::StreamBuffer& data){
+                    m_Socket->recv(m_TotalLength - dataStream.size(),[this,self = std::move(self)](DataStream& dataStream){
                 #else
-                    m_Socket->recv(m_TotalLength - data.size(),[this,self](Socket::StreamBuffer& data){
+                    m_Socket->recv(m_TotalLength - dataStream.size(),[this,self](DataStream& dataStream){
                 #endif
                         auto& request = m_RequestParser->getData();
-                        request->setBody(Magic::StringView(data.data(),data.size()));
-                        data.clear();
+                        request->setBody(dataStream.read());
+                        dataStream.resize(0);
                         this->handleRequest();
                     });
                 }else{
-                    data.clear();
+                    dataStream.resize(0);
                     this->handleRequest();
                 }
             }
@@ -263,17 +262,17 @@ namespace Http{
             return;
         auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& data){
+        m_Socket->recv([this,self = std::move(self)](DataStream& dataStream){
     #else
-        m_Socket->recv([this,self](Socket::StreamBuffer& data){
+        m_Socket->recv([this,self](DataStream& dataStream){
     #endif
             m_Death = false;
-            uint64_t nparse = m_ResponseParser->execute(data.data(),data.size());
+            uint64_t nparse = m_ResponseParser->execute(dataStream.data(),dataStream.size());
             if(m_ResponseParser->hasError()){
                 return;
             }
-            uint64_t m_Offset = data.size() - nparse;
-            data.resize(m_Offset);
+            uint64_t m_Offset = dataStream.size() - nparse;
+            dataStream.resize(m_Offset);
             if(!m_ResponseParser->isFinished()){
                 this->responseParser();
                 return;
@@ -281,17 +280,17 @@ namespace Http{
             uint64_t contentLength = m_ResponseParser->getContentLength();
             if(contentLength > 0){
             #if __cplusplus >= 201402L
-                m_Socket->recv(contentLength - data.size(),[this,self = std::move(const_cast<Safe<HttpSocket>&>(self))](Socket::StreamBuffer& data){
+                m_Socket->recv(contentLength - dataStream.size(),[this,self = std::move(self)](DataStream& dataStream){
             #else
-                m_Socket->recv(contentLength - data.size(),[this,self](Socket::StreamBuffer& data){
+                m_Socket->recv(contentLength - dataStream.size(),[this,self](DataStream& dataStream){
             #endif
                     auto& response = m_ResponseParser->getData();
-                    response->setBody(Magic::StringView(data.data(),data.size()));
-                    data.clear();
+                    response->setBody(dataStream.read());
+                    dataStream.resize(0);
                     this->handleResponse();
                 });
             }else{
-                data.clear();
+                dataStream.resize(0);
                 this->handleResponse();
             }
         });
@@ -302,19 +301,18 @@ namespace Http{
             return;
         auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& data){
+        m_Socket->recv([this,self = std::move(self)](DataStream& dataStream){
     #else
-        m_Socket->recv([this,self](Socket::StreamBuffer& data){
+        m_Socket->recv([this,self](DataStream& dataStream){
     #endif
             size_t fed = 0;
             do{
-                size_t ret = m_MultiPart->feed(data.data() + fed,data.size() - fed);
+                size_t ret = m_MultiPart->feed(dataStream.data() + fed,dataStream.size() - fed);
                 fed += ret;
-            }while(fed < data.size() && !m_MultiPart->stopped());
-            m_CurrentLength += data.size();
-            data.resize(0);
+            }while(fed < dataStream.size() && !m_MultiPart->stopped());
+            m_CurrentLength += dataStream.size();
+            dataStream.resize(0);
             if(m_CurrentLength == m_TotalLength){
-                data.clear();
                 this->handleRequest();
             }else{
                 this->multiPartParser();
@@ -322,29 +320,37 @@ namespace Http{
         });
     }
 
-    void HttpSocket::transferFileStream(){
+    void HttpSocket::transferDataStream(){
         if(!m_Socket
-            || m_FileStream.eof()
+            || !m_Stream
+            || m_Stream->eof()
             || m_CurrentTransferLength == m_TotalTransferLength){
-            m_FileStream.close();
-            m_StreamBuffer.reset();
+            m_Stream.reset();
             m_ResponseParser->reset();
             m_TotalTransferLength = 0;
             m_CurrentTransferLength = 0;
             return;
         }
-        uint64_t transferLength = m_TotalTransferLength > m_StreamBufferSize ? m_StreamBufferSize : m_TotalTransferLength;
-        m_FileStream.read(m_StreamBuffer.get(),transferLength);
-        auto length = m_FileStream.gcount();
-        m_CurrentTransferLength += length;
+        IStream::BufferView buffer = m_Stream->read();
+        m_CurrentTransferLength += buffer.size();
         auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->send(m_StreamBuffer.get(),length,[this,self = std::move(self)](){
+        m_Socket->send(buffer,[this,self = std::move(self)](){
     #else
-        m_Socket->send(m_StreamBuffer.get(),length,[this,self](){
+        m_Socket->send(buffer,[this,self](){
     #endif
-            this->transferFileStream();
+            this->transferDataStream();
         });
+    }
+
+    std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title,const Magic::StringView& message){
+        return Magic::StringCat("<!DOCTYPE html><html lang=\"en\"><head><title>"
+                                ,status
+                                ,"</title></head><body><center><h1>"
+                                ,title
+                                ,"</h1><h3>"
+                                ,message
+                                ,"</h3></center><hr><center>Magic/2.0.0</center></body></html>");
     }
 }
 }

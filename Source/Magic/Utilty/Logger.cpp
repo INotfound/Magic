@@ -80,49 +80,49 @@ namespace Magic{
 //###############################BEGIN##################################
     ILogFormatItem::~ILogFormatItem() = default;
 
-    class MessageFormatItem:public ILogFormatItem{
+    class MessageFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getContent().data();
         }
     };
 
-    class LevelFormatItem:public ILogFormatItem{
+    class LevelFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel level,const Safe<LogEvent>& /*event*/) override{
             os << ToString(level);
         }
     };
 
-    class ElapseFormatItem:public ILogFormatItem{
+    class ElapseFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getElapse();
         }
     };
 
-    class LogNameFormatItem:public ILogFormatItem{
+    class LogNameFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getLogName();
         }
     };
 
-    class ThreadIdFormatItem:public ILogFormatItem{
+    class ThreadIdFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getThreadId();
         }
     };
 
-    class NewLineFormatItem:public ILogFormatItem{
+    class NewLineFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& /*event*/) override{
             os << std::endl;
         }
     };
 
-    class DateTimeFormatItem:public ILogFormatItem{
+    class DateTimeFormatItem :public ILogFormatItem{
     public:
         explicit DateTimeFormatItem(const Magic::StringView& formatString = "%Y:%m:%d %H:%M:%S")
             :m_FormatString(formatString.data(),formatString.size()){
@@ -140,7 +140,7 @@ namespace Magic{
         std::string m_FormatString;
     };
 
-    class FilePathFormatItem:public ILogFormatItem{
+    class FilePathFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             Magic::StringView filePath = event->getFile();
@@ -155,28 +155,28 @@ namespace Magic{
         }
     };
 
-    class LineFormatItem:public ILogFormatItem{
+    class LineFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getLine();
         }
     };
 
-    class TabFormatItem:public ILogFormatItem{
+    class TabFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& /*event*/) override{
             os << '\t';
         }
     };
 
-    class ThreadNameFormatItem:public ILogFormatItem{
+    class ThreadNameFormatItem :public ILogFormatItem{
     public:
         void format(std::ostream& os,LogLevel /*level*/,const Safe<LogEvent>& event) override{
             os << event->getThreadName().data();
         }
     };
 
-    class StringFormatItem:public ILogFormatItem{
+    class StringFormatItem :public ILogFormatItem{
     public:
         explicit StringFormatItem(const Magic::StringView& str)
             :m_String(str.data(),str.size()){

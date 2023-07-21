@@ -87,7 +87,7 @@ namespace Http{
          * @param offset 当前数据偏移量
          * @param streamBuffer 数据内容缓存
          */
-        void handleMaskPayload(bool mask,uint32_t offset,Socket::StreamBuffer& streamBuffer);
+        void handleMaskPayload(bool mask,uint32_t offset,DataStream& streamBuffer);
 
     private:
         bool m_Fin;

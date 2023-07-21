@@ -26,6 +26,7 @@ set(TestSrc
     main.cpp
     UnitString.cpp
     UnitCrypto.cpp
+    UnitStream.cpp
     UnitCompress.cpp
 )
 add_executable(Test ${TestSrc})

@@ -26,17 +26,44 @@ namespace Magic{
         using const_reference = const char&;
         static constexpr size_type npos = size_type(-1);
     public:
-        constexpr StringView() noexcept :m_Data(nullptr),m_Size(0){}
+        constexpr StringView() noexcept
+            :m_Size(0),m_Data(nullptr){}
 
-        StringView(const std::string& str) noexcept :m_Data(str.data()),m_Size(str.size()){}
 
-        constexpr StringView(const char* data,size_type size) noexcept :m_Data(data),m_Size(size){}
+        StringView(const char* data) noexcept
+            :m_Size(std::char_traits<value_type>::length(data)),m_Data(data){}
 
-        StringView(const char* data) noexcept :m_Data(data),m_Size(std::char_traits<value_type>::length(data)){}
+        StringView(const std::string& str) noexcept
+            :m_Size(str.size()),m_Data(str.data()){}
+
 
         constexpr StringView(const StringView&) noexcept = default;
 
         StringView& operator=(const StringView&) noexcept = default;
+
+        constexpr StringView(const char* data,size_type size) noexcept
+            :m_Size(size),m_Data(data){}
+
+        constexpr bool empty() const noexcept{
+            return m_Size == 0;
+        }
+
+        constexpr size_type size() const noexcept{
+            return m_Size;
+        }
+
+        constexpr size_type length() const noexcept{
+            return m_Size;
+        }
+
+        int32_t compare(StringView x) const noexcept{
+            const int32_t cmp = std::char_traits<value_type>::compare(m_Data,x.data(),std::min(m_Size,x.size()));
+            return cmp != 0 ? cmp : (m_Size == x.size() ? 0 : (m_Size < x.size() ? -1 : 1));
+        }
+
+        constexpr const_pointer data() const noexcept{
+            return m_Data;
+        }
 
         constexpr const_iterator end() const noexcept{
             return m_Data + m_Size;
@@ -54,21 +81,6 @@ namespace Magic{
             return m_Data;
         }
 
-        constexpr bool empty() const noexcept{
-            return m_Size == 0;
-        }
-
-        constexpr size_type size() const noexcept{
-            return m_Size;
-        }
-
-        constexpr size_type length() const noexcept{
-            return m_Size;
-        }
-
-        constexpr const_pointer data() const noexcept{
-            return m_Data;
-        }
         constexpr const_reference at(size_type pos) const{
             return pos >= m_Size ? throw std::out_of_range("StringView::at"),m_Data[0] : m_Data[pos];
         }
@@ -81,10 +93,6 @@ namespace Magic{
                 throw std::out_of_range("StringView::substr");
             }
             return StringView(data() + pos,std::min(m_Size - pos,n));
-        }
-
-        constexpr const_reference operator[](size_type pos) const noexcept{
-            return m_Data[pos];
         }
 
         size_type find(value_type c,size_type pos = 0) const noexcept{
@@ -120,6 +128,10 @@ namespace Magic{
             return npos;
         }
 
+        size_type rfind(value_type c,size_type pos = npos) const noexcept{
+            return rfind(StringView(&c,1),pos);
+        }
+
         size_type rfind(StringView sv,size_type pos = npos) const noexcept{
             if (m_Size < sv.size()){
                 return npos;
@@ -139,17 +151,12 @@ namespace Magic{
             };
         }
 
-        size_type rfind(value_type c,size_type pos = npos) const noexcept{
-            return rfind(StringView(&c,1),pos);
-        }
-
-        int compare(StringView x) const noexcept{
-            const int cmp = std::char_traits<value_type>::compare(m_Data,x.data(),std::min(m_Size,x.size()));
-            return cmp != 0 ? cmp : (m_Size == x.size() ? 0 : (m_Size < x.size() ? -1 : 1));
+        constexpr const_reference operator[](size_type pos) const noexcept{
+            return m_Data[pos];
         }
     private:
-        const_pointer m_Data;
         size_type m_Size;
+        const_pointer m_Data;
     };
 
     inline std::ostream& operator<<(std::ostream& os,const StringView& sv){

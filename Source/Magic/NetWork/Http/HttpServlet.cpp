@@ -13,17 +13,6 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-
-    std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title,const Magic::StringView& message){
-        return Magic::StringCat("<!DOCTYPE html><html lang=\"en\"><head><title>"
-                                ,status
-                                ,"</title></head><body><center><h1>"
-                                ,title
-                                ,"</h1><h3>"
-                                ,message
-                                ,"</h3></center><hr><center>Magic/2.0.0</center></body></html>");
-    }
-
     IHttpServlet::~IHttpServlet() = default;
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){

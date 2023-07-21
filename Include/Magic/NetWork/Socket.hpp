@@ -15,6 +15,7 @@
 
 #include <atomic>
 #include "Magic/Core/Core.hpp"
+#include "Magic/Core/Stream.hpp"
 #include "Magic/Utilty/TimingWheel.hpp"
 
 namespace Magic{
@@ -24,12 +25,10 @@ namespace NetWork{
      */
     class Socket:public Noncopyable,public std::enable_shared_from_this<Socket>{
     public:
-        /// 数据流缓存
-        typedef std::vector<char> StreamBuffer;
         /// 发送回调方法
         typedef std::function<void()> SendCallBack;
         /// 数据接收方法
-        typedef std::function<void(StreamBuffer&)> RecvCallBack;
+        typedef std::function<void(DataStream&)> RecvCallBack;
         /// 错误回调方法
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
         /// 心跳回调方法
@@ -122,12 +121,11 @@ namespace NetWork{
 
         /**
          * @brief 发送数据函数
-         * @param data 二进制或文本数据
-         * @param length 发送数据的长度
+         * @param buffer 二进制或文本数据
          * @param callback 发送完成后响应函数
          * @warning 该函数不保证生命周期,需要注意！
          */
-        void send(const char* data,uint64_t length,SendCallBack callBack = nullptr);
+        void send(const IStream::BufferView& buffer,SendCallBack callBack = nullptr);
 
         /**
          * @brief 发送数据函数
@@ -142,8 +140,8 @@ namespace NetWork{
         uint64_t m_BufferSize;
         uint64_t m_HeartBeatMs;
         Safe<char> m_ByteBlock;
+        DataStream m_DataStream;
         std::atomic_bool m_Working;
-        StreamBuffer m_StreamBuffer;
         ErrorCallBack m_ErrorCodeCallBack;
         Safe<asio::ip::tcp::socket> m_Socket;
         HeartBeatCallBack m_HeartBeatCallBack;

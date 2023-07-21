@@ -81,9 +81,9 @@ namespace Http{
             return;
         auto self = this->shared_from_this();
     #if __cplusplus >= 201402L
-        m_Socket->recv([this,self = std::move(self)](Socket::StreamBuffer& streamBuffer){
+        m_Socket->recv([this,self = std::move(self)](DataStream& streamBuffer){
     #else
-        m_Socket->recv([this,self](Socket::StreamBuffer& streamBuffer){
+        m_Socket->recv([this,self](DataStream& streamBuffer){
     #endif
             if(streamBuffer.size() >= 2){
                 uint32_t offset = 2;
@@ -204,7 +204,7 @@ namespace Http{
         }
     }
 
-    void WebSocket::handleMaskPayload(bool mask,uint32_t offset,Socket::StreamBuffer& streamBuffer){
+    void WebSocket::handleMaskPayload(bool mask,uint32_t offset,DataStream& streamBuffer){
         char* data = streamBuffer.data() + offset;
 
         if(mask){
@@ -220,8 +220,8 @@ namespace Http{
             }
         }
 
-        m_RawData.append(streamBuffer.begin() + offset,streamBuffer.end());
-        streamBuffer.clear();
+        m_RawData.append(streamBuffer.data() + offset,streamBuffer.size() - offset);
+        streamBuffer.resize(0);
 
         if(!m_Fin){
             this->handleProtocol();

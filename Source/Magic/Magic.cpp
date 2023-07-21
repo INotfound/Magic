@@ -30,7 +30,6 @@ namespace Magic{
     Application::Application()
         :m_Container(std::make_shared<Container>()){
         Magic::Thread::SetName("Magic");
-        std::ios::sync_with_stdio(false);
-        std::cout << g_Logo.data() << std::endl;
+        std::printf("%s",g_Logo.data());
     }
 }

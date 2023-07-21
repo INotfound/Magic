@@ -54,6 +54,13 @@ public:
             MAGIC_DEBUG() << "disconnected";
         });
     }
+
+    void handle4(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
+        auto& response = httpSocket->getResponse();
+        response->setResource("BSong-LYCB.mpg");
+        httpSocket->sendResponse(response);
+    }
+
     void handle3(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         std::ifstream fileSteam;
         auto& response = httpSocket->getResponse();
@@ -170,6 +177,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/2",&ResourceServlet::handle1,m_Container->resolve<Aop>(),m_Container->resolve<AopEx>());
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/3",&ResourceServlet::handle2);
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/4",&ResourceServlet::handle3);
+    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/5",&ResourceServlet::handle4);
 
     m_Container->resolve<Magic::NetWork::Http::HttpServletDispatch>()->addGlobalAspect(m_Container->resolve<AopGlobal>(),m_Container->resolve<AopGlobalEx>());
 

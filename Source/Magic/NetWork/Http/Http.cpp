@@ -5,7 +5,6 @@
  * @Date           : 2023-07-03 18:32
  ******************************************************************************
  */
-#include <cstring>
 #include <algorithm>
 
 #include "Magic/Utilty/Compress.hpp"
@@ -172,16 +171,6 @@ namespace Http{
         }while(pos <= str.size());
     }
 
-    inline std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title){
-        std::stringstream html;
-        html << "<!DOCTYPE html><html lang=\"en\"><head><title>"
-             << status
-             << "</title></head><body><center><h1>"
-             << title
-             << "</h1></center><hr><center>Magic/2.0.0</center></body></html>";
-        return html.str();
-    }
-
     HttpRequest::HttpRequest(bool keepAlive,uint8_t version)
         :m_KeepAlive(keepAlive)
         ,m_Version(version)
@@ -192,6 +181,10 @@ namespace Http{
 
     bool HttpRequest::isRange() const{
         return m_Headers.find("Range") != m_Headers.end();
+    }
+
+    bool HttpRequest::hasBody() const{
+        return m_BodyStream.operator bool();
     }
 
     bool HttpRequest::getKeepAlive() const{
@@ -243,7 +236,12 @@ namespace Http{
     }
 
     Magic::StringView HttpRequest::getBody() const{
-        return m_Body;
+        if(m_BodyStream){
+            m_BodyStream->seek(0);
+            return m_BodyStream->read();
+        }else{
+            return Magic::StringView();
+        }
     }
 
     Magic::StringView HttpRequest::getQuery() const{
@@ -313,9 +311,15 @@ namespace Http{
             os << v.first << ": " << v.second << "\r\n";
         }
 
-        if(!m_Body.empty()){
-            os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
-                << m_Body;
+        if(m_BodyStream){
+            std::string body;
+            m_BodyStream->seek(0);
+            while(!m_BodyStream->eof()){
+                auto buffer = m_BodyStream->read();
+                body.append(buffer.data(),buffer.data());
+            }
+            os  << "Content-Length: " << body.size() << "\r\n\r\n"
+                << body;
         }else{
             if(m_ContentLength != 0){
                 os << "Content-Length: " << m_ContentLength << "\r\n";
@@ -345,10 +349,10 @@ namespace Http{
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setRange(uint64_t start,uint64_t stop){
-        m_Headers.emplace("Range",Magic::StringCat("bytes="
-                                                   ,AsString<uint64_t>(start)
-                                                   ,"-"
-                                                   ,(stop == 0) ? "" : AsString<uint64_t>(stop)));
+        m_Headers["Range"] = Magic::StringCat("bytes="
+                                              ,Magic::AsString<uint64_t>(start)
+                                              ,"-"
+                                              ,(stop == 0) ? "" : Magic::AsString<uint64_t>(stop));
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -357,7 +361,12 @@ namespace Http{
         if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded")){
             Parse(body,m_Params,"&");
         }
-        m_Body = std::string(body.data(),body.size());
+        m_BodyStream = std::make_shared<DataStream>(body);
+        return ObjectWrapper<HttpRequest>(this);
+    }
+
+    ObjectWrapper<HttpRequest> HttpRequest::setBody(const Safe<IStream>& bodyStream){
+        m_BodyStream = bodyStream;
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -402,6 +411,10 @@ namespace Http{
 
     bool HttpResponse::isRange() const{
         return m_Headers.find("Content-Range") != m_Headers.end();
+    }
+
+    bool HttpResponse::hasBody() const{
+        return m_BodyStream.operator bool();
     }
 
     bool HttpResponse::hasResource() const{
@@ -455,7 +468,12 @@ namespace Http{
     }
 
     Magic::StringView HttpResponse::getBody() const{
-        return m_Body;
+        if(m_BodyStream){
+            m_BodyStream->seek(0);
+            return m_BodyStream->read();
+        }else{
+            return Magic::StringView();
+        }
     }
 
     uint64_t HttpResponse::getContentLength() const{
@@ -518,36 +536,25 @@ namespace Http{
             os << "Connection: " << (m_KeepAlive ? "keep-alive" : "close") << "\r\n";
         }
 
-        bool hasBody = !m_Body.empty();
-
-        if(!hasBody && m_Resource.empty() && m_Status > HttpStatus::Ok){
-            hasBody = true;
-            m_Body = GenerateHtml(HttpStatusToString(m_Status),HttpStatusToString(m_Status));
-        }
-
-        auto contentEncodingIter = m_Headers.find("Content-Encoding");
-
-        if(contentEncodingIter != m_Headers.end()){
-            if(hasBody && contentEncodingIter->second.find("br") != std::string::npos){
-                std::string compressData;
-                contentEncodingIter->second = "br";
-                Magic::BrotliEncoder(m_Body,compressData);
-                m_Body.swap(compressData);
+        bool hasBody = m_BodyStream.operator bool();
+        auto encodingIter = m_Headers.find("Content-Encoding");
+        if(encodingIter != m_Headers.end()){
+            const auto& contentEncoding = encodingIter->second;
+            if(hasBody && contentEncoding.find("br") != Magic::StringView::npos){
+                encodingIter->second = "br";
+                m_BodyStream = std::make_shared<BrotliEncoder>(m_BodyStream);
             }
         #ifdef ZLIB
-            else if(hasBody && contentEncodingIter->second.find("gzip") != std::string::npos){
-                std::string compressData;
-                contentEncodingIter->second = "gzip";
-                Magic::GZipEncoder(m_Body,compressData);
-                m_Body.swap(compressData);
+            else if(hasBody && encodingHeader.find("gzip") != Magic::StringView::npos){
+                httpResponse.setHeader(contentEncoding,"gzip");
+                m_BodyStream = std::make_shared<GZipEncoder>(m_BodyStream);
             }
         #endif
             else{
-                m_Headers.erase(contentEncodingIter);
+                m_Headers.erase(encodingIter);
             }
         }
 
-        /// Headers
         for(auto& v : m_Headers){
             os << v.first << ": " << v.second << "\r\n";
         }
@@ -557,10 +564,19 @@ namespace Http{
         }
 
         if(hasBody){
-            os  << "Content-Length: " << m_Body.size() << "\r\n\r\n"
-                << m_Body;
+            std::string body;
+            m_BodyStream->seek(0);
+            while(!m_BodyStream->eof()){
+                auto buffer = m_BodyStream->read();
+                body.append(buffer.data(),buffer.size());
+            }
+            os  << "Content-Length: " << body.size() << "\r\n\r\n"
+                << body;
         }else{
-            os << "Content-Length: " << m_ContentLength << "\r\n\r\n";
+            if(m_ContentLength != 0){
+                os << "Content-Length: " << m_ContentLength << "\r\n";
+            }
+            os << "\r\n";
         }
     }
 
@@ -585,7 +601,12 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setBody(const Magic::StringView& body){
-        m_Body = std::string(body.data(),body.size());
+        m_BodyStream = std::make_shared<DataStream>(body);
+        return ObjectWrapper<HttpResponse>(this);
+    }
+
+    ObjectWrapper<HttpResponse> HttpResponse::setBody(const Safe<IStream>& bodyStream){
+        m_BodyStream = bodyStream;
         return ObjectWrapper<HttpResponse>(this);
     }
 
@@ -600,7 +621,7 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setContentType(const Magic::StringView& contentType){
-        m_Headers.emplace("Content-Type",std::string(contentType.data(),contentType.size()));
+        m_Headers["Content-Type"] = std::string(contentType.data(),contentType.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
@@ -611,12 +632,12 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setRange(uint64_t start,uint64_t stop,uint64_t totalLength){
-        m_Headers.emplace("Content-Range",Magic::StringCat("bytes "
-                                         ,AsString<uint64_t>(start)
-                                         ,"-"
-                                         ,AsString<uint64_t>(stop)
-                                         ,"/"
-                                         ,AsString<uint64_t>(totalLength)));
+        m_Headers["Content-Range"] = Magic::StringCat("bytes "
+                                                      ,Magic::AsString<uint64_t>(start)
+                                                      ,"-"
+                                                      ,Magic::AsString<uint64_t>(stop)
+                                                      ,"/"
+                                                      ,Magic::AsString<uint64_t>(totalLength));
         return ObjectWrapper<HttpResponse>(this);
     }
 

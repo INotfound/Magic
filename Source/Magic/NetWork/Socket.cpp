@@ -18,7 +18,6 @@ namespace NetWork{
         ,m_ByteBlock(new char[m_BufferSize],std::default_delete<char[]>())
         ,m_Working(false)
         ,m_Socket(std::make_shared<asio::ip::tcp::socket>(context)){
-        m_StreamBuffer.reserve(m_BufferSize);
         m_ErrorCodeCallBack = [](const asio::error_code& err){
             MAGIC_WARN() << err.message();
         };
@@ -85,9 +84,9 @@ namespace NetWork{
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+            m_DataStream.write(Magic::IStream::BufferView(m_ByteBlock.get(),length));
             if(callBack)
-                callBack(this->m_StreamBuffer);
+                callBack(m_DataStream);
         };
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
@@ -112,13 +111,13 @@ namespace NetWork{
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_StreamBuffer.insert(m_StreamBuffer.end(),m_ByteBlock.get(),m_ByteBlock.get() + length);
+            m_DataStream.write(Magic::IStream::BufferView(m_ByteBlock.get(),length));
             if(size > length){
                 this->recv(size - length,callBack);
                 return;
             }
             if(callBack)
-                callBack(this->m_StreamBuffer);
+                callBack(m_DataStream);
         };
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_Socket->is_open()){
@@ -145,7 +144,7 @@ namespace NetWork{
         m_HeartBeatCallBack = std::move(heartBeatCallBack);
     }
 
-    void Socket::send(const char* data,uint64_t length,SendCallBack callBack){
+    void Socket::send(const IStream::BufferView& buffer,SendCallBack callBack){
     #if __cplusplus >= 201402L
         auto sendCallBack = [this,callBack = std::move(callBack)](const asio::error_code& err,std::size_t /*length*/){
     #else
@@ -166,11 +165,11 @@ namespace NetWork{
         m_Working = true;
     #ifdef OPENSSL
         if(m_SslStream){
-            asio::async_write(*m_SslStream,asio::const_buffer(data,length),std::move(sendCallBack));
+            asio::async_write(*m_SslStream,asio::const_buffer(buffer.data(),buffer.size()),std::move(sendCallBack));
             return;
         }
     #endif
-        asio::async_write(*m_Socket,asio::const_buffer(data,length),std::move(sendCallBack));
+        asio::async_write(*m_Socket,asio::const_buffer(buffer.data(),buffer.size()),std::move(sendCallBack));
     }
 
     void Socket::send(const Safe<asio::streambuf>& stream,SendCallBack callBack){

@@ -6,40 +6,80 @@
  ******************************************************************************
  */
 #pragma once
+#ifdef ZLIB
+#include <zlib.h>
+#endif
+#include <brotli/encode.h>
+#include <brotli/decode.h>
 
 #include "Magic/Core/Core.hpp"
+#include "Magic/Core/Stream.hpp"
 
 namespace Magic{
+    class CompressionDecorator :public IStream{
+    public:
+        explicit CompressionDecorator(const Safe<IStream>& stream);
+    protected:
+        Safe<IStream> m_Stream;
+    };
 #ifdef ZLIB
-    /**
-     * @brief GZip Decompression
-     * @param compressedData - The Gzip Compressed Data
-     * @param data - The Resulting Uncompressed Data (May Contain Binary Data)
-     * @return - true On Success, false On Failure
-     */
-    bool GZipDecoder(const Magic::StringView& compressedData,std::string& data);
 
-    /**
-     * @brief GZip Compression
-     * @param data - The Data To Compress
-     * @param compressedData - The Resulting Gzip Compressed Data
-     * @param level - The Gzip Compress Level -1 = Default, 0 = No Compression, 1= Worst/Fastest Compression, 9 = Best/Slowest Compression
-     * @return - true On Success, false On Failure
-     */
-    bool GZipEncoder(const Magic::StringView& data,std::string& compressedData);
+    class GZipDecoder :public CompressionDecorator{
+    public:
+        explicit GZipDecoder(const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+    private:
+        void write(const BufferView& data) override;
+    private:
+        z_stream m_ZStream;
+        BufferType m_Buffer;
+    };
+
+    class GZipEncoder :public CompressionDecorator{
+    public:
+        explicit GZipEncoder(const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+    private:
+        void write(const BufferView& data) override;
+    private:
+        z_stream m_ZStream;
+        BufferType m_Buffer;
+    };
 #endif
-    /**
-     * @brief Brotli Decompression
-     * @param compressedData - The Brotli Compressed Data
-     * @param data - The Resulting Uncompressed Data (May Contain Binary Data)
-     * @return - true On Success, false On Failure
-     */
-    bool BrotliDecoder(const Magic::StringView& compressedData,std::string& data);
-    /**
-     * @brief Brotli Compression
-     * @param data - The Data To Compress
-     * @param compressedData - The Resulting Brotli Compressed Data
-     * @return - true On Success, false On Failure
-     */
-    bool BrotliEncoder(const Magic::StringView& data,std::string& compressedData);
+
+    class BrotliDecoder :public CompressionDecorator{
+    public:
+        explicit BrotliDecoder(const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+    private:
+        void write(const BufferView& data) override;
+    private:
+        BufferType m_Buffer;
+        std::unique_ptr<BrotliDecoderState,void (*)(BrotliDecoderState*)> m_BrotliDecoderState;
+    };
+
+    class BrotliEncoder :public CompressionDecorator{
+    public:
+        explicit BrotliEncoder(const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+    private:
+        void write(const BufferView& data) override;
+    private:
+        BufferType m_Buffer;
+        std::unique_ptr<BrotliEncoderState,void (*)(BrotliEncoderState*)> m_BrotliEncoderState;
+    };
+
+
 }

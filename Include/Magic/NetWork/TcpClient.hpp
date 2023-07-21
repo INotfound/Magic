@@ -49,7 +49,7 @@ namespace NetWork{
          * @param length 长度
          * @param callBack 发送完成后响应函数
          */
-        void send(const char* data,uint64_t length,Socket::SendCallBack callBack = nullptr);
+        void send(const IStream::BufferView& buffer,Socket::SendCallBack callBack = nullptr);
 
         /**
          * @brief 异步发送数据函数
