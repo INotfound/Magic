@@ -22,14 +22,14 @@ static Magic::StringView g_Logo = R"(
 
 namespace Magic{
     Application::~Application(){
-        if(m_Container->contain<Magic::NetWork::IoPool>()){
-            m_Container->resolve<Magic::NetWork::IoPool>()->wait();
+        if(m_Container->contain<NetWork::IoPool>()){
+            m_Container->resolve<NetWork::IoPool>()->wait();
         }
     }
 
     Application::Application()
         :m_Container(std::make_shared<Container>()){
-        Magic::Thread::SetName("Magic");
         std::printf("%s",g_Logo.data());
+        Thread::SetName("Magic");
     }
 }

@@ -13,7 +13,7 @@ namespace NetWork{
 namespace Http{
     HttpClient::~HttpClient() = default;
 
-    HttpClient::HttpClient(const Magic::StringView& url,uint64_t timeOutMs)
+    HttpClient::HttpClient(const StringView& url,uint64_t timeOutMs)
         :m_Url(url.data(),url.size())
         ,m_Death(false)
         ,m_Finish(false){
@@ -40,15 +40,15 @@ namespace Http{
         if(uri.hasError()){
             auto& errorCallBack = m_Socket->getErrorCodeCallBack();
             if(errorCallBack)
-                errorCallBack(std::error_code(static_cast<int>(UriErrorCode::ParseError),Magic::NetWork::Http::UriErrorCategory()));;
+                errorCallBack(std::error_code(static_cast<int>(UriErrorCode::ParseError),UriErrorCategory()));;
             return;
         }
 
         uint16_t port = uri.getPort();
-        Magic::StringView host = uri.getHost();
-        Magic::StringView path = uri.getPath();
-        Magic::StringView query = uri.getQuery();
-        Magic::StringView fragment = uri.getFragment();
+        StringView host = uri.getHost();
+        StringView path = uri.getPath();
+        StringView query = uri.getQuery();
+        StringView fragment = uri.getFragment();
 
         if(!path.empty())
             request->setPath(path);

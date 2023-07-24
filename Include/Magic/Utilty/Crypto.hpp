@@ -6,56 +6,67 @@
  ******************************************************************************
  */
 #pragma once
-
+#include <openssl/evp.h>
 #include "Magic/Core/Core.hpp"
+#include "Magic/Core/Stream.hpp"
 
 namespace Magic{
-    /**
-     * @brief MD5
-     * @param str 需要加密的字符串
-     * @return: 返回加密后的字符串
-     */
-    std::string MD5(const Magic::StringView& str);
+    class CryptoDecorator :public IStream{
+    public:
+        explicit CryptoDecorator(const Safe<IStream>& stream);
+    protected:
+        Safe<IStream> m_Stream;
+    };
 
-    /**
-     * @brief SHA1
-     * @param str 需要加密的字符串
-     * @return: 返回加密后的字符串
-     */
-    std::string SHA1(const Magic::StringView& str);
+    class Base64Decoder :public CryptoDecorator{
+    public:
+        explicit Base64Decoder(const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+    private:
+        void write(const BufferView& data) override;
+    private:
+        uint64_t m_ChunkLen;
+        IStream::BufferType m_Buffer;
+    };
 
-    /**
-     * @brief MD5
-     * @param str 需要加密的文件
-     * @return: 返回文件加密后的十六进制字符串
-     */
-    std::string StringToHexMD5(const Magic::StringView& str);
+    class Base64Encoder :public CryptoDecorator{
+    public:
+        explicit Base64Encoder(const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+    private:
+        void write(const BufferView& data) override;
+    private:
+        uint64_t m_ChunkLen;
+        IStream::BufferType m_Buffer;
+    };
 
-    /**
-     * @brief SHA1
-     * @param str 需要加密的文件
-     * @return: 返回文件加密后的十六进制字符串
-     */
-    std::string StringToHexSHA1(const Magic::StringView& str);
-
-    /**
-     * @brief Base64
-     * @param str 需要解码的字符串
-     * @return: 返回解码后的字符串
-     */
-    std::string Base64Decode(const Magic::StringView& src);
-
-    /**
-     * @brief Base64
-     * @param src 需要编码的字符串
-     * @return: 返回编码后的字符串
-     */
-    std::string Base64Encode(const Magic::StringView& src);
-
-    /**
-     * @brief MD5
-     * @param filePath 需要加密的文件
-     * @return: 返回文件加密后的十六进制字符串
-     */
-    std::string FileToHexMD5String(const Magic::StringView& filePath);
+    class MessageDigest :public CryptoDecorator{
+    public:
+        enum class Algorithm{
+            MD4,
+            MD5,
+            SHA1,
+            SHA256,
+            SHA384,
+            SHA512,
+        };
+    public:
+        explicit MessageDigest(Algorithm algorithm,const Safe<IStream>& stream);
+        BufferView read() override;
+        void seek(uint64_t pos) override;
+    private:
+        bool eof() const noexcept override;
+        uint64_t size() const noexcept override;
+        void write(const BufferView& data) override;
+    private:
+        uint32_t m_DigestSize;
+        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> m_EvpMdCtx;
+        std::unique_ptr<IStream::BufferView::value_type,void (*)(IStream::BufferView::value_type*)> m_Digest;
+    };
 }

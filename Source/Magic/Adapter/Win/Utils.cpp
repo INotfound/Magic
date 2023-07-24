@@ -35,7 +35,7 @@ namespace Magic{
     #undef EPOCHFILETIME
     }
 
-    bool IsFile(const Magic::StringView& path){
+    bool IsFile(const StringView& path){
         struct stat fileStat;
         bool isOk = stat(path.data(),&fileStat) == 0;
         if(isOk){

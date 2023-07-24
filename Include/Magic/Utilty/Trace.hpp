@@ -17,7 +17,7 @@ namespace Magic{
     public:
         ~TraceTimer();
 
-        explicit TraceTimer(const Magic::StringView& funcName);
+        explicit TraceTimer(const StringView& funcName);
 
     private:
         std::string m_FunctionName;
@@ -30,7 +30,7 @@ namespace Magic{
 
         virtual void complete() = 0;
 
-        virtual void tracing(const Magic::StringView& funcName,uint64_t threadId,int64_t start,int64_t end) = 0;
+        virtual void tracing(const StringView& funcName,uint64_t threadId,int64_t start,int64_t end) = 0;
     };
 
     /**
@@ -40,11 +40,11 @@ namespace Magic{
     public:
         ~ChromiumTraceAppender() override;
 
-        explicit ChromiumTraceAppender(const Magic::StringView& outFilePath);
+        explicit ChromiumTraceAppender(const StringView& outFilePath);
 
         void complete() override;
 
-        void tracing(const Magic::StringView& funcName,uint64_t threadId,int64_t start,int64_t end) override;
+        void tracing(const StringView& funcName,uint64_t threadId,int64_t start,int64_t end) override;
 
     private:
         bool m_UseSplit;

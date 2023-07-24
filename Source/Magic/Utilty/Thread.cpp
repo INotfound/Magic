@@ -14,7 +14,7 @@ namespace Magic{
 
     Thread::~Thread() = default;
 
-    Thread::Thread(const Magic::StringView& threadName,std::function<void()> callBack)
+    Thread::Thread(const StringView& threadName,std::function<void()> callBack)
         :m_Id(-1)
         ,m_Name(threadName.data(),threadName.size())
         ,m_CallBack(std::move(callBack)){
@@ -42,16 +42,16 @@ namespace Magic{
         return m_Id;
     }
 
-    Magic::StringView Thread::GetName(){
+    StringView Thread::GetName(){
         return g_ThreadName;
     }
 
-    void Thread::SetName(const Magic::StringView& threadName){
+    void Thread::SetName(const StringView& threadName){
         g_ThreadName = std::string(threadName.data(),threadName.size());
     }
 
     void Thread::run(){
-        m_Id = Magic::GetThreadId();
+        m_Id = GetThreadId();
         SetName(m_Name);
         m_CallBack();
     }

@@ -11,10 +11,10 @@
 #include "Magic/Core/StringView.hpp"
 
 namespace Magic{
-    class IStream :public Magic::Noncopyable{
+    class IStream :public Noncopyable{
     public:
+        using BufferView = StringView;
         using BufferType = std::vector<char>;
-        using BufferView = Magic::StringView;
     public:
         virtual ~IStream();
         virtual BufferView read() = 0;
@@ -27,7 +27,7 @@ namespace Magic{
     class DataStream :public IStream{
     public:
         DataStream();
-        explicit DataStream(const Magic::StringView& data);
+        explicit DataStream(const StringView& data);
 
         void resize(uint64_t size);
         BufferView read() override;
@@ -50,7 +50,7 @@ namespace Magic{
             ReadWrite   = 1000
         };
     public:
-        explicit FileStream(const Magic::StringView& path);
+        explicit FileStream(const StringView& path);
 
         bool open(OpenMode mode);
         BufferView read() override;

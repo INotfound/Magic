@@ -29,7 +29,7 @@ namespace Magic{
         return tv.tv_sec * 1000 * 1000ul + tv.tv_usec;
     }
 
-    bool IsFile(const Magic::StringView& path){
+    bool IsFile(const StringView& path){
         struct stat fileStat;
         bool isOk = stat(path.data(),&fileStat) == 0;
         if(isOk){

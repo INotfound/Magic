@@ -63,7 +63,7 @@ namespace NetWork{
         return m_SslStream;
     }
 
-    void Socket::enableSsl(const Magic::StringView& keyPath,const Magic::StringView& certPath){
+    void Socket::enableSsl(const StringView& keyPath,const StringView& certPath){
         asio::ssl::context sslContext(asio::ssl::context::sslv23);
         if(!keyPath.empty() && !certPath.empty()){
             sslContext.set_options(asio::ssl::context::no_sslv2 | asio::ssl::context::single_dh_use | asio::ssl::context::default_workarounds);
@@ -84,7 +84,7 @@ namespace NetWork{
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_DataStream.write(Magic::IStream::BufferView(m_ByteBlock.get(),length));
+            m_DataStream.write(IStream::BufferView(m_ByteBlock.get(),length));
             if(callBack)
                 callBack(m_DataStream);
         };
@@ -111,7 +111,7 @@ namespace NetWork{
                 m_ErrorCodeCallBack(err);
                 return;
             }
-            m_DataStream.write(Magic::IStream::BufferView(m_ByteBlock.get(),length));
+            m_DataStream.write(IStream::BufferView(m_ByteBlock.get(),length));
             if(size > length){
                 this->recv(size - length,callBack);
                 return;

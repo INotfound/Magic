@@ -57,7 +57,7 @@ namespace DataBase{
     class ConnectionPool:public Noncopyable,public std::enable_shared_from_this<ConnectionPool<T>>{
         friend class Connection<T>;
     public:
-        explicit ConnectionPool(const Safe<Magic::Config>& configuration)
+        explicit ConnectionPool(const Safe<Config>& configuration)
             :m_Count(configuration->at("DataBase.Connection.Count",2)){
         }
 

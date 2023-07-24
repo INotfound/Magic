@@ -47,40 +47,40 @@ namespace Http{
      */
     class Uri:public Noncopyable{
     public:
-        explicit Uri(const Magic::StringView& uri);
+        explicit Uri(const StringView& uri);
 
         bool hasError() const;
 
         uint32_t getPort() const;
 
-        Magic::StringView getUser() const;
+        StringView getUser() const;
 
-        Magic::StringView getHost() const;
+        StringView getHost() const;
 
-        Magic::StringView getPath() const;
+        StringView getPath() const;
 
-        Magic::StringView getQuery() const;
+        StringView getQuery() const;
 
-        Magic::StringView getScheme() const;
+        StringView getScheme() const;
 
-        Magic::StringView getFragment() const;
+        StringView getFragment() const;
 
         void setPort(uint32_t val);
 
-        void setHost(const Magic::StringView& val);
+        void setHost(const StringView& val);
 
-        void setPath(const Magic::StringView& val);
+        void setPath(const StringView& val);
 
-        void setUser(const Magic::StringView& val);
+        void setUser(const StringView& val);
 
-        void setQuery(const Magic::StringView& val);
+        void setQuery(const StringView& val);
 
-        void setScheme(const Magic::StringView& val);
+        void setScheme(const StringView& val);
 
-        void setFragment(const Magic::StringView& val);
+        void setFragment(const StringView& val);
 
     private:
-        bool execute(const Magic::StringView& uri);
+        bool execute(const StringView& uri);
 
     private:
         bool m_Error;

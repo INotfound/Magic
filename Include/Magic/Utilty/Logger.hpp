@@ -50,7 +50,7 @@ namespace Magic{
          * @param LogName 日志器名称
          * @param threadName 线程名称
          */
-        LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t threadId,const Magic::StringView& file,const Magic::StringView& LogName,const Magic::StringView& threadName);
+        LogEvent(uint32_t line,uint64_t time,uint64_t elapse,uint64_t threadId,const StringView& file,const StringView& LogName,const StringView& threadName);
 
         /**
          * @brief 获取行数
@@ -86,19 +86,19 @@ namespace Magic{
          * @brief 获取文件名称
          * @return: 返回文件名称
          */
-        Magic::StringView getFile() const;
+        StringView getFile() const;
 
         /**
          * @brief 获取日志器名称
          * @return: 返回日志器名称
          */
-        Magic::StringView getLogName() const;
+        StringView getLogName() const;
 
         /**
          * @brief 获取线程名称
          * @return: 返回线程名称
          */
-        Magic::StringView getThreadName() const;
+        StringView getThreadName() const;
 
         /**
          * @brief 获取输出流
@@ -136,7 +136,7 @@ namespace Magic{
          * @brief 构造函数
          * @param pattern 格式化字符串
          */
-        explicit LogFormatter(const Magic::StringView& pattern);
+        explicit LogFormatter(const StringView& pattern);
 
         /**
          * @brief 格式化函数
@@ -205,13 +205,13 @@ namespace Magic{
          * @brief 设置日志名称函数
          * @return: 返回日志名称
          */
-        Magic::StringView getLogName() const;
+        StringView getLogName() const;
 
         /**
          * @brief 设置日志格式化器函数
          * @param level 日志级别
          */
-        void setFormatter(const Magic::StringView& pattern);
+        void setFormatter(const StringView& pattern);
 
         /**
          * @brief 日志输出函数
@@ -287,7 +287,7 @@ namespace Magic{
         void log(LogLevel level,const Safe<LogEvent>& event) override;
     };
 
-    extern Safe<Magic::Logger> g_Logger;
+    extern Safe<Logger> g_Logger;
 }
 
 

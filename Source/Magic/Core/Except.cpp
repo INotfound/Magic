@@ -8,7 +8,7 @@
 #include "Magic/Core/Except.hpp"
 
 namespace Magic{
-    Failure::Failure(const Magic::StringView& error)
+    Failure::Failure(const StringView& error)
         :std::runtime_error(error.data()){
     }
 }

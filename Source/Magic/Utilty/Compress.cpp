@@ -76,7 +76,7 @@ namespace Magic{
 
     IStream::BufferView GZipEncoder::read(){
         if(m_Stream->eof()){
-            return Magic::IStream::BufferView();
+            return IStream::BufferView();
         }
         m_Buffer.resize(0);
         IStream::BufferView bufferView = m_Stream->read();

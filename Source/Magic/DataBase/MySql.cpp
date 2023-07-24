@@ -70,7 +70,7 @@ namespace DataBase{
         MAGIC_ERROR() << mysql_error(&m_MySql);
     }
 
-    bool MySql::execute(const Magic::StringView& sql){
+    bool MySql::execute(const StringView& sql){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&m_MySql) != 0){
             this->printError();
@@ -81,7 +81,7 @@ namespace DataBase{
         return false;
     }
 
-    bool MySql::connnetDB(const Magic::StringView& dataBase,const Magic::StringView& ip,const Magic::StringView& user,const Magic::StringView& password,uint16_t port){
+    bool MySql::connnetDB(const StringView& dataBase,const StringView& ip,const StringView& user,const StringView& password,uint16_t port){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!mysql_init(&m_MySql)){
             this->printError();
@@ -201,7 +201,7 @@ namespace DataBase{
         MAGIC_WARN() << mysql_stmt_error(m_Stmt);
     }
 
-    bool MySqlStmt::prepare(const Magic::StringView& sql){
+    bool MySqlStmt::prepare(const StringView& sql){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(mysql_ping(&this->m_MySql->m_MySql) != 0){
             this->printError();
@@ -287,16 +287,16 @@ namespace DataBase{
         m_MySqlModifyBinds[index].is_unsigned = true;
     }
 
-    void MySqlStmt::bind(uint32_t index,const Magic::StringView& value){
+    void MySqlStmt::bind(uint32_t index,const StringView& value){
         BIND_COPY(MYSQL_TYPE_STRING,value.data(),value.size());
+    }
+
+    void MySqlStmt::bindBlob(uint32_t index,const StringView& value){
+        BIND_COPY(MYSQL_TYPE_BLOB,value.data(),value.size());
     }
 
     void MySqlStmt::bindTime(uint32_t index,const std::time_t value){
         bind(index,TimeToString(value));
-    }
-
-    void MySqlStmt::bindBlob(uint32_t index,const Magic::StringView& value){
-        BIND_COPY(MYSQL_TYPE_BLOB,value.data(),value.size());
     }
 
     void MySqlStmt::bindBlob(uint32_t index,const void* value,uint64_t size){

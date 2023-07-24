@@ -21,7 +21,7 @@ namespace Http{
 
     public:
         typedef std::function<void(const Safe<WebSocket>&)> DisconnectedCallBack;
-        typedef std::function<void(const Safe<WebSocket>&,const Magic::StringView&)> RecvCallBack;
+        typedef std::function<void(const Safe<WebSocket>&,const StringView&)> RecvCallBack;
     public:
         ~WebSocket();
 
@@ -48,13 +48,13 @@ namespace Http{
          * @brief 发送文本消息
          * @param message 文本消息
          */
-        void sendTextMessage(const Magic::StringView& message);
+        void sendTextMessage(const StringView& message);
 
         /**
          * @brief 发送二进制消息
          * @param message 二进制消息
          */
-        void sendBinaryMessage(const Magic::StringView& message);
+        void sendBinaryMessage(const StringView& message);
 
         /**
          * @brief 连接断开
@@ -79,7 +79,7 @@ namespace Http{
          * @param opCode 操作码
          * @param rawData 原始数据
          */
-        void sendEncodePackage(uint8_t opCode,const Magic::StringView& rawData);
+        void sendEncodePackage(uint8_t opCode,const StringView& rawData);
 
         /**
          * @brief 解析数据体

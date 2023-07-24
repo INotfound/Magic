@@ -28,7 +28,7 @@ namespace Magic{
          * @param threadName 线程名称
          * @param callBack 回调函数
          */
-        Thread(const Magic::StringView& threadName,std::function<void()> callBack);
+        Thread(const StringView& threadName,std::function<void()> callBack);
 
         /**
          * @brief 等待线程执行函数
@@ -50,13 +50,13 @@ namespace Magic{
          * @brief 获取线程名称
          * @return: 返回线程名,若返回空,即线程未初始化
          */
-        static Magic::StringView GetName();
+        static StringView GetName();
 
         /**
          * @brief 设置线程名称
          * @param threadName 需设置的线程名称
          */
-        static void SetName(const Magic::StringView& threadName);
+        static void SetName(const StringView& threadName);
 
     protected:
         /**

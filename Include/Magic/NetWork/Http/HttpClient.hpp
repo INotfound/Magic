@@ -24,7 +24,7 @@ namespace Http{
          * @param url 地址
          * @param timeOutMs 超时时间,默认1000毫秒
          */
-        explicit HttpClient(const Magic::StringView& url,uint64_t timeOutMs = 1000);
+        explicit HttpClient(const StringView& url,uint64_t timeOutMs = 1000);
 
         /**
          * @brief 执行Http请求处理

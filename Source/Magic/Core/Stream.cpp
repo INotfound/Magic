@@ -15,7 +15,7 @@ namespace Magic{
         :m_Position(0){
     }
 
-    DataStream::DataStream(const Magic::StringView& data)
+    DataStream::DataStream(const StringView& data)
         :m_Position(0)
         ,m_Buffer(data.cbegin(),data.cend()){
     }
@@ -51,7 +51,7 @@ namespace Magic{
         m_Buffer.insert(m_Buffer.end(),data.cbegin(),data.cend());
     }
 
-    FileStream::FileStream(const Magic::StringView& path)
+    FileStream::FileStream(const StringView& path)
         :m_Position(0)
         ,m_FileSize(0)
         ,m_BufferSize(65536)
@@ -69,7 +69,7 @@ namespace Magic{
     }
 
     bool FileStream::open(OpenMode mode){
-        Magic::StringView openType;
+        StringView openType;
         switch(mode){
             case OpenMode::Read:
                 openType = "rb";
@@ -85,7 +85,9 @@ namespace Magic{
                 break;
         }
         m_File.reset(std::fopen(m_FilePath.data(),openType.data()));
-
+        if(!m_File){
+            return false;
+        }
         const auto current = std::ftell(m_File.get());
         if(current < 0){
             return false;
@@ -112,7 +114,7 @@ namespace Magic{
         if(!m_File){
             return;
         }
-        if(std::fseek(m_File.get(),pos,SEEK_SET) != 0){
+        if(std::fseek(m_File.get(),pos,SEEK_SET) == 0){
             m_Position = pos;
         }
     }

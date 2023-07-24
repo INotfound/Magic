@@ -13,35 +13,35 @@
 namespace Magic{
 namespace NetWork{
 namespace Http{
-    static const Magic::StringView g_MethodString[]{
+    static const StringView g_MethodString[]{
         #define XX(num,name,string) #string,
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
 
-    static const std::map<Magic::StringView,HttpMethod,CaseResponsiveLess> g_HttpMethod = {
+    static const std::map<StringView,HttpMethod,CaseResponsiveLess> g_HttpMethod = {
         #define XX(num,name,string) {#string,HttpMethod::name},
             HTTP_METHOD_MAP(XX)
         #undef XX
     };
 
-    static const std::map<Magic::StringView,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
+    static const std::map<StringView,HttpContentType,CaseInsensitiveLess> g_HttpContent = {
         #define XX(name,extName,desc){extName,HttpContentType::name},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    static const std::map<HttpContentType,Magic::StringView> g_HttpContentType = {
+    static const std::map<HttpContentType,StringView> g_HttpContentType = {
         #define XX(name,extName,desc){HttpContentType::name,desc},
             HTTP_CONTENT_TYPE(XX)
         #undef XX
     };
 
-    bool IsUrlEncode(const Magic::StringView& str){
+    bool IsUrlEncode(const StringView& str){
         return str.find('%') != std::string::npos || str.find('+') != std::string::npos;
     }
 
-    HttpMethod StringToHttpMethod(const Magic::StringView& str){
+    HttpMethod StringToHttpMethod(const StringView& str){
         auto iter = g_HttpMethod.find(str);
         if(iter != g_HttpMethod.end()){
             return iter->second;
@@ -49,27 +49,27 @@ namespace Http{
         return HttpMethod::InvalidMethod;
     }
 
-    Magic::StringView HttpMethodToString(const HttpMethod& method){
+    StringView HttpMethodToString(const HttpMethod& method){
         auto index = static_cast<uint64_t>(method);
         if(index >= (sizeof(g_MethodString) / sizeof(g_MethodString[0]))){
-            return Magic::StringView("<unknown>");
+            return StringView("<unknown>");
         }
         return g_MethodString[index];
     }
 
-    Magic::StringView HttpStatusToString(const HttpStatus& status){
+    StringView HttpStatusToString(const HttpStatus& status){
         switch(status){
         #define XX(code,name,desc)  \
             case HttpStatus::name : \
-                return Magic::StringView(#desc);
+                return StringView(#desc);
             HTTP_STATUS_MAP(XX)
         #undef XX
             default:
-                return Magic::StringView("<unknown>");
+                return StringView("<unknown>");
         }
     }
 
-    std::string UrlEncode(const Magic::StringView& value) noexcept{
+    std::string UrlEncode(const StringView& value) noexcept{
         static auto hex_chars = "0123456789ABCDEF";
 
         std::string result;
@@ -89,7 +89,7 @@ namespace Http{
 		return result;
 	}
 
-    std::string UrlDecode(const Magic::StringView& value) noexcept{
+    std::string UrlDecode(const StringView& value) noexcept{
         std::string result;
         result.reserve(value.size() / 3 + (value.size() % 3)); // Minimum size of result
 
@@ -109,10 +109,10 @@ namespace Http{
         return result;
     }
 
-    HttpContentType FileTypeToHttpContentType(const Magic::StringView& fileName){
+    HttpContentType FileTypeToHttpContentType(const StringView& fileName){
         auto pos = fileName.rfind('.');
-        if(pos != Magic::StringView::npos){
-            Magic::StringView sv = fileName.substr(pos + 1);
+        if(pos != StringView::npos){
+            StringView sv = fileName.substr(pos + 1);
             auto iter = g_HttpContent.find(sv);
             if(iter != g_HttpContent.end()){
                 return iter->second;
@@ -126,11 +126,11 @@ namespace Http{
     }
 
     template<typename Map>
-    inline void Parse(const Magic::StringView& str,Map& map,const Magic::StringView& flag){
+    inline void Parse(const StringView& str,Map& map,const StringView& flag){
         uint64_t pos = 0;
         do{
             uint64_t idx = 0;
-            Magic::StringView rawString = SubString(str,pos,flag);
+            StringView rawString = SubString(str,pos,flag);
             pos += static_cast<uint64_t>(rawString.size() + 1);
             if(IsUrlEncode(rawString)){
                 std::string decodeString = UrlDecode(rawString);
@@ -142,19 +142,19 @@ namespace Http{
                 idx = rawString.find('=');
                 if(idx == std::string::npos)
                     break;
-                Magic::StringView svKey = rawString.substr(0,idx);
-                Magic::StringView svValue = rawString.substr(idx + 1);
+                StringView svKey = rawString.substr(0,idx);
+                StringView svValue = rawString.substr(idx + 1);
                 map.emplace(std::string(svKey.data(),svKey.size()),std::string(svValue.data(),svValue.size()));
             }
         }while(pos <= str.size());
     }
 
     template<typename Map>
-    inline void ParseCookies(const Magic::StringView& str,Map& map,const Magic::StringView& flag){
+    inline void ParseCookies(const StringView& str,Map& map,const StringView& flag){
         uint64_t pos = 0;
         do{
             uint64_t key = 0;
-            Magic::StringView rawString = SubString(str,pos,flag);
+            StringView rawString = SubString(str,pos,flag);
             pos += static_cast<uint64_t>(rawString.size() + 1);
             if(IsUrlEncode(rawString)){
                 std::string decodeString = UrlDecode(rawString);
@@ -231,24 +231,24 @@ namespace Http{
         return m_ContentLength;
     }
 
-    Magic::StringView HttpRequest::getPath() const{
+    StringView HttpRequest::getPath() const{
         return m_UrlPath;
     }
 
-    Magic::StringView HttpRequest::getBody() const{
+    StringView HttpRequest::getBody() const{
         if(m_BodyStream){
             m_BodyStream->seek(0);
             return m_BodyStream->read();
         }else{
-            return Magic::StringView();
+            return StringView();
         }
     }
 
-    Magic::StringView HttpRequest::getQuery() const{
+    StringView HttpRequest::getQuery() const{
         return m_Query;
     }
 
-    Magic::StringView HttpRequest::getCookie(const Magic::StringView& key){
+    StringView HttpRequest::getCookie(const StringView& key){
         if(!m_Cookies.empty()){
             auto value = m_Cookies.find(std::string(key.data(),key.size()));
             if(value == m_Cookies.end()){
@@ -267,7 +267,7 @@ namespace Http{
         return value->second;
     }
 
-    Magic::StringView HttpRequest::getParam(const Magic::StringView& key) const{
+    StringView HttpRequest::getParam(const StringView& key) const{
         auto iter = m_Params.find(std::string(key.data(),key.size()));
         if(iter == m_Params.end()){
             return g_EmptyString;
@@ -275,7 +275,7 @@ namespace Http{
         return iter->second;
     }
 
-    Magic::StringView HttpRequest::getHeader(const Magic::StringView& key) const{
+    StringView HttpRequest::getHeader(const StringView& key) const{
         auto iter = m_Headers.find(std::string(key.data(),key.size()));
         if(iter == m_Headers.end()){
             return g_EmptyString;
@@ -283,11 +283,11 @@ namespace Http{
         return iter->second;
     }
 
-    void HttpRequest::delParam(const Magic::StringView& key){
+    void HttpRequest::delParam(const StringView& key){
         m_Params.erase(std::string(key.data(),key.size()));
     }
 
-    void HttpRequest::delHeader(const Magic::StringView& key){
+    void HttpRequest::delHeader(const StringView& key){
         m_Headers.erase(std::string(key.data(),key.size()));
     }
 
@@ -349,14 +349,14 @@ namespace Http{
     }
 
     ObjectWrapper<HttpRequest> HttpRequest::setRange(uint64_t start,uint64_t stop){
-        m_Headers["Range"] = Magic::StringCat("bytes="
-                                              ,Magic::AsString<uint64_t>(start)
-                                              ,"-"
-                                              ,(stop == 0) ? "" : Magic::AsString<uint64_t>(stop));
+        m_Headers["Range"] = StringCat("bytes="
+                                       ,AsString<uint64_t>(start)
+                                       ,"-"
+                                       ,(stop == 0) ? "" : AsString<uint64_t>(stop));
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setBody(const Magic::StringView& body){
+    ObjectWrapper<HttpRequest> HttpRequest::setBody(const StringView& body){
         auto contentType = m_Headers.find("Content-Type");
         if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded")){
             Parse(body,m_Params,"&");
@@ -370,34 +370,34 @@ namespace Http{
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const Magic::StringView& query){
+    ObjectWrapper<HttpRequest> HttpRequest::setQuery(const StringView& query){
         Parse(query,m_Params,"&");
         m_Query = std::string(query.data(),query.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setPath(const Magic::StringView& urlPath){
+    ObjectWrapper<HttpRequest> HttpRequest::setPath(const StringView& urlPath){
         m_UrlPath = std::string(urlPath.data(),urlPath.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const Magic::StringView& fragment){
+    ObjectWrapper<HttpRequest> HttpRequest::setFragment(const StringView& fragment){
         m_Fragment = std::string(fragment.data(),fragment.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setParam(const Magic::StringView& key,const Magic::StringView& value){
-        m_Params.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
+    ObjectWrapper<HttpRequest> HttpRequest::setParam(const StringView& key,const StringView& value){
+        m_Params[std::string(key.data(),key.size())] = std::string(value.data(),value.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const Magic::StringView& key,const Magic::StringView& value){
-        m_Headers.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
+    ObjectWrapper<HttpRequest> HttpRequest::setHeader(const StringView& key,const StringView& value){
+        m_Headers[std::string(key.data(),key.size())] = std::string(value.data(),value.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
-    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const Magic::StringView& key,const Magic::StringView& value){
-        m_Cookies.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
+    ObjectWrapper<HttpRequest> HttpRequest::setCookie(const StringView& key,const StringView& value){
+        m_Cookies[std::string(key.data(),key.size())] = std::string(value.data(),value.size());
         return ObjectWrapper<HttpRequest>(this);
     }
 
@@ -467,12 +467,12 @@ namespace Http{
         return 0;
     }
 
-    Magic::StringView HttpResponse::getBody() const{
+    StringView HttpResponse::getBody() const{
         if(m_BodyStream){
             m_BodyStream->seek(0);
             return m_BodyStream->read();
         }else{
-            return Magic::StringView();
+            return StringView();
         }
     }
 
@@ -497,11 +497,11 @@ namespace Http{
         return 0;
     }
 
-    Magic::StringView HttpResponse::getReason() const{
+    StringView HttpResponse::getReason() const{
         return m_Reason;
     }
 
-    Magic::StringView HttpResponse::getResource() const{
+    StringView HttpResponse::getResource() const{
         return m_Resource;
     }
 
@@ -509,11 +509,11 @@ namespace Http{
         return m_ContentType;
     }
 
-    void HttpResponse::delHeader(const Magic::StringView& key){
+    void HttpResponse::delHeader(const StringView& key){
         m_Headers.erase(std::string(key.data(),key.size()));
     }
 
-    Magic::StringView HttpResponse::getHeader(const Magic::StringView& key){
+    StringView HttpResponse::getHeader(const StringView& key){
         auto iter = m_Headers.find(std::string(key.data(),key.size()));
         if(iter == m_Headers.end()){
             return g_EmptyString;
@@ -540,13 +540,13 @@ namespace Http{
         auto encodingIter = m_Headers.find("Content-Encoding");
         if(encodingIter != m_Headers.end()){
             const auto& contentEncoding = encodingIter->second;
-            if(hasBody && contentEncoding.find("br") != Magic::StringView::npos){
+            if(hasBody && contentEncoding.find("br") != StringView::npos){
                 encodingIter->second = "br";
                 m_BodyStream = std::make_shared<BrotliEncoder>(m_BodyStream);
             }
         #ifdef ZLIB
-            else if(hasBody && encodingHeader.find("gzip") != Magic::StringView::npos){
-                httpResponse.setHeader(contentEncoding,"gzip");
+            else if(hasBody && contentEncoding.find("gzip") != StringView::npos){
+                encodingIter->second = "gzip";
                 m_BodyStream = std::make_shared<GZipEncoder>(m_BodyStream);
             }
         #endif
@@ -600,7 +600,7 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setBody(const Magic::StringView& body){
+    ObjectWrapper<HttpResponse> HttpResponse::setBody(const StringView& body){
         m_BodyStream = std::make_shared<DataStream>(body);
         return ObjectWrapper<HttpResponse>(this);
     }
@@ -610,17 +610,17 @@ namespace Http{
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setReason(const Magic::StringView& reason){
+    ObjectWrapper<HttpResponse> HttpResponse::setReason(const StringView& reason){
         m_Reason = std::string(reason.data(),reason.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setResource(const Magic::StringView& filePath){
+    ObjectWrapper<HttpResponse> HttpResponse::setResource(const StringView& filePath){
         m_Resource = std::string(filePath.data(),filePath.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const Magic::StringView& contentType){
+    ObjectWrapper<HttpResponse> HttpResponse::setContentType(const StringView& contentType){
         m_Headers["Content-Type"] = std::string(contentType.data(),contentType.size());
         return ObjectWrapper<HttpResponse>(this);
     }
@@ -632,22 +632,22 @@ namespace Http{
     }
 
     ObjectWrapper<HttpResponse> HttpResponse::setRange(uint64_t start,uint64_t stop,uint64_t totalLength){
-        m_Headers["Content-Range"] = Magic::StringCat("bytes "
-                                                      ,Magic::AsString<uint64_t>(start)
-                                                      ,"-"
-                                                      ,Magic::AsString<uint64_t>(stop)
-                                                      ,"/"
-                                                      ,Magic::AsString<uint64_t>(totalLength));
+        m_Headers["Content-Range"] = StringCat("bytes "
+                                               ,AsString<uint64_t>(start)
+                                               ,"-"
+                                               ,AsString<uint64_t>(stop)
+                                               ,"/"
+                                               ,AsString<uint64_t>(totalLength));
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const Magic::StringView& key,const Magic::StringView& value){
-        m_Headers.emplace(std::string(key.data(),key.size()),std::string(value.data(),value.size()));
+    ObjectWrapper<HttpResponse> HttpResponse::setHeader(const StringView& key,const StringView& value){
+        m_Headers[std::string(key.data(),key.size())] = std::string(value.data(),value.size());
         return ObjectWrapper<HttpResponse>(this);
     }
 
-    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const Magic::StringView& key,const Magic::StringView& val,std::time_t expired,const Magic::StringView& path,const Magic::StringView& domain,bool httpOnly,bool secure){
-        std::string result = Magic::StringCat(key,"=",val);
+    ObjectWrapper<HttpResponse> HttpResponse::setCookie(const StringView& key,const StringView& val,std::time_t expired,const StringView& path,const StringView& domain,bool httpOnly,bool secure){
+        std::string result = StringCat(key,"=",val);
         if(!path.empty()){
             result.append("; Path=");
             result.append(path.data(),path.size());

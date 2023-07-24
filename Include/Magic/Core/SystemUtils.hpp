@@ -29,5 +29,5 @@ namespace Magic{
      * @param path 文件路径
      * @return: True 是 False 否
      */
-    bool IsFile(const Magic::StringView& path);
+    bool IsFile(const StringView& path);
 }

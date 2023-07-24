@@ -71,7 +71,7 @@ namespace Http{
         this->responseParser();
     }
 
-    void HttpSocket::setDirectory(const Magic::StringView& dirPath){
+    void HttpSocket::setDirectory(const StringView& dirPath){
         m_MultiPart->setDirectory(dirPath);
     }
 
@@ -91,7 +91,7 @@ namespace Http{
         std::ostream stream(streamBuffer.get());
         m_CurrentTransferLength = 0;
         if(httpResponse.hasResource()){
-            Magic::StringView filePath = httpResponse.getResource();
+            StringView filePath = httpResponse.getResource();
             Safe<FileStream> fileStream = std::make_shared<FileStream>(filePath);
             if(IsFile(filePath) && fileStream->open(FileStream::OpenMode::Read)){
                 uint64_t totalLength = fileStream->size();
@@ -120,7 +120,7 @@ namespace Http{
                     m_Stream = fileStream;
                 }
             }else{
-                httpResponse.setResource(Magic::StringView());
+                httpResponse.setResource(StringView());
                 httpResponse.setStatus(HttpStatus::NotFound);
             }
         }else{
@@ -157,15 +157,16 @@ namespace Http{
                    ->setHeader("Sec-WebSocket-Key","SU5vdEZvdW5kCg==");
             this->sendRequest(request);
         }else{
-            Magic::StringView wsKey = request->getHeader("Sec-WebSocket-Key");
+            StringView wsKey = request->getHeader("Sec-WebSocket-Key");
             if(wsKey.empty()){
                 throw Failure("Upgrade WebSocket Failed: Sec-WebSocket-Key Missing Parameters");
             }
-            std::string key = Magic::StringCat(wsKey,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+            auto base64Encoder = std::make_shared<Base64Encoder>(std::make_shared<MessageDigest>(MessageDigest::Algorithm::SHA1
+                                                                 ,std::make_shared<DataStream>(StringCat(wsKey,"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"))));
             response->setHeader("Upgrade","websocket")
                     ->setHeader("Connection","Upgrade")
                     ->setStatus(HttpStatus::SwitchingProtocols)
-                    ->setHeader("Sec-WebSocket-Accept",Base64Encode(SHA1(key)));
+                    ->setHeader("Sec-WebSocket-Accept",base64Encoder->read());
             this->sendResponse(response);
         }
         Safe<Socket> socket = std::move(m_Socket);
@@ -229,7 +230,7 @@ namespace Http{
             m_CurrentLength = 0;
             auto& request = m_RequestParser->getData();
             m_TotalLength = m_RequestParser->getContentLength();
-            Magic::StringView value = request->getHeader("Content-Type");
+            StringView value = request->getHeader("Content-Type");
             auto pos = value.find("boundary=");
             if(pos != std::string::npos){
                 pos += 9;
@@ -343,14 +344,14 @@ namespace Http{
         });
     }
 
-    std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title,const Magic::StringView& message){
-        return Magic::StringCat("<!DOCTYPE html><html lang=\"en\"><head><title>"
-                                ,status
-                                ,"</title></head><body><center><h1>"
-                                ,title
-                                ,"</h1><h3>"
-                                ,message
-                                ,"</h3></center><hr><center>Magic/2.0.0</center></body></html>");
+    std::string GenerateHtml(const StringView& status,const StringView& title,const StringView& message){
+        return StringCat("<!DOCTYPE html><html lang=\"en\"><head><title>"
+                         ,status
+                         ,"</title></head><body><center><h1>"
+                         ,title
+                         ,"</h1><h3>"
+                         ,message
+                         ,"</h3></center><hr><center>Magic/2.0.0</center></body></html>");
     }
 }
 }

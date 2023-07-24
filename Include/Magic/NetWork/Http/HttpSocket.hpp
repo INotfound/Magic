@@ -69,7 +69,7 @@ namespace Http{
         * @brief 设置临时文件目录路径
         * @param dirPath 临时文件目录路径
         */
-        void setDirectory(const Magic::StringView& dirPath);
+        void setDirectory(const StringView& dirPath);
 
         /**
          * @brief 接收请求头函数
@@ -168,7 +168,7 @@ namespace Http{
         socket->sendResponse(*response);
     }
 
-    std::string GenerateHtml(const Magic::StringView& status,const Magic::StringView& title,const Magic::StringView& message);
+    std::string GenerateHtml(const StringView& status,const StringView& title,const StringView& message);
 }
 }
 }

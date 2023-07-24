@@ -20,11 +20,11 @@ namespace Magic{
         int64_t start = std::chrono::time_point_cast<std::chrono::microseconds>(m_TimePoint).time_since_epoch().count();
 
         if(g_TraceAppender){
-            g_TraceAppender->tracing(m_FunctionName,Magic::GetThreadId(),start,end);
+            g_TraceAppender->tracing(m_FunctionName,GetThreadId(),start,end);
         }
     }
 
-    TraceTimer::TraceTimer(const Magic::StringView& funcName)
+    TraceTimer::TraceTimer(const StringView& funcName)
         :m_FunctionName(funcName.data(),funcName.size()){
         m_TimePoint = std::chrono::steady_clock::now();
     }
@@ -35,7 +35,7 @@ namespace Magic{
         this->complete();
     }
 
-    ChromiumTraceAppender::ChromiumTraceAppender(const Magic::StringView& outFilePath)
+    ChromiumTraceAppender::ChromiumTraceAppender(const StringView& outFilePath)
         :m_UseSplit(false)
         ,m_FilePath(outFilePath.data(),outFilePath.size()){
     }
@@ -50,14 +50,14 @@ namespace Magic{
         m_FileStream.close();
     }
 
-    void ChromiumTraceAppender::tracing(const Magic::StringView& funcName,uint64_t threadId,int64_t start,int64_t end){
+    void ChromiumTraceAppender::tracing(const StringView& funcName,uint64_t threadId,int64_t start,int64_t end){
         std::lock_guard<std::mutex> locker(m_Mutex);
         if(!m_FileStream.is_open()){
             std::string filePath = m_FilePath;
             filePath.append(".");
             std::uniform_int_distribution<uint16_t> uniformIntDistribution;
             std::default_random_engine randomEngine(std::chrono::steady_clock::now().time_since_epoch().count());
-            filePath.append(Magic::AsString(uniformIntDistribution(randomEngine)));
+            filePath.append(AsString(uniformIntDistribution(randomEngine)));
             m_FileStream.open(filePath,std::ios_base::out | std::ios_base::trunc);
             if(m_FileStream.is_open()){
                 m_FileStream << "{\"otherData\":{},\"traceEvents\":[";

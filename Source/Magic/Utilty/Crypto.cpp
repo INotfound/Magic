@@ -5,257 +5,231 @@
  * @Date           : 2023-07-03 18:34
  ******************************************************************************
  */
-#include <cstdio>
-#include <cstring>
-#ifdef OPENSSL
-#include <openssl/evp.h>
-#include <openssl/sha.h>
+#include <openssl/md4.h>
 #include <openssl/md5.h>
-#endif
-#include "Magic/Utilty/Logger.hpp"
+#include <openssl/sha.h>
+
 #include "Magic/Utilty/Crypto.hpp"
 
 namespace Magic{
-    void HexStringFromData(const void* data,uint32_t len,char* outPut){
-        const auto* buf = (const unsigned char*)data;
-        size_t i,j;
-        for(i = j = 0;i < len;++i){
-            char c;
-            c = (buf[i] >> 4) & 0xF;
-            c = (c > 9) ? c + 'a' - 10 : c + '0';
-            outPut[j++] = c;
-            c = (buf[i] & 0xF);
-            c = (c > 9) ? c + 'a' - 10 : c + '0';
-            outPut[j++] = c;
-        }
+    CryptoDecorator::CryptoDecorator(const Safe<IStream>& stream)
+        :m_Stream(stream){
     }
 
-    std::string MD5(const Magic::StringView& str){
-        if(str.empty()){
-            return std::string();
+    Base64Decoder::Base64Decoder(const std::shared_ptr<IStream>& stream)
+        :CryptoDecorator(stream)
+        ,m_ChunkLen(0){
+    }
+
+    IStream::BufferView Base64Decoder::read(){
+        if(m_Stream->eof()){
+            return IStream::BufferView();
         }
-    #ifdef OPENSSL
-        uint32_t len = 0;
-        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
-        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
-            if(pointer != nullptr){
-                EVP_MD_CTX_free(pointer);
+        static unsigned char base64DecodeMap[256] ={
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0x3E, 0xFF, 0xFF, 0xFF, 0x3F,
+            0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3A, 0x3B,
+            0x3C, 0x3D, 0xFF, 0xFF, 0xFF, 0x00, 0xFF, 0xFF,
+            0xFF, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,
+            0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E,
+            0x0F, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,
+            0x17, 0x18, 0x19, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20,
+            0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+            0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30,
+            0x31, 0x32, 0x33, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF
+        };
+        uint8_t group[4];
+        m_Buffer.resize(0);
+        uint32_t i = 0,j = 0;
+        auto bufferView = m_Stream->read();
+        m_Buffer.resize(((bufferView.size()+3)/4*3+80));
+        for(i = 0; i + 4 <= bufferView.size(); i+=4){
+            for(uint32_t k = 0; k < 4; k++){
+                group[k] = base64DecodeMap[static_cast<uint8_t>(bufferView[i + k])];
             }
-        });
-        EVP_DigestInit_ex(evpCtx.get(),EVP_md5(),nullptr);
-        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
-        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
-        return std::string(reinterpret_cast<char*>(digest),len);
-    #else
-        throw Failure("Requires SSL Support");
-    #endif
-    }
-
-    std::string SHA1(const Magic::StringView& str){
-        if(str.empty()){
-            return std::string();
-        }
-    #ifdef OPENSSL
-        uint32_t len = 0;
-        uint8_t digest[SHA_DIGEST_LENGTH] = {0};
-        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
-            if(pointer != nullptr){
-                EVP_MD_CTX_free(pointer);
+            m_Buffer[j++] = (group[0] << 2) | (group[1] >> 4);
+            if(group[2] >= 64){
+                break;
+            }else if(group[3] >= 64){
+                m_Buffer[j++] = (group[1] << 4) | (group[2] >> 2);
+            }else{
+                m_Buffer[j++] = (group[1] << 4) | (group[2] >> 2);
+                m_Buffer[j++] = (group[2] << 6) | (group[3]);
             }
-        });
-        EVP_DigestInit_ex(evpCtx.get(),EVP_sha1(),nullptr);
-        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
-        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
-        return std::string(reinterpret_cast<char*>(digest),len);
-    #else
-        throw Failure("Requires SSL Support");
-    #endif
-    }
-
-    std::string StringToHexMD5(const Magic::StringView& str){
-        if(str.empty()){
-            return std::string();
         }
-    #ifdef OPENSSL
-        uint32_t len = 0;
-        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
-        char hexBuffer[MD5_DIGEST_LENGTH*2] = {0};
-        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
-            if(pointer != nullptr){
-                EVP_MD_CTX_free(pointer);
-            }
-        });
-        EVP_DigestInit_ex(evpCtx.get(),EVP_md5(),nullptr);
-        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
-        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
-        HexStringFromData(digest,len,hexBuffer);
-        return std::string(hexBuffer,len*2);
-    #else
-        throw Failure("Requires SSL Support");
-    #endif
-    }
-
-    std::string StringToHexSHA1(const Magic::StringView& str){
-        if(str.empty()){
-            return std::string();
+        if(!m_Stream->eof()){
+            m_ChunkLen += i;
+            m_Stream->seek(m_ChunkLen);
         }
-    #ifdef OPENSSL
-        uint32_t len = 0;
-        uint8_t digest[SHA_DIGEST_LENGTH] = {0};
-        char hexBuffer[SHA_DIGEST_LENGTH*2] = {0};
-        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
-            if(pointer != nullptr){
-                EVP_MD_CTX_free(pointer);
-            }
-        });
-        EVP_DigestInit_ex(evpCtx.get(),EVP_sha1(),nullptr);
-        EVP_DigestUpdate(evpCtx.get(),str.data(),str.size());
-        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
-        HexStringFromData(digest,len,hexBuffer);
-        return std::string(hexBuffer,len*2);
-    #else
-        throw Failure("Requires SSL Support");
-    #endif
+        return IStream::BufferView(m_Buffer.data(),j);
     }
 
-    std::string Base64Decode(const Magic::StringView& src){
-        std::string result;
-        result.resize(src.size() * 3 / 4);
-        char* writeBuf = &result[0];
-        const char* ptr = src.data();
-        const char* end = ptr + src.size();
-        while(ptr < end){
-            int i = 0;
-            int padding = 0;
-            int packed = 0;
-            for(;i < 4 && ptr < end;++i,++ptr){
-                if(*ptr == '='){
-                    ++padding;
-                    packed <<= 6;
-                    continue;
-                }
-                // padding with "=" only
-                if(padding > 0){
-                    return "";
-                }
+    void Base64Decoder::seek(uint64_t pos){
+        m_Stream->seek(pos);
+    }
 
-                int val = 0;
-                if(*ptr >= 'A' && *ptr <= 'Z'){
-                    val = *ptr - 'A';
-                }else if(*ptr >= 'a' && *ptr <= 'z'){
-                    val = *ptr - 'a' + 26;
-                }else if(*ptr >= '0' && *ptr <= '9'){
-                    val = *ptr - '0' + 52;
-                }else if(*ptr == '+'){
-                    val = 62;
-                }else if(*ptr == '/'){
-                    val = 63;
+    bool Base64Decoder::eof() const noexcept{
+        return m_Stream->eof();
+    }
+
+    uint64_t Base64Decoder::size() const noexcept{
+        return m_Stream->size();
+    }
+
+    void Base64Decoder::write(const IStream::BufferView& data){
+        m_Stream->write(data);
+    }
+
+    Base64Encoder::Base64Encoder(const std::shared_ptr<IStream>& stream)
+        :CryptoDecorator(stream)
+        ,m_ChunkLen(0){
+    }
+
+    IStream::BufferView Base64Encoder::read(){
+        if(m_Stream->eof()){
+            return IStream::BufferView();
+        }
+        static const char* base64EncodeMap = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        uint32_t i,j;
+        m_Buffer.resize(0);
+        auto bufferView = m_Stream->read();
+        const uint64_t bufferSize = bufferView.size();
+        const auto* bufferData = reinterpret_cast<const uint8_t*>(bufferView.data());
+        m_Buffer.resize(((bufferSize+2)/3*4)+(bufferSize/48+1)*2+80);
+        for(i = 0, j = 0; i+3 <= bufferSize; i+=3){
+            m_Buffer[j++] = base64EncodeMap[bufferData[i]>>2];
+            m_Buffer[j++] = base64EncodeMap[((bufferData[i]<<4)&0x30)|(bufferData[i+1]>>4)];
+            m_Buffer[j++] = base64EncodeMap[((bufferData[i+1]<<2)&0x3c)|(bufferData[i+2]>>6)];
+            m_Buffer[j++] = base64EncodeMap[bufferData[i+2]&0x3f];
+        }
+        if(!m_Stream->eof()){
+            m_ChunkLen += i;
+            m_Stream->seek(m_ChunkLen);
+        }else{
+            if(i < bufferSize){
+                uint32_t tail = bufferSize - i;
+                if(tail == 1){
+                    m_Buffer[j++] = base64EncodeMap[bufferData[i] >> 2];
+                    m_Buffer[j++] = base64EncodeMap[(bufferData[i] << 4) & 0x30];
+                    m_Buffer[j++] = '=';
+                    m_Buffer[j++] = '=';
                 }else{
-                    return ""; // invalid character
+                    m_Buffer[j++] = base64EncodeMap[bufferData[i] >> 2];
+                    m_Buffer[j++] = base64EncodeMap[((bufferData[i] << 4) & 0x30) | (bufferData[i + 1] >> 4)];
+                    m_Buffer[j++] = base64EncodeMap[(bufferData[i + 1] << 2) & 0x3c];
+                    m_Buffer[j++] = '=';
                 }
-
-                packed = (packed << 6) | val;
-            }
-            if(i != 4){
-                return "";
-            }
-            if(padding > 0 && ptr != end){
-                return "";
-            }
-            if(padding > 2){
-                return "";
-            }
-
-            *writeBuf++ = (char)((packed >> 16) & 0xff);
-            if(padding != 2){
-                *writeBuf++ = (char)((packed >> 8) & 0xff);
-            }
-            if(padding == 0){
-                *writeBuf++ = (char)(packed & 0xff);
             }
         }
-
-        result.resize(writeBuf - result.data());
-        return result;
+        return IStream::BufferView(m_Buffer.data(),j);
     }
 
-    std::string Base64Encode(const Magic::StringView& src){
-        std::string ret;
-        uint64_t len = src.size();
-        const char* data = src.data();
-        static const char* base64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-        ret.reserve(len * 4 / 3 + 2);
-        const auto* ptr = (const unsigned char*)data;
-        const unsigned char* end = ptr + len;
-        while(ptr < end){
-            unsigned int packed = 0;
-            int i = 0;
-            int padding = 0;
-            for(;i < 3 && ptr < end;++i,++ptr){
-                packed = (packed << 8) | *ptr;
-            }
-            if(i == 2){
-                padding = 1;
-            }else if(i == 1){
-                padding = 2;
-            }
-            for(;i < 3;++i){
-                packed <<= 8;
-            }
-
-            ret.append(1,base64[packed >> 18]);
-            ret.append(1,base64[(packed >> 12) & 0x3f]);
-            if(padding != 2){
-                ret.append(1,base64[(packed >> 6) & 0x3f]);
-            }
-            if(padding == 0){
-                ret.append(1,base64[packed & 0x3f]);
-            }
-            ret.append(padding,'=');
-        }
-        return ret;
+    void Base64Encoder::seek(uint64_t pos){
+        m_Stream->seek(pos);
     }
 
-    std::string FileToHexMD5String(const Magic::StringView& filePath){
-        if(filePath.empty()){
-            return std::string();
-        }
-    #ifdef OPENSSL
-        std::unique_ptr<std::FILE,void (*)(std::FILE*)> file(std::fopen(filePath.data(),"rb"),[](std::FILE* pointer){
-            if(pointer != nullptr){
-                std::fclose(pointer);
+    bool Base64Encoder::eof() const noexcept{
+        return m_Stream->eof();
+    }
+
+    uint64_t Base64Encoder::size() const noexcept{
+        return m_Stream->size();
+    }
+
+    void Base64Encoder::write(const IStream::BufferView& data){
+        m_Stream->write(data);
+    }
+
+    MessageDigest::MessageDigest(MessageDigest::Algorithm algorithm,const Safe<IStream>& stream)
+        :CryptoDecorator(stream)
+        ,m_DigestSize(1)
+        ,m_EvpMdCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
+            if(pointer){
+                EVP_MD_CTX_free(pointer);
             }
-        });
-
-        if(file == nullptr){
-            return std::string();
-        }
-
-        uint32_t len = 0;
-        uint8_t digest[MD5_DIGEST_LENGTH] = {0};
-        char hexBuffer[MD5_DIGEST_LENGTH*2] = {0};
-        constexpr const uint32_t bufferSize = 1024*1024;
-        std::unique_ptr<uint8_t,void (*)(uint8_t*)> buffer(new uint8_t[bufferSize],[](uint8_t* pointer){
-            if(pointer != nullptr){
+        })
+        ,m_Digest(nullptr,[](IStream::BufferView::value_type* pointer){
+            if(pointer){
                 delete[] pointer;
             }
-        });
+        }){
 
-        std::unique_ptr<EVP_MD_CTX,void (*)(EVP_MD_CTX*)> evpCtx(EVP_MD_CTX_new(),[](EVP_MD_CTX* pointer){
-            if(pointer != nullptr){
-                EVP_MD_CTX_free(pointer);
-            }
-        });
-
-        EVP_DigestInit_ex(evpCtx.get(),EVP_md5(),nullptr);
-        while((len = std::fread(buffer.get(),1,bufferSize,file.get()))){
-            EVP_DigestUpdate(evpCtx.get(),buffer.get(),len);
+        switch(algorithm){
+            case Algorithm::MD4:
+                m_DigestSize = MD4_DIGEST_LENGTH;
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_md4(),nullptr);
+                break;
+            case Algorithm::MD5:
+                m_DigestSize = MD5_DIGEST_LENGTH;
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_md5(),nullptr);
+                break;
+            case Algorithm::SHA1:
+                m_DigestSize = SHA_DIGEST_LENGTH;
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_sha1(),nullptr);
+                break;
+            case Algorithm::SHA256:
+                m_DigestSize = SHA256_DIGEST_LENGTH;
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_sha1(),nullptr);
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_sha256(),nullptr);
+                break;
+            case Algorithm::SHA384:
+                m_DigestSize = SHA384_DIGEST_LENGTH;
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_sha384(),nullptr);
+                break;
+            case Algorithm::SHA512:
+                m_DigestSize = SHA512_DIGEST_LENGTH;
+                EVP_DigestInit_ex(m_EvpMdCtx.get(),EVP_sha512(),nullptr);
+                break;
         }
-        EVP_DigestFinal_ex(evpCtx.get(),digest,&len);
-        HexStringFromData(digest,len,hexBuffer);
-        return std::string(hexBuffer,len*2);
-    #else
-        throw Failure("Requires SSL Support");
-    #endif
+        m_Digest.reset(new IStream::BufferView::value_type[m_DigestSize]);
+    }
+
+    IStream::BufferView MessageDigest::read(){
+        if(m_Stream->eof()){
+            return IStream::BufferView();
+        }
+        do{
+            IStream::BufferView bufferView = m_Stream->read();
+            EVP_DigestUpdate(m_EvpMdCtx.get(),bufferView.data(),bufferView.size());
+        }while(!m_Stream->eof());
+        EVP_DigestFinal_ex(m_EvpMdCtx.get(),reinterpret_cast<uint8_t*>(m_Digest.get()),&m_DigestSize);
+        return IStream::BufferView(m_Digest.get(),m_DigestSize);
+    }
+
+    void MessageDigest::seek(uint64_t pos){
+        m_Stream->seek(pos);
+    }
+
+    bool MessageDigest::eof() const noexcept{
+        return m_Stream->eof();
+    }
+
+    uint64_t MessageDigest::size() const noexcept{
+        return m_Stream->size();
+    }
+
+    void MessageDigest::write(const IStream::BufferView& data){
+        m_Stream->write(data);
     }
 }

@@ -17,7 +17,7 @@ namespace Http{
 
     void HttpServletDispatch::handle(const Safe<HttpSocket>& httpSocket){
         std::lock_guard<std::mutex> locker(m_Mutex);
-        Magic::StringView httpPath = httpSocket->getRequest()->getPath();
+        StringView httpPath = httpSocket->getRequest()->getPath();
         try{
             auto exactlyIter = m_NormalRoutes.find(std::string(httpPath.data(),httpPath.size()));
             auto exactlyEnd = m_NormalRoutes.end();
