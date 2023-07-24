@@ -7,12 +7,8 @@
 #include "Magic/NetWork/Http/HttpServer.hpp"
 #include "Magic/Utilty/Logger.hpp"
 #include "Magic/Utilty/TimingWheel.hpp"
-#include "Magic/DataBase/ConnectionPool.hpp"
 #include "Magic/Core/Adapter.hpp"
 #include "Magic/Utilty/Trace.hpp"
-#include "Magic/NetWork/TcpClient.hpp"
-#include "Magic/NetWork/Http/HttpClient.hpp"
-#include "Magic/Core/Except.hpp"
 #include "Magic/Core/StringView.hpp"
 
 using namespace Magic::NetWork::Http;
@@ -83,22 +79,16 @@ public:
     }
 
     void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
-        auto& response = httpSocket->getResponse();
-        std::cout << httpSocket->getRequest();
-//        auto httpRequest = std::make_shared<Magic::NetWork::Http::HttpRequest>();
-//        auto httpClient = std::make_shared<Magic::NetWork::Http::HttpClient>("http://www.baidu.com/",10000);
-//        httpClient->onTimeOut([](){
-//            MAGIC_DEBUG() << "Time Out";
-//        })->onResponse([httpSocket,response](const Safe<Magic::NetWork::Http::HttpResponse>& httpResponse){
-//            response->setBody(httpResponse->getBody())
-//            ->setStatus(HttpStatus::OK);
-//           httpSocket->sendResponse(response);
-//        });
-//        httpClient->execute(httpRequest);
-//        throw Magic::Failure("data sell");
-
-        httpSocket << response->setStatus(HttpStatus::Ok)
-                              ->setBody("hello world!");
+        const auto& request = httpSocket->getRequest();
+        const auto& response = httpSocket->getResponse();
+        std::string localPath(request->getPath());
+        if(localPath == "/"){
+            localPath = Magic::StringCat(".","/index.html");
+        }else{
+            localPath = Magic::StringCat(".",request->getPath());
+        }
+        httpSocket << response->setResource(localPath)
+                              ->setContentType(FileTypeToHttpContentType(localPath));
     }
 };
 
@@ -171,7 +161,7 @@ const Safe<Magic::Container>& Magic::Application::initialize(std::function<void(
     httpServer->run();
 
 
-    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/",&ResourceServlet::handle1);
+    m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addMatchRoute("^/?(.*)$",&ResourceServlet::handle1);
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/ws",&ResourceServlet::websocket);
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/1",&ResourceServlet::handle1,m_Container->resolve<Aop>());
     m_Container->resolve<Magic::NetWork::Http::IHttpServlet,ResourceServlet>()->addRoute("/2",&ResourceServlet::handle1,m_Container->resolve<Aop>(),m_Container->resolve<AopEx>());
@@ -198,7 +188,6 @@ void printff(const std::string& str){
 void pprintf(const Magic::StringView& view){
     printff(view.data());
 }
-
 
 int main(int /*argc*/,char** /*argv*/){
     std::cout << __cplusplus << std::endl;

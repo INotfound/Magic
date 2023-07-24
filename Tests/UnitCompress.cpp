@@ -7,7 +7,7 @@ TEST(MagicCompressTest,DataStreamBrotliEncoderAndBrotliDecoder){
     std::string data;
     std::string compressData;
     std::string unCompressData;
-    for(auto i = 0;i < 1000;i++){
+    for(auto i = 0;i < 10000;i++){
         data.append("AASDFGHJKSDFGHJKDFGHJKCVBNRGHJK");
     }
 
@@ -37,7 +37,7 @@ TEST(MagicCompressTest,FileStreamBrotliEncoderAndBrotliDecoder){
     Magic::StringView br = "Brotli.br";
     Magic::StringView txt = "Brotli.txt";
     {
-        for(auto i = 0;i < 1000;i++){
+        for(auto i = 0;i < 10000;i++){
             data.append("XXXX");
         }
         Magic::FileStream fileStream(txt);
@@ -77,7 +77,7 @@ TEST(MagicCompressTest,GZipEncoderAndBrotliDecoder){
     std::string data;
     std::string compressData;
     std::string unCompressData;
-    for(auto i = 0;i < 1000;i++){
+    for(auto i = 0;i < 10000;i++){
         data.append("AASDFGHJKSDFGHJKDFGHJKCVBNRGHJK");
     }
 
@@ -107,7 +107,7 @@ TEST(MagicCompressTest,FileStreamGZipEncoderAndBrotliDecoder){
     Magic::StringView br = "GZip.br";
     Magic::StringView txt = "GZip.txt";
     {
-        for(auto i = 0;i < 1000;i++){
+        for(auto i = 0;i < 10000;i++){
             data.append("XXXX");
         }
         Magic::FileStream fileStream(txt);

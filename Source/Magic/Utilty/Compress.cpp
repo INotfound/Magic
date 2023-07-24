@@ -34,7 +34,6 @@ namespace Magic{
         m_ZStream.avail_in = bufferView.size();
         std::array<uint8_t,g_BufferSize> buffer;
         m_ZStream.next_in = reinterpret_cast<uint8_t*>(const_cast<IStream::BufferView::pointer>(bufferView.data()));
-
         do{
             m_ZStream.next_out = buffer.data();
             m_ZStream.avail_out = g_BufferSize;
@@ -84,14 +83,18 @@ namespace Magic{
         std::array<uint8_t,g_BufferSize> buffer;
         m_ZStream.next_in = reinterpret_cast<uint8_t*>(const_cast<IStream::BufferView::pointer>(bufferView.data()));
         int32_t ret = 0;
+        int32_t operation = Z_FULL_FLUSH;
         do{
+            if(m_Stream->eof()){
+                operation = Z_FINISH;
+            }
             m_ZStream.next_out = buffer.data();
             m_ZStream.avail_out = g_BufferSize;
-            ret = deflate(&m_ZStream,Z_FINISH);
+            ret = deflate(&m_ZStream,operation);
             m_Buffer.insert(m_Buffer.end(),buffer.data(),buffer.data() + (g_BufferSize - m_ZStream.avail_out));
         }while(ret == Z_OK);
         if(m_Stream->eof()){
-            inflateEnd(&m_ZStream);
+            deflateEnd(&m_ZStream);
         }
         return IStream::BufferView(m_Buffer.data(),m_Buffer.size());
     }
