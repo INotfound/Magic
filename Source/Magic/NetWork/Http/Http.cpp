@@ -321,10 +321,7 @@ namespace Http{
             os  << "Content-Length: " << body.size() << "\r\n\r\n"
                 << body;
         }else{
-            if(m_ContentLength != 0){
-                os << "Content-Length: " << m_ContentLength << "\r\n";
-            }
-            os << "\r\n";
+            os << "Content-Length: " << m_ContentLength << "\r\n\r\n";
         }
     }
 
@@ -573,10 +570,7 @@ namespace Http{
             os  << "Content-Length: " << body.size() << "\r\n\r\n"
                 << body;
         }else{
-            if(m_ContentLength != 0){
-                os << "Content-Length: " << m_ContentLength << "\r\n";
-            }
-            os << "\r\n";
+            os << "Content-Length: " << m_ContentLength << "\r\n\r\n";
         }
     }
 
