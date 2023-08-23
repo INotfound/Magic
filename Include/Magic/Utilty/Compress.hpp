@@ -22,8 +22,8 @@ namespace Magic{
     protected:
         Safe<IStream> m_Stream;
     };
-#ifdef ZLIB
 
+#ifdef ZLIB
     class GZipDecoder :public CompressionDecorator{
     public:
         explicit GZipDecoder(const Safe<IStream>& stream);
@@ -80,6 +80,5 @@ namespace Magic{
         BufferType m_Buffer;
         std::unique_ptr<BrotliEncoderState,void (*)(BrotliEncoderState*)> m_BrotliEncoderState;
     };
-
 
 }

@@ -40,13 +40,19 @@ namespace Http{
         void runHeartBeat();
 
         /**
-         * 获取Http请求
+         * @brief 获取MultiPart数据
+         * @return MultiPart对象
+         */
+        const Safe<MultiPart>& getMultiPart() const;
+
+        /**
+         * @brief 获取Http请求
          * @return HttpRequest对象
          */
         const Safe<HttpRequest>& getRequest() const;
 
         /**
-         * 获取Http响应
+         * @brief 获取Http响应
          * @return HttpResponse对象
          */
         const Safe<HttpResponse>& getResponse() const;

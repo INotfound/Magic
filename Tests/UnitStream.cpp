@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include <cctype>
+#include <cstdio>
 #include "Magic/Core/Stream.hpp"
 #include "Magic/Core/StringView.hpp"
 
@@ -18,7 +20,7 @@ TEST(MagicStreamTest,DataStream){
 TEST(MagicStreamTest,FileStream){
     Magic::FileStream fileStreamWrite("Data.txt");
     EXPECT_EQ(fileStreamWrite.open(Magic::FileStream::OpenMode::Write),true);
-    for(auto i = 0;i<10000;i++){
+    for(auto i = 0;i < 10000;i++){
         fileStreamWrite.write("XXXX");
     }
     auto fileSize = fileStreamWrite.size();
@@ -30,4 +32,13 @@ TEST(MagicStreamTest,FileStream){
         text.append(buffer.data(),buffer.size());
     }
     EXPECT_EQ(text.size(),fileSize);
+}
+
+TEST(MagicStreamTest,ReadWriteFileStream){
+    Magic::FileStream fileStreamReadWrite("Data.dt");
+    EXPECT_EQ(fileStreamReadWrite.open(Magic::FileStream::OpenMode::ReadWrite),true);
+    fileStreamReadWrite.write("Data");
+    fileStreamReadWrite.seek(0);
+    auto buffer = fileStreamReadWrite.read();
+    EXPECT_TRUE(buffer.size() > 0);
 }

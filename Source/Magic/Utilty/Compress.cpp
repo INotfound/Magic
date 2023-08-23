@@ -12,6 +12,7 @@ namespace Magic{
 
     CompressionDecorator::CompressionDecorator(const Safe<IStream>& stream)
         :m_Stream(stream){
+        m_Stream->seek(0);
     }
 
 #ifdef ZLIB

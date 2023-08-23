@@ -53,6 +53,10 @@ namespace Http{
         m_Socket->runHeartBeat(this->shared_from_this());
     }
 
+    const Safe<MultiPart>& HttpSocket::getMultiPart() const{
+        return m_MultiPart;
+    }
+
     const Safe<HttpRequest>& HttpSocket::getRequest() const{
         return m_RequestParser->getData();
     }
@@ -176,12 +180,8 @@ namespace Http{
     }
 
     void HttpSocket::handleRequest(){
-        auto& params = m_MultiPart->getParamMap();
         auto& request = m_RequestParser->getData();
         auto& response = m_ResponseParser->getData();
-        for(auto& v :params){
-            request->setParam(v.first,v.second);
-        }
         if(request->isRange()){
             response->setRange(request->getRangeStart(),request->getRangeStop(),0);
         }
@@ -308,7 +308,7 @@ namespace Http{
     #endif
             size_t fed = 0;
             do{
-                size_t ret = m_MultiPart->feed(dataStream.data() + fed,dataStream.size() - fed);
+                size_t ret = m_MultiPart->feed(IStream::BufferView(dataStream.data() + fed,dataStream.size() - fed));
                 fed += ret;
             }while(fed < dataStream.size() && !m_MultiPart->stopped());
             m_CurrentLength += dataStream.size();

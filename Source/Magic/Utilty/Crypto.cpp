@@ -14,6 +14,7 @@
 namespace Magic{
     CryptoDecorator::CryptoDecorator(const Safe<IStream>& stream)
         :m_Stream(stream){
+        m_Stream->seek(0);
     }
 
     Base64Decoder::Base64Decoder(const std::shared_ptr<IStream>& stream)
@@ -174,7 +175,6 @@ namespace Magic{
                 delete[] pointer;
             }
         }){
-
         switch(algorithm){
             case Algorithm::MD4:
                 m_DigestSize = MD4_DIGEST_LENGTH;

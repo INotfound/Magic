@@ -6,14 +6,12 @@
  ******************************************************************************
  */
 #pragma once
+#include <atomic>
 
 #include "asio.hpp"
-
 #ifdef OPENSSL
 #include "asio/ssl.hpp"
 #endif
-
-#include <atomic>
 #include "Magic/Core/Core.hpp"
 #include "Magic/Core/Stream.hpp"
 #include "Magic/Utilty/TimingWheel.hpp"
@@ -33,7 +31,7 @@ namespace NetWork{
         typedef std::function<void(const asio::error_code&)> ErrorCallBack;
         /// 心跳回调方法
         typedef std::function<void(const Safe<Socket>&)> HeartBeatCallBack;
-
+    public:
         /**
          * @brief Socket
          */

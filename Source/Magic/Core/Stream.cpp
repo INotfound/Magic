@@ -57,8 +57,9 @@ namespace Magic{
         ,m_BufferSize(65536)
         ,m_FilePath(path.begin(),path.end())
         ,m_Buffer(nullptr,[](char* pointer){
-            if(pointer)
+            if(pointer){
                 delete[] pointer;
+            }
         })
         ,m_File(nullptr,[](std::FILE* pointer){
             if(pointer){
@@ -66,6 +67,10 @@ namespace Magic{
                 fclose(pointer);
             }
         }){
+    }
+
+    bool FileStream::remove(){
+        return std::remove(m_FilePath.data()) == 0;
     }
 
     bool FileStream::open(OpenMode mode){
@@ -81,7 +86,7 @@ namespace Magic{
                 openType = "ab";
                 break;
             case OpenMode::ReadWrite:
-                openType = "rb+";
+                openType = "wb+";
                 break;
         }
         m_File.reset(std::fopen(m_FilePath.data(),openType.data()));
@@ -110,6 +115,10 @@ namespace Magic{
         return true;
     }
 
+    StringView FileStream::getPath() const{
+        return m_FilePath;
+    }
+
     void FileStream::seek(uint64_t pos){
         if(!m_File){
             return;
@@ -129,7 +138,11 @@ namespace Magic{
             return IStream::BufferView();
         }
         auto size = std::fread(m_Buffer.get(),sizeof(char),m_BufferSize,m_File.get());
-        m_Position += size;
+        if(size > 0){
+            m_Position += size;
+        }else{
+            m_Position = m_FileSize;
+        }
         return IStream::BufferView(m_Buffer.get(),size);
     }
 
@@ -144,6 +157,26 @@ namespace Magic{
         auto size = std::fwrite(data.data(),sizeof(char),data.size(),m_File.get());
         std::fflush(m_File.get());
         m_FileSize += size;
+    }
+
+    bool FileStream::copy(const StringView& newPath){
+        FileStream writeStream(newPath);
+        FileStream readStream(m_FilePath);
+        if(readStream.open(OpenMode::Read) && writeStream.open(OpenMode::Write)){
+            while(!readStream.eof()){
+                auto bufferView = readStream.read();
+                writeStream.write(bufferView);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    bool FileStream::move(const StringView& newPath){
+        if(this->copy(newPath)){
+            return this->remove();
+        }
+        return false;
     }
 }
 

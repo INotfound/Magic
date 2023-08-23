@@ -5,6 +5,9 @@
  * @Date           : 2023-07-03 18:33
  ******************************************************************************
  */
+#include "Magic/Utilty/Crypto.hpp"
+#include "Magic/Utilty/String.hpp"
+#include "Magic/Core/StringView.hpp"
 #include "Magic/NetWork/Http/MultiPart.hpp"
 
 namespace Magic{
@@ -24,19 +27,56 @@ namespace Http{
         setParserCallBacks();
     }
 
+    StringView MultiPart::getParam(const StringView& key) const{
+        auto iter = m_ParamMap.find(std::string(key.data(),key.size()));
+        if(iter == m_ParamMap.end()){
+            return g_EmptyString;
+        }
+        return iter->second;
+    }
+
+    const Safe<FileStream>& MultiPart::getFile(const StringView& sv){
+        auto iter = m_Files.find(std::string(sv.data(),sv.size()));
+        if(iter == m_Files.end()){
+            return m_FileStream;
+        }
+        return iter->second;
+    }
+
+    const std::unordered_map<std::string,Safe<FileStream>>& MultiPart::getFiles() const{
+        return m_Files;
+    }
+
     void MultiPart::reset(){
-        for(const auto& path : m_FilePaths){
-            std::remove(path.c_str());
+        for(const auto& v : m_Files){
+            if(v.second){
+                v.second->remove();
+            }
         }
         m_HeaderMaps.clear();
         m_HeaderMap.clear();
-        m_FilePaths.clear();
         m_ParamMap.clear();
         m_Parser.reset();
+        m_Files.clear();
     }
 
     bool MultiPart::stopped() const{
         return m_Parser.stopped();
+    }
+
+    StringView MultiPart::getName(){
+        auto it = m_HeaderMap.find("Content-Disposition");
+        if(it != m_HeaderMap.end()){
+            auto pos = it->second.find("name");
+            if(pos != std::string::npos){
+                auto start = it->second.find('"',pos) + 1;
+                auto end = it->second.find('"',start + 1);
+                if(start != std::string::npos || end != std::string::npos || end > start){
+                    return StringView(it->second.data() + start,end - start);
+                }
+            }
+        }
+        return StringView();
     }
 
     bool MultiPart::hasError() const{
@@ -47,25 +87,19 @@ namespace Http{
         return m_Parser.succeeded();
     }
 
-    const char* MultiPart::getErrorMessage() const{
-        return m_Parser.getErrorMessage();
-    }
-
-    size_t MultiPart::feed(const char* buffer,size_t len){
-        return m_Parser.feed(buffer,len);
-    }
-
-    void MultiPart::setBoundary(const StringView& boundary){
-        m_Boundary = std::string(boundary.data(),boundary.size());
-        m_Parser.setBoundary(boundary);
-    }
-
-    void MultiPart::setDirectory(const StringView& dirPath){
-        m_Directory = std::string(dirPath.data(),dirPath.size());
-    }
-
-    const std::unordered_map<std::string,std::string>& MultiPart::getParamMap() const{
-        return m_ParamMap;
+    StringView MultiPart::getFileName(){
+        auto it = m_HeaderMap.find("Content-Disposition");
+        if(it != m_HeaderMap.end()){
+            auto pos = it->second.find("filename");
+            if(pos != std::string::npos){
+                auto start = it->second.find('"',pos) + 1;
+                auto end = it->second.find('"',start + 1);
+                if(start != std::string::npos || end != std::string::npos || end > start){
+                    return StringView(it->second.data() + start,end - start);
+                }
+            }
+        }
+        return StringView();
     }
 
     void MultiPart::setParserCallBacks(){
@@ -80,34 +114,21 @@ namespace Http{
         m_Parser.userData = this;
     }
 
-    std::string MultiPart::getName(){
-        auto it = m_HeaderMap.find("Content-Disposition");
-        if(it != m_HeaderMap.end()){
-            auto pos = it->second.find("name");
-            if(pos != std::string::npos){
-                auto start = it->second.find('"',pos) + 1;
-                auto end = it->second.find('"',start + 1);
-                if(start != std::string::npos || end != std::string::npos || end > start){
-                    return it->second.substr(start,end - start);
-                }
-            }
-        }
-        return std::string();
+    const char* MultiPart::getErrorMessage() const{
+        return m_Parser.getErrorMessage();
     }
 
-    std::string MultiPart::getFileName(){
-        auto it = m_HeaderMap.find("Content-Disposition");
-        if(it != m_HeaderMap.end()){
-            auto pos = it->second.find("filename");
-            if(pos != std::string::npos){
-                auto start = it->second.find('"',pos) + 1;
-                auto end = it->second.find('"',start + 1);
-                if(start != std::string::npos || end != std::string::npos || end > start){
-                    return it->second.substr(start,end - start);
-                }
-            }
-        }
-        return std::string();
+    void MultiPart::setBoundary(const StringView& boundary){
+        m_Boundary = std::string(boundary.data(),boundary.size());
+        m_Parser.setBoundary(boundary);
+    }
+
+    void MultiPart::setDirectory(const StringView& dirPath){
+        m_Directory = std::string(dirPath.data(),dirPath.size());
+    }
+
+    size_t MultiPart::feed(const IStream::BufferView bufferView){
+        return m_Parser.feed(bufferView.data(),bufferView.size());
     }
 
     void MultiPart::PartBegin(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
@@ -142,24 +163,26 @@ namespace Http{
         self->m_HeaderValue.clear();
         self->m_HeaderMaps.push_back(self->m_HeaderMap);
         /// TODO: PartBegin
-        std::string fileName = self->getFileName();
+        auto fileName = self->getFileName();
+        auto name = self->getName();
         if(!fileName.empty()){
-            self->m_FilePath = self->m_Directory + '/' + self->m_Boundary + fileName.substr(fileName.rfind('.'));
-            self->m_FileStream.open(self->m_FilePath,std::ios::binary);
+            auto ext = fileName.substr(fileName.rfind('.'));
+            Base64Encoder encoder(std::make_shared<DataStream>(fileName));
+            auto fileStream = std::make_shared<FileStream>(Magic::StringCat(self->m_Directory,"/", self->m_Boundary,encoder.read(),ext));
+            if(fileStream->open(FileStream::OpenMode::ReadWrite)){
+                self->m_FileStream = std::move(fileStream);
+            }
         }
-
-        std::string name = self->getName();
         if(!name.empty()){
             self->m_ParamName = name;
         }
-
         self->m_HeaderMap.clear();
     }
 
     void MultiPart::PartData(const char* buffer,size_t start,size_t end,void* userData){
         auto* self = reinterpret_cast<MultiPart*>(userData);
-        if(self->m_FileStream.is_open()){
-            self->m_FileStream.write(buffer + start,end - start);
+        if(self->m_FileStream){
+            self->m_FileStream->write(FileStream::BufferView(buffer + start,end - start));
         }else if(!self->m_ParamName.empty()){
             self->m_ParamValue.append(buffer + start,end - start);
         }
@@ -168,18 +191,15 @@ namespace Http{
     void MultiPart::PartEnd(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
         auto* self = reinterpret_cast<MultiPart*>(userData);
         if(!self->m_ParamName.empty()){
-            if(self->m_FileStream.is_open()){
-                self->m_ParamMap.emplace(self->m_ParamName,self->m_FilePath);
-                self->m_FilePaths.push_back(self->m_FilePath);
-                self->m_FileStream.flush();
-                self->m_FileStream.close();
-                self->m_FilePath.clear();
+            if(self->m_FileStream){
+                self->m_Files.emplace(self->m_ParamName,self->m_FileStream);
             }else{
                 self->m_ParamMap.emplace(self->m_ParamName,self->m_ParamValue);
             }
-            self->m_ParamName.clear();
-            self->m_ParamValue.clear();
         }
+        self->m_FileStream.reset();
+        self->m_ParamValue.clear();
+        self->m_ParamName.clear();
     }
 
     void MultiPart::End(const char*/*buffer*/,size_t /*start*/,size_t /*end*/,void* userData){
