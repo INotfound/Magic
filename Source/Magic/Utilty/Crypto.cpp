@@ -17,7 +17,7 @@ namespace Magic{
         m_Stream->seek(0);
     }
 
-    Base64Decoder::Base64Decoder(const std::shared_ptr<IStream>& stream)
+    Base64Decoder::Base64Decoder(const Safe<IStream>& stream)
         :CryptoDecorator(stream)
         ,m_ChunkLen(0){
     }
@@ -102,7 +102,7 @@ namespace Magic{
         m_Stream->write(data);
     }
 
-    Base64Encoder::Base64Encoder(const std::shared_ptr<IStream>& stream)
+    Base64Encoder::Base64Encoder(const Safe<IStream>& stream)
         :CryptoDecorator(stream)
         ,m_ChunkLen(0){
     }
