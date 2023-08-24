@@ -70,6 +70,7 @@ namespace Magic{
     }
 
     bool FileStream::remove(){
+        m_File.reset();
         return std::remove(m_FilePath.data()) == 0;
     }
 

@@ -53,6 +53,10 @@ namespace Http{
                 v.second->remove();
             }
         }
+        if(m_FileStream){
+            m_FileStream->remove();
+        }
+        m_FileStream.reset();
         m_HeaderMaps.clear();
         m_HeaderMap.clear();
         m_ParamMap.clear();
