@@ -81,7 +81,8 @@ public:
     void handle1(const Safe<Magic::NetWork::Http::HttpSocket>& httpSocket){
         const auto& request = httpSocket->getRequest();
         const auto& response = httpSocket->getResponse();
-        std::string localPath(request->getPath());
+        auto path = request->getPath();
+        std::string localPath(path.data(),path.size());
         if(localPath == "/"){
             localPath = Magic::StringCat(".","/index.html");
         }else{

@@ -178,7 +178,7 @@ namespace Http{
             }
         }
         if(!name.empty()){
-            self->m_ParamName = name;
+            self->m_ParamName = std::string(name.data(),name.size());
         }
         self->m_HeaderMap.clear();
     }
