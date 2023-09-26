@@ -8,6 +8,7 @@
 #pragma once
 
 #include <list>
+#include <array>
 #include <mutex>
 #include <deque>
 #include <string>

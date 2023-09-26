@@ -20,17 +20,18 @@ namespace Magic{
     class StringView{
     public:
         using value_type = char;
+        using pointer = value_type*;
         using size_type = std::size_t;
-        using const_pointer = const char*;
-        using const_iterator = const char*;
-        using const_reference = const char&;
+        using const_pointer = const value_type*;
+        using const_iterator = const value_type*;
+        using const_reference = const value_type&;
         static constexpr size_type npos = size_type(-1);
     public:
         constexpr StringView() noexcept
             :m_Size(0),m_Data(nullptr){}
 
 
-        StringView(const char* data) noexcept
+        StringView(const value_type* data) noexcept
             :m_Size(std::char_traits<value_type>::length(data)),m_Data(data){}
 
         StringView(const std::string& str) noexcept
@@ -41,7 +42,7 @@ namespace Magic{
 
         StringView& operator=(const StringView&) noexcept = default;
 
-        constexpr StringView(const char* data,size_type size) noexcept
+        constexpr StringView(const value_type* data,size_type size) noexcept
             :m_Size(size),m_Data(data){}
 
         constexpr bool empty() const noexcept{
