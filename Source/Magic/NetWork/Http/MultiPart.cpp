@@ -171,8 +171,8 @@ namespace Http{
         auto name = self->getName();
         if(!fileName.empty()){
             auto ext = fileName.substr(fileName.rfind('.'));
-            Base64Encoder encoder(std::make_shared<DataStream>(Magic::StringCat(self->m_Boundary,fileName)));
-            auto fileStream = std::make_shared<FileStream>(Magic::StringCat(self->m_Directory,"/",encoder.read(),ext));
+            Base64Encoder encoder(std::make_shared<DataStream>(StringCat(self->m_Boundary,fileName)));
+            auto fileStream = std::make_shared<FileStream>(StringCat(self->m_Directory,"/",encoder.read(),ext));
             if(fileStream->open(FileStream::OpenMode::ReadWrite)){
                 self->m_FileStream = std::move(fileStream);
             }

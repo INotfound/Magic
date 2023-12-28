@@ -1,6 +1,4 @@
 #include "gtest/gtest.h"
-#include <cctype>
-#include <cstdio>
 #include "Magic/Core/Stream.hpp"
 #include "Magic/Core/StringView.hpp"
 

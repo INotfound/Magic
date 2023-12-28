@@ -22,9 +22,6 @@ namespace Http{
             auto exactlyIter = m_NormalRoutes.find(std::string(httpPath.data(),httpPath.size()));
             auto exactlyEnd = m_NormalRoutes.end();
             if(exactlyIter != exactlyEnd){
-            #ifdef TRACE
-                TraceTimer traceTimer(httpPath);
-            #endif
                 /// Global Before
                 for(const auto& func : m_AspectBefores){
                     if(!func(httpSocket))
@@ -58,9 +55,6 @@ namespace Http{
             for(;matchIter != matchEnd;matchIter++){
                 reg.assign(matchIter->first);
                 if(std::regex_match(httpPath.begin(),httpPath.end(),reg)){
-                #ifdef TRACE
-                    TraceTimer traceTimer(httpPath);
-                #endif
                     /// Global Before
                     for(const auto& func : m_AspectBefores){
                         if(!func(httpSocket))

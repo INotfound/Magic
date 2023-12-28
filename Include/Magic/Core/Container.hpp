@@ -54,7 +54,7 @@ namespace Magic{
     public:
         template<typename T>
         bool contain(){
-            const void* id = CompiletimeIId<T>();
+            const void* id = CompileTimeIId<T>();
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
                 return false;
@@ -69,8 +69,8 @@ namespace Magic{
         template<typename T,typename M,typename... Args,typename = typename std::enable_if<std::is_constructible<M,Args...>::value
             && (std::is_same<T,M>::value || std::is_base_of<T,M>::value)>::type>
         RegisteredType& registerTypeEx(bool isSingleton = true){
-            const void* id = CompiletimeIId<T>();
-            const void* raw = CompiletimeIId<M>();
+            const void* id = CompileTimeIId<T>();
+            const void* raw = CompileTimeIId<M>();
             if(std::is_same<T,M>::value && m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw Failure(std::string(typeid(T).name()) + " Is Multiple Registered!");
             Function<T,Args...> createFunc = &Container::invoke<T,M,typename Safe_Traits<Args>::Type...>;
@@ -80,7 +80,7 @@ namespace Magic{
 
         template<typename T>
         RegisteredType& registerInstance(const Safe<T>& instance){
-            const void* id = CompiletimeIId<T>();
+            const void* id = CompileTimeIId<T>();
             if(m_RegisteredType.find(id) != m_RegisteredType.end())
                 throw Failure(std::string(typeid(T).name()) + " Is Multiple Registered!");
             RegisteredType registerObject(true,[](){ return Safe<void>(); });
@@ -91,8 +91,8 @@ namespace Magic{
 
         template<typename T,typename M,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
         RegisteredType& registerInstance(const Safe<M>& instance){
-            const void* id = CompiletimeIId<T>();
-            const void* raw = CompiletimeIId<M>();
+            const void* id = CompileTimeIId<T>();
+            const void* raw = CompileTimeIId<M>();
             RegisteredType registerObject(true,[](){ return Safe<void>(); });
             registerObject.m_Object = std::move(instance);
             m_RegisteredType[id].emplace(raw,registerObject);
@@ -101,7 +101,7 @@ namespace Magic{
 
         template<typename T>
         Safe<T> resolve(){
-            const void* id = CompiletimeIId<T>();
+            const void* id = CompileTimeIId<T>();
 
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
@@ -125,8 +125,8 @@ namespace Magic{
 
         template<typename T,typename M,typename = typename std::enable_if<std::is_same<T,M>::value || std::is_base_of<T,M>::value>::type>
         Safe<T> resolve(){
-            const void* id = CompiletimeIId<T>();
-            const void* raw = CompiletimeIId<M>();
+            const void* id = CompileTimeIId<T>();
+            const void* raw = CompileTimeIId<M>();
             auto iter = m_RegisteredType.find(id);
             if(iter == m_RegisteredType.end())
                 throw Failure(std::string(typeid(T).name()) + " Is Not Registered!");
@@ -166,7 +166,7 @@ namespace Magic{
         std::vector<Safe<T>> resolveAll(){
             std::vector<Safe<T>> objects;
             auto self = this->shared_from_this();
-            auto iter = m_RegisteredType.find(CompiletimeIId<T>());
+            auto iter = m_RegisteredType.find(CompileTimeIId<T>());
             if(iter != m_RegisteredType.end()){
                 for(auto& registeredType :iter->second){
                     if(registeredType.second.m_IsSingelton){

@@ -12,7 +12,7 @@ namespace Magic{
     IStream::~IStream() = default;
 
     DataStream::DataStream()
-        :m_Position(0){
+        :DataStream(StringView()){
     }
 
     DataStream::DataStream(const StringView& data)
@@ -51,6 +51,10 @@ namespace Magic{
         m_Buffer.insert(m_Buffer.end(),data.cbegin(),data.cend());
     }
 
+    FileStream::~FileStream(){
+        std::fflush(m_File.get());
+    }
+
     FileStream::FileStream(const StringView& path)
         :m_Position(0)
         ,m_FileSize(0)
@@ -67,6 +71,10 @@ namespace Magic{
                 fclose(pointer);
             }
         }){
+    }
+
+    void FileStream::flush(){
+        std::fflush(m_File.get());
     }
 
     bool FileStream::remove(){
@@ -147,19 +155,6 @@ namespace Magic{
         return IStream::BufferView(m_Buffer.get(),size);
     }
 
-    uint64_t FileStream::size() const noexcept{
-        return m_FileSize;
-    }
-
-    void FileStream::write(const IStream::BufferView& data){
-        if(!m_File || !m_Buffer || std::ferror(m_File.get()) != 0){
-            return;
-        }
-        auto size = std::fwrite(data.data(),sizeof(char),data.size(),m_File.get());
-        std::fflush(m_File.get());
-        m_FileSize += size;
-    }
-
     bool FileStream::copy(const StringView& newPath){
         FileStream writeStream(newPath);
         FileStream readStream(m_FilePath);
@@ -178,6 +173,18 @@ namespace Magic{
             return this->remove();
         }
         return false;
+    }
+
+    uint64_t FileStream::size() const noexcept{
+        return m_FileSize;
+    }
+
+    void FileStream::write(const IStream::BufferView& data){
+        if(!m_File || !m_Buffer || std::ferror(m_File.get()) != 0){
+            return;
+        }
+        auto size = std::fwrite(data.data(),sizeof(char),data.size(),m_File.get());
+        m_FileSize += size;
     }
 }
 

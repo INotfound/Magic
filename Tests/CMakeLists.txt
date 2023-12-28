@@ -24,6 +24,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/../ThirdParty/GoogleTest ${PROJECT_BINARY
 ### TEST ###
 set(TestSrc
     main.cpp
+    UnitTrace.cpp
     UnitString.cpp
     UnitCrypto.cpp
     UnitStream.cpp

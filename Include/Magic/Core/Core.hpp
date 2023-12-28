@@ -83,8 +83,8 @@ namespace Magic{
     };
 
     template<typename T>
-    const void* CompiletimeIId(){
-        return reinterpret_cast<const void*>(&CompiletimeIId<T>);
+    constexpr const void* CompileTimeIId() noexcept{
+        return reinterpret_cast<const void*>(&CompileTimeIId<T>);
     }
 
     template<typename T>

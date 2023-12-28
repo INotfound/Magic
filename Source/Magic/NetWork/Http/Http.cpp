@@ -130,7 +130,7 @@ namespace Http{
         uint64_t pos = 0;
         do{
             uint64_t idx = 0;
-            StringView rawString = SubString(str,pos,flag);
+            StringView rawString = SubString(str,flag,pos);
             pos += static_cast<uint64_t>(rawString.size() + 1);
             if(IsUrlEncode(rawString)){
                 std::string decodeString = UrlDecode(rawString);
@@ -154,7 +154,7 @@ namespace Http{
         uint64_t pos = 0;
         do{
             uint64_t key = 0;
-            StringView rawString = SubString(str,pos,flag);
+            StringView rawString = SubString(str,flag,pos);
             pos += static_cast<uint64_t>(rawString.size() + 1);
             if(IsUrlEncode(rawString)){
                 std::string decodeString = UrlDecode(rawString);
@@ -355,7 +355,8 @@ namespace Http{
 
     ObjectWrapper<HttpRequest> HttpRequest::setBody(const StringView& body){
         auto contentType = m_Headers.find("Content-Type");
-        if(contentType != m_Headers.end() && StringCompareNoCase(contentType->second,"application/x-www-form-urlencoded")){
+        if(contentType != m_Headers.end()
+            && contentType->second == "application/x-www-form-urlencoded"){
             Parse(body,m_Params,"&");
         }
         m_BodyStream = std::make_shared<DataStream>(body);

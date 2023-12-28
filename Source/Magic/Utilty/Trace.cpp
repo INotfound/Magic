@@ -7,8 +7,8 @@
  */
 #include <mutex>
 #include <random>
+#include "Magic/Core/Stream.hpp"
 #include "Magic/Utilty/Trace.hpp"
-#include "Magic/Utilty/Thread.hpp"
 #include "Magic/Utilty/String.hpp"
 
 namespace Magic{
@@ -31,57 +31,44 @@ namespace Magic{
 
     ITraceAppender::~ITraceAppender() = default;
 
-    ChromiumTraceAppender::~ChromiumTraceAppender(){
-        this->complete();
-    }
-
-    ChromiumTraceAppender::ChromiumTraceAppender(const StringView& outFilePath)
-        :m_UseSplit(false)
-        ,m_FilePath(outFilePath.data(),outFilePath.size()){
+    ChromiumTraceAppender::ChromiumTraceAppender(const StringView& filePath)
+        :m_FilePath(filePath.data(),filePath.size()){
     }
 
     void ChromiumTraceAppender::complete(){
         std::lock_guard<std::mutex> locker(m_Mutex);
-        if(!m_FileStream.is_open()){
-            return;
+        FileStream fileStream(m_FilePath);
+        if(fileStream.open(FileStream::OpenMode::Write)){
+            fileStream.write("{\"otherData\":{},\"traceEvents\":[");
+            for(std::vector<TraceData>::size_type i = 0;i < m_Traces.size();i++){
+                std::stringstream object;
+                if(i > 0){
+                    object << ",";
+                }
+                const auto& value = m_Traces.at(i);
+                object << "{"
+                       << "\"cat\":\"function\","
+                       << "\"dur\":" << (value.m_End-value.m_Start) << ","
+                       << "\"name\":\"" << value.m_FuncName << "\","
+                       << "\"ph\":\"X\","
+                       << "\"pid\":0,"
+                       << "\"tid\":" << value.m_ThreadId << ","
+                       << "\"ts\":" << value.m_Start
+                       << "}";
+                fileStream.write(object.str());
+            }
+            fileStream.write("]}");
         }
-        m_FileStream << "]}";
-        m_FileStream.flush();
-        m_FileStream.close();
     }
 
     void ChromiumTraceAppender::tracing(const StringView& funcName,uint64_t threadId,int64_t start,int64_t end){
         std::lock_guard<std::mutex> locker(m_Mutex);
-        if(!m_FileStream.is_open()){
-            std::string filePath = m_FilePath;
-            filePath.append(".");
-            std::uniform_int_distribution<uint16_t> uniformIntDistribution;
-            std::default_random_engine randomEngine(std::chrono::steady_clock::now().time_since_epoch().count());
-            filePath.append(AsString(uniformIntDistribution(randomEngine)));
-            m_FileStream.open(filePath,std::ios_base::out | std::ios_base::trunc);
-            if(m_FileStream.is_open()){
-                m_FileStream << "{\"otherData\":{},\"traceEvents\":[";
-                m_UseSplit = false;
-            }
-        }
-
-        if(m_FileStream.is_open()){
-            if(!m_UseSplit){
-                m_UseSplit = true;
-            }else{
-                m_FileStream << ",";
-            }
-            m_FileStream << "{"
-                         << "\"cat\":\"function\","
-                         << "\"dur\":" << (end-start) << ","
-                         << "\"name\":\"" << funcName << "\","
-                         << "\"ph\":\"X\","
-                         << "\"pid\":0,"
-                         << "\"tid\":" << threadId << ","
-                         << "\"ts\":" << start
-                         << "}";
-            m_FileStream.flush();
-        }
+        TraceData data;
+        data.m_End = end;
+        data.m_Start = start;
+        data.m_ThreadId = threadId;
+        data.m_FuncName = std::string(funcName.data(),funcName.size());
+        m_Traces.push_back(data);
     }
 }
 

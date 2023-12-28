@@ -162,6 +162,11 @@ namespace Magic{
         return static_cast<uint8_t>(newValue);
     }
 
+    /**
+     * @brief 字符串拼接函数
+     * @param strings 可变参字符串
+     * @return 返回拼接好的字符串
+     */
     template<typename... Strings>
     inline std::string StringCat(Strings... strings){
         std::string result;
@@ -175,18 +180,33 @@ namespace Magic{
         return result;
     }
 
+    /**
+     * @brief 转换小写字符串
+     * @param string 需要转换的字符串
+     * @return 转换好的字符串
+     */
     inline std::string ToLower(const StringView& string){
         std::string newString;
         std::transform(string.begin(),string.end(),std::back_inserter(newString),::tolower);
         return newString;
     }
 
+    /**
+     * @brief 转换大写字符串
+     * @param string 需要转换的字符串
+     * @return 转换好的字符串
+     */
     inline std::string ToUpper(const StringView& string){
         std::string newString;
         std::transform(string.begin(),string.end(),std::back_inserter(newString),::toupper);
         return newString;
     }
 
+    /**
+     * @brief 转换Hex字符串
+     * @param string 需要转换的字符串
+     * @return 转换好的字符串
+     */
     inline std::string ToHexString(const StringView& string){
         size_t i,j;
         std::string result;
@@ -204,33 +224,28 @@ namespace Magic{
         return result;
     }
 
-    inline std::string Trim(const StringView& str,const StringView& flag = " "){
-        std::string string(str.data(),str.size());
-        if(str.empty())
+    /**
+     * @brief 修整掉字符串的前后 flag
+     * @param stringView 需要修正的字符串
+     * @param flag 修整掉的字符串
+     * @return 修整好的字符串
+     */
+    inline std::string Trim(const StringView& stringView,const StringView& flag = " "){
+        std::string string(stringView.data(),stringView.size());
+        if(stringView.empty())
             return g_EmptyString;
-        string.erase(0,string.find_first_not_of(std::string(flag.data(),flag.size())));
-        string.erase(string.find_last_not_of(std::string(flag.data(),flag.size())) + 1);
+        std::string flagString(flag.data(),flag.size());
+        string.erase(0,string.find_first_not_of(flagString));
+        string.erase(string.find_last_not_of(flagString) + 1);
         return string;
     }
 
-    inline bool StringCompareCase(const StringView& dest,const StringView& src){
-        if(dest.size() != src.size()){
-            return false;
-        }
-        return dest.compare(src) == 0;
-    }
-
-    inline bool StringCompareNoCase(const StringView& dest,const StringView& src){
-        if(dest.size() != src.size()){
-            return false;
-        }
-        return std::lexicographical_compare(dest.begin(),dest.end(),src.begin(),src.end(),
-            [](std::string::value_type lc,std::string::value_type rc) {
-                return std::tolower(lc) < std::tolower(rc);
-            }
-        ) == false;
-    }
-
+    /**
+     * @brief 分割字符串
+     * @param str 需要分割的字符串
+     * @param delim 分割符
+     * @return 返回分割完成后的字符串数组
+     */
     inline std::vector<StringView> Split(const StringView& str,const StringView& delim){
         std::size_t previous = 0;
         std::size_t current = str.find(delim);
@@ -248,13 +263,26 @@ namespace Magic{
         return elems;
     }
 
-    inline StringView SubString(const StringView& str,uint64_t index,const StringView& delim){
-        uint64_t pos = str.find(delim,index);
+    /**
+     * @brief 截取子字符串
+     * @param stringView 字符串
+     * @param delim 截取字符串
+     * @param index 起始位置
+     * @return 返回字符串
+     */
+    inline StringView SubString(const StringView& stringView,const StringView& delim,uint64_t index = 0){
+        uint64_t pos = stringView.find(delim,index);
         if(pos == std::string::npos)
-            return str.substr(index,str.size() - index);;
-        return str.substr(index,pos - index);
+            return stringView.substr(index,stringView.size() - index);;
+        return stringView.substr(index,pos - index);
     }
 
+    /**
+     * @brief 格式化时间
+     * @param ts time 需要转换的时间
+     * @param format 转换格式
+     * @return 转换好的时间字符串
+     */
     inline std::string TimeToString(std::time_t ts,const StringView& format = "%Y-%m-%d %H:%M:%S"){
         struct tm nowTime;
     #if defined(_WIN32) || defined(_WIN64)
@@ -267,6 +295,13 @@ namespace Magic{
         return buf;
     }
 
+    /**
+     * @brief 替换字符串
+     * @param string 需要替换的字符串
+     * @param oldStr 老字符串
+     * @param newStr 新字符串
+     * @return 替换好的字符串
+     */
     inline std::string Replace(const StringView& string,const StringView& oldStr,const StringView& newStr){
         std::string oldString(oldStr.data(),oldStr.size());
         std::string newString = std::string(string.data(),string.size());

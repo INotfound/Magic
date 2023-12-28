@@ -9,7 +9,6 @@
 
 #include <mutex>
 #include <chrono>
-#include <fstream>
 #include "Magic/Core/Core.hpp"
 
 namespace Magic{
@@ -37,27 +36,30 @@ namespace Magic{
      * @brief Use Browser ://tracing
      */
     class ChromiumTraceAppender:public ITraceAppender{
+    private:
+        struct TraceData{
+            int64_t m_End;
+            int64_t m_Start;
+            uint64_t m_ThreadId;
+            std::string m_FuncName;
+        };
     public:
-        ~ChromiumTraceAppender() override;
-
-        explicit ChromiumTraceAppender(const StringView& outFilePath);
-
+        explicit ChromiumTraceAppender(const StringView& filePath);
         void complete() override;
 
         void tracing(const StringView& funcName,uint64_t threadId,int64_t start,int64_t end) override;
 
     private:
-        bool m_UseSplit;
         std::mutex m_Mutex;
         std::string m_FilePath;
-        std::ofstream m_FileStream;
+        std::vector<TraceData> m_Traces;
     };
 
     extern Safe<ITraceAppender> g_TraceAppender;
 }
 
 #ifndef TRACE
-#define MAGIC_TRACE_FUNCTION(funcName)
+    #define MAGIC_TRACE_FUNCTION()
 #else
-#define MAGIC_TRACE_FUNCTION(funcName) Magic::TraceTimer traceTimer_##funcName(funcName)
+    #define MAGIC_TRACE_FUNCTION() Magic::TraceTimer traceTimer_##funcName(__FUNCTION__)
 #endif

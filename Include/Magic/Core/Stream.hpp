@@ -50,18 +50,20 @@ namespace Magic{
             ReadWrite   = 1000
         };
     public:
+        virtual ~FileStream() override;
         explicit FileStream(const StringView& path);
 
+        void flush();
         bool remove();
         bool open(OpenMode mode);
         StringView getPath() const;
         BufferView read() override;
         void seek(uint64_t pos) override;
         bool eof() const noexcept override;
+        bool copy(const StringView& newPath);
+        bool move(const StringView& newPath);
         uint64_t size() const noexcept override;
         void write(const BufferView& data) override;
-        bool copy(const Magic::StringView& newPath);
-        bool move(const Magic::StringView& newPath);
     private:
         uint64_t m_Position;
         uint64_t m_FileSize;
