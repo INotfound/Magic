@@ -15,11 +15,9 @@ namespace Magic{
     Safe<ITraceAppender> g_TraceAppender;
 
     TraceTimer::~TraceTimer(){
-        auto timePoint = std::chrono::steady_clock::now();
-        int64_t end = std::chrono::time_point_cast<std::chrono::microseconds>(timePoint).time_since_epoch().count();
-        int64_t start = std::chrono::time_point_cast<std::chrono::microseconds>(m_TimePoint).time_since_epoch().count();
-
         if(g_TraceAppender){
+            int64_t end = std::chrono::time_point_cast<std::chrono::microseconds>(std::chrono::steady_clock::now()).time_since_epoch().count();
+            int64_t start = std::chrono::time_point_cast<std::chrono::microseconds>(m_TimePoint).time_since_epoch().count();
             g_TraceAppender->tracing(m_FunctionName,GetThreadId(),start,end);
         }
     }
